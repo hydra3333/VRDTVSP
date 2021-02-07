@@ -151,6 +151,50 @@ Set objShell = Nothing
 Set file = Nothing
 Set fso = Nothing
 
+
+    function fnModifyDateGetSetVB()
+        dim objShell
+        set objShell = CreateObject("shell.application")
+        if (not objShell is nothing) then
+            dim objFolder2
+            dim ssfWINDOWS
+            ssfWINDOWS = 36
+            set objFolder2 = objShell.NameSpace(ssfWINDOWS)
+            if (not objFolder2 is nothing) then
+                dim objFolderItem
+                set objFolderItem = objFolder2.ParseName("NOTEPAD.EXE")
+                if (not objFolderItem is nothing) then
+                    dim szReturn
+                    szReturn = objFolderItem.ModifyDate
+                    objFolderItem.ModifyDate = "01/01/1900 6:05:00 PM"
+                end if
+                set objFolderItem = nothing
+            end if
+            set objFolder2 = nothing
+        end if
+        set objShell = nothing
+    end function
+
+
+' all files in a folder
+Set objShell = CreateObject("Shell.Application")
+Set objFSO = CreateObject("Scripting.FileSystemObject")
+Const FolderPath = "C:\Documents\Folder"
+Call Moodify (FolderPath)
+Sub Moodify(str)
+     Set objFolderShell = objShell.NameSpace(str)
+     Set objFolderFSO = objFSO.GetFolder(str)
+     Set colFiles = objFolderFSO.Files
+     For Each objFile in colFiles
+             Set objFolderItem = objFolderShell.ParseName(objFile.Name)
+             objFolderItem.ModifyDate = "04/11/2013 8:00:00 AM"
+     Next
+     For Each objSubFolder In objFolderFSO.SubFolders
+             Moodify(objSubFolder.Path)
+     Next
+End Sub
+
+
 '-----------------------------------------------------------------------------------------------------------------------------------------------
 ' Can we somehow open and use external .DLL files such as mediainfo.dll
 '   or is there an interface altready (eg google it)
@@ -167,6 +211,14 @@ Set fso = Nothing
 '-----------------------------------------------------------------------------------------------------------------------------------------------
 ' how can we bulk move source files in vbscript to a differtent folder
 '
+
+' individual file
+Set obj = createobject(“Scripting.FileSystemObject”) ‘Creating a File Object
+Dim filename1,filename2                                   ‘Declaring variables
+filename1=”C:\app\pictures\img1.jpg” ‘Mentioning the name and source location of the file to be moved
+filename2=”C:\Users\img1.jpg” ‘Mentioning the name and destination location of the file to be moved
+obj.MoveFile filename1,filename1 ‘MoveFile Method is used for moving the file to the destination
+Set obj=Nothing                                           ‘Releasing File object
 
 
 '-----------------------------------------------------------------------------------------------------------------------------------------------
