@@ -39,10 +39,10 @@ The Exec method cannot be used to run remote scripts. Do not confuse the Exec me
 
 Set WshShell = CreateObject("WScript.Shell")
 Set oExec = WshShell.Exec("calc")
-Do While oExec.Status = 0
+Do While oExec.Status = 0 '0 is running and 1 is ending
      WScript.Sleep 100
 Loop
-WScript.Echo oExec.Status
+WScript.Echo oExec.ExitCode
 
 
 
@@ -64,19 +64,25 @@ WScript.Echo strErrorCode ' always write to stdout, not use echo so it works in 
 '
 set wso = CreateObject("Wscript.Shell")
 set exe = wso.Exec("cmd /c dir /s /b d:\temp\*.jpg")
-Do While exe.Status = 0
+Do While exe.Status = 0 '0 is running and 1 is ending
      WScript.Sleep 100
 Loop
+WScript.Echo exe.ExitCode
 Do Until exe.StdOut.AtEndOfStream
     Wscript.Echo exe.StdOut.ReadLine
+Loop
+Do Until exe.StdErr.AtEndOfStream
+    Wscript.Echo exe.StdErr.ReadLine
 Loop
 '
 set wso = CreateObject("Wscript.Shell")
 set exe = wso.Exec("cmd /c dir /s /b d:\temp\*.jpg")
-Do While exe.Status = 0
+Do While exe.Status = 0 '0 is running and 1 is ending
      WScript.Sleep 100
 Loop
+WScript.Echo exe.ExitCode
 sout = exe.StdOut.ReadAll
+serr = exe.StdErr.ReadAll
 '
 
 
