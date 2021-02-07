@@ -200,7 +200,7 @@ BUT CANNOT CHANGE DATE CREATED ... resort to powershell
 '-----------------------------------------------------------------------------------------------------------------------------------------------
 ' Can we somehow open and use external .DLL files such as mediainfo.dll
 '   or is there an interface altready (eg google it)
-'   ... can we even buile mediainfo.dll
+'   ... can we even build mediainfo.dll
 '
 
 
@@ -211,7 +211,7 @@ BUT CANNOT CHANGE DATE CREATED ... resort to powershell
 
 
 '-----------------------------------------------------------------------------------------------------------------------------------------------
-' how can we bulk move source files in vbscript to a differtent folder
+' how can we bulk move source files in vbscript to a different folder
 '
 
 ' individual file
