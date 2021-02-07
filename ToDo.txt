@@ -6,6 +6,11 @@
 '   get a return status
 '   pipe input and output
 '
+'
+' The principal difference between Exec and Run is that 
+'   Exec supports real-time output to the user (if it is a command-line program),
+'   BUT we can't get ERRORLEVEL using this method. 
+
 ' https://www.codeproject.com/Tips/507798/Differences-between-Run-and-Exec-VBScript
 '
 ' https://www.daniweb.com/programming/code/516406/vbscript-run-an-external-program-and-capture-the-output
