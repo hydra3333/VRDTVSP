@@ -43,10 +43,11 @@ Set oExec = WshShell.Exec("calc")
 Do While oExec.Status = 0 '0 is running and 1 is ending
      WScript.Sleep 100
 Loop
+objStdOut.WriteLine oExec.ExitCode
 WScript.StdOut.WriteLine oExec.ExitCode
-
-
-
+Set oExec = Nothing
+Set WshShell = Nothing
+Set objStdOut = Nothing
 
 
 
@@ -62,7 +63,8 @@ WScript.StdOut.WriteLine oExec.ExitCode
 set wso = CreateObject("Wscript.Shell")
 strErrorCode wso.Run "cmd /c dir /s /b d:\temp\*.jpg",True,7
 WScript.StdOut.WriteLine strErrorCode ' always write to stdout, not use echo so it works in batch console mode
-'
+Set wso = Nothing
+
 set wso = CreateObject("Wscript.Shell")
 set exe = wso.Exec("cmd /c dir /s /b d:\temp\*.jpg")
 Do While exe.Status = 0 '0 is running and 1 is ending
@@ -75,7 +77,10 @@ Loop
 Do Until exe.StdErr.AtEndOfStream
     WScript.StdOut.WriteLine exe.StdErr.ReadLine
 Loop
-'
+Set exe = Nothing
+Set wso = Nothing
+
+
 set wso = CreateObject("Wscript.Shell")
 set exe = wso.Exec("cmd /c dir /s /b d:\temp\*.jpg")
 Do While exe.Status = 0 '0 is running and 1 is ending
@@ -86,8 +91,8 @@ sout = exe.StdOut.ReadAll
 WScript.StdOut.WriteLine sout
 serr = exe.StdErr.ReadAll
 WScript.StdOut.WriteLine serr
-'
-
+Set exe = Nothing
+Set wso = Nothing
 
 
 '-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -114,16 +119,20 @@ Set objShell = Nothing
 
 '-----------------------------------------------------------------------------------------------------------------------------------------------
 ' how can we use regex in vbscript to change filenames to lose special characters like the poweshell script does
-'   I guess also remove the leading filename tvsp stuff  (see existing vbs script)
+'   I guess also remove the leading filename tvsp stuff (see existing vbs script) eg "movies-action" etc
 '   I guess also change the filenames to move the date to the end (see existing vbs script)
 '
-
-'Prepare a regular expression object
+' REGEX
 Set myRegExp = New RegExp
 myRegExp.IgnoreCase = False
 myRegExp.Global = True  
 myRegExp.Pattern = "[^a-zA-Z0-9-_. ]+"      ' ^ means not matching
 result_string = myRegExp.Replace(input_string,".") ' in this case replace all matching characters with ".", in this case all non-standard characters
+Set myRegExp = Nothing
+
+'-----------------------------------------------------------------------------------------------------------------------------------------------
+' how can we change file modified,created date/time stamps in vbscript like the poweshell script does, using the date in the end of the filename
+'
 
 
 
@@ -148,12 +157,6 @@ result_string = myRegExp.Replace(input_string,".") ' in this case replace all ma
 
 '-----------------------------------------------------------------------------------------------------------------------------------------------
 ' how can we delete a file in vbscript
-'
-
-
-
-'-----------------------------------------------------------------------------------------------------------------------------------------------
-' how can we change file modified,created date/time stamps in vbscript like the poweshell script does, using the date in the end of the filename
 '
 
 
