@@ -17,7 +17,7 @@
 '
 set wso = CreateObject("Wscript.Shell")
 strErrorCode wso.Run "cmd /c dir /s /b d:\temp\*.jpg"
-WScript.Echo strErrorCode ' always write toi stdout, not use echo so it works in batch console mode
+WScript.Echo strErrorCode ' always write to stdout, not use echo so it works in batch console mode
 '
 set wso = CreateObject("Wscript.Shell")
 set exe = wso.Exec("cmd /c dir /s /b d:\temp\*.jpg")
