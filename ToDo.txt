@@ -12,8 +12,7 @@
 '   BUT we can't get ERRORLEVEL using this method. 
 
 object.Run(strCommand, [intWindowStyle], [bWaitOnReturn])
-
-intWindowStyle
+intWindowStyle Integer value indicating the appearance of the program's window.
 0	Hides the window and activates another window.
 1	Activates and displays a window. If the window is minimized or maximized, the system restores it to its original size and position. An application should specify this flag when displaying the window for the first time.
 2	Activates the window and displays it as a minimized window.
@@ -25,10 +24,29 @@ intWindowStyle
 8	Displays the window in its current state. The active window remains active.
 9	Activates and displays the window. If the window is minimized or maximized, the system restores it to its original size and position. An application should specify this flag when restoring a minimized window.
 10	Sets the show-state based on the state of the program that started the application.
-
 bWaitOnReturn Boolean value indicating whether the script should wait for the program to finish executing before continuing to the next statement in your script.
 True    script execution halts until the program finishes, and Run returns any error code returned by the program. 
 False   (the default), the Run method returns immediately after starting the program, automatically returning 0 (not to be interpreted as an error code).
+
+object.Exec(strCommand)
+strCommand  String value indicating the command line used to run the script.
+            The command line should appear exactly as it would if you typed it at the command prompt.
+The Exec method returns a WshScriptExec object, 
+which provides status and error information about a script run with Exec 
+along with access to the StdIn, StdOut, and StdErr channels. 
+The Exec method allows the execution of command line applications only. 
+The Exec method cannot be used to run remote scripts. Do not confuse the Exec method with the Execute method (of the WshRemote object).
+
+Set WshShell = CreateObject("WScript.Shell")
+Set oExec = WshShell.Exec("calc")
+Do While oExec.Status = 0
+     WScript.Sleep 100
+Loop
+WScript.Echo oExec.Status
+
+
+
+
 
 
 ' https://www.codeproject.com/Tips/507798/Differences-between-Run-and-Exec-VBScript
@@ -41,17 +59,23 @@ False   (the default), the Run method returns immediately after starting the pro
 ' If you don't do this you may end up with orphan cmd.exe processes littering up memory
 '
 set wso = CreateObject("Wscript.Shell")
-strErrorCode wso.Run "cmd /c dir /s /b d:\temp\*.jpg"
+strErrorCode wso.Run "cmd /c dir /s /b d:\temp\*.jpg",True,7
 WScript.Echo strErrorCode ' always write to stdout, not use echo so it works in batch console mode
 '
 set wso = CreateObject("Wscript.Shell")
 set exe = wso.Exec("cmd /c dir /s /b d:\temp\*.jpg")
+Do While exe.Status = 0
+     WScript.Sleep 100
+Loop
 Do Until exe.StdOut.AtEndOfStream
     Wscript.Echo exe.StdOut.ReadLine
 Loop
 '
 set wso = CreateObject("Wscript.Shell")
 set exe = wso.Exec("cmd /c dir /s /b d:\temp\*.jpg")
+Do While exe.Status = 0
+     WScript.Sleep 100
+Loop
 sout = exe.StdOut.ReadAll
 '
 
