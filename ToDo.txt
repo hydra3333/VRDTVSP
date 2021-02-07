@@ -221,6 +221,8 @@ obj.MoveFile filename1,filename1 ‘MoveFile Method is used for moving the file 
 Set obj=Nothing                                           ‘Releasing File object
 
 
+?? bulk move ??
+
 '-----------------------------------------------------------------------------------------------------------------------------------------------
 ' how can we delete a file in vbscript
 '
