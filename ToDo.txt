@@ -36,13 +36,14 @@ which provides status and error information about a script run with Exec
 along with access to the StdIn, StdOut, and StdErr channels. 
 The Exec method allows the execution of command line applications only. 
 The Exec method cannot be used to run remote scripts. Do not confuse the Exec method with the Execute method (of the WshRemote object).
-
+eg
+Set objStdOut = WScript.StdOut
 Set WshShell = CreateObject("WScript.Shell")
 Set oExec = WshShell.Exec("calc")
 Do While oExec.Status = 0 '0 is running and 1 is ending
      WScript.Sleep 100
 Loop
-WScript.Echo oExec.ExitCode
+WScript.StdOut.WriteLine oExec.ExitCode
 
 
 
@@ -60,19 +61,19 @@ WScript.Echo oExec.ExitCode
 '
 set wso = CreateObject("Wscript.Shell")
 strErrorCode wso.Run "cmd /c dir /s /b d:\temp\*.jpg",True,7
-WScript.Echo strErrorCode ' always write to stdout, not use echo so it works in batch console mode
+WScript.StdOut.WriteLine strErrorCode ' always write to stdout, not use echo so it works in batch console mode
 '
 set wso = CreateObject("Wscript.Shell")
 set exe = wso.Exec("cmd /c dir /s /b d:\temp\*.jpg")
 Do While exe.Status = 0 '0 is running and 1 is ending
      WScript.Sleep 100
 Loop
-WScript.Echo exe.ExitCode
+WScript.StdOut.WriteLine exe.ExitCode
 Do Until exe.StdOut.AtEndOfStream
-    Wscript.Echo exe.StdOut.ReadLine
+    WScript.StdOut.WriteLine exe.StdOut.ReadLine
 Loop
 Do Until exe.StdErr.AtEndOfStream
-    Wscript.Echo exe.StdErr.ReadLine
+    WScript.StdOut.WriteLine exe.StdErr.ReadLine
 Loop
 '
 set wso = CreateObject("Wscript.Shell")
@@ -80,9 +81,11 @@ set exe = wso.Exec("cmd /c dir /s /b d:\temp\*.jpg")
 Do While exe.Status = 0 '0 is running and 1 is ending
      WScript.Sleep 100
 Loop
-WScript.Echo exe.ExitCode
+WScript.StdOut.WriteLine exe.ExitCode
 sout = exe.StdOut.ReadAll
+WScript.StdOut.WriteLine sout
 serr = exe.StdErr.ReadAll
+WScript.StdOut.WriteLine serr
 '
 
 
