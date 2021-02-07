@@ -1,4 +1,4 @@
-' Thinsg to find out about VBScript
+' Things to find out about VBScript
 '
 ' Can we 
 ' 
