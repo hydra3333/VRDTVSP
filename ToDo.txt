@@ -50,7 +50,6 @@ Set WshShell = Nothing
 Set objStdOut = Nothing
 
 
-
 ' https://www.codeproject.com/Tips/507798/Differences-between-Run-and-Exec-VBScript
 '
 ' https://www.daniweb.com/programming/code/516406/vbscript-run-an-external-program-and-capture-the-output
@@ -134,8 +133,23 @@ Set myRegExp = Nothing
 ' how can we change file modified,created date/time stamps in vbscript like the poweshell script does, using the date in the end of the filename
 '
 
+Set objShell = CreateObject("Shell.Application")
+Set objFolder = objShell.NameSpace("C:\Scripts")
+Set objFolderItem = objFolder.ParseName("File.jpg")
+objFolderItem.ModifyDate = "01/01/2008 8:00:00 AM"
+Set objFolderItem = Nothing
+Set objFolder = Nothing
+Set objShell = Nothing
 
-
+Set fso = CreateObject("Scripting.Filesystemobject")
+Set file = fso.GetFile(path) ' the full file path
+Set objShell = CreateObject("Shell.Application")
+Set objFolder = objShell.NameSpace(file.ParentFolder.Path)
+objFolder.Items.Item(file.Name).ModifyDate = Now
+Set objFolder = Nothing
+Set objShell = Nothing
+Set file = Nothing
+Set fso = Nothing
 
 '-----------------------------------------------------------------------------------------------------------------------------------------------
 ' Can we somehow open and use external .DLL files such as mediainfo.dll
