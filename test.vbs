@@ -17,7 +17,7 @@
 ' how can we use ffprobe from vbscript ?
 '   can we somehow create a ffprobe .DLL and perhaps use that form vbscript
 '
-' how can we bulk move source files in vbscript
+' how can we bulk move source files in vbscript to a differtent folder
 '
 ' how can we delete a file in vbscript
 '
