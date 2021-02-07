@@ -21,7 +21,7 @@
 '
 ' how can we delete a file in vbscript
 '
-' how can we change file modfiled,created date/time stamps in vbscript like the poweshell script does
+' how can we change file modified,created date/time stamps in vbscript like the poweshell script does
 '
 ' how can we use regex in vbscript to change filenames to lose special characters like the poweshell script does
 '
