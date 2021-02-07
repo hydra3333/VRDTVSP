@@ -103,14 +103,27 @@ Yes, use Run or Exec as above with plain Run, or cscript to force running in con
 Dim objShell, exe
 Set objShell = Wscript.CreateObject("WScript.Shell")
 set exe=objShell.Run "TestScript.vbs 42 ""an arg containing spaces"" foo",7,True
-WScript.StdOut.WriteLine  exe.ExitCode
+WScript.StdOut.WriteLine exe.ExitCode
 Set objShell = Nothing
 
 Dim objShell, exe
 Set objShell = Wscript.CreateObject("WScript.Shell")
 set exe=objShellobjShell.Run "cscript //nologo """vbs_file"" ""parameter 1"" ""parameter 2""",7,True
-WScript.StdOut.WriteLine  exe.ExitCode
+WScript.StdOut.WriteLine exe.ExitCode
 Set objShell = Nothing
+
+'-----------------------------------------------------------------------------------------------------------------------------------------------
+' how can we use regex in vbscript to change filenames to lose special characters like the poweshell script does
+'   I guess also remove the leading filename tvsp stuff  (see existing vbs script)
+'   I guess also change the filenames to move the date to the end (see existing vbs script)
+'
+
+'Prepare a regular expression object
+Set myRegExp = New RegExp
+myRegExp.IgnoreCase = False
+myRegExp.Global = True  
+myRegExp.Pattern = "[^a-zA-Z0-9-_. ]+"      ' ^ means not matching
+result_string = myRegExp.Replace(input_string,".") ' in this case replace all matching characters with ".", in this case all non-standard characters
 
 
 
@@ -137,12 +150,6 @@ Set objShell = Nothing
 ' how can we delete a file in vbscript
 '
 
-
-'-----------------------------------------------------------------------------------------------------------------------------------------------
-' how can we use regex in vbscript to change filenames to lose special characters like the poweshell script does
-'   I guess also remove the leading filename tvsp stuff  (see existing vbs script)
-'   I guess also change the filenames to move the date to the end (see existing vbs script)
-'
 
 
 '-----------------------------------------------------------------------------------------------------------------------------------------------
