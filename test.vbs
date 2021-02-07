@@ -21,9 +21,11 @@
 '
 ' how can we delete a file in vbscript
 '
-' how can we change file modified,created date/time stamps in vbscript like the poweshell script does
-'
 ' how can we use regex in vbscript to change filenames to lose special characters like the poweshell script does
+'   I guess also remove the leading filename tvsp stuff  (see existing vbs script)
+'   I guess also change the filenames to move the date to the end (see existing vbs script)
+'
+' how can we change file modified,created date/time stamps in vbscript like the poweshell script does, using the date in the end of the filename
 '
 ' how can we copy the contents of a file in vbscript and deal with special characters for DOS .bat files
 '    see file "G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\-----------------.BAT"
