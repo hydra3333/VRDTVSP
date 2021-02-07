@@ -96,6 +96,25 @@ WScript.StdOut.WriteLine serr
 '   get a return status
 '   pipe input and output
 
+'cscript' runs entirely in the command line and is ideal for non-interactive scripts
+
+Yes, use Run or Exec as above with plain Run, or cscript to force running in console-compatile mode
+
+Dim objShell, exe
+Set objShell = Wscript.CreateObject("WScript.Shell")
+set exe=objShell.Run "TestScript.vbs 42 ""an arg containing spaces"" foo",7,True
+WScript.StdOut.WriteLine  exe.ExitCode
+Set objShell = Nothing
+
+Dim objShell, exe
+Set objShell = Wscript.CreateObject("WScript.Shell")
+set exe=objShellobjShell.Run "cscript //nologo """vbs_file"" ""parameter 1"" ""parameter 2""",7,True
+WScript.StdOut.WriteLine  exe.ExitCode
+Set objShell = Nothing
+
+
+
+
 '-----------------------------------------------------------------------------------------------------------------------------------------------
 ' Can we somehow open and use external .DLL files such as mediainfo.dll
 '   or is there an interface altready (eg google it)
