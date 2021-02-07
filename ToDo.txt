@@ -195,6 +195,8 @@ Sub Moodify(str)
 End Sub
 
 
+BUT CANNOT CHANGE DATE CREATED ... resort to powershell
+
 '-----------------------------------------------------------------------------------------------------------------------------------------------
 ' Can we somehow open and use external .DLL files such as mediainfo.dll
 '   or is there an interface altready (eg google it)
