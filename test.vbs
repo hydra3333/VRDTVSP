@@ -47,6 +47,8 @@ Set wso = Nothing
 WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
 
 '----------------------------------
+' How to parse commandline aruments in vbscript
+
 ' Firstly, using standard arguments
 ' Example 1 cscript //nologo test.vbs /p1:"This is the value for p1" /p2:500dim i, c, NamedArgs, p1, p2
 WScript.StdOut.WriteLine "3. ------------------------------------------------------------------------------------------------------"
@@ -126,7 +128,7 @@ set fso=Nothing
 WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
 
 '----------------------------------
-' Build a fully qualified filename from a path and filename
+' Build a fully qualified filename from a path and filename and a temporary filename
 WScript.StdOut.WriteLine "6. ------------------------------------------------------------------------------------------------------"
 Dim fso1, objFile
 Dim the_path, the_file, the_result, The_AbsolutePath, theBaseName, theExtName, theFileName, theDriveName
@@ -229,3 +231,61 @@ WScript.StdOut.WriteLine ""
 set objFile=Nothing
 set fso1=Nothing
 WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
+
+'----------------------------------
+' do elapsed time calculations
+
+dim timer_StartTime, timer_EndTime, timer_ElapsedTime
+timer_StartTime = Timer()
+Wscript.Sleep 750 ' milliseconds
+timer_EndTime = Timer()
+timer_ElapsedTime = FormatNumber(timer_EndTime - timer_StartTime, 3)
+WScript.StdOut.WriteLine "1. straight calculation Elapsed Time in Seconds to 3 decimal places: " & timer_ElapsedTime
+
+timer_StartTime = Timer()
+Wscript.Sleep 750 ' milliseconds
+timer_EndTime = Timer()
+Wscript.Echo "2. Function Elapsed Time in ms : " & Calculate_ElapsedTime_ms(timer_StartTime, timer_EndTime)
+Wscript.Echo "2. Function Elapsed Time String: " & Calculate_ElapsedTime_string(timer_StartTime, timer_EndTime)
+
+Function Calculate_ElapsedTime_ms (timer_StartTime, timer_EndTime)
+    Calculate_ElapsedTime_ms = Round(timer_EndTime - timer_StartTime, 3) * 1000 ' round to 3 decimal places is milliseconds
+End Function
+Function Calculate_ElapsedTime_string (timer_StartTime, timer_EndTime)
+    Const SECONDS_IN_DAY    = 86400
+    Const SECONDS_IN_HOUR   = 3600
+    Const SECONDS_IN_MINUTE = 60
+    Const SECONDS_IN_WEEK   = 604800
+	Dim seconds, minutes, hours, days, seconds_plural
+    seconds = Round(timer_EndTime - timer_StartTime, 3) ' 3 decimal places is milliseconds
+	If seconds > 1 Then
+		seconds_plural = "s"
+	Else
+		seconds_plural = ""
+	End If
+    If seconds < SECONDS_IN_MINUTE Then
+        Calculate_ElapsedTime_string = FormatNumber(seconds,3) & " second" & seconds_plural
+        Exit Function
+    End If
+    If seconds < SECONDS_IN_HOUR Then 
+        minutes = seconds / SECONDS_IN_MINUTE
+        seconds = seconds MOD SECONDS_IN_MINUTE
+        Calculate_ElapsedTime_string = Int(minutes) & " minutes " & FormatNumber(seconds,3) & " second" & seconds_plural
+        Exit Function
+    End If
+    If seconds < SECONDS_IN_DAY Then
+        hours   = seconds / SECONDS_IN_HOUR
+        minutes = (seconds MOD SECONDS_IN_HOUR) / SECONDS_IN_MINUTE
+        seconds = (seconds MOD SECONDS_IN_HOUR) MOD SECONDS_IN_MINUTE
+        Calculate_ElapsedTime_string = Int(hours) & " hours " & Int(minutes) & " minutes " & FormatNumber(seconds,3) & " second" & seconds_plural
+        Exit Function
+    End If
+    If seconds < SECONDS_IN_WEEK Then
+        days    = seconds / SECONDS_IN_DAY
+        hours   = (seconds MOD SECONDS_IN_DAY) / SECONDS_IN_HOUR
+        minutes = ((seconds MOD SECONDS_IN_DAY) MOD SECONDS_IN_HOUR) / SECONDS_IN_MINUTE
+        seconds = ((seconds MOD SECONDS_IN_DAY) MOD SECONDS_IN_HOUR) MOD SECONDS_IN_MINUTE
+        Calculate_ElapsedTime_string = Int(days) & " days " & Int(hours) & " hours " & Int(minutes) & " minutes " & FormatNumber(seconds,3) & " second" & seconds_plural
+        Exit Function
+    End If
+End Function

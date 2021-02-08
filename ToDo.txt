@@ -55,13 +55,17 @@ WScript.StdOut.WriteLine "cscript Engine = """ & cscript_strEngine & """"
 
 
 '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-' How to use named arguments in vbscript ???
-'
+' How to use un-named and named arguments in vbscript ???
+' How to parse commandline aruments in vbscript
+
 https://ss64.com/vb/syntax-args.html
 
+
 ' Firstly, using standard arguments
-' Example 1 cscript //nologo "test.vbs" /p1:"This is the value for p1" /p2:500
-dim i, c, NamedArgs, p1, p2
+' Example 1 cscript //nologo test.vbs /p1:"This is the value for p1" /p2:500dim i, c, NamedArgs, p1, p2
+dim NamedArgs
+dim c, i
+dim p1, p2
 c = WScript.Arguments.Count
 if c>0 then
     for i=0 to (c-1)
@@ -69,7 +73,7 @@ if c>0 then
     next
 end if
 ' Secondly, using named arguments 
-' Example 2 cscript //nologo "test.vbs" /p1:"This is the value for p1" /p2:500
+' Example 2 cscript //nologo test.vbs /p1:"This is the value for p1" /p2:500
 c = WScript.Arguments.Count
 set NamedArgs = WScript.Arguments.Named
 if NamedArgs.Exists("p1") and NOT IsEmpty(NamedArgs("p1")) then 
@@ -86,17 +90,17 @@ WScript.StdOut.WriteLine "Named Argument value for p1=" & p1
 WScript.StdOut.WriteLine "Named Argument value for p2=" & p2
 ' BECAUSE:
 '- If a named argument is given but not assigned a value on the command line (/argname)
-WScript.Arguments.Named.Exists("argname") will return True
-WScript.Arguments.Named("argname") will return an empty value
+'   WScript.Arguments.Named.Exists("argname") will return True
+'   WScript.Arguments.Named("argname") will return an empty value
 '- If a named argument is given with an empty string on the command line (/argname:)
-WScript.Arguments.Named.Exists("argname") will return True
-WScript.Arguments.Named("argname") will return an empty string
+'   WScript.Arguments.Named.Exists("argname") will return True
+'   WScript.Arguments.Named("argname") will return an empty string
 '- If a named argument is given with a value on the command line (/argname:value)
-WScript.Arguments.Named.Exists("argname") will return True
-WScript.Arguments.Named("argname") will return a string with that value
+'   WScript.Arguments.Named.Exists("argname") will return True
+'   WScript.Arguments.Named("argname") will return a string with that value
 '- "Empty values" are DIFFERENT from empty strings: 
-They are uninitialized, whereas the empty string is a is regular string of zero length.
-You can check for empty values with the IsEmpty() function.
+'   They are uninitialized, whereas the empty string is a is regular string of zero length.
+'   You can check for empty values with the IsEmpty() function.
 
 
 '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -234,12 +238,13 @@ set exe=objShellobjShell.Run "cscript //nologo """vbs_file"" ""parameter 1"" ""p
 WScript.StdOut.WriteLine exe.ExitCode
 Set objShell = Nothing
 
+
+
 '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' how can we use regex in vbscript to change filenames to lose special characters like the poweshell script does
 '   I guess also remove the leading filename tvsp stuff (see existing vbs script) eg "movies-action" etc
 '   I guess also change the filenames to move the date to the end (see existing vbs script)
 '
-' REGEX
 ' REGEX
 Const replacement_character="."
 Const regex_pattern="[^a-zA-Z0-9-_. ]+"      ' ^ means not matching
@@ -339,7 +344,8 @@ BUT WE CANNOT CHANGE DATE CREATED ... so resort to powershell
 '
 ' *** ---------------------------------------------------------------------------------------------------
 ' *** ---------------------------------------------------------------------------------------------------
-' *** ANSWER: reporting errors is problematic ... use Exec and DOS MOVE instead 
+' *** ANSWER: reporting errors is problematic ... 
+' ***         SO ... use Exec and DOS MOVE instead 
 ' *** ---------------------------------------------------------------------------------------------------
 ' *** ---------------------------------------------------------------------------------------------------
 
@@ -357,6 +363,7 @@ Set obj=Nothing                                           ‘Releasing File obje
 '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' how can we delete a file in vbscript
 
+' Delete a file
 Dim fso
 Dim the_Err_number, the_Err_Description, the_Err_Helpfile, the_Err_HelpContext
 Dim the_filename_to_delete
@@ -381,39 +388,10 @@ WScript.StdOut.WriteLine "Deleting file: """ & the_filename_to_delete & """"
 set fso=Nothing
 
 
-'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-' Can we somehow open and use external .DLL files such as mediainfo.dll
-'   or is there an interface altready (eg google it)
-'   ... can we even build mediainfo.dll
-'
-
 
 '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-' how can we use ffprobe from vbscript ?
-'   can we somehow create a ffprobe .DLL and perhaps use that form vbscript
+' how to   Build a fully qualified filename from a path and filename and build a temporary filename
 '
-
-
-
-'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-' how can we delete a file in vbscript
-'
-
-
-'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-' how can we copy the contents of a file in vbscript and deal with special characters for DOS .bat files
-'    see file "G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\-----------------.BAT"
-'
-'
-
-
-
-'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-' how can we  find and build fully qualified pathnames and filenames and temproary filenames
-
-'----------------------------------
-' Build a fully qualified filename from a path and filename
-WScript.StdOut.WriteLine "6. ------------------------------------------------------------------------------------------------------"
 Dim fso1, objFile
 Dim the_path, the_file, the_result, The_AbsolutePath, theBaseName, theExtName, theFileName, theDriveName
 Dim theParentFolderName, theParentFolderName2, temp_Filename
@@ -515,3 +493,85 @@ WScript.StdOut.WriteLine ""
 set objFile=Nothing
 set fso1=Nothing
 WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
+
+
+'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+' Can we somehow open and use external .DLL files such as mediainfo.dll
+'   or is there an interface altready (eg google it)
+'   ... can we even build mediainfo.dll
+'
+
+
+'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+' how can we use ffprobe from vbscript ?
+'   can we somehow create a ffprobe .DLL and perhaps use that form vbscript
+'
+
+
+
+
+
+'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+' how can we copy the contents of a file in vbscript and deal with special characters for DOS .bat files
+'    see file "G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\-----------------.BAT"
+'
+'
+
+
+'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+' how to do elapsed time calculations
+
+dim timer_StartTime, timer_EndTime, timer_ElapsedTime
+timer_StartTime = Timer()
+Wscript.Sleep 750 ' milliseconds
+timer_EndTime = Timer()
+timer_ElapsedTime = FormatNumber(timer_EndTime - timer_StartTime, 3)
+WScript.StdOut.WriteLine "1. straight calculation Elapsed Time in Seconds to 3 decimal places: " & timer_ElapsedTime
+
+timer_StartTime = Timer()
+Wscript.Sleep 750 ' milliseconds
+timer_EndTime = Timer()
+Wscript.Echo "2. Function Elapsed Time in ms : " & Calculate_ElapsedTime_ms(timer_StartTime, timer_EndTime)
+Wscript.Echo "2. Function Elapsed Time String: " & Calculate_ElapsedTime_string(timer_StartTime, timer_EndTime)
+
+Function Calculate_ElapsedTime_ms (timer_StartTime, timer_EndTime)
+    Calculate_ElapsedTime_ms = Round(timer_EndTime - timer_StartTime, 3) * 1000 ' round to 3 decimal places is milliseconds
+End Function
+Function Calculate_ElapsedTime_string (timer_StartTime, timer_EndTime)
+    Const SECONDS_IN_DAY    = 86400
+    Const SECONDS_IN_HOUR   = 3600
+    Const SECONDS_IN_MINUTE = 60
+    Const SECONDS_IN_WEEK   = 604800
+	Dim seconds, minutes, hours, days, seconds_plural
+    seconds = Round(timer_EndTime - timer_StartTime, 3) ' 3 decimal places is milliseconds
+	If seconds > 1 Then
+		seconds_plural = "s"
+	Else
+		seconds_plural = ""
+	End If
+    If seconds < SECONDS_IN_MINUTE Then
+        Calculate_ElapsedTime_string = FormatNumber(seconds,3) & " second" & seconds_plural
+        Exit Function
+    End If
+    If seconds < SECONDS_IN_HOUR Then 
+        minutes = seconds / SECONDS_IN_MINUTE
+        seconds = seconds MOD SECONDS_IN_MINUTE
+        Calculate_ElapsedTime_string = Int(minutes) & " minutes " & FormatNumber(seconds,3) & " second" & seconds_plural
+        Exit Function
+    End If
+    If seconds < SECONDS_IN_DAY Then
+        hours   = seconds / SECONDS_IN_HOUR
+        minutes = (seconds MOD SECONDS_IN_HOUR) / SECONDS_IN_MINUTE
+        seconds = (seconds MOD SECONDS_IN_HOUR) MOD SECONDS_IN_MINUTE
+        Calculate_ElapsedTime_string = Int(hours) & " hours " & Int(minutes) & " minutes " & FormatNumber(seconds,3) & " second" & seconds_plural
+        Exit Function
+    End If
+    If seconds < SECONDS_IN_WEEK Then
+        days    = seconds / SECONDS_IN_DAY
+        hours   = (seconds MOD SECONDS_IN_DAY) / SECONDS_IN_HOUR
+        minutes = ((seconds MOD SECONDS_IN_DAY) MOD SECONDS_IN_HOUR) / SECONDS_IN_MINUTE
+        seconds = ((seconds MOD SECONDS_IN_DAY) MOD SECONDS_IN_HOUR) MOD SECONDS_IN_MINUTE
+        Calculate_ElapsedTime_string = Int(days) & " days " & Int(hours) & " hours " & Int(minutes) & " minutes " & FormatNumber(seconds,3) & " second" & seconds_plural
+        Exit Function
+    End If
+End Function
