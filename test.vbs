@@ -353,15 +353,15 @@ WScript.StdOut.WriteLine "8. ---------------------------------------------------
 '
 ' Example:
 ' Dim G_Duration_ms, V_CodecID, V_CodecID_String
-' G_Duration_ms = get_mediainfo_parameter("General" "Duration" "c:\foldername\media_file.mp4", "")
-' V_CodecID = get_mediainfo_parameter("Video" "CodecID" "c:\foldername\media_file.mp4", "")
-' V_Codec_legacy = get_mediainfo_parameter("Video" "Codec" "c:\foldername\media_file.mp4", "--Legacy")
-' V_CodecID_String = get_mediainfo_parameter("Video" "CodecID/String" "c:\foldername\media_file.mp4", "")
+' G_Duration_ms = get_mediainfo_parameter("General","Duration","c:\foldername\media_file.mp4", "")
+' V_CodecID = get_mediainfo_parameter("Video","CodecID","c:\foldername\media_file.mp4", "")
+' V_Codec_legacy = get_mediainfo_parameter("Video","Codec","c:\foldername\media_file.mp4", "--Legacy")
+' V_CodecID_String = get_mediainfo_parameter("Video","CodecID/String","c:\foldername\media_file.mp4", "")
 
 Dim vrdtvs_mediainfoexe
 vrdtvs_mediainfoexe = "C:\SOFTWARE\MediaInfo\MediaInfo.exe"
-dim V_CodecID_String
-V_CodecID_String = get_mediainfo_parameter("Video","CodecID/String","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4", "")
+dim V_Width 
+V_Width = get_mediainfo_parameter("Video","Width","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4", "")
 
 
 Function get_mediainfo_parameter (mi_Section, mi_Parameter, mi_MediaFilename, mi_Legacy) 
@@ -383,9 +383,9 @@ set mi_wso = CreateObject("Wscript.Shell")
 ' If piping to a temporary file, cmd looks something like this:
 ' mi_temp_Filename = gimme_a_temporary_absolute_filename() ' generate a fully qualified temporary filename from the function
 ' mi_status = delete_a_file (mi_temp_Filename, True)
-' mi_cmd = "cmd /c " & """" & vrdtvs_mediainfoexe & """ " & mi_Legacy & " ""--Inform=" & mi_Section & ";%%" & mi_Parameter & "%%\r\n"" """ & mi_MediaFilename & """ > """ & mi_temp_Filename & """"
+' mi_cmd = "cmd /c " & """" & vrdtvs_mediainfoexe & """ " & mi_Legacy & " ""--Inform=" & mi_Section & ";%" & mi_Parameter & "%\r\n"" """ & mi_MediaFilename & """ > """ & mi_temp_Filename & """"
 '
-mi_cmd = "cmd /c " & """" & vrdtvs_mediainfoexe & """ " & mi_Legacy & " ""--Inform=" & mi_Section & ";%%" & mi_Parameter & "%%\r\n"" """ & mi_MediaFilename & """"
+mi_cmd = """" & vrdtvs_mediainfoexe & """ " & mi_Legacy & " ""--Inform=" & mi_Section & ";%" & mi_Parameter & "%\r\n"" """ & mi_MediaFilename & """"
 WScript.StdOut.WriteLine("DEBUG: get_mediainfo_parameter Exec command: " & mi_cmd)
 set mi_exe = mi_wso.Exec(mi_cmd)
 Do While mi_exe.Status = 0 '0 is running and 1 is ending
@@ -393,19 +393,19 @@ Do While mi_exe.Status = 0 '0 is running and 1 is ending
 Loop
 Do Until mi_exe.StdErr.AtEndOfStream
     mi_tmp = mi_exe.StdErr.ReadLine()
-    WScript.StdOut.WriteLin("get_mediainfo_parameter StdErr: " & x)
+    WScript.StdOut.WriteLine("get_mediainfo_parameter StdErr: " & mi_tmp)
 Loop
 mi_status = mi_exe.ExitCode
 If mi_status <> 0 then
-    WScript.StdOut.WriteLine("get_mediainfo_parameter Exec command: " & mi_cmd)
-    WScript.StdOut.WriteLine("get_mediainfo_parameter ABORTNG with Exit Status: " & mi_status)
+    WScript.StdOut.WriteLine("get_mediainfo_parameter ABORTING Exec command: " & mi_cmd)
+    WScript.StdOut.WriteLine("get_mediainfo_parameter ABORTING with Exit Status: " & mi_status)
     ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
 	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
 mi_tmp="" ' default to nothing
 Do Until mi_exe.StdOut.AtEndOfStream ' we need to read only one line though
     mi_tmp = mi_exe.StdOut.ReadLine()
-    WScript.StdOut.WriteLine("DEBUG get_mediainfo_parameter StdOut: " & mi_tmp)
+    WScript.StdOut.WriteLine("DEBUG: get_mediainfo_parameter StdOut: " & mi_tmp)
     Exit Do ' we need to read only one line so exit loop immediately
 Loop
 Set mi_exe = Nothing
