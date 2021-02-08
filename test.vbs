@@ -358,10 +358,14 @@ WScript.StdOut.WriteLine "8. ---------------------------------------------------
 ' V_Codec_legacy = get_mediainfo_parameter("Video" "Codec" "c:\foldername\media_file.mp4", "--Legacy")
 ' V_CodecID_String = get_mediainfo_parameter("Video" "CodecID/String" "c:\foldername\media_file.mp4", "")
 
+Dim vrdtvs_mediainfoexe
+vrdtvs_mediainfoexe = "C:\SOFTWARE\MediaInfo\MediaInfo.exe"
+dim V_CodecID_String
+V_CodecID_String = get_mediainfo_parameter("Video" "CodecID/String" "G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4", "")
+
+
 Function get_mediainfo_parameter (mi_Section, mi_Parameter, mi_MediaFilename, mi_Legacy) 
-' Assume 1. a global variable vrdtvs_temp_path exists as a string without a trailing slash
-'           and we rely on and use this to create temporary working files
-'        2. a global variable vrdtvs_mediainfoexe exists pointing to the mediainfo exe
+'        1. a global variable vrdtvs_mediainfoexe exists pointing to the mediainfo exe
 ' Note \r\n is Windows new-line, 
 ' Which in the case of multiple audio streams, outputs a result for each stream on a new line, 
 ' the first stream being the first entry, and the first audio stream should be the one we need. 
@@ -382,7 +386,7 @@ set mi_wso = CreateObject("Wscript.Shell")
 ' mi_cmd = "cmd /c " & """" & vrdtvs_mediainfoexe & """ " & mi_Legacy & " ""--Inform=" & mi_Section & ";%%" & mi_Parameter & "%%\r\n"" """ & mi_MediaFilename & """ > """ & mi_temp_Filename & """"
 '
 mi_cmd = "cmd /c " & """" & vrdtvs_mediainfoexe & """ " & mi_Legacy & " ""--Inform=" & mi_Section & ";%%" & mi_Parameter & "%%\r\n"" """ & mi_MediaFilename & """"
-'WScript.StdOut.WriteLine("DEBUG: get_mediainfo_parameter Exec command: " & mi_cmd)
+WScript.StdOut.WriteLine("DEBUG: get_mediainfo_parameter Exec command: " & mi_cmd)
 set mi_exe = mi_wso.Exec(mi_cmd)
 Do While mi_exe.Status = 0 '0 is running and 1 is ending
      Wscript.Sleep 100
@@ -401,7 +405,7 @@ End If
 mi_tmp="" ' default to nothing
 Do Until mi_exe.StdOut.AtEndOfStream ' we need to read only one line though
     mi_tmp = mi_exe.StdOut.ReadLine()
-    'WScript.StdOut.WriteLine("DEBUG get_mediainfo_parameter StdOut: " & mi_tmp)
+    WScript.StdOut.WriteLine("DEBUG get_mediainfo_parameter StdOut: " & mi_tmp)
     Exit Do ' we need to read only one line so exit loop immediately
 Loop
 Set mi_exe = Nothing
