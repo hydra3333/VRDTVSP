@@ -353,12 +353,12 @@ WScript.StdOut.WriteLine "8. ---------------------------------------------------
 '
 ' Example:
 ' Dim G_Duration_ms, V_CodecID, V_CodecID_String
-' G_Duration_ms = get_mediainfo_parameter("General" "Duration" "c:\foldername\media_file.mp4")
-' V_CodecID = get_mediainfo_parameter("Video" "CodecID" "c:\foldername\media_file.mp4")
-' V_CodecID_String = get_mediainfo_parameter("Video" "CodecID/String" "c:\foldername\media_file.mp4")
+' G_Duration_ms = get_mediainfo_parameter("General" "Duration" "c:\foldername\media_file.mp4", "")
+' V_CodecID = get_mediainfo_parameter("Video" "CodecID" "c:\foldername\media_file.mp4", "")
+' V_Codec_legacy = get_mediainfo_parameter("Video" "Codec" "c:\foldername\media_file.mp4", "--Legacy")
+' V_CodecID_String = get_mediainfo_parameter("Video" "CodecID/String" "c:\foldername\media_file.mp4", "")
 
-
-Function get_mediainfo_parameter (mi_Section, mi_Parameter, mi_MediaFilename, mi_Legacy) 'mi_Legacy is to be "--Legacy" or ""
+Function get_mediainfo_parameter (mi_Section, mi_Parameter, mi_MediaFilename, mi_Legacy) 
 ' Assume 1. a global variable vrdtvs_temp_path exists as a string without a trailing slash
 '           and we rely on and use this to create temporary working files
 '        2. a global variable vrdtvs_mediainfoexe exists pointing to the mediainfo exe
@@ -381,7 +381,7 @@ set mi_wso = CreateObject("Wscript.Shell")
 ' mi_status = delete_a_file (mi_temp_Filename, True)
 ' mi_cmd = "cmd /c " & """" & vrdtvs_mediainfoexe & """ --Inform= """ & mi_Section & ";%%" & mi_Parameter & "%%\r\n"" """ & mi_MediaFilename & """ > """ & mi_temp_Filename & """"
 '
-mi_cmd = "cmd /c " & """" & vrdtvs_mediainfoexe & """ --Inform= """ & mi_Section & ";%%" & mi_Parameter & "%%\r\n"" """ & mi_MediaFilename & """"
+mi_cmd = "cmd /c " & """" & vrdtvs_mediainfoexe & """" & mi_Legacy & """--Inform= """ & mi_Section & ";%%" & mi_Parameter & "%%\r\n"" """ & mi_MediaFilename & """"
 'WScript.StdOut.WriteLine("DEBUG: get_mediainfo_parameter Exec command: " & mi_cmd)
 set mi_exe = mi_wso.Exec(mi_cmd)
 Do While mi_exe.Status = 0 '0 is running and 1 is ending
