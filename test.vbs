@@ -350,31 +350,39 @@ WScript.StdOut.WriteLine "8. ---------------------------------------------------
 ' Assuming a global variable vrdtvs_temp_path exists,
 ' then we call like this
 ' result = get_mediainfo_parameter("Video" "Codec" "V_Codec_legacy" "media_filename")
+'
 ' Example:
-' Dim result
-' result = get_mediainfo_parameter("Video" "Codec" "V_Codec_legacy" "media_filename")
+' Dim G_Duration_ms, V_CodecID, V_CodecID_String
+' G_Duration_ms = get_mediainfo_parameter("General" "Duration" "c:\foldername\media_file.mp4")
+' V_CodecID = get_mediainfo_parameter("Video" "CodecID" "c:\foldername\media_file.mp4")
+' V_CodecID_String = get_mediainfo_parameter("Video" "CodecID/String" "c:\foldername\media_file.mp4")
 
 
-
-Function get_mediainfo_parameter (mi_Section, mi_Parameter, mi_MediaFilename)
+Function get_mediainfo_parameter (mi_Section, mi_Parameter, mi_MediaFilename, mi_Legacy) 'mi_Legacy is to be "--Legacy" or ""
 ' Assume 1. a global variable vrdtvs_temp_path exists as a string without a trailing slash
 '           and we rely on and use this to create temporary working files
 '        2. a global variable vrdtvs_mediainfoexe exists pointing to the mediainfo exe
 ' Note \r\n is Windows new-line, 
 ' Which in the case of multiple audio streams, outputs a result for each stream on a new line, 
 ' the first stream being the first entry, and the first audio stream should be the one we need. 
-Dim mi_fso, mi_temp_Filename, mi_status
+Dim mi_fso, mi_status
+'Dim mi_temp_Filename
 Dim mi_wso, mi_exe, mi_cmd, mi_tmp
+If Ucase(mi_Legacy) <> Ucase("--Legacy") AND Ucase(mi_Legacy) <> "" Then
+    WScript.StdOut.WriteLine("get_mediainfo_parameter UNRECOGNISED LEGACY PARAMETER: " & mi_Legacy & " : it should only be an empty string or --Legacy")
+    ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+End If
 Set mi_fso = CreateObject("Scripting.FileSystemObject")
 set mi_wso = CreateObject("Wscript.Shell")
 '
-mi_temp_Filename = gimme_a_temporary_absolute_filename() ' generate a fully qualified temporary filename from the function
-'mi_status = delete_a_file (mi_temp_Filename, True) ' delete a temp file silently
+' If piping to a temporary file, cmd looks something like this:
+' mi_temp_Filename = gimme_a_temporary_absolute_filename() ' generate a fully qualified temporary filename from the function
+' mi_status = delete_a_file (mi_temp_Filename, True)
+' mi_cmd = "cmd /c " & """" & vrdtvs_mediainfoexe & """ --Inform= """ & mi_Section & ";%%" & mi_Parameter & "%%\r\n"" """ & mi_MediaFilename & """ > """ & mi_temp_Filename & """"
 '
-'mi_cmd = "cmd /c " & """" & vrdtvs_mediainfoexe & """ --Inform= """ & mi_Section & ";%%" & mi_Parameter & "%%\r\n"" """ & mi_MediaFilename & """ > """ & mi_temp_Filename & """"
 mi_cmd = "cmd /c " & """" & vrdtvs_mediainfoexe & """ --Inform= """ & mi_Section & ";%%" & mi_Parameter & "%%\r\n"" """ & mi_MediaFilename & """"
-'
-'WScript.StdOut.WriteLine("get_mediainfo_parameter Exec command: " & mi_cmd)
+'WScript.StdOut.WriteLine("DEBUG: get_mediainfo_parameter Exec command: " & mi_cmd)
 set mi_exe = mi_wso.Exec(mi_cmd)
 Do While mi_exe.Status = 0 '0 is running and 1 is ending
      Wscript.Sleep 100
@@ -393,8 +401,8 @@ End If
 mi_tmp="" ' default to nothing
 Do Until mi_exe.StdOut.AtEndOfStream ' we need to read only one line though
     mi_tmp = mi_exe.StdOut.ReadLine()
-    'WScript.StdOut.WriteLine("get_mediainfo_parameter StdOut: " & mi_tmp)
-    Exit Do ' we need to read only one line so exit immediately
+    'WScript.StdOut.WriteLine("DEBUG get_mediainfo_parameter StdOut: " & mi_tmp)
+    Exit Do ' we need to read only one line so exit loop immediately
 Loop
 Set mi_exe = Nothing
 Set mi_wso = Nothing
