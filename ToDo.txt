@@ -628,7 +628,7 @@ Do While mi_exe.Status = 0 '0 is running and 1 is ending
 Loop
 Do Until mi_exe.StdErr.AtEndOfStream
     mi_tmp = mi_exe.StdErr.ReadLine()
-    WScript.StdOut.WriteLine("get_mediainfo_parameter StdErr: " & mi_tmp)
+    WScript.StdOut.WriteLine("ERROR: get_mediainfo_parameter StdErr: " & mi_tmp)
 Loop
 mi_status = mi_exe.ExitCode
 If mi_status <> 0 then

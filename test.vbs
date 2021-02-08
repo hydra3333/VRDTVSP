@@ -392,26 +392,26 @@ set mi_wso = CreateObject("Wscript.Shell")
 ' mi_cmd =  """" & vrdtvs_mediainfoexe & """ " & mi_Legacy & " ""--Inform=" & mi_Section & ";%" & mi_Parameter & "%\r\n"" """ & mi_MediaFilename & """ > """ & mi_temp_Filename & """"
 '
 mi_cmd = """" & vrdtvs_mediainfoexe & """ " & mi_Legacy & " ""--Inform=" & mi_Section & ";%" & mi_Parameter & "%\r\n"" """ & mi_MediaFilename & """"
-WScript.StdOut.WriteLine("DEBUG: get_mediainfo_parameter Exec command: " & mi_cmd)
+'WScript.StdOut.WriteLine("DEBUG: get_mediainfo_parameter Exec command: " & mi_cmd)
 set mi_exe = mi_wso.Exec(mi_cmd)
 Do While mi_exe.Status = 0 '0 is running and 1 is ending
      Wscript.Sleep 100
 Loop
 Do Until mi_exe.StdErr.AtEndOfStream
     mi_tmp = mi_exe.StdErr.ReadLine()
-    WScript.StdOut.WriteLine("get_mediainfo_parameter StdErr: " & mi_tmp)
+    WScript.StdOut.WriteLine("ERROR: get_mediainfo_parameter StdErr: " & mi_tmp)
 Loop
 mi_status = mi_exe.ExitCode
 If mi_status <> 0 then
-    WScript.StdOut.WriteLine("get_mediainfo_parameter ABORTING Exec command: " & mi_cmd)
-    WScript.StdOut.WriteLine("get_mediainfo_parameter ABORTING with Exit Status: " & mi_status)
+    WScript.StdOut.WriteLine("ERROR: get_mediainfo_parameter ABORTING Exec command: " & mi_cmd)
+    WScript.StdOut.WriteLine("ERROR: get_mediainfo_parameter ABORTING with Exit Status: " & mi_status)
     ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
 	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
 mi_tmp="" ' default to nothing
 Do Until mi_exe.StdOut.AtEndOfStream ' we need to read only one line though
     mi_tmp = mi_exe.StdOut.ReadLine()
-    WScript.StdOut.WriteLine("DEBUG: get_mediainfo_parameter StdOut: " & mi_tmp)
+    'WScript.StdOut.WriteLine("DEBUG: get_mediainfo_parameter StdOut: " & mi_tmp)
     Exit Do ' we need to read only one line so exit loop immediately
 Loop
 Set mi_exe = Nothing
