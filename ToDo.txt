@@ -1,11 +1,15 @@
 ' Things to find out about VBScript
 
+' *** ------------------------------------------------------------------
+' *** ------------------------------------------------------------------
 '' NOTE:    For ANY of this to work, the vb script MUST be run under Cscript host - or, things like stdout fail to work.
 ''          Thus, call the vbscript like this:
 ''              cscript //NOLOGO "vbscript_path_and_file" "parameter 1" "parameter 2"
+' *** ------------------------------------------------------------------
+' *** ------------------------------------------------------------------
 
 
-'-----------------------------------------------------------------------------------------------------------------------------------------------
+'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' How to use named arguments in vbscript ???
 '
 https://ss64.com/vb/syntax-args.html
@@ -49,7 +53,7 @@ They are uninitialized, whereas the empty string is a is regular string of zero 
 You can check for empty values with the IsEmpty() function.
 
 
-'-----------------------------------------------------------------------------------------------------------------------------------------------
+'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' Can we execute an external command/program/bat and 
 '   wait for it to complete 
 '   get a return status
@@ -145,7 +149,7 @@ Set exe = Nothing
 Set wso = Nothing
 
 
-'-----------------------------------------------------------------------------------------------------------------------------------------------
+'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' Can we execute another .vbs (eg vp.vbs) and 
 '   wait for it to complete 
 '   get a return status
@@ -181,7 +185,7 @@ set exe=objShellobjShell.Run "cscript //nologo """vbs_file"" ""parameter 1"" ""p
 WScript.StdOut.WriteLine exe.ExitCode
 Set objShell = Nothing
 
-'-----------------------------------------------------------------------------------------------------------------------------------------------
+'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' how can we use regex in vbscript to change filenames to lose special characters like the poweshell script does
 '   I guess also remove the leading filename tvsp stuff (see existing vbs script) eg "movies-action" etc
 '   I guess also change the filenames to move the date to the end (see existing vbs script)
@@ -205,9 +209,17 @@ WScript.StdOut.WriteLine "replacement_character=""" & replacement_character & ""
 WScript.StdOut.WriteLine "Input String         =""" & input_string & """"
 WScript.StdOut.WriteLine "Result String        =""" & result_string & """"
 
-'-----------------------------------------------------------------------------------------------------------------------------------------------
+'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' how can we change file modified,created date/time stamps in vbscript like the poweshell script does, using the date in the end of the filename
 '
+' *** ---------------------------------------------------------------------------------------------------
+' *** ---------------------------------------------------------------------------------------------------
+' *** ANSWER: We can't !
+' ***         BECAUSE CANNOT CHANGE THE DATE CREATED ... so we MUST resort to calling a powershell script
+' *** ---------------------------------------------------------------------------------------------------
+' *** ---------------------------------------------------------------------------------------------------
+
+' ... saw these but they only do half the job ...
 
 Set objShell = CreateObject("Shell.Application")
 Set objFolder = objShell.NameSpace("C:\Scripts")
@@ -271,22 +283,22 @@ Sub Moodify(str)
 End Sub
 
 
-BUT CANNOT CHANGE DATE CREATED ... resort to powershell
+BUT WE CANNOT CHANGE DATE CREATED ... resort to powershell
 
-'-----------------------------------------------------------------------------------------------------------------------------------------------
+'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' Can we somehow open and use external .DLL files such as mediainfo.dll
 '   or is there an interface altready (eg google it)
 '   ... can we even build mediainfo.dll
 '
 
 
-'-----------------------------------------------------------------------------------------------------------------------------------------------
+'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' how can we use ffprobe from vbscript ?
 '   can we somehow create a ffprobe .DLL and perhaps use that form vbscript
 '
 
 
-'-----------------------------------------------------------------------------------------------------------------------------------------------
+'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' how can we bulk move source files in vbscript to a different folder
 '
 
@@ -303,12 +315,12 @@ Set obj=Nothing                                           ‘Releasing File obje
 best to use the DOS command 
 
 
-'-----------------------------------------------------------------------------------------------------------------------------------------------
+'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' how can we delete a file in vbscript
 '
 
 
-'-----------------------------------------------------------------------------------------------------------------------------------------------
+'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' how can we copy the contents of a file in vbscript and deal with special characters for DOS .bat files
 '    see file "G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\-----------------.BAT"
 '
