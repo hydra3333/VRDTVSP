@@ -3,14 +3,12 @@ Option explicit
 ''          Thus, call the vbscript like this:
 ''              cscript //NOLOGO "vbscript_path_and_file" "parameter 1" "parameter 2"
 '----------------------------------
-' Firstly, using standard arguments
-' Example 1 cscript //nologo test.vbs /p1:"This is the value for p1" /p2:500
 dim wso, exe 
 dim x
 set wso = CreateObject("Wscript.Shell")
 set exe = wso.Exec("cmd /c dirx /s /b d:\temp\h*.jpg 2>&1")
 Do While exe.Status = 0 '0 is running and 1 is ending
-     Wscript.Sleep 200
+     Wscript.Sleep 250
 Loop
 Do Until exe.StdOut.AtEndOfStream
     x=exe.StdOut.ReadLine()
@@ -28,16 +26,16 @@ WScript.StdOut.WriteLine("Exit Status: " & x)
 Set exe = Nothing
 Set wso = Nothing
 '----------------------------------
-' Secondly, using named arguments 
-' Example 2 cscript //nologo test.vbs /p1:"This is the value for p1" /p2:500
-dim i, c, NamedArgs, p1, p2
+' Firstly, using standard arguments
+' Example 1 cscript //nologo test.vbs /p1:"This is the value for p1" /p2:500dim i, c, NamedArgs, p1, p2
 c = WScript.Arguments.Count
 if c>0 then
     for i=0 to (c-1)
         WScript.StdOut.WriteLine "Unnamed Argument " & i & "=" & WScript.Arguments(i)
     next
 end if
-' Secondly, using named arguments cscript //nologo test2.vbs /p1:"This is the value for p1" /p2:500
+' Secondly, using named arguments 
+' Example 2 cscript //nologo test.vbs /p1:"This is the value for p1" /p2:500
 c = WScript.Arguments.Count
 set NamedArgs = WScript.Arguments.Named
 if NamedArgs.Exists("p1") and NOT IsEmpty(NamedArgs("p1")) then 

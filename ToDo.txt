@@ -10,43 +10,16 @@
 '
 https://ss64.com/vb/syntax-args.html
 
-
-'----------------------------------
 ' Firstly, using standard arguments
-' Example 1 cscript //nologo test.vbs /p1:"This is the value for p1" /p2:500
-dim wso, exe 
-dim x
-set wso = CreateObject("Wscript.Shell")
-set exe = wso.Exec("cmd /c dirx /s /b d:\temp\h*.jpg 2>&1")
-Do While exe.Status = 0 '0 is running and 1 is ending
-     Wscript.Sleep 200
-Loop
-Do Until exe.StdOut.AtEndOfStream
-    x=exe.StdOut.ReadLine()
-    WScript.StdOut.WriteLine("StdOut: " & x)
-    'Wscript.echo x
-Loop
-Do Until exe.StdErr.AtEndOfStream
-    x=exe.StdErr.ReadLine()
-    WScript.StdOut.WriteLin("StdErr: " & x)
-    'Wscript.echo(x)
-Loop
-x=exe.ExitCode
-WScript.StdOut.WriteLine("Exit Status: " & x)
-'Wscript.echo(x)
-Set exe = Nothing
-Set wso = Nothing
-'----------------------------------
-' Secondly, using named arguments 
-' Example 2 cscript //nologo test.vbs /p1:"This is the value for p1" /p2:500
-dim i, c, NamedArgs, p1, p2
+' Example 1 cscript //nologo test.vbs /p1:"This is the value for p1" /p2:500dim i, c, NamedArgs, p1, p2
 c = WScript.Arguments.Count
 if c>0 then
     for i=0 to (c-1)
         WScript.StdOut.WriteLine "Unnamed Argument " & i & "=" & WScript.Arguments(i)
     next
 end if
-' Secondly, using named arguments cscript //nologo test2.vbs /p1:"This is the value for p1" /p2:500
+' Secondly, using named arguments 
+' Example 2 cscript //nologo test.vbs /p1:"This is the value for p1" /p2:500
 c = WScript.Arguments.Count
 set NamedArgs = WScript.Arguments.Named
 if NamedArgs.Exists("p1") and NOT IsEmpty(NamedArgs("p1")) then 
@@ -81,8 +54,6 @@ You can check for empty values with the IsEmpty() function.
 '   wait for it to complete 
 '   get a return status
 '   pipe input and output
-'
-'
 ' The principal difference between Exec and Run is that 
 '   Exec supports real-time output to the user (if it is a command-line program),
 '   BUT we can't get ERRORLEVEL using this method. 
@@ -124,7 +95,7 @@ dim x
 set wso = CreateObject("Wscript.Shell")
 set exe = wso.Exec("cmd /c dirx /s /b d:\temp\h*.jpg 2>&1")
 Do While exe.Status = 0 '0 is running and 1 is ending
-     Wscript.Sleep 200
+     Wscript.Sleep 250
 Loop
 Do Until exe.StdOut.AtEndOfStream
     x=exe.StdOut.ReadLine()
@@ -144,18 +115,6 @@ Set wso = Nothing
 '----------------------------------
 
 
-Set objStdOut = WScript.StdOut
-Set WshShell = CreateObject("WScript.Shell")
-Set oExec = WshShell.Exec("calc")
-Do While oExec.Status = 0 '0 is running and 1 is ending
-     WScript.Sleep 100
-Loop
-objStdOut.WriteLine oExec.ExitCode
-WScript.StdOut.WriteLine oExec.ExitCode
-Set oExec = Nothing
-Set WshShell = Nothing
-Set objStdOut = Nothing
-
 
 ' https://www.codeproject.com/Tips/507798/Differences-between-Run-and-Exec-VBScript
 '
@@ -167,33 +126,15 @@ Set objStdOut = Nothing
 ' If you don't do this you may end up with orphan cmd.exe processes littering up memory
 '
 set wso = CreateObject("Wscript.Shell")
-strErrorCode wso.Run "cmd /c dir /s /b d:\temp\*.jpg",True,7
+strErrorCode = wso.Run "cmd /c dir /s /b d:\temp\*.jpg",True,7
 WScript.StdOut.WriteLine strErrorCode ' always write to stdout, not use echo so it works in batch console mode
 Set wso = Nothing
 
 
 set wso = CreateObject("Wscript.Shell")
-set exe = wso.Exec("cmd /c dir /s /b d:\temp\*.jpg 2>&1")
-Do While exe.Status = 0 '0 is running and 1 is ending
-     WScript.Sleep 100
-Loop
-Do Until exe.StdOut.AtEndOfStream
-    WScript.StdOut.WriteLine exe.StdOut.ReadLine
-Loop
-Do Until exe.StdErr.AtEndOfStream
-    WScript.StdOut.WriteLine exe.StdErr.ReadLine
-Loop
-WScript.StdOut.WriteLine exe.ExitCode
-Set exe = Nothing
-Set wso = Nothing
-
-
-
-
-set wso = CreateObject("Wscript.Shell")
 set exe = wso.Exec("cmd /c dir /s /b d:\temp\*.jpg")
 Do While exe.Status = 0 '0 is running and 1 is ending
-     WScript.Sleep 100
+     WScript.Sleep 250
 Loop
 WScript.StdOut.WriteLine exe.ExitCode
 sout = exe.StdOut.ReadAll
@@ -211,9 +152,22 @@ Set wso = Nothing
 '   pipe input and output
 
 'cscript' runs entirely in the command line and is ideal for non-interactive scripts
+'' NOTE:    For ANY of this to work, the vb script MUST be run under Cscript host - or, things like stdout fail to work.
+''          Thus, call the vbscript like this:
+''              cscript //NOLOGO "vbscript_path_and_file" "parameter 1" "parameter 2"
 
-Yes, use Run or Exec as above with plain Run, or cscript to force running in console-compatile mode
+'Yes, use Run or Exec as above with plain Run, or cscript to force running in console-compatible mode
 
+' *** ------------------------------------------------------------------
+' *** ------------------------------------------------------------------
+' *** see the vbs named arguments finding, above
+' *** runs use Exec so we can catch stdout and std error and exit status
+' *** ------------------------------------------------------------------
+' *** ------------------------------------------------------------------
+
+OR,
+
+' If we have to use .Run then see these examples
 Dim objShell, exe
 Set objShell = Wscript.CreateObject("WScript.Shell")
 set exe=objShell.Run "TestScript.vbs 42 ""an arg containing spaces"" foo",7,True
@@ -222,6 +176,7 @@ Set objShell = Nothing
 
 Dim objShell, exe
 Set objShell = Wscript.CreateObject("WScript.Shell")
+' see the vbs named arguments finding, above
 set exe=objShellobjShell.Run "cscript //nologo """vbs_file"" ""parameter 1"" ""parameter 2""",7,True
 WScript.StdOut.WriteLine exe.ExitCode
 Set objShell = Nothing
