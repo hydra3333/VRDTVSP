@@ -1,6 +1,9 @@
 Option explicit
 '' NOTE:    For ANY of this to work, the vb script MUST be run under Cscript host - or, things like stdout fail to work.
-''          Thus, call the vbscript like this:   cscript //NOLOGO "vbscript_path_and_file" "parameter 1" "parameter 2"
+''          Thus, call the vbscript like this:
+''              cscript //NOLOGO "vbscript_path_and_file" "parameter 1" "parameter 2"
+'----------------------------------
+' Example 1
 dim wso, exe 
 dim x
 set wso = CreateObject("Wscript.Shell")
@@ -10,16 +13,41 @@ Do While exe.Status = 0 '0 is running and 1 is ending
 Loop
 Do Until exe.StdOut.AtEndOfStream
     x=exe.StdOut.ReadLine()
-    WScript.StdOut.WriteLine(x)
+    WScript.StdOut.WriteLine("StdOut: " & x)
     'Wscript.echo x
 Loop
 Do Until exe.StdErr.AtEndOfStream
     x=exe.StdErr.ReadLine()
-    WScript.StdOut.WriteLine(x)
+    WScript.StdOut.WriteLin("StdErr: " & x)
     'Wscript.echo(x)
 Loop
 x=exe.ExitCode
-WScript.StdOut.WriteLine(x)
+WScript.StdOut.WriteLine("Exit Status: " & x)
 'Wscript.echo(x)
 Set exe = Nothing
 Set wso = Nothing
+'----------------------------------
+' Example 2
+' Firstly, using standard arguments cscript //nologo test2.vbs "this is p1" 500
+dim i, c, NameArgs, p1, p2
+c = WScript.Arguments.Count
+if c>0 then
+    for i=0 to (c-1)
+        WScript.StdOut.WriteLine "Unnamed Argument " & i & "=" & WScript.Arguments(i)
+    next
+end if
+' Secondly, using named arguments cscript //nologo test2.vbs /p1:"This is the value for p1" /p2:500
+c = WScript.Arguments.Count
+set NameArgs = WScript.Arguments.Named
+if NameArgs.Exists("p1") and NOT NameArgs("p1").IsEmpty() then 
+    p1 = NameArgs.Item("p1")
+else
+    p1 = "some default for p1" ' default value if not specified on commandline
+end if
+if NameArgs.Exists("p2")  and NOT NameArgs("p2").IsEmpty()then 
+    p2 = NameArgs.Item("p2")
+else
+    p2 = 2 ' default value if not specified on commandline
+end if
+WScript.StdOut.WriteLine "Named Argument value for p1=" & p1
+WScript.StdOut.WriteLine "Named Argument value for p2=" & p2

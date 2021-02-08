@@ -34,19 +34,16 @@ else
     price = 500
 end if
 ' BECAUSE:
-If a named argument is given but not assigned a value on the command line (/argname)
+'- If a named argument is given but not assigned a value on the command line (/argname)
 WScript.Arguments.Named.Exists("argname") will return True
 WScript.Arguments.Named("argname") will return an empty value
-'
-If a named argument is given with an empty string on the command line (/argname:)
+'- If a named argument is given with an empty string on the command line (/argname:)
 WScript.Arguments.Named.Exists("argname") will return True
 WScript.Arguments.Named("argname") will return an empty string
-'
-If a named argument is given with a value on the command line (/argname:value)
+'- If a named argument is given with a value on the command line (/argname:value)
 WScript.Arguments.Named.Exists("argname") will return True
 WScript.Arguments.Named("argname") will return a string with that value
-'
-"Empty values" are DIFFERENT from empty strings: 
+'- "Empty values" are DIFFERENT from empty strings: 
 They are uninitialized, whereas the empty string is a is regular string of zero length.
 You can check for empty values with the IsEmpty() function.
 
@@ -89,7 +86,7 @@ along with access to the StdIn, StdOut, and StdErr channels.
 The Exec method allows the execution of command line applications only. 
 The Exec method cannot be used to run remote scripts. Do not confuse the Exec method with the Execute method (of the WshRemote object).
 
-
+'----------------------------------
 Option explicit
 '' NOTE:    For ANY of this to work, the vb script MUST be run under Cscript host - or, things like stdout fail to work.
 ''          Thus, call the vbscript like this:
@@ -103,19 +100,20 @@ Do While exe.Status = 0 '0 is running and 1 is ending
 Loop
 Do Until exe.StdOut.AtEndOfStream
     x=exe.StdOut.ReadLine()
-    WScript.StdOut.WriteLine(x)
+    WScript.StdOut.WriteLine("StdOut: " & x)
     'Wscript.echo x
 Loop
 Do Until exe.StdErr.AtEndOfStream
     x=exe.StdErr.ReadLine()
-    WScript.StdOut.WriteLine(x)
+    WScript.StdOut.WriteLin("StdErr: " & x)
     'Wscript.echo(x)
 Loop
 x=exe.ExitCode
-WScript.StdOut.WriteLine(x)
+WScript.StdOut.WriteLine("Exit Status: " & x)
 'Wscript.echo(x)
 Set exe = Nothing
 Set wso = Nothing
+'----------------------------------
 
 
 Set objStdOut = WScript.StdOut
