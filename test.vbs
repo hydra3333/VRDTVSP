@@ -3,7 +3,8 @@ Option explicit
 ''          Thus, call the vbscript like this:
 ''              cscript //NOLOGO "vbscript_path_and_file" "parameter 1" "parameter 2"
 '----------------------------------
-' Example 1
+' Firstly, using standard arguments
+' Example 1 cscript //nologo test.vbs /p1:"This is the value for p1" /p2:500
 dim wso, exe 
 dim x
 set wso = CreateObject("Wscript.Shell")
@@ -27,9 +28,9 @@ WScript.StdOut.WriteLine("Exit Status: " & x)
 Set exe = Nothing
 Set wso = Nothing
 '----------------------------------
-' Example 2
-' Firstly, using standard arguments cscript //nologo test2.vbs "this is p1" 500
-dim i, c, NameArgs, p1, p2
+' Secondly, using named arguments 
+' Example 2 cscript //nologo test.vbs /p1:"This is the value for p1" /p2:500
+dim i, c, NamedArgs, p1, p2
 c = WScript.Arguments.Count
 if c>0 then
     for i=0 to (c-1)
@@ -38,14 +39,14 @@ if c>0 then
 end if
 ' Secondly, using named arguments cscript //nologo test2.vbs /p1:"This is the value for p1" /p2:500
 c = WScript.Arguments.Count
-set NameArgs = WScript.Arguments.Named
-if NameArgs.Exists("p1") and NOT NameArgs("p1").IsEmpty() then 
-    p1 = NameArgs.Item("p1")
+set NamedArgs = WScript.Arguments.Named
+if NamedArgs.Exists("p1") and NOT IsEmpty(NamedArgs("p1")) then 
+    p1 = NamedArgs.Item("p1")
 else
     p1 = "some default for p1" ' default value if not specified on commandline
 end if
-if NameArgs.Exists("p2")  and NOT NameArgs("p2").IsEmpty()then 
-    p2 = NameArgs.Item("p2")
+if NamedArgs.Exists("p2")  and NOT  IsEmpty(NamedArgs("p2")) then 
+    p2 = NamedArgs.Item("p2")
 else
     p2 = 2 ' default value if not specified on commandline
 end if
