@@ -420,3 +420,74 @@ Set mi_fso = Nothing
 get_mediainfo_parameter = mi_tmp
 End Function
 
+WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
+
+
+'----------------------------------
+' Can we somehow open and use external FFPROBE
+'
+' Answer: Yes, like medianfo.exe
+
+WScript.StdOut.WriteLine "9. ------------------------------------------------------------------------------------------------------"
+
+Dim vrdtvs_ffprobeexe
+vrdtvs_ffprobeexe = "C:\SOFTWARE\Vapoursynth-x64\ffprobe.exe"
+
+dim V_Width_FF, V_Height_FF, V_Duration_s_FF, V_BitRate_FF, V_BitRate_Maximum_FF
+
+V_Width_FF = get_ffprobe_video_stream_parameter("width","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4")
+V_Height_FF = get_ffprobe_video_stream_parameter("height","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4")
+V_Duration_s_FF = get_ffprobe_video_stream_parameter("duration","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4")
+V_BitRate_FF = get_ffprobe_video_stream_parameter("bit_rate","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4")
+V_BitRate_Maximum_FF = get_ffprobe_video_stream_parameter("max_bit_rate","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4")
+Wscript.echo("V_Width_FF=" & V_Width_FF & " V_Height_FF=" & V_Height_FF)
+Wscript.echo("V_Duration_s_FF=" & V_Duration_s_FF)
+Wscript.echo("V_BitRate_FF=" & V_BitRate_FF)
+Wscript.echo("V_BitRate_Maximum_FF=" & V_BitRate_Maximum_FF)
+
+Function get_ffprobe_video_stream_parameter (ffp_Parameter, ffp_MediaFilename) 
+'        1. a global variable vrdtvs_ffprobeexe exists pointing to the ffprobe exe
+' Note \r\n is Windows new-line, which is for the case of multiple audio streams, 
+'      it outputs a result for each stream on a new line, the first stream being the first entry,
+'      and the first audio stream should be the one we need. 
+'      read the first line.
+'      see if -probesize 5000M  makes any difference
+Dim ffp_fso, ffp_status
+'Dim ffp_temp_Filename
+Dim ffp_wso, ffp_exe, ffp_cmd, ffp_tmp
+Set ffp_fso = CreateObject("Scripting.FileSystemObject")
+set ffp_wso = CreateObject("Wscript.Shell")
+'
+' If piping to a temporary file, cmd looks something like this:
+' ffp_temp_Filename = gimme_a_temporary_absolute_filename() ' generate a fully qualified temporary filename from the function
+' ffp_status = delete_a_file (ffp_temp_Filename, True)
+' ffp_cmd =  """" & vrdtvs_ffprobeexe & ???  & ffp_MediaFilename & """ > """ & ffp_temp_Filename & """"
+'
+ffp_cmd = """" & vrdtvs_ffprobeexe & """ -hide_banner -v quiet -select_streams v:0 -show_entries stream=" & ffp_Parameter & " -of default=noprint_wrappers=1:nokey=1 """ & ffp_MediaFilename & """"
+'WScript.StdOut.WriteLine("DEBUG: get_ffprobe_video_stream_parameter Exec command: " & ffp_cmd)
+set ffp_exe = ffp_wso.Exec(ffp_cmd)
+Do While ffp_exe.Status = 0 '0 is running and 1 is ending
+     Wscript.Sleep 100
+Loop
+Do Until ffp_exe.StdErr.AtEndOfStream
+    ffp_tmp = ffp_exe.StdErr.ReadLine()
+    WScript.StdOut.WriteLine("ERROR: get_ffprobe_video_stream_parameter StdErr: " & ffp_tmp)
+Loop
+ffp_status = ffp_exe.ExitCode
+If ffp_status <> 0 then
+    WScript.StdOut.WriteLine("ERROR: get_ffprobe_video_stream_parameter ABORTING Exec command: " & ffp_cmd)
+    WScript.StdOut.WriteLine("ERROR: get_ffprobe_video_stream_parameter ABORTING with Exit Status: " & ffp_status)
+    ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+End If
+ffp_tmp="" ' default to nothing
+Do Until ffp_exe.StdOut.AtEndOfStream ' we need to read only one line though
+    ffp_tmp = ffp_exe.StdOut.ReadLine()
+    'WScript.StdOut.WriteLine("DEBUG: get_ffprobe_video_stream_parameter StdOut: " & ffp_tmp)
+    Exit Do ' we need to read only one line so exit loop immediately
+Loop
+Set ffp_exe = Nothing
+Set ffp_wso = Nothing
+Set ffp_fso = Nothing
+get_ffprobe_video_stream_parameter = ffp_tmp
+End Function
