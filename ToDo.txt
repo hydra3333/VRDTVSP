@@ -69,15 +69,33 @@ set exe = wso.Exec("cmd /c dir /s /b d:\temp\*.jpg")
 Do While exe.Status = 0 '0 is running and 1 is ending
      WScript.Sleep 100
 Loop
-WScript.StdOut.WriteLine exe.ExitCode
 Do Until exe.StdOut.AtEndOfStream
     WScript.StdOut.WriteLine exe.StdOut.ReadLine
 Loop
 Do Until exe.StdErr.AtEndOfStream
     WScript.StdOut.WriteLine exe.StdErr.ReadLine
 Loop
+WScript.StdOut.WriteLine exe.ExitCode
 Set exe = Nothing
 Set wso = Nothing
+
+
+set wso = CreateObject("Wscript.Shell")
+set exe = wso.Exec("cmd /c dir /s /b d:\temp\*.jpg 2>&1")
+Do While exe.Status = 0 '0 is running and 1 is ending
+     WScript.Sleep 100
+Loop
+Do Until exe.StdOut.AtEndOfStream
+    WScript.StdOut.WriteLine exe.StdOut.ReadLine
+Loop
+Do Until exe.StdErr.AtEndOfStream
+    WScript.StdOut.WriteLine exe.StdErr.ReadLine
+Loop
+WScript.StdOut.WriteLine exe.ExitCode
+Set exe = Nothing
+Set wso = Nothing
+
+
 
 
 set wso = CreateObject("Wscript.Shell")
@@ -224,6 +242,8 @@ Set obj=Nothing                                           ‘Releasing File obje
 
 
 ?? bulk move ??
+best to use the DOS command 
+
 
 '-----------------------------------------------------------------------------------------------------------------------------------------------
 ' how can we delete a file in vbscript
