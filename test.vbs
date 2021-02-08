@@ -379,9 +379,9 @@ set mi_wso = CreateObject("Wscript.Shell")
 ' If piping to a temporary file, cmd looks something like this:
 ' mi_temp_Filename = gimme_a_temporary_absolute_filename() ' generate a fully qualified temporary filename from the function
 ' mi_status = delete_a_file (mi_temp_Filename, True)
-' mi_cmd = "cmd /c " & """" & vrdtvs_mediainfoexe & """ --Inform= """ & mi_Section & ";%%" & mi_Parameter & "%%\r\n"" """ & mi_MediaFilename & """ > """ & mi_temp_Filename & """"
+' mi_cmd = "cmd /c " & """" & vrdtvs_mediainfoexe & """ " & mi_Legacy & " ""--Inform=" & mi_Section & ";%%" & mi_Parameter & "%%\r\n"" """ & mi_MediaFilename & """ > """ & mi_temp_Filename & """"
 '
-mi_cmd = "cmd /c " & """" & vrdtvs_mediainfoexe & """" & mi_Legacy & """--Inform= """ & mi_Section & ";%%" & mi_Parameter & "%%\r\n"" """ & mi_MediaFilename & """"
+mi_cmd = "cmd /c " & """" & vrdtvs_mediainfoexe & """ " & mi_Legacy & " ""--Inform=" & mi_Section & ";%%" & mi_Parameter & "%%\r\n"" """ & mi_MediaFilename & """"
 'WScript.StdOut.WriteLine("DEBUG: get_mediainfo_parameter Exec command: " & mi_cmd)
 set mi_exe = mi_wso.Exec(mi_cmd)
 Do While mi_exe.Status = 0 '0 is running and 1 is ending
