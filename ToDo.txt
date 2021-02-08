@@ -5,8 +5,47 @@
 '' NOTE:    For ANY of this to work, the vb script MUST be run under Cscript host - or, things like stdout fail to work.
 ''          Thus, call the vbscript like this:
 ''              cscript //NOLOGO "vbscript_path_and_file" "parameter 1" "parameter 2"
+''              cscript //nologo "test.vbs" /p1:"This is the value for p1" /p2:500
 ' *** ------------------------------------------------------------------
 ' *** ------------------------------------------------------------------
+
+'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+' How to force a vbscript .vbs to run in CSCRIPT ???
+'
+
+' Because we must also run in BATCH, instead opt for the short version.
+
+' This is the full thing.
+Dim force_strArgs, force_strCmd, force_strEngine, force_i, force_objDebug, force_wshShell
+Set force_wshShell = CreateObject( "WScript.Shell" )
+force_strEngine = UCase( Right( WScript.FullName, 12 ) )
+If force_strEngine <> "\CSCRIPT.EXE" Then
+	' Recreate the list of command line arguments
+	force_strArgs = ""
+	If WScript.Arguments.Count > 0 Then
+		For force_i = 0 To WScript.Arguments.Count - 1
+			force_strArgs = force_strArgs & " " & WScript.Arguments(i)
+		Next
+	End If
+	' Create the complete command line to rerun this script in CSCRIPT
+	force_strCmd = "CSCRIPT.EXE //NoLogo """ & WScript.ScriptFullName & """" & force_strArgs
+	' Rerun the script in CSCRIPT
+	Set force_objDebug = force_wshShell.Exec( force_strCmd )
+	' Wait until the script exits
+	Do While force_objDebug.Status = 0
+		WScript.Sleep 250
+	Loop
+	' Exit with CSCRIPT's return code
+	WScript.Quit force_objDebug.ExitCode
+End If
+
+' This is the short version.
+Dim  cscript_wshShell, cscript_strEngine
+Set cscript_wshShell = CreateObject( "WScript.Shell" )
+cscript_strEngine = UCase( Right( WScript.FullName, 12 ) )
+If UCase(cscript_strEngine) <> UCase("\CSCRIPT.EXE") Then
+	WScript.Quit 17 ' exit immediately with error code 17 since it was not run like cscript //NOLOGO "vbscript_path_and_file" "parameter 1" "parameter 2"
+End If
 
 
 '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -15,7 +54,8 @@
 https://ss64.com/vb/syntax-args.html
 
 ' Firstly, using standard arguments
-' Example 1 cscript //nologo test.vbs /p1:"This is the value for p1" /p2:500dim i, c, NamedArgs, p1, p2
+' Example 1 cscript //nologo "test.vbs" /p1:"This is the value for p1" /p2:500
+dim i, c, NamedArgs, p1, p2
 c = WScript.Arguments.Count
 if c>0 then
     for i=0 to (c-1)
@@ -23,7 +63,7 @@ if c>0 then
     next
 end if
 ' Secondly, using named arguments 
-' Example 2 cscript //nologo test.vbs /p1:"This is the value for p1" /p2:500
+' Example 2 cscript //nologo "test.vbs" /p1:"This is the value for p1" /p2:500
 c = WScript.Arguments.Count
 set NamedArgs = WScript.Arguments.Named
 if NamedArgs.Exists("p1") and NOT IsEmpty(NamedArgs("p1")) then 
@@ -282,8 +322,30 @@ Sub Moodify(str)
      Next
 End Sub
 
+BUT WE CANNOT CHANGE DATE CREATED ... so resort to powershell
 
-BUT WE CANNOT CHANGE DATE CREATED ... resort to powershell
+
+'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+' how can we bulk move source files in vbscript to a different folder
+'
+
+' *** ---------------------------------------------------------------------------------------------------
+' *** ---------------------------------------------------------------------------------------------------
+' *** ANSWER: reporting errors is problematic ... use Exec and DOS MOVE instead 
+' *** ---------------------------------------------------------------------------------------------------
+' *** ---------------------------------------------------------------------------------------------------
+
+
+' individual file
+Dim obj, filename1,filename2                                   ‘Declaring variables
+Set obj = createobject(“Scripting.FileSystemObject”) ‘Creating a File Object
+filename1=”C:\app\pictures\img1.jpg” ‘Mentioning the name and source location of the file to be moved
+filename2=”C:\Users\img1.jpg” ‘Mentioning the name and destination location of the file to be moved
+obj.MoveFile filename1,filename1 ‘MoveFile Method is used for moving the file to the destination
+Set obj=Nothing                                           ‘Releasing File object
+
+
+
 
 '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' Can we somehow open and use external .DLL files such as mediainfo.dll
@@ -297,22 +359,6 @@ BUT WE CANNOT CHANGE DATE CREATED ... resort to powershell
 '   can we somehow create a ffprobe .DLL and perhaps use that form vbscript
 '
 
-
-'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-' how can we bulk move source files in vbscript to a different folder
-'
-
-' individual file
-Set obj = createobject(“Scripting.FileSystemObject”) ‘Creating a File Object
-Dim filename1,filename2                                   ‘Declaring variables
-filename1=”C:\app\pictures\img1.jpg” ‘Mentioning the name and source location of the file to be moved
-filename2=”C:\Users\img1.jpg” ‘Mentioning the name and destination location of the file to be moved
-obj.MoveFile filename1,filename1 ‘MoveFile Method is used for moving the file to the destination
-Set obj=Nothing                                           ‘Releasing File object
-
-
-?? bulk move ??
-best to use the DOS command 
 
 
 '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
