@@ -372,28 +372,36 @@ Set obj=Nothing                                           ‘Releasing File obje
 ' how can we delete a file in vbscript
 
 ' Delete a file
-Dim fso
-Dim the_Err_number, the_Err_Description, the_Err_Helpfile, the_Err_HelpContext
-Dim the_filename_to_delete
-Set fso = CreateObject("Scripting.FileSystemObject")
-the_filename_to_delete = "c:\temp\some_existing_file.txt"
-WScript.StdOut.WriteLine "Deleting file: """ & the_filename_to_delete & """"
-'If fso.FileExists(the_filename_to_delete) Then
-	On Error Resume Next
-	fso.DeleteFile "c:\somefile.txt", True ' fso.DeleteFile ( filespec[, force] ) ' it also supports wildcards, allowing delete of multiple files ...
-	the_Err_number = Err.Number
-    the_Err_Description = Err.Description
-    the_Err_Helpfile = Err.Helpfile
-    the_Err_HelpContext = Err.HelpContext
-    If the_Err_number <> 0 Then
-        WScript.StdOut.WriteLine "Error " &  the_Err_number &  " " &  the_Err_Description & " : raised when Deleting file """ & the_filename_to_delete & """"
-	    Err.Clear
-    Else
-        WScript.StdOut.WriteLine "Deleted file """ & the_filename_to_delete & """"
-    End if
-	On Error Goto 0 ' now continue
-'End If
-set fso=Nothing
+Function delete_a_file (filename_to_delete, do_it_silently)
+    Dim daf_fso
+    Dim daf_Err_number, daf_Err_Description, daf_Err_Helpfile, daf_Err_HelpContext
+    Dim daf_filename_to_delete
+    If NOT do_it_silently Then
+        WScript.StdOut.WriteLine "Deleting file: """ & filename_to_delete & """"
+    End If
+    Set daf_fso=CreateObject("Scripting.FileSystemObject")
+    'If daf_fso.FileExists(filename_to_delete) Then
+    	On Error Resume Next
+	    daf_fso.DeleteFile filename_to_delete, True ' daf_fso.DeleteFile ( filespec[, force] ) ' it also supports wildcards, allowing delete of multiple files ...
+	    daf_Err_number = Err.Number
+        daf_Err_Description = Err.Description
+        daf_Err_Helpfile = Err.Helpfile
+        daf_Err_HelpContext = Err.HelpContext
+        If daf_Err_number <> 0 Then
+            If NOT do_it_silently Then
+                WScript.StdOut.WriteLine "Error " &  daf_Err_number &  " " &  daf_Err_Description & " : raised when Deleting file """ & filename_to_delete & """"
+            End If
+	        Err.Clear
+        Else
+            If NOT do_it_silently Then
+                WScript.StdOut.WriteLine "Deleted file """ & filename_to_delete & """"
+            End If
+        End if
+	    On Error Goto 0 ' now continue
+    'End If
+    set daf_fso=Nothing
+    delete_a_file = daf_Err_number
+End Function
 
 
 
@@ -504,6 +512,20 @@ WScript.StdOut.WriteLine "------------------------------------------------------
 
 
 
+Dim vrdtvs_temp_path
+vrdtvs_temp_path = "D:\VRDTVS-SCRATCH\"
+Function gimme_a_temporary_absolute_filename
+    ' rely on global variable "vrdtvs_temp_path" being set to a valid path
+    Dim atf_fso, atf_temp
+    Set atf_fso=CreateObject("Scripting.FileSystemObject")
+    atf_temp = atf_fso.GetTempName & ".tmp"
+    atf_temp = atf_fso.BuildPath(vrdtvs_temp_path,atf_temp) ' rely on global variable "vrdtvs_temp_path" already being set to a valid path
+    atf_temp = atf_fso.GetAbsolutePathName(atf_temp)
+    'WScript.StdOut.WriteLine "generated a_temporary_filename=""" & a_temporary_filename & """"
+    Set mi_fso=Nothing
+    gimme_a_temporary_absolute_filename = atf_temp
+End Function
+
 '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' how to do elapsed time calculations
 
@@ -598,53 +620,53 @@ Wscript.echo("A_Video_Delay_ms=" & A_Video_Delay_ms)
 Wscript.echo("A_Audio_Delay_ms=" & A_Audio_Delay_ms)
 
 Function get_mediainfo_parameter (mi_Section, mi_Parameter, mi_MediaFilename, mi_Legacy) 
-'        1. a global variable vrdtvs_mediainfoexe exists pointing to the mediainfo exe
-' Note \r\n is Windows new-line, 
-' Which in the case of multiple audio streams, outputs a result for each stream on a new line, 
-' the first stream being the first entry, and the first audio stream should be the one we need. 
-Dim mi_fso, mi_status
-'Dim mi_temp_Filename
-Dim mi_wso, mi_exe, mi_cmd, mi_tmp
-If Ucase(mi_Legacy) <> Ucase("--Legacy") AND Ucase(mi_Legacy) <> "" Then
-    WScript.StdOut.WriteLine("get_mediainfo_parameter UNRECOGNISED LEGACY PARAMETER: " & mi_Legacy & " : it should only be an empty string or --Legacy")
-    ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
-	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
-End If
-Set mi_fso = CreateObject("Scripting.FileSystemObject")
-set mi_wso = CreateObject("Wscript.Shell")
-'
-' If piping to a temporary file, cmd looks something like this:
-' mi_temp_Filename = gimme_a_temporary_absolute_filename() ' generate a fully qualified temporary filename from the function
-' mi_status = delete_a_file (mi_temp_Filename, True)
-' mi_cmd =  """" & vrdtvs_mediainfoexe & """ " & mi_Legacy & " ""--Inform=" & mi_Section & ";%" & mi_Parameter & "%\r\n"" """ & mi_MediaFilename & """ > """ & mi_temp_Filename & """"
-'
-mi_cmd = """" & vrdtvs_mediainfoexe & """ " & mi_Legacy & " ""--Inform=" & mi_Section & ";%" & mi_Parameter & "%\r\n"" """ & mi_MediaFilename & """"
-'WScript.StdOut.WriteLine("DEBUG: get_mediainfo_parameter Exec command: " & mi_cmd)
-set mi_exe = mi_wso.Exec(mi_cmd)
-Do While mi_exe.Status = 0 '0 is running and 1 is ending
-     Wscript.Sleep 100
-Loop
-Do Until mi_exe.StdErr.AtEndOfStream
-    mi_tmp = mi_exe.StdErr.ReadLine()
-    WScript.StdOut.WriteLine("ERROR: get_mediainfo_parameter StdErr: " & mi_tmp)
-Loop
-mi_status = mi_exe.ExitCode
-If mi_status <> 0 then
-    WScript.StdOut.WriteLine("ERROR: get_mediainfo_parameter ABORTING Exec command: " & mi_cmd)
-    WScript.StdOut.WriteLine("ERROR: get_mediainfo_parameter ABORTING with Exit Status: " & mi_status)
-    ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
-	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
-End If
-mi_tmp="" ' default to nothing
-Do Until mi_exe.StdOut.AtEndOfStream ' we need to read only one line though
-    mi_tmp = mi_exe.StdOut.ReadLine()
-    'WScript.StdOut.WriteLine("DEBUG: get_mediainfo_parameter StdOut: " & mi_tmp)
-    Exit Do ' we need to read only one line so exit loop immediately
-Loop
-Set mi_exe = Nothing
-Set mi_wso = Nothing
-Set mi_fso = Nothing
-get_mediainfo_parameter = mi_tmp
+    '        1. a global variable vrdtvs_mediainfoexe exists pointing to the mediainfo exe
+    ' Note \r\n is Windows new-line, 
+    ' Which in the case of multiple audio streams, outputs a result for each stream on a new line, 
+    ' the first stream being the first entry, and the first audio stream should be the one we need. 
+    Dim mi_fso, mi_status
+    'Dim mi_temp_Filename
+    Dim mi_wso, mi_exe, mi_cmd, mi_tmp
+    If Ucase(mi_Legacy) <> Ucase("--Legacy") AND Ucase(mi_Legacy) <> "" Then
+        WScript.StdOut.WriteLine("get_mediainfo_parameter UNRECOGNISED LEGACY PARAMETER: " & mi_Legacy & " : it should only be an empty string or --Legacy")
+        ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
+	    WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+    End If
+    Set mi_fso = CreateObject("Scripting.FileSystemObject")
+    set mi_wso = CreateObject("Wscript.Shell")
+    '
+    ' If piping to a temporary file, cmd looks something like this:
+    ' mi_temp_Filename = gimme_a_temporary_absolute_filename() ' generate a fully qualified temporary filename from the function
+    ' mi_status = delete_a_file (mi_temp_Filename, True)
+    ' mi_cmd = """" & vrdtvs_mediainfoexe & """ " & mi_Legacy & " ""--Inform=" & mi_Section & ";%" & mi_Parameter & "%\r\n"" """ & mi_MediaFilename & """ > """ & mi_temp_Filename & """"
+    '
+    mi_cmd = """" & vrdtvs_mediainfoexe & """ " & mi_Legacy & " ""--Inform=" & mi_Section & ";%" & mi_Parameter & "%\r\n"" """ & mi_MediaFilename & """"
+    'WScript.StdOut.WriteLine("DEBUG: get_mediainfo_parameter Exec command: " & mi_cmd)
+    set mi_exe = mi_wso.Exec(mi_cmd)
+    Do While mi_exe.Status = 0 '0 is running and 1 is ending
+        Wscript.Sleep 100
+    Loop
+    Do Until mi_exe.StdErr.AtEndOfStream
+        mi_tmp = mi_exe.StdErr.ReadLine()
+        WScript.StdOut.WriteLine("ERROR: get_mediainfo_parameter StdErr: " & mi_tmp)
+    Loop
+    mi_status = mi_exe.ExitCode
+    If mi_status <> 0 then
+        WScript.StdOut.WriteLine("ERROR: get_mediainfo_parameter ABORTING Exec command: " & mi_cmd)
+        WScript.StdOut.WriteLine("ERROR: get_mediainfo_parameter ABORTING with Exit Status: " & mi_status)
+        ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
+	    WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+    End If
+    mi_tmp="" ' default to nothing
+    Do Until mi_exe.StdOut.AtEndOfStream ' we need to read only one line though
+        mi_tmp = mi_exe.StdOut.ReadLine()
+        'WScript.StdOut.WriteLine("DEBUG: get_mediainfo_parameter StdOut: " & mi_tmp)
+        Exit Do ' we need to read only one line so exit loop immediately
+    Loop
+    Set mi_exe = Nothing
+    Set mi_wso = Nothing
+    Set mi_fso = Nothing
+    get_mediainfo_parameter = mi_tmp
 End Function
 
 
@@ -670,50 +692,50 @@ Wscript.echo("V_BitRate_FF=" & V_BitRate_FF)
 Wscript.echo("V_BitRate_Maximum_FF=" & V_BitRate_Maximum_FF)
 
 Function get_ffprobe_video_stream_parameter (ffp_Parameter, ffp_MediaFilename) 
-'        1. a global variable vrdtvs_ffprobeexe exists pointing to the ffprobe exe
-' Note \r\n is Windows new-line, which is for the case of multiple audio streams, 
-'      it outputs a result for each stream on a new line, the first stream being the first entry,
-'      and the first audio stream should be the one we need. 
-'      read the first line.
-'      see if -probesize 5000M  makes any difference
-Dim ffp_fso, ffp_status
-'Dim ffp_temp_Filename
-Dim ffp_wso, ffp_exe, ffp_cmd, ffp_tmp
-Set ffp_fso = CreateObject("Scripting.FileSystemObject")
-set ffp_wso = CreateObject("Wscript.Shell")
-'
-' If piping to a temporary file, cmd looks something like this:
-' ffp_temp_Filename = gimme_a_temporary_absolute_filename() ' generate a fully qualified temporary filename from the function
-' ffp_status = delete_a_file (ffp_temp_Filename, True)
-' ffp_cmd =  """" & vrdtvs_ffprobeexe & ???  & ffp_MediaFilename & """ > """ & ffp_temp_Filename & """"
-'
-ffp_cmd = """" & vrdtvs_ffprobeexe & """ -hide_banner -v quiet -select_streams v:0 -show_entries stream=" & ffp_Parameter & " -of default=noprint_wrappers=1:nokey=1 """ & ffp_MediaFilename & """"
-'WScript.StdOut.WriteLine("DEBUG: get_ffprobe_video_stream_parameter Exec command: " & ffp_cmd)
-set ffp_exe = ffp_wso.Exec(ffp_cmd)
-Do While ffp_exe.Status = 0 '0 is running and 1 is ending
-     Wscript.Sleep 100
-Loop
-Do Until ffp_exe.StdErr.AtEndOfStream
-    ffp_tmp = ffp_exe.StdErr.ReadLine()
-    WScript.StdOut.WriteLine("ERROR: get_ffprobe_video_stream_parameter StdErr: " & ffp_tmp)
-Loop
-ffp_status = ffp_exe.ExitCode
-If ffp_status <> 0 then
-    WScript.StdOut.WriteLine("ERROR: get_ffprobe_video_stream_parameter ABORTING Exec command: " & ffp_cmd)
-    WScript.StdOut.WriteLine("ERROR: get_ffprobe_video_stream_parameter ABORTING with Exit Status: " & ffp_status)
-    ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
-	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
-End If
-ffp_tmp="" ' default to nothing
-Do Until ffp_exe.StdOut.AtEndOfStream ' we need to read only one line though
-    ffp_tmp = ffp_exe.StdOut.ReadLine()
-    'WScript.StdOut.WriteLine("DEBUG: get_ffprobe_video_stream_parameter StdOut: " & ffp_tmp)
-    Exit Do ' we need to read only one line so exit loop immediately
-Loop
-Set ffp_exe = Nothing
-Set ffp_wso = Nothing
-Set ffp_fso = Nothing
-get_ffprobe_video_stream_parameter = ffp_tmp
+    '        1. a global variable vrdtvs_ffprobeexe exists pointing to the ffprobe exe
+    ' Note \r\n is Windows new-line, which is for the case of multiple audio streams, 
+    '      it outputs a result for each stream on a new line, the first stream being the first entry,
+    '      and the first audio stream should be the one we need. 
+    '      read the first line.
+    '      see if -probesize 5000M  makes any difference
+    Dim ffp_fso, ffp_status
+    'Dim ffp_temp_Filename
+    Dim ffp_wso, ffp_exe, ffp_cmd, ffp_tmp
+    Set ffp_fso = CreateObject("Scripting.FileSystemObject")
+    set ffp_wso = CreateObject("Wscript.Shell")
+    '
+    ' If piping to a temporary file, cmd looks something like this:
+    ' ffp_temp_Filename = gimme_a_temporary_absolute_filename() ' generate a fully qualified temporary filename from the function
+    ' ffp_status = delete_a_file (ffp_temp_Filename, True)
+    ' ffp_cmd = """" & vrdtvs_ffprobeexe & """ -hide_banner -v quiet -select_streams v:0 -show_entries stream=" & ffp_Parameter & " -of default=noprint_wrappers=1:nokey=1 """ & ffp_MediaFilename & """ > """ & ffp_temp_Filename & """"
+    '
+    ffp_cmd = """" & vrdtvs_ffprobeexe & """ -hide_banner -v quiet -select_streams v:0 -show_entries stream=" & ffp_Parameter & " -of default=noprint_wrappers=1:nokey=1 """ & ffp_MediaFilename & """"
+    'WScript.StdOut.WriteLine("DEBUG: get_ffprobe_video_stream_parameter Exec command: " & ffp_cmd)
+    set ffp_exe = ffp_wso.Exec(ffp_cmd)
+    Do While ffp_exe.Status = 0 '0 is running and 1 is ending
+        Wscript.Sleep 100
+    Loop
+    Do Until ffp_exe.StdErr.AtEndOfStream
+        ffp_tmp = ffp_exe.StdErr.ReadLine()
+        WScript.StdOut.WriteLine("ERROR: get_ffprobe_video_stream_parameter StdErr: " & ffp_tmp)
+    Loop
+    ffp_status = ffp_exe.ExitCode
+    If ffp_status <> 0 then
+        WScript.StdOut.WriteLine("ERROR: get_ffprobe_video_stream_parameter ABORTING Exec command: " & ffp_cmd)
+        WScript.StdOut.WriteLine("ERROR: get_ffprobe_video_stream_parameter ABORTING with Exit Status: " & ffp_status)
+        ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
+	    WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+    End If
+    ffp_tmp="" ' default to nothing
+    Do Until ffp_exe.StdOut.AtEndOfStream ' we need to read only one line though
+        ffp_tmp = ffp_exe.StdOut.ReadLine()
+        'WScript.StdOut.WriteLine("DEBUG: get_ffprobe_video_stream_parameter StdOut: " & ffp_tmp)
+        Exit Do ' we need to read only one line so exit loop immediately
+    Loop
+    Set ffp_exe = Nothing
+    Set ffp_wso = Nothing
+    Set ffp_fso = Nothing
+    get_ffprobe_video_stream_parameter = ffp_tmp
 End Function
 
 
