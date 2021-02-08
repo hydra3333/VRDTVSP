@@ -25,9 +25,13 @@ WScript.StdOut.WriteLine("Exit Status: " & x)
 'Wscript.echo(x)
 Set exe = Nothing
 Set wso = Nothing
+
 '----------------------------------
 ' Firstly, using standard arguments
 ' Example 1 cscript //nologo test.vbs /p1:"This is the value for p1" /p2:500dim i, c, NamedArgs, p1, p2
+dim NamedArgs
+dim c, i
+dim p1, p2
 c = WScript.Arguments.Count
 if c>0 then
     for i=0 to (c-1)
@@ -50,3 +54,24 @@ else
 end if
 WScript.StdOut.WriteLine "Named Argument value for p1=" & p1
 WScript.StdOut.WriteLine "Named Argument value for p2=" & p2
+
+'----------------------------------
+' REGEX
+Const replacement_character="."
+Const regex_pattern="[^a-zA-Z0-9-_. ]+"      ' ^ means not matching
+dim myRegExp
+dim input_string
+dim result_string
+input_string="ABCabc!@#$%^&*()_+-={}[}|\;:`~'""<>,.?/_-+=1234567890."
+Set myRegExp = New RegExp
+myRegExp.IgnoreCase = False
+myRegExp.Global = True  
+myRegExp.Pattern = regex_pattern
+result_string = myRegExp.Replace(input_string,replacement_character) ' in this case replace all matching characters with ".", in this case all non-standard characters
+Set myRegExp = Nothing
+WScript.StdOut.WriteLine "regex_pattern        =""" & regex_pattern & """"
+WScript.StdOut.WriteLine "replacement_character=""" & replacement_character & """"
+WScript.StdOut.WriteLine "Input String         =""" & input_string & """"
+WScript.StdOut.WriteLine "Result String        =""" & result_string & """"
+
+
