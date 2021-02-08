@@ -3,29 +3,41 @@ Option explicit
 ''          Thus, call the vbscript like this:
 ''              cscript //NOLOGO "vbscript_path_and_file" "parameter 1" "parameter 2"
 '----------------------------------
-dim wso, exe 
-dim x
+Dim  cscript_wshShell, cscript_strEngine
+Set cscript_wshShell = CreateObject( "WScript.Shell" )
+cscript_strEngine = UCase( Right( WScript.FullName, 12 ) )
+If UCase(cscript_strEngine) <> UCase("\CSCRIPT.EXE") Then
+    ' exit immediately with error code 17 cannot perform the requested operation
+    ' since it was not run like:
+    '      cscript //NOLOGO "vbscript_path_and_file" "parameter 1" "parameter 2"
+    '      cscript //NOLOGO "test.vbs" /p1:"This is the value for p1" /p2:500
+    ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+End If
+'----------------------------------
+dim wso, the_exe, the_cmd, x
 set wso = CreateObject("Wscript.Shell")
-set exe = wso.Exec("cmd /c dirx /s /b d:\temp\h*.jpg 2>&1")
-Do While exe.Status = 0 '0 is running and 1 is ending
+the_cmd = "cmd /c dirx /s /b d:\temp\h*.jpg 2>&1"
+WScript.StdOut.WriteLine("the_cmd: " & the_cmd)
+set the_exe = wso.Exec(the_cmd)
+Do While the_exe.Status = 0 '0 is running and 1 is ending
      Wscript.Sleep 250
 Loop
-Do Until exe.StdOut.AtEndOfStream
-    x=exe.StdOut.ReadLine()
+Do Until the_exe.StdOut.AtEndOfStream
+    x=the_exe.StdOut.ReadLine()
     WScript.StdOut.WriteLine("StdOut: " & x)
     'Wscript.echo x
 Loop
-Do Until exe.StdErr.AtEndOfStream
-    x=exe.StdErr.ReadLine()
+Do Until the_exe.StdErr.AtEndOfStream
+    x=the_exe.StdErr.ReadLine()
     WScript.StdOut.WriteLin("StdErr: " & x)
     'Wscript.echo(x)
 Loop
-x=exe.ExitCode
+x=the_exe.ExitCode
 WScript.StdOut.WriteLine("Exit Status: " & x)
 'Wscript.echo(x)
-Set exe = Nothing
+Set the_exe = Nothing
 Set wso = Nothing
-
 '----------------------------------
 ' Firstly, using standard arguments
 ' Example 1 cscript //nologo test.vbs /p1:"This is the value for p1" /p2:500dim i, c, NamedArgs, p1, p2
