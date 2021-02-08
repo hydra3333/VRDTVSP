@@ -361,7 +361,7 @@ WScript.StdOut.WriteLine "8. ---------------------------------------------------
 Dim vrdtvs_mediainfoexe
 vrdtvs_mediainfoexe = "C:\SOFTWARE\MediaInfo\MediaInfo.exe"
 dim V_CodecID_String
-V_CodecID_String = get_mediainfo_parameter("Video" "CodecID/String" "G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4", "")
+V_CodecID_String = get_mediainfo_parameter("Video","CodecID/String","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4", "")
 
 
 Function get_mediainfo_parameter (mi_Section, mi_Parameter, mi_MediaFilename, mi_Legacy) 
