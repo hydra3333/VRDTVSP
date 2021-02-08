@@ -126,23 +126,24 @@ WScript.StdOut.WriteLine "Deleting file: """ & the_filename_to_delete & """"
 'End If
 set fso=Nothing
 
-Sub Delete_a_File (filename_to_delete, do_it_silently)
-Dim fso
-Dim the_Err_number, the_Err_Description, the_Err_Helpfile, the_Err_HelpContext
-Dim the_filename_to_delete
-Set fso = CreateObject("Scripting.FileSystemObject")
-filename_to_delete = "c:\temp\some_existing_file.txt"
-WScript.StdOut.WriteLine "Deleting file: """ & filename_to_delete & """"
-'If fso.FileExists(filename_to_delete) Then
+Function delete_a_file (filename_to_delete, do_it_silently)
+Dim daf_fso
+Dim daf_Err_number, daf_Err_Description, daf_Err_Helpfile, daf_Err_HelpContext
+Dim daf_filename_to_delete
+If NOT do_it_silently Then
+    WScript.StdOut.WriteLine "Deleting file: """ & filename_to_delete & """"
+End If
+Set daf_fso=CreateObject("Scripting.FileSystemObject")
+'If daf_fso.FileExists(filename_to_delete) Then
 	On Error Resume Next
-	fso.DeleteFile "c:\somefile.txt", True ' fso.DeleteFile ( filespec[, force] ) ' it also supports wildcards, allowing delete of multiple files ...
-	the_Err_number = Err.Number
-    the_Err_Description = Err.Description
-    the_Err_Helpfile = Err.Helpfile
-    the_Err_HelpContext = Err.HelpContext
-    If the_Err_number <> 0 Then
+	daf_fso.DeleteFile filename_to_delete, True ' daf_fso.DeleteFile ( filespec[, force] ) ' it also supports wildcards, allowing delete of multiple files ...
+	daf_Err_number = Err.Number
+    daf_Err_Description = Err.Description
+    daf_Err_Helpfile = Err.Helpfile
+    daf_Err_HelpContext = Err.HelpContext
+    If daf_Err_number <> 0 Then
         If NOT do_it_silently Then
-            WScript.StdOut.WriteLine "Error " &  the_Err_number &  " " &  the_Err_Description & " : raised when Deleting file """ & filename_to_delete & """"
+            WScript.StdOut.WriteLine "Error " &  daf_Err_number &  " " &  daf_Err_Description & " : raised when Deleting file """ & filename_to_delete & """"
         End If
 	    Err.Clear
     Else
@@ -152,7 +153,9 @@ WScript.StdOut.WriteLine "Deleting file: """ & filename_to_delete & """"
     End if
 	On Error Goto 0 ' now continue
 'End If
-set fso=Nothing
+set daf_fso=Nothing
+delete_a_file = daf_Err_number
+End Function
 
 WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
 
@@ -259,6 +262,22 @@ WScript.StdOut.WriteLine ""
 '
 set objFile=Nothing
 set fso1=Nothing
+
+Dim vrdtvs_temp_path
+vrdtvs_temp_path = "D:\VRDTVS-SCRATCH\"
+Function gimme_a_temporary_absolute_filename
+' rely on global variable "vrdtvs_temp_path" being set to a valid path
+Dim atf_fso, atf_temp
+Set atf_fso=CreateObject("Scripting.FileSystemObject")
+atf_temp = atf_fso.GetTempName & ".tmp"
+atf_temp = atf_fso.BuildPath(vrdtvs_temp_path,atf_temp) ' rely on global variable "vrdtvs_temp_path" already being set to a valid path
+atf_temp = atf_fso.GetAbsolutePathName(atf_temp)
+'WScript.StdOut.WriteLine "generated a_temporary_filename=""" & a_temporary_filename & """"
+Set mi_fso=Nothing
+gimme_a_temporary_absolute_filename = atf_temp
+End Function
+
+
 WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
 
 '----------------------------------
@@ -328,40 +347,58 @@ WScript.StdOut.WriteLine "------------------------------------------------------
 
 WScript.StdOut.WriteLine "8. ------------------------------------------------------------------------------------------------------"
 
-
-result = get_mediainfo_parameter "Video" "Codec" "V_Codec_legacy" "media_filename" 
+' Assuming a global variable vrdtvs_temp_path exists,
+' then we call like this
+' result = get_mediainfo_parameter("Video" "Codec" "V_Codec_legacy" "media_filename")
+' Example:
+' Dim result
+' result = get_mediainfo_parameter("Video" "Codec" "V_Codec_legacy" "media_filename")
 
 
 
 Function get_mediainfo_parameter (mi_Section, mi_Parameter, mi_MediaFilename)
-'
-' Assume a global variable vrdtvs_temp_path exists as a string without a trailing slash
-'        and we rely on and use this to create temporary working files
-'
-Dim mi_tempfile
-Dim fso
-Set fso = CreateObject("Scripting.FileSystemObject")
-
-
-set "mi_var="
-
-
-
-Call Delete_a_File (mi_tempfile, True) ' delete a temp file silently
-
-DEL /F "!tempfile!" >NUL 2>&1
+' Assume 1. a global variable vrdtvs_temp_path exists as a string without a trailing slash
+'           and we rely on and use this to create temporary working files
+'        2. a global variable vrdtvs_mediainfoexe exists pointing to the mediainfo exe
 ' Note \r\n is Windows new-line, 
 ' Which in the case of multiple audio streams, outputs a result for each stream on a new line, 
 ' the first stream being the first entry, and the first audio stream should be the one we need. 
-
-
-"!mediainfoexe!" "--Inform=!mi_Section!;%%!mi_Parameter!%%\r\n" "!mi_Filename!" > "!tempfile!"
-set /p mi_var=<"!tempfile!"
-set !mi_Variable!=!mi_var!
-REM ECHO !DATE! !TIME! "!mi_Variable!=!mi_var!" from "!mi_Section!" "!mi_Parameter!"
-REM ECHO !DATE! !TIME! "!mi_Variable!=!mi_var!" from "!mi_Section!" "!mi_Parameter!" >> "!vrdlog!" 2>&1
-DEL /F "!tempfile!" >NUL 2>&1
-goto :eof
-
-
+Dim mi_fso, mi_temp_Filename, mi_status
+Dim mi_wso, mi_exe, mi_cmd, mi_tmp
+Set mi_fso = CreateObject("Scripting.FileSystemObject")
+set mi_wso = CreateObject("Wscript.Shell")
+'
+mi_temp_Filename = gimme_a_temporary_absolute_filename() ' generate a fully qualified temporary filename from the function
+'mi_status = delete_a_file (mi_temp_Filename, True) ' delete a temp file silently
+'
+'mi_cmd = "cmd /c " & """" & vrdtvs_mediainfoexe & """ --Inform= """ & mi_Section & ";%%" & mi_Parameter & "%%\r\n"" """ & mi_MediaFilename & """ > """ & mi_temp_Filename & """"
+mi_cmd = "cmd /c " & """" & vrdtvs_mediainfoexe & """ --Inform= """ & mi_Section & ";%%" & mi_Parameter & "%%\r\n"" """ & mi_MediaFilename & """"
+'
+'WScript.StdOut.WriteLine("get_mediainfo_parameter Exec command: " & mi_cmd)
+set mi_exe = mi_wso.Exec(mi_cmd)
+Do While mi_exe.Status = 0 '0 is running and 1 is ending
+     Wscript.Sleep 100
+Loop
+Do Until mi_exe.StdErr.AtEndOfStream
+    mi_tmp = mi_exe.StdErr.ReadLine()
+    WScript.StdOut.WriteLin("get_mediainfo_parameter StdErr: " & x)
+Loop
+mi_status = mi_exe.ExitCode
+If mi_status <> 0 then
+    WScript.StdOut.WriteLine("get_mediainfo_parameter Exec command: " & mi_cmd)
+    WScript.StdOut.WriteLine("get_mediainfo_parameter ABORTNG with Exit Status: " & mi_status)
+    ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+End If
+mi_tmp="" ' default to nothing
+Do Until mi_exe.StdOut.AtEndOfStream ' we need to read only one line though
+    mi_tmp = mi_exe.StdOut.ReadLine()
+    'WScript.StdOut.WriteLine("get_mediainfo_parameter StdOut: " & mi_tmp)
+    Exit Do ' we need to read only one line so exit immediately
+Loop
+Set mi_exe = Nothing
+Set mi_wso = Nothing
+Set mi_fso = Nothing
+get_mediainfo_parameter = mi_tmp
 End Function
+
