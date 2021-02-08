@@ -129,23 +129,75 @@ WScript.StdOut.WriteLine "------------------------------------------------------
 ' Build a fully qualified filename from a path and filename
 WScript.StdOut.WriteLine "6. ------------------------------------------------------------------------------------------------------"
 Dim fso1
-Dim the_path, the_file, the_result, The_AbsolutePath
+Dim the_path, the_file, the_result, The_AbsolutePath, theBaseName, theExtName, theFileName, theDriveName
+Dim theParentFolderName, theParentFolderName2
 Set fso1 = CreateObject("Scripting.FileSystemObject")
 the_path = "c:\test\"
-the_file = "abd.def"
+the_file = "abcd.def"
 the_result = fso1.BuildPath(the_path,the_file)  ' Path can be absolute or relative and need not specify an existing folder.
 The_AbsolutePath = fso1.GetAbsolutePathName(the_result)
-WScript.StdOut.WriteLine "Buildpath  path=""" & the_path & """ file=""" & the_file & """ Result=""" & the_result & """ AbsolutePathName=""" & The_AbsolutePath  & """"
+theBaseName = fso1.GetBaseName(The_AbsolutePath)
+theExtName = fso1.GetExtensionName(The_AbsolutePath) ' does not include  the "."
+theFileName = fso1.GetFileName(The_AbsolutePath) ' includes filename and "." and extension
+theDriveName = fso1.GetDriveName(The_AbsolutePath) ' includes driver letter and ":"
+theParentFolderName = fso1.GetParentFolderName(The_AbsolutePath) ' the drive and folder name without any trailing "\"
+WScript.StdOut.WriteLine "Buildpath  path=""" & the_path & """ file=""" & the_file & """ Result=""" & the_result & """"
+WScript.StdOut.WriteLine "AbsolutePathName=""" & The_AbsolutePath & """"
+WScript.StdOut.WriteLine "theBaseName=""" & theBaseName  & """"
+WScript.StdOut.WriteLine "theExtName=""" & theExtName  & """"
+WScript.StdOut.WriteLine "theFileName=""" & theFileName  & """"
+WScript.StdOut.WriteLine "theDriveName=""" & theDriveName  & """"
+WScript.StdOut.WriteLine "theParentFolderName=""" & theParentFolderName  & """"
 the_path = "c:\temp"
-the_file = "abd.def"
+the_file = "abcd.def"
 the_result = fso1.BuildPath(the_path,the_file)  ' Path can be absolute or relative and need not specify an existing folder.
 The_AbsolutePath = fso1.GetAbsolutePathName(the_result)
-WScript.StdOut.WriteLine "Buildpath  path=""" & the_path & """ file=""" & the_file & """ Result=""" & the_result & """ AbsolutePathName=""" & The_AbsolutePath  & """"
+theBaseName = fso1.GetBaseName(The_AbsolutePath)
+theExtName = fso1.GetExtensionName(The_AbsolutePath) ' does not include  the "."
+theFileName = fso1.GetFileName(The_AbsolutePath) ' includes filename and "." and extension
+theDriveName = fso1.GetDriveName(The_AbsolutePath) ' includes driver letter and ":"
+theParentFolderName = fso1.GetParentFolderName(The_AbsolutePath) ' the drive and folder name of the file without any trailing "\"
+WScript.StdOut.WriteLine "Buildpath  path=""" & the_path & """ file=""" & the_file & """ Result=""" & the_result & """"
+WScript.StdOut.WriteLine "AbsolutePathName=""" & The_AbsolutePath & """"
+WScript.StdOut.WriteLine "theBaseName=""" & theBaseName  & """"
+WScript.StdOut.WriteLine "theExtName=""" & theExtName  & """"
+WScript.StdOut.WriteLine "theFileName=""" & theFileName  & """"
+WScript.StdOut.WriteLine "theDriveName=""" & theDriveName  & """"
+WScript.StdOut.WriteLine "theParentFolderName=""" & theParentFolderName  & """"
 the_path = ".\"
-the_file = "abd.def"
+the_file = "abcd.def"
 the_result = fso1.BuildPath(the_path,the_file)  ' Path can be absolute or relative and need not specify an existing folder.
 The_AbsolutePath = fso1.GetAbsolutePathName(the_result)
-WScript.StdOut.WriteLine "Buildpath  path=""" & the_path & """ file=""" & the_file & """ Result=""" & the_result & """ AbsolutePathName=""" & The_AbsolutePath  & """"
+theBaseName = fso1.GetBaseName(The_AbsolutePath)
+theExtName = fso1.GetExtensionName(The_AbsolutePath) ' does not include  the "."
+theFileName = fso1.GetFileName(The_AbsolutePath) ' includes filename and "." and extension
+theDriveName = fso1.GetDriveName(The_AbsolutePath) ' includes driver letter and ":"
+theParentFolderName = fso1.GetParentFolderName(The_AbsolutePath) ' the drive and folder name of the file without any trailing "\"
+WScript.StdOut.WriteLine "Buildpath  path=""" & the_path & """ file=""" & the_file & """ Result=""" & the_result & """"
+WScript.StdOut.WriteLine "AbsolutePathName=""" & The_AbsolutePath & """"
+WScript.StdOut.WriteLine "theBaseName=""" & theBaseName  & """"
+WScript.StdOut.WriteLine "theExtName=""" & theExtName  & """"
+WScript.StdOut.WriteLine "theFileName=""" & theFileName  & """"
+WScript.StdOut.WriteLine "theDriveName=""" & theDriveName  & """"
+WScript.StdOut.WriteLine "theParentFolderName=""" & theParentFolderName  & """"
+the_path = "..\\"
+the_file = "abcd.def"
+the_result = fso1.BuildPath(the_path,the_file)  ' Path can be absolute or relative and need not specify an existing folder.
+The_AbsolutePath = fso1.GetAbsolutePathName(the_result)
+theBaseName = fso1.GetBaseName(The_AbsolutePath)
+theExtName = fso1.GetExtensionName(The_AbsolutePath) ' does not include  the "."
+theFileName = fso1.GetFileName(The_AbsolutePath) ' includes filename and "." and extension
+theDriveName = fso1.GetDriveName(The_AbsolutePath) ' includes driver letter and ":"
+theParentFolderName = fso1.GetParentFolderName(The_AbsolutePath) ' the drive and folder name of the file without any trailing "\"
+theParentFolderName2 = fso1.GetParentFolderName(the_path & the_file) ' input a relative path also returns a good relative path
+WScript.StdOut.WriteLine "Buildpath  path=""" & the_path & """ file=""" & the_file & """ Result=""" & the_result & """"
+WScript.StdOut.WriteLine "AbsolutePathName=""" & The_AbsolutePath & """"
+WScript.StdOut.WriteLine "theBaseName=""" & theBaseName  & """"
+WScript.StdOut.WriteLine "theExtName=""" & theExtName  & """"
+WScript.StdOut.WriteLine "theFileName=""" & theFileName  & """"
+WScript.StdOut.WriteLine "theDriveName=""" & theDriveName  & """"
+WScript.StdOut.WriteLine "theParentFolderName (of absolute path)=""" & theParentFolderName  & """"
+WScript.StdOut.WriteLine "for a relative path=""" & the_path & the_file & """ theParentFolderName2=""" & theParentFolderName2  & """"
 set fso1=Nothing
 WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
 
