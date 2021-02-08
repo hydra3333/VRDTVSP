@@ -51,6 +51,7 @@ If UCase(cscript_strEngine) <> UCase("\CSCRIPT.EXE") Then
     ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
 	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
+WScript.StdOut.WriteLine "cscript Engine = """ & cscript_strEngine & """"
 
 
 '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -142,7 +143,7 @@ Option explicit
 dim wso, the_exe, the_cmd, x
 set wso = CreateObject("Wscript.Shell")
 the_cmd = "cmd /c dirx /s /b d:\temp\h*.jpg 2>&1"
-WScript.StdOut.WriteLine("the_cmd: " & the_cmd)
+WScript.StdOut.WriteLine("Exec command: " & the_cmd)
 set the_exe = wso.Exec(the_cmd)
 Do While the_exe.Status = 0 '0 is running and 1 is ending
      Wscript.Sleep 250
@@ -163,7 +164,6 @@ WScript.StdOut.WriteLine("Exit Status: " & x)
 Set the_exe = Nothing
 Set wso = Nothing
 '----------------------------------
-
 
 
 ' https://www.codeproject.com/Tips/507798/Differences-between-Run-and-Exec-VBScript
@@ -334,7 +334,6 @@ BUT WE CANNOT CHANGE DATE CREATED ... so resort to powershell
 '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' how can we bulk move source files in vbscript to a different folder
 '
-
 ' *** ---------------------------------------------------------------------------------------------------
 ' *** ---------------------------------------------------------------------------------------------------
 ' *** ANSWER: reporting errors is problematic ... use Exec and DOS MOVE instead 
@@ -351,6 +350,32 @@ obj.MoveFile filename1,filename1 ‘MoveFile Method is used for moving the file 
 Set obj=Nothing                                           ‘Releasing File object
 
 
+
+'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+' how can we delete a file in vbscript
+
+Dim fso
+Dim the_Err_number, the_Err_Description, the_Err_Helpfile, the_Err_HelpContext
+Dim the_filename_to_delete
+Set fso = CreateObject("Scripting.FileSystemObject")
+the_filename_to_delete = "c:\temp\some_existing_file.txt"
+WScript.StdOut.WriteLine "Deleting file: """ & the_filename_to_delete & """"
+'If fso.FileExists(the_filename_to_delete) Then
+	On Error Resume Next
+	fso.DeleteFile "c:\somefile.txt", True ' fso.DeleteFile ( filespec[, force] ) ' it also supports wildcards, allowing delete of multiple files ...
+	the_Err_number = Err.Number
+    the_Err_Description = Err.Description
+    the_Err_Helpfile = Err.Helpfile
+    the_Err_HelpContext = Err.HelpContext
+    If the_Err_number <> 0 Then
+        WScript.StdOut.WriteLine "Error " &  the_Err_number &  " " &  the_Err_Description & " : raised when Deleting file """ & the_filename_to_delete & """"
+	    Err.Clear
+    Else
+        WScript.StdOut.WriteLine "Deleted file """ & the_filename_to_delete & """"
+    End if
+	On Error Goto 0 ' now continue
+'End If
+set fso=Nothing
 
 
 '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
