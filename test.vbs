@@ -128,10 +128,11 @@ WScript.StdOut.WriteLine "------------------------------------------------------
 '----------------------------------
 ' Build a fully qualified filename from a path and filename
 WScript.StdOut.WriteLine "6. ------------------------------------------------------------------------------------------------------"
-Dim fso1
+Dim fso1, objFile
 Dim the_path, the_file, the_result, The_AbsolutePath, theBaseName, theExtName, theFileName, theDriveName
-Dim theParentFolderName, theParentFolderName2
+Dim theParentFolderName, theParentFolderName2, temp_Filename
 Set fso1 = CreateObject("Scripting.FileSystemObject")
+'
 the_path = "c:\test\"
 the_file = "abcd.def"
 the_result = fso1.BuildPath(the_path,the_file)  ' Path can be absolute or relative and need not specify an existing folder.
@@ -148,6 +149,8 @@ WScript.StdOut.WriteLine "theExtName=""" & theExtName  & """"
 WScript.StdOut.WriteLine "theFileName=""" & theFileName  & """"
 WScript.StdOut.WriteLine "theDriveName=""" & theDriveName  & """"
 WScript.StdOut.WriteLine "theParentFolderName=""" & theParentFolderName  & """"
+WScript.StdOut.WriteLine ""
+'
 the_path = "c:\temp"
 the_file = "abcd.def"
 the_result = fso1.BuildPath(the_path,the_file)  ' Path can be absolute or relative and need not specify an existing folder.
@@ -164,6 +167,8 @@ WScript.StdOut.WriteLine "theExtName=""" & theExtName  & """"
 WScript.StdOut.WriteLine "theFileName=""" & theFileName  & """"
 WScript.StdOut.WriteLine "theDriveName=""" & theDriveName  & """"
 WScript.StdOut.WriteLine "theParentFolderName=""" & theParentFolderName  & """"
+WScript.StdOut.WriteLine ""
+'
 the_path = ".\"
 the_file = "abcd.def"
 the_result = fso1.BuildPath(the_path,the_file)  ' Path can be absolute or relative and need not specify an existing folder.
@@ -180,6 +185,8 @@ WScript.StdOut.WriteLine "theExtName=""" & theExtName  & """"
 WScript.StdOut.WriteLine "theFileName=""" & theFileName  & """"
 WScript.StdOut.WriteLine "theDriveName=""" & theDriveName  & """"
 WScript.StdOut.WriteLine "theParentFolderName=""" & theParentFolderName  & """"
+WScript.StdOut.WriteLine ""
+'
 the_path = "..\\"
 the_file = "abcd.def"
 the_result = fso1.BuildPath(the_path,the_file)  ' Path can be absolute or relative and need not specify an existing folder.
@@ -198,6 +205,26 @@ WScript.StdOut.WriteLine "theFileName=""" & theFileName  & """"
 WScript.StdOut.WriteLine "theDriveName=""" & theDriveName  & """"
 WScript.StdOut.WriteLine "theParentFolderName (of absolute path)=""" & theParentFolderName  & """"
 WScript.StdOut.WriteLine "for a relative path=""" & the_path & the_file & """ theParentFolderName2=""" & theParentFolderName2  & """"
+WScript.StdOut.WriteLine ""
+'
+The_AbsolutePath = fso1.GetAbsolutePathName("C:\000-Essential-tasks\get-my-ip.bat")
+Set objFile = fso1.GetFile(The_AbsolutePath)
+WScript.StdOut.WriteLine "for existing FileName=""" & The_AbsolutePath & """ FullyQualifiedFileName=""" & objFile.Path & """ Created: """ & objFile.DateCreated & """ Last Modified: """ & objFile.DateLastModified & """ Last Accessed: """ & objFile.DateLastAccessed & """"
+WScript.StdOut.WriteLine ""
+'
+' this next one crashes since the file does not exist -  "Microsoft VBScript runtime error: File not found"
+'The_AbsolutePath = fso1.GetAbsolutePathName("C:\test\nonexistentfile.txt")
+'Set objFile = fso1.GetFile(The_AbsolutePath)
+'WScript.StdOut.WriteLine "for AbsolutePathName=""" & The_AbsolutePath & """ FullyQualifiedFileName=""" & objFile.Path & """ Created: """ & objFile.DateCreated & """ Last Accessed: """ & objFile.DateLastAccessed & """ Last Modified: """ & objFile.DateLastModified & """"
+'WScript.StdOut.WriteLine ""
+'
+the_path = "..\\"
+temp_Filename = fso1.GetTempName
+the_result = fso1.BuildPath(the_path,temp_Filename) ' Path can be absolute or relative and need not specify an existing folder.
+The_AbsolutePath = fso1.GetAbsolutePathName(the_result)
+WScript.StdOut.WriteLine "generated temp_Filename=""" & temp_Filename & """ The_AbsolutePath=""" & The_AbsolutePath & """"
+WScript.StdOut.WriteLine ""
+'
+set objFile=Nothing
 set fso1=Nothing
 WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
-
