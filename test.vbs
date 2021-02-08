@@ -343,26 +343,32 @@ WScript.StdOut.WriteLine "------------------------------------------------------
 
 '----------------------------------
 ' Can we somehow open and use external .DLL files such as mediainfo.dll
+'
 ' Answer: NO.  use the old method and use it the same for ffprobe too
 
 WScript.StdOut.WriteLine "8. ------------------------------------------------------------------------------------------------------"
 
-' Assuming a global variable vrdtvs_temp_path exists,
-' then we call like this
-' result = get_mediainfo_parameter("Video" "Codec" "V_Codec_legacy" "media_filename")
-'
-' Example:
-' Dim G_Duration_ms, V_CodecID, V_CodecID_String
-' G_Duration_ms = get_mediainfo_parameter("General","Duration","c:\foldername\media_file.mp4", "")
-' V_CodecID = get_mediainfo_parameter("Video","CodecID","c:\foldername\media_file.mp4", "")
-' V_Codec_legacy = get_mediainfo_parameter("Video","Codec","c:\foldername\media_file.mp4", "--Legacy")
-' V_CodecID_String = get_mediainfo_parameter("Video","CodecID/String","c:\foldername\media_file.mp4", "")
-
 Dim vrdtvs_mediainfoexe
 vrdtvs_mediainfoexe = "C:\SOFTWARE\MediaInfo\MediaInfo.exe"
-dim V_Width 
-V_Width = get_mediainfo_parameter("Video","Width","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4", "")
+dim V_Width, V_Height, V_DisplayAspectRatio, V_DisplayAspectRatio_string, V_DisplayAspectRatio_string_slash, A_Video_Delay_ms, A_Audio_Delay_ms
 
+V_Width = get_mediainfo_parameter("Video","Width","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4", "")
+V_Height = get_mediainfo_parameter("Video","Height","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4", "")
+V_DisplayAspectRatio = get_mediainfo_parameter("Video","DisplayAspectRatio","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4", "")
+V_DisplayAspectRatio_string = get_mediainfo_parameter("Video","DisplayAspectRatio/String","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4", "")
+V_DisplayAspectRatio_string_slash = Replace(V_DisplayAspectRatio_string,":","/",1,-1,1)
+A_Video_Delay_ms =  get_mediainfo_parameter("Audio","Video_Delay","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4", "")
+If A_Video_Delay_ms = "" Then
+	A_Video_Delay_ms = 0
+	A_Audio_Delay_ms = 0
+Else
+	A_Audio_Delay_ms = 0 - A_Video_Delay_ms
+End If
+Wscript.echo("V_Width=" & V_Width & " V_Height=" & V_Height)
+Wscript.echo("V_DisplayAspectRatio=" & V_DisplayAspectRatio)
+Wscript.echo("V_DisplayAspectRatio_string=" & V_DisplayAspectRatio_string & " V_DisplayAspectRatio_string_slash=" & V_DisplayAspectRatio_string_slash)
+Wscript.echo("A_Video_Delay_ms=" & A_Video_Delay_ms)
+Wscript.echo("A_Audio_Delay_ms=" & A_Audio_Delay_ms)
 
 Function get_mediainfo_parameter (mi_Section, mi_Parameter, mi_MediaFilename, mi_Legacy) 
 '        1. a global variable vrdtvs_mediainfoexe exists pointing to the mediainfo exe
@@ -383,7 +389,7 @@ set mi_wso = CreateObject("Wscript.Shell")
 ' If piping to a temporary file, cmd looks something like this:
 ' mi_temp_Filename = gimme_a_temporary_absolute_filename() ' generate a fully qualified temporary filename from the function
 ' mi_status = delete_a_file (mi_temp_Filename, True)
-' mi_cmd = "cmd /c " & """" & vrdtvs_mediainfoexe & """ " & mi_Legacy & " ""--Inform=" & mi_Section & ";%" & mi_Parameter & "%\r\n"" """ & mi_MediaFilename & """ > """ & mi_temp_Filename & """"
+' mi_cmd =  """" & vrdtvs_mediainfoexe & """ " & mi_Legacy & " ""--Inform=" & mi_Section & ";%" & mi_Parameter & "%\r\n"" """ & mi_MediaFilename & """ > """ & mi_temp_Filename & """"
 '
 mi_cmd = """" & vrdtvs_mediainfoexe & """ " & mi_Legacy & " ""--Inform=" & mi_Section & ";%" & mi_Parameter & "%\r\n"" """ & mi_MediaFilename & """"
 WScript.StdOut.WriteLine("DEBUG: get_mediainfo_parameter Exec command: " & mi_cmd)

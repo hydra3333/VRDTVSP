@@ -570,89 +570,90 @@ End Function
 '
 ' NO. use the old methods with Exec
 
+'----------------------------------
+' Can we somehow open and use external .DLL files such as mediainfo.dll
+'
+' Answer: NO.  use the old method and use it the same for ffprobe too
 
-:get_mediainfo_parameter
-REM DO NOT SET @setlocal ENABLEDELAYEDEXPANSION
-REM DO NOT SET @setlocal enableextensions
-REM ensure no trailing spaces in any of the lines in this routine !!
-set mi_Section=%~1
-set mi_Parameter=%~2
-set mi_Variable=%~3
-set mi_Filename=%~4
-set "mi_var="
-DEL /F "!tempfile!" >NUL 2>&1
-REM Note \r\n is Windows new-line, which is for the case of multiple audio streams, 
-REM it outputs a result for each stream on a new line, the first stream being the first entry,
-REM and the first audio stream should be the one we need. 
-REM Set /p from an input file reads the first line.
-"!mediainfoexe!" "--Inform=!mi_Section!;%%!mi_Parameter!%%\r\n" "!mi_Filename!" > "!tempfile!"
-set /p mi_var=<"!tempfile!"
-set !mi_Variable!=!mi_var!
-REM ECHO !DATE! !TIME! "!mi_Variable!=!mi_var!" from "!mi_Section!" "!mi_Parameter!"
-REM ECHO !DATE! !TIME! "!mi_Variable!=!mi_var!" from "!mi_Section!" "!mi_Parameter!" >> "!vrdlog!" 2>&1
-DEL /F "!tempfile!" >NUL 2>&1
-goto :eof
-REM
-REM -------------------------------------------------------------------------------------------------------------------------------------
-REM -------------------------------------------------------------------------------------------------------------------------------------
-REM -------------------------------------------------------------------------------------------------------------------------------------
-REM -------------------------------------------------------------------------------------------------------------------------------------
-REM -------------------------------------------------------------------------------------------------------------------------------------
-REM
-:get_mediainfo_parameter_legacy
-REM DO NOT SET @setlocal ENABLEDELAYEDEXPANSION
-REM DO NOT SET @setlocal enableextensions
-REM ensure no trailing spaces in any of the lines in this routine !!
-set mi_Section=%~1
-set mi_Parameter=%~2
-set mi_Variable=%~3
-set mi_Filename=%~4
-set "mi_var="
-DEL /F "!tempfile!" >NUL 2>&1
-REM Note \r\n is Windows new-line, which is for the case of multiple audio streams, 
-REM it outputs a result for each stream on a new line, the first stream being the first entry,
-REM and the first audio stream should be the one we need. 
-REM Set /p from an input file reads the first line.
-"!mediainfoexe!" --Legacy "--Inform=!mi_Section!;%%!mi_Parameter!%%\r\n" "!mi_Filename!" > "!tempfile!"
-set /p mi_var=<"!tempfile!"
-set !mi_Variable!=!mi_var!
-REM ECHO !DATE! !TIME! "!mi_Variable!=!mi_var!" from Legacy "!mi_Section!" "!mi_Parameter!"
-REM ECHO !DATE! !TIME! "!mi_Variable!=!mi_var!" from Legacy "!mi_Section!" "!mi_Parameter!" >> "!vrdlog!" 2>&1
-DEL /F "!tempfile!" >NUL 2>&1
-goto :eof
-REM
-REM -------------------------------------------------------------------------------------------------------------------------------------
-REM -------------------------------------------------------------------------------------------------------------------------------------
-REM -------------------------------------------------------------------------------------------------------------------------------------
-REM -------------------------------------------------------------------------------------------------------------------------------------
-REM -------------------------------------------------------------------------------------------------------------------------------------
-REM
-:get_ffprobe_video_stream_parameter
-REM DO NOT SET @setlocal ENABLEDELAYEDEXPANSION
-REM DO NOT SET @setlocal enableextensions
-REM ensure no trailing spaces in any of the lines in this routine !!
-set mi_Parameter=%~1
-set mi_Variable=%~2
-set mi_Filename=%~3
-set "mi_var="
-DEL /F "!tempfile!" >NUL 2>&1
-REM Note \r\n is Windows new-line, which is for the case of multiple audio streams, 
-REM it outputs a result for each stream on a new line, the first stream being the first entry,
-REM and the first audio stream should be the one we need. 
-REM Set /p from an input file reads the first line.
-REM see if -probesize 5000M  makes any difference
-"!ffprobeexe64!" -hide_banner -v quiet -select_streams v:0 -show_entries stream=!mi_Parameter! -of default=noprint_wrappers=1:nokey=1 "!mi_Filename!" > "!tempfile!"
-set /p mi_var=<"!tempfile!"
-set !mi_Variable!=!mi_var!
-REM ECHO !DATE! !TIME! "!mi_Variable!=!mi_var!" from ffprobe "!mi_Parameter!"
-REM ECHO !DATE! !TIME! "!mi_Variable!=!mi_var!" from ffprobe "!mi_Parameter!" >> "!vrdlog!" 2>&1
-DEL /F "!tempfile!" >NUL 2>&1
-goto :eof
+WScript.StdOut.WriteLine "8. ------------------------------------------------------------------------------------------------------"
+
+Dim vrdtvs_mediainfoexe
+vrdtvs_mediainfoexe = "C:\SOFTWARE\MediaInfo\MediaInfo.exe"
+dim V_Width, V_Height, V_DisplayAspectRatio, V_DisplayAspectRatio_string, V_DisplayAspectRatio_string_slash, A_Video_Delay_ms, A_Audio_Delay_ms
+
+V_Width = get_mediainfo_parameter("Video","Width","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4", "")
+V_Height = get_mediainfo_parameter("Video","Height","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4", "")
+V_DisplayAspectRatio = get_mediainfo_parameter("Video","DisplayAspectRatio","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4", "")
+V_DisplayAspectRatio_string = get_mediainfo_parameter("Video","DisplayAspectRatio/String","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4", "")
+V_DisplayAspectRatio_string_slash = Replace(V_DisplayAspectRatio_string,":","/",1,-1,1)
+A_Video_Delay_ms =  get_mediainfo_parameter("Audio","Video_Delay","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4", "")
+If A_Video_Delay_ms = "" Then
+	A_Video_Delay_ms = 0
+	A_Audio_Delay_ms = 0
+Else
+	A_Audio_Delay_ms = 0 - A_Video_Delay_ms
+End If
+Wscript.echo("V_Width=" & V_Width & " V_Height=" & V_Height)
+Wscript.echo("V_DisplayAspectRatio=" & V_DisplayAspectRatio)
+Wscript.echo("V_DisplayAspectRatio_string=" & V_DisplayAspectRatio_string & " V_DisplayAspectRatio_string_slash=" & V_DisplayAspectRatio_string_slash)
+Wscript.echo("A_Video_Delay_ms=" & A_Video_Delay_ms)
+Wscript.echo("A_Audio_Delay_ms=" & A_Audio_Delay_ms)
+
+Function get_mediainfo_parameter (mi_Section, mi_Parameter, mi_MediaFilename, mi_Legacy) 
+'        1. a global variable vrdtvs_mediainfoexe exists pointing to the mediainfo exe
+' Note \r\n is Windows new-line, 
+' Which in the case of multiple audio streams, outputs a result for each stream on a new line, 
+' the first stream being the first entry, and the first audio stream should be the one we need. 
+Dim mi_fso, mi_status
+'Dim mi_temp_Filename
+Dim mi_wso, mi_exe, mi_cmd, mi_tmp
+If Ucase(mi_Legacy) <> Ucase("--Legacy") AND Ucase(mi_Legacy) <> "" Then
+    WScript.StdOut.WriteLine("get_mediainfo_parameter UNRECOGNISED LEGACY PARAMETER: " & mi_Legacy & " : it should only be an empty string or --Legacy")
+    ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+End If
+Set mi_fso = CreateObject("Scripting.FileSystemObject")
+set mi_wso = CreateObject("Wscript.Shell")
+'
+' If piping to a temporary file, cmd looks something like this:
+' mi_temp_Filename = gimme_a_temporary_absolute_filename() ' generate a fully qualified temporary filename from the function
+' mi_status = delete_a_file (mi_temp_Filename, True)
+' mi_cmd =  """" & vrdtvs_mediainfoexe & """ " & mi_Legacy & " ""--Inform=" & mi_Section & ";%" & mi_Parameter & "%\r\n"" """ & mi_MediaFilename & """ > """ & mi_temp_Filename & """"
+'
+mi_cmd = """" & vrdtvs_mediainfoexe & """ " & mi_Legacy & " ""--Inform=" & mi_Section & ";%" & mi_Parameter & "%\r\n"" """ & mi_MediaFilename & """"
+WScript.StdOut.WriteLine("DEBUG: get_mediainfo_parameter Exec command: " & mi_cmd)
+set mi_exe = mi_wso.Exec(mi_cmd)
+Do While mi_exe.Status = 0 '0 is running and 1 is ending
+     Wscript.Sleep 100
+Loop
+Do Until mi_exe.StdErr.AtEndOfStream
+    mi_tmp = mi_exe.StdErr.ReadLine()
+    WScript.StdOut.WriteLine("get_mediainfo_parameter StdErr: " & mi_tmp)
+Loop
+mi_status = mi_exe.ExitCode
+If mi_status <> 0 then
+    WScript.StdOut.WriteLine("get_mediainfo_parameter ABORTING Exec command: " & mi_cmd)
+    WScript.StdOut.WriteLine("get_mediainfo_parameter ABORTING with Exit Status: " & mi_status)
+    ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+End If
+mi_tmp="" ' default to nothing
+Do Until mi_exe.StdOut.AtEndOfStream ' we need to read only one line though
+    mi_tmp = mi_exe.StdOut.ReadLine()
+    WScript.StdOut.WriteLine("DEBUG: get_mediainfo_parameter StdOut: " & mi_tmp)
+    Exit Do ' we need to read only one line so exit loop immediately
+Loop
+Set mi_exe = Nothing
+Set mi_wso = Nothing
+Set mi_fso = Nothing
+get_mediainfo_parameter = mi_tmp
+End Function
+
 
 
 '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' how can we use ffprobe from vbscript ?
-'   can we somehow create a ffprobe .DLL and perhaps use that form vbscript
+'   can we somehow create a ffprobe .DLL and perhaps use that from vbscript
 '
 
 
