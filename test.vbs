@@ -218,6 +218,7 @@ WScript.StdOut.WriteLine ""
 'WScript.StdOut.WriteLine "for AbsolutePathName=""" & The_AbsolutePath & """ FullyQualifiedFileName=""" & objFile.Path & """ Created: """ & objFile.DateCreated & """ Last Accessed: """ & objFile.DateLastAccessed & """ Last Modified: """ & objFile.DateLastModified & """"
 'WScript.StdOut.WriteLine ""
 '
+' Generate a temporary filename in a nominated folder (does not create the file)
 the_path = "..\\"
 temp_Filename = fso1.GetTempName
 the_result = fso1.BuildPath(the_path,temp_Filename) ' Path can be absolute or relative and need not specify an existing folder.
