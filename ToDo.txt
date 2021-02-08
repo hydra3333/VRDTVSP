@@ -9,6 +9,8 @@
 ' *** ------------------------------------------------------------------
 ' *** ------------------------------------------------------------------
 
+
+
 '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' How to force a vbscript .vbs to run in CSCRIPT ???
 '
@@ -52,6 +54,7 @@ If UCase(cscript_strEngine) <> UCase("\CSCRIPT.EXE") Then
 	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
 WScript.StdOut.WriteLine "cscript Engine = """ & cscript_strEngine & """"
+
 
 
 '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -101,6 +104,7 @@ WScript.StdOut.WriteLine "Named Argument value for p2=" & p2
 '- "Empty values" are DIFFERENT from empty strings: 
 '   They are uninitialized, whereas the empty string is a is regular string of zero length.
 '   You can check for empty values with the IsEmpty() function.
+
 
 
 '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -202,6 +206,7 @@ Set exe = Nothing
 Set wso = Nothing
 
 
+
 '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' Can we execute another .vbs (eg vp.vbs) and 
 '   wait for it to complete 
@@ -262,6 +267,8 @@ WScript.StdOut.WriteLine "regex_pattern        =""" & regex_pattern & """"
 WScript.StdOut.WriteLine "replacement_character=""" & replacement_character & """"
 WScript.StdOut.WriteLine "Input String         =""" & input_string & """"
 WScript.StdOut.WriteLine "Result String        =""" & result_string & """"
+
+
 
 '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' how can we change file modified,created date/time stamps in vbscript like the poweshell script does, using the date in the end of the filename
@@ -339,6 +346,7 @@ End Sub
 BUT WE CANNOT CHANGE DATE CREATED ... so resort to powershell
 
 
+
 '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' how can we bulk move source files in vbscript to a different folder
 '
@@ -350,7 +358,7 @@ BUT WE CANNOT CHANGE DATE CREATED ... so resort to powershell
 ' *** ---------------------------------------------------------------------------------------------------
 
 
-' individual file
+' individual file - do not use this
 Dim obj, filename1,filename2                                   ‘Declaring variables
 Set obj = createobject(“Scripting.FileSystemObject”) ‘Creating a File Object
 filename1=”C:\app\pictures\img1.jpg” ‘Mentioning the name and source location of the file to be moved
@@ -390,7 +398,7 @@ set fso=Nothing
 
 
 '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-' how to   Build a fully qualified filename from a path and filename and build a temporary filename
+' how to  Build a fully qualified filename from a path and filename and build a temporary filename
 '
 Dim fso1, objFile
 Dim the_path, the_file, the_result, The_AbsolutePath, theBaseName, theExtName, theFileName, theDriveName
@@ -495,28 +503,6 @@ set fso1=Nothing
 WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
 
 
-'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-' Can we somehow open and use external .DLL files such as mediainfo.dll
-'   or is there an interface altready (eg google it)
-'   ... can we even build mediainfo.dll
-'
-
-
-'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-' how can we use ffprobe from vbscript ?
-'   can we somehow create a ffprobe .DLL and perhaps use that form vbscript
-'
-
-
-
-
-
-'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-' how can we copy the contents of a file in vbscript and deal with special characters for DOS .bat files
-'    see file "G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\-----------------.BAT"
-'
-'
-
 
 '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ' how to do elapsed time calculations
@@ -575,3 +561,25 @@ Function Calculate_ElapsedTime_string (timer_StartTime, timer_EndTime)
         Exit Function
     End If
 End Function
+
+
+'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+' Can we somehow open and use external .DLL files such as mediainfo.dll
+'   or is there an interface altready (eg google it)
+'   ... can we even build mediainfo.dll
+'
+
+
+'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+' how can we use ffprobe from vbscript ?
+'   can we somehow create a ffprobe .DLL and perhaps use that form vbscript
+'
+
+
+
+
+'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+' how can we copy the contents of a file in vbscript and deal with special characters for DOS .BAT files
+'    see file "G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\-----------------.BAT"
+'
+'
