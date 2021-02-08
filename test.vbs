@@ -124,3 +124,28 @@ WScript.StdOut.WriteLine "Deleting file: """ & the_filename_to_delete & """"
 'End If
 set fso=Nothing
 WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
+
+'----------------------------------
+' Build a fully qualified filename from a path and filename
+WScript.StdOut.WriteLine "6. ------------------------------------------------------------------------------------------------------"
+Dim fso1
+Dim the_path, the_file, the_result, The_AbsolutePath
+Set fso1 = CreateObject("Scripting.FileSystemObject")
+the_path = "c:\test\"
+the_file = "abd.def"
+the_result = fso1.BuildPath(the_path,the_file)  ' Path can be absolute or relative and need not specify an existing folder.
+The_AbsolutePath = fso1.GetAbsolutePathName(the_result)
+WScript.StdOut.WriteLine "Buildpath  path=""" & the_path & """ file=""" & the_file & """ Result=""" & the_result & """ AbsolutePathName=""" & The_AbsolutePath  & """"
+the_path = "c:\temp"
+the_file = "abd.def"
+the_result = fso1.BuildPath(the_path,the_file)  ' Path can be absolute or relative and need not specify an existing folder.
+The_AbsolutePath = fso1.GetAbsolutePathName(the_result)
+WScript.StdOut.WriteLine "Buildpath  path=""" & the_path & """ file=""" & the_file & """ Result=""" & the_result & """ AbsolutePathName=""" & The_AbsolutePath  & """"
+the_path = ".\"
+the_file = "abd.def"
+the_result = fso1.BuildPath(the_path,the_file)  ' Path can be absolute or relative and need not specify an existing folder.
+The_AbsolutePath = fso1.GetAbsolutePathName(the_result)
+WScript.StdOut.WriteLine "Buildpath  path=""" & the_path & """ file=""" & the_file & """ Result=""" & the_result & """ AbsolutePathName=""" & The_AbsolutePath  & """"
+set fso1=Nothing
+WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
+
