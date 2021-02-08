@@ -568,6 +568,86 @@ End Function
 '   or is there an interface altready (eg google it)
 '   ... can we even build mediainfo.dll
 '
+' NO. use the old methods with Exec
+
+
+:get_mediainfo_parameter
+REM DO NOT SET @setlocal ENABLEDELAYEDEXPANSION
+REM DO NOT SET @setlocal enableextensions
+REM ensure no trailing spaces in any of the lines in this routine !!
+set mi_Section=%~1
+set mi_Parameter=%~2
+set mi_Variable=%~3
+set mi_Filename=%~4
+set "mi_var="
+DEL /F "!tempfile!" >NUL 2>&1
+REM Note \r\n is Windows new-line, which is for the case of multiple audio streams, 
+REM it outputs a result for each stream on a new line, the first stream being the first entry,
+REM and the first audio stream should be the one we need. 
+REM Set /p from an input file reads the first line.
+"!mediainfoexe!" "--Inform=!mi_Section!;%%!mi_Parameter!%%\r\n" "!mi_Filename!" > "!tempfile!"
+set /p mi_var=<"!tempfile!"
+set !mi_Variable!=!mi_var!
+REM ECHO !DATE! !TIME! "!mi_Variable!=!mi_var!" from "!mi_Section!" "!mi_Parameter!"
+REM ECHO !DATE! !TIME! "!mi_Variable!=!mi_var!" from "!mi_Section!" "!mi_Parameter!" >> "!vrdlog!" 2>&1
+DEL /F "!tempfile!" >NUL 2>&1
+goto :eof
+REM
+REM -------------------------------------------------------------------------------------------------------------------------------------
+REM -------------------------------------------------------------------------------------------------------------------------------------
+REM -------------------------------------------------------------------------------------------------------------------------------------
+REM -------------------------------------------------------------------------------------------------------------------------------------
+REM -------------------------------------------------------------------------------------------------------------------------------------
+REM
+:get_mediainfo_parameter_legacy
+REM DO NOT SET @setlocal ENABLEDELAYEDEXPANSION
+REM DO NOT SET @setlocal enableextensions
+REM ensure no trailing spaces in any of the lines in this routine !!
+set mi_Section=%~1
+set mi_Parameter=%~2
+set mi_Variable=%~3
+set mi_Filename=%~4
+set "mi_var="
+DEL /F "!tempfile!" >NUL 2>&1
+REM Note \r\n is Windows new-line, which is for the case of multiple audio streams, 
+REM it outputs a result for each stream on a new line, the first stream being the first entry,
+REM and the first audio stream should be the one we need. 
+REM Set /p from an input file reads the first line.
+"!mediainfoexe!" --Legacy "--Inform=!mi_Section!;%%!mi_Parameter!%%\r\n" "!mi_Filename!" > "!tempfile!"
+set /p mi_var=<"!tempfile!"
+set !mi_Variable!=!mi_var!
+REM ECHO !DATE! !TIME! "!mi_Variable!=!mi_var!" from Legacy "!mi_Section!" "!mi_Parameter!"
+REM ECHO !DATE! !TIME! "!mi_Variable!=!mi_var!" from Legacy "!mi_Section!" "!mi_Parameter!" >> "!vrdlog!" 2>&1
+DEL /F "!tempfile!" >NUL 2>&1
+goto :eof
+REM
+REM -------------------------------------------------------------------------------------------------------------------------------------
+REM -------------------------------------------------------------------------------------------------------------------------------------
+REM -------------------------------------------------------------------------------------------------------------------------------------
+REM -------------------------------------------------------------------------------------------------------------------------------------
+REM -------------------------------------------------------------------------------------------------------------------------------------
+REM
+:get_ffprobe_video_stream_parameter
+REM DO NOT SET @setlocal ENABLEDELAYEDEXPANSION
+REM DO NOT SET @setlocal enableextensions
+REM ensure no trailing spaces in any of the lines in this routine !!
+set mi_Parameter=%~1
+set mi_Variable=%~2
+set mi_Filename=%~3
+set "mi_var="
+DEL /F "!tempfile!" >NUL 2>&1
+REM Note \r\n is Windows new-line, which is for the case of multiple audio streams, 
+REM it outputs a result for each stream on a new line, the first stream being the first entry,
+REM and the first audio stream should be the one we need. 
+REM Set /p from an input file reads the first line.
+REM see if -probesize 5000M  makes any difference
+"!ffprobeexe64!" -hide_banner -v quiet -select_streams v:0 -show_entries stream=!mi_Parameter! -of default=noprint_wrappers=1:nokey=1 "!mi_Filename!" > "!tempfile!"
+set /p mi_var=<"!tempfile!"
+set !mi_Variable!=!mi_var!
+REM ECHO !DATE! !TIME! "!mi_Variable!=!mi_var!" from ffprobe "!mi_Parameter!"
+REM ECHO !DATE! !TIME! "!mi_Variable!=!mi_var!" from ffprobe "!mi_Parameter!" >> "!vrdlog!" 2>&1
+DEL /F "!tempfile!" >NUL 2>&1
+goto :eof
 
 
 '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

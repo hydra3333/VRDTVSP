@@ -125,6 +125,35 @@ WScript.StdOut.WriteLine "Deleting file: """ & the_filename_to_delete & """"
 	On Error Goto 0 ' now continue
 'End If
 set fso=Nothing
+
+Sub Delete_a_File (filename_to_delete, do_it_silently)
+Dim fso
+Dim the_Err_number, the_Err_Description, the_Err_Helpfile, the_Err_HelpContext
+Dim the_filename_to_delete
+Set fso = CreateObject("Scripting.FileSystemObject")
+filename_to_delete = "c:\temp\some_existing_file.txt"
+WScript.StdOut.WriteLine "Deleting file: """ & filename_to_delete & """"
+'If fso.FileExists(filename_to_delete) Then
+	On Error Resume Next
+	fso.DeleteFile "c:\somefile.txt", True ' fso.DeleteFile ( filespec[, force] ) ' it also supports wildcards, allowing delete of multiple files ...
+	the_Err_number = Err.Number
+    the_Err_Description = Err.Description
+    the_Err_Helpfile = Err.Helpfile
+    the_Err_HelpContext = Err.HelpContext
+    If the_Err_number <> 0 Then
+        If NOT do_it_silently Then
+            WScript.StdOut.WriteLine "Error " &  the_Err_number &  " " &  the_Err_Description & " : raised when Deleting file """ & filename_to_delete & """"
+        End If
+	    Err.Clear
+    Else
+        If NOT do_it_silently Then
+            WScript.StdOut.WriteLine "Deleted file """ & filename_to_delete & """"
+        End If
+    End if
+	On Error Goto 0 ' now continue
+'End If
+set fso=Nothing
+
 WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
 
 '----------------------------------
@@ -234,6 +263,7 @@ WScript.StdOut.WriteLine "------------------------------------------------------
 
 '----------------------------------
 ' do elapsed time calculations
+WScript.StdOut.WriteLine "7. ------------------------------------------------------------------------------------------------------"
 
 dim timer_StartTime, timer_EndTime, timer_ElapsedTime
 timer_StartTime = Timer()
@@ -288,4 +318,50 @@ Function Calculate_ElapsedTime_string (timer_StartTime, timer_EndTime)
         Calculate_ElapsedTime_string = Int(days) & " days " & Int(hours) & " hours " & Int(minutes) & " minutes " & FormatNumber(seconds,3) & " second" & seconds_plural
         Exit Function
     End If
+End Function
+WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
+
+
+'----------------------------------
+' Can we somehow open and use external .DLL files such as mediainfo.dll
+' Answer: NO.  use the old method and use it the same for ffprobe too
+
+WScript.StdOut.WriteLine "8. ------------------------------------------------------------------------------------------------------"
+
+
+result = get_mediainfo_parameter "Video" "Codec" "V_Codec_legacy" "media_filename" 
+
+
+
+Function get_mediainfo_parameter (mi_Section, mi_Parameter, mi_MediaFilename)
+'
+' Assume a global variable vrdtvs_temp_path exists as a string without a trailing slash
+'        and we rely on and use this to create temporary working files
+'
+Dim mi_tempfile
+Dim fso
+Set fso = CreateObject("Scripting.FileSystemObject")
+
+
+set "mi_var="
+
+
+
+Call Delete_a_File (mi_tempfile, True) ' delete a temp file silently
+
+DEL /F "!tempfile!" >NUL 2>&1
+' Note \r\n is Windows new-line, 
+' Which in the case of multiple audio streams, outputs a result for each stream on a new line, 
+' the first stream being the first entry, and the first audio stream should be the one we need. 
+
+
+"!mediainfoexe!" "--Inform=!mi_Section!;%%!mi_Parameter!%%\r\n" "!mi_Filename!" > "!tempfile!"
+set /p mi_var=<"!tempfile!"
+set !mi_Variable!=!mi_var!
+REM ECHO !DATE! !TIME! "!mi_Variable!=!mi_var!" from "!mi_Section!" "!mi_Parameter!"
+REM ECHO !DATE! !TIME! "!mi_Variable!=!mi_var!" from "!mi_Section!" "!mi_Parameter!" >> "!vrdlog!" 2>&1
+DEL /F "!tempfile!" >NUL 2>&1
+goto :eof
+
+
 End Function
