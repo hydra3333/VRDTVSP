@@ -11,6 +11,7 @@ WScript.StdOut.WriteLine "------------------------------------------------------
 Dim  cscript_wshShell, cscript_strEngine
 Set cscript_wshShell = CreateObject( "WScript.Shell" )
 cscript_strEngine = UCase( Right( WScript.FullName, 12 ) )
+Set cscript_wshShell = Nothing
 WScript.Echo "Checked and CSCRIPT Engine = """ & cscript_strEngine & """" ' .Echo works in both wscript and cscript
 If UCase(cscript_strEngine) <> UCase("\CSCRIPT.EXE") Then
     ' exit immediately with error code 17 cannot perform the requested operation
@@ -22,15 +23,27 @@ If UCase(cscript_strEngine) <> UCase("\CSCRIPT.EXE") Then
 	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
 WScript.StdOut.WriteLine "Checked and cscript Engine = """ & cscript_strEngine & """"
+WScript.StdOut.WriteLine "VRDTVS Script name: " & Wscript.ScriptName
+WScript.StdOut.WriteLine "VRDTVS Script path: " & Wscript.ScriptFullName
 WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
 '----------------------------------------------------------------------------------------------------------------------------------------
+'
+' Setup Global variables
+'
+Dim vrdtvs_ScriptName
+vrdtvs_ScriptName = Wscript.ScriptName
+WScript.StdOut.WriteLine(vrdtvs_ScriptName & " Started.")
+'
+Dim vrdtvs_DEBUG
+vrdtvs_DEBUG = True
+'
 ' Setup Global Objects (remember to Set the_object=Nothing later)
 '
 dim fso, wso
 set wso = CreateObject("Wscript.Shell")
 Set fso = CreateObject("Scripting.FileSystemObject")
 '
-' Setup Global exe files, resolving them to Absolute paths
+' Setup Global exe file paths, resolving them to Absolute paths
 '
 Dim _vs_root
 Dim vrdtvs_mediainfoexe64
@@ -45,49 +58,111 @@ vrdtvs_ffprobeexe64 = fso.GetAbsolutePathName(fso.BuildPath(_vs_root,"ffprobe.ex
 vrdtvs_ffmpegexe64 = fso.GetAbsolutePathName(fso.BuildPath(_vs_root,"ffmpeg.exe"))
 vrdtvs_dgindexNVexe64 = fso.GetAbsolutePathName(fso.BuildPath(_vs_root,"DGIndex\DGIndexNV.exe"))
 '
-' Setup Global Paths
+' Setup Global Paths, resolving them to Absolute paths
 '
+Dim vrdtvs_source_TS_Folder
+Dim vrdtvs_done_TS_Folder
+Dim vrdtvs_destination_mp4_Folder
+Dim vrdtvs_failed_conversion_TS_Folder
 Dim vrdtvs_temp_path
-Dim _HDTV
-
 vrdtvs_source_TS_Folder = fso.GetAbsolutePathName("G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\"))
 vrdtvs_done_TS_Folder = fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_source_TS_Folder,"VRDTVS-done\"))
 vrdtvs_destination_mp4_Folder = fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_source_TS_Folder,"VRDTVS-Converted\"))
 vrdtvs_failed_conversion_TS_Folder = fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_source_TS_Folder,"VRDTVS-Failed-Conversio\"))
 vrdtvs_temp_path = fso.GetAbsolutePathName("D:\VRDTVS-SCRATCH\")
+' just examples of stuff for re-use in future BuildPath calls
+' theParentFolderName = fso.GetParentFolderName(an_AbsolutePath) ' the drive and folder name of the file without any trailing "\"
+' theBaseName = fso.GetBaseName(an_AbsolutePath)
+' theExtName = fso.GetExtensionName(an_AbsolutePath) ' does not include  the "."
+' theFileName = fso.GetFileName(an_AbsolutePath) ' includes filename and "." and extension
+' theDriveName = fso.GetDriveName(an_AbsolutePath) ' includes driver letter and ":"
+' theParentFolderName = fso.GetParentFolderName(an_AbsolutePath) 
 
 
 
 
 
-'----------------------------------
-' Run a command and capture output and errors
-WScript.StdOut.WriteLine "2. ------------------------------------------------------------------------------------------------------"
-dim wso, the_exe, the_cmd, x
-set wso = CreateObject("Wscript.Shell")
-the_cmd = "cmd /c dirx /s /b d:\temp\h*.jpg 2>&1"
-WScript.StdOut.WriteLine("Exec command: " & the_cmd)
-set the_exe = wso.Exec(the_cmd)
-Do While the_exe.Status = 0 '0 is running and 1 is ending
-     Wscript.Sleep 250
-Loop
-Do Until the_exe.StdOut.AtEndOfStream
-    x=the_exe.StdOut.ReadLine()
-    WScript.StdOut.WriteLine("StdOut: " & x)
-    'Wscript.echo x
-Loop
-Do Until the_exe.StdErr.AtEndOfStream
-    x=the_exe.StdErr.ReadLine()
-    WScript.StdOut.WriteLin("StdErr: " & x)
-    'Wscript.echo(x)
-Loop
-x=the_exe.ExitCode
-WScript.StdOut.WriteLine("Exit Status: " & x)
-'Wscript.echo(x)
-Set the_exe = Nothing
-Set wso = Nothing
-WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
 
+' .... code goes in here
+
+
+
+
+WScript.StdOut.WriteLine(vrdtvs_ScriptName & " Finished.")
+WScript.Quit
+'----------------------------------------------------------------------------------------------------------------------------------------
+'----------------------------------------------------------------------------------------------------------------------------------------
+'
+' Subroutines and Functions
+'
+Function vrdtvs_delete_a_file (filename_to_delete, do_it_silently)
+    ' rely on global variable "fso"
+    ' Parameters:
+    '   filename_to_delete      a fully qualified filename
+    '   do_it_silently          true or false
+    Dim daf_Err_number, daf_Err_Description, daf_Err_Helpfile, daf_Err_HelpContext
+    Dim daf_filename_to_delete
+    If NOT do_it_silently Then
+        WScript.StdOut.WriteLine "Deleting file: """ & filename_to_delete & """"
+    End If
+    If vrdtvs_DEBUG Then
+        WScript.StdOut.WriteLine "DEBUG: Deleting file: """ & filename_to_delete & """"
+    End If
+    'If fso.FileExists(filename_to_delete) Then
+    	On Error Resume Next
+	    fso.DeleteFile filename_to_delete, True ' fso.DeleteFile ( filespec[, force] ) ' it also supports wildcards, allowing delete of multiple files ...
+	    daf_Err_number = Err.Number
+        daf_Err_Description = Err.Description
+        daf_Err_Helpfile = Err.Helpfile
+        daf_Err_HelpContext = Err.HelpContext
+        If daf_Err_number <> 0 Then
+            If NOT do_it_silently Then
+                WScript.StdOut.WriteLine "Error " &  daf_Err_number &  " " &  daf_Err_Description & " : raised when Deleting file """ & filename_to_delete & """"
+            End If
+            If vrdtvs_DEBUG Then
+                WScript.StdOut.WriteLine "DEBUG: Error " &  daf_Err_number &  " " &  daf_Err_Description & " : raised when Deleting file """ & filename_to_delete & """"
+            End If
+	        Err.Clear
+        Else
+            If NOT do_it_silently Then
+                WScript.StdOut.WriteLine "Deleted file """ & filename_to_delete & """"
+            End If
+            If vrdtvs_DEBUG Then
+                WScript.StdOut.WriteLine "DEBUG: Deleted file """ & filename_to_delete & """"
+            End If
+        End if
+	    On Error Goto 0 ' now continue
+    'End If
+    vrdtvs_delete_a_file = daf_Err_number
+End Function
+'
+Function vrdtvs_gimme_a_temporary_absolute_filename ()
+    ' rely on global variable "fso"
+    ' rely on global variable "vrdtvs_temp_path" being set to a valid path
+    ' Parameters: none
+    Dim atf_temp
+    atf_temp = fso.GetTempName & ".tmp"
+    atf_temp = fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_temp_path,atf_temp)) ' rely on global variable "vrdtvs_temp_path" already being set to a valid path
+    If vrdtvs_DEBUG Then
+        WScript.StdOut.WriteLine "DEBUG: generated a_temporary_filename=""" & a_temporary_filename & """"
+    End If
+    vrdtvs_gimme_a_temporary_absolute_filename = atf_temp
+End Function
+
+
+
+
+
+
+
+
+
+
+
+
+
+'----------------------------------------------------------------------------------------------------------------------------------------
+'----------------------------------------------------------------------------------------------------------------------------------------
 '----------------------------------
 ' How to parse commandline aruments in vbscript
 
@@ -142,62 +217,6 @@ WScript.StdOut.WriteLine "Input String         =""" & input_string & """"
 WScript.StdOut.WriteLine "Result String        =""" & result_string & """"
 WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
 
-'----------------------------------
-' Delete a file
-WScript.StdOut.WriteLine "5. ------------------------------------------------------------------------------------------------------"
-Dim fso
-Dim the_Err_number, the_Err_Description, the_Err_Helpfile, the_Err_HelpContext
-Dim the_filename_to_delete
-Set fso = CreateObject("Scripting.FileSystemObject")
-the_filename_to_delete = "c:\temp\some_existing_file.txt"
-WScript.StdOut.WriteLine "Deleting file: """ & the_filename_to_delete & """"
-'If fso.FileExists(the_filename_to_delete) Then
-	On Error Resume Next
-	fso.DeleteFile "c:\somefile.txt", True ' fso.DeleteFile ( filespec[, force] ) ' it also supports wildcards, allowing delete of multiple files ...
-	the_Err_number = Err.Number
-    the_Err_Description = Err.Description
-    the_Err_Helpfile = Err.Helpfile
-    the_Err_HelpContext = Err.HelpContext
-    If the_Err_number <> 0 Then
-        WScript.StdOut.WriteLine "Error " &  the_Err_number &  " " &  the_Err_Description & " : raised when Deleting file """ & the_filename_to_delete & """"
-	    Err.Clear
-    Else
-        WScript.StdOut.WriteLine "Deleted file """ & the_filename_to_delete & """"
-    End if
-	On Error Goto 0 ' now continue
-'End If
-set fso=Nothing
-
-Function delete_a_file (filename_to_delete, do_it_silently)
-    Dim daf_fso
-    Dim daf_Err_number, daf_Err_Description, daf_Err_Helpfile, daf_Err_HelpContext
-    Dim daf_filename_to_delete
-    If NOT do_it_silently Then
-        WScript.StdOut.WriteLine "Deleting file: """ & filename_to_delete & """"
-    End If
-    Set daf_fso=CreateObject("Scripting.FileSystemObject")
-    'If daf_fso.FileExists(filename_to_delete) Then
-    	On Error Resume Next
-	    daf_fso.DeleteFile filename_to_delete, True ' daf_fso.DeleteFile ( filespec[, force] ) ' it also supports wildcards, allowing delete of multiple files ...
-	    daf_Err_number = Err.Number
-        daf_Err_Description = Err.Description
-        daf_Err_Helpfile = Err.Helpfile
-        daf_Err_HelpContext = Err.HelpContext
-        If daf_Err_number <> 0 Then
-            If NOT do_it_silently Then
-                WScript.StdOut.WriteLine "Error " &  daf_Err_number &  " " &  daf_Err_Description & " : raised when Deleting file """ & filename_to_delete & """"
-            End If
-	        Err.Clear
-        Else
-            If NOT do_it_silently Then
-                WScript.StdOut.WriteLine "Deleted file """ & filename_to_delete & """"
-            End If
-        End if
-	    On Error Goto 0 ' now continue
-    'End If
-    set daf_fso=Nothing
-    delete_a_file = daf_Err_number
-End Function
 
 WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
 
