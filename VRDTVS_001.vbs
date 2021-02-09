@@ -31,7 +31,7 @@ WScript.StdOut.WriteLine "------------------------------------------------------
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Setup Global (default) variables
 '
-Dim vrdtvs_tmp, vrdtvs_status, vrdtvs_exit_code, vrdrvs_Err_Code, vrdrvs_Err_Description ' a few working variables, for common use
+Dim vrdtvs_tmp, vrdtvs_status, vrdtvs_exit_code, vrdrvs_Err_Code, vrdrvs_Err_Description, vrdtvs_cmd, vrdtvs_exe ' a few working variables, for common use
 '
 Dim vrdtvs_run_datetime
 vrdtvs_run_datetime = vrdtvs_current_datetime() ' start of runtime, for common use
@@ -218,11 +218,28 @@ If vrdrvs_Err_Code <> 0 Then
     ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
     WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
+'
+' Exec it asynchronously and do not wait for it to finish
+'
+
+ vrdtvs_tmp, vrdtvs_status, vrdtvs_exit_code, vrdrvs_Err_Code, vrdrvs_Err_Description, vrdtvs_cmd, vrdtvs_exe
+
+
+ ???????????? start /min "!iFile!" "!source_TS_Folder!!iFile!"
+
+
+vrdtvs_cmd = "START /min """ & vrdtvs_Insomnia64_tmp_filename & """ "" """
+
+' Exec has a .Terminate ' note - this type of process kill does NOT clean up properly and may cause memory leaks - use only as a last resort!
+
+
+WScript.StdOut.WriteLine("VTDRVS Exec command: " & vrdtvs_cmd)
+set vrdtvs_exe = wso.Exec(vrdtvs_cmd)
+Set vrdtvs_exe = Nothing
+WScript.StdOut.WriteLine("VTDRVS Exec command: " & vrdtvs_cmd & " is run asynchronously and status is NOT checked.")
 
 
 
-
-Exec it asynchronously and do not wait for it to finish
 
 
 
