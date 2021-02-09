@@ -89,35 +89,13 @@ vrdtvs_failed_conversion_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandl
 vrdtvs_temp_path = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("temp_path",vrdtvs_temp_path))
 
 ????????????????
-vrdtvs_DEBUG = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("DEBUG",vrdtvs_DEBUG)) ' false = 0 true = -1
+vrdtvs_DEBUG = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("DEBUG",vrdtvs_DEBUG)) ' false = 0 true = -1 or 1
 ????????????????
 
 
 
 create the folders if they do not already exist
 
-
-
-Function vrdtvs_get_commandline_parameter(gcp_argument_name, gcp_default_value)
-    ' Parameters: 
-    '   gcp_argument_name       named argument specified on commandline like 
-    '                               /p1:"This is the value for p1"
-    '   gcp_default_value       a default value if the parameter is not specified on the commandline (or specified with no value)
-    ' Call like this:
-    '       x = vrdtvs_get_commandline_parameter("source_TS_Folder","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\")
-    ' NOTE: if the commandline parameter is a path or something, it is NOT checked or Absoluted by this function
-Dim gcp_argument_count, gcp_NamedArgs, gcp_Return_Value
-gcp_argument_count = WScript.Arguments.Count
-gcp_Return_Value = gcp_default_value ' default to return the default_value
-If gcp_argument_count > 0 Then
-    Set gcp_NamedArgs = WScript.Arguments.Named
-    If NamedArgs.Exists(gcp_argument_name) and NOT IsEmpty(NamedArgs(gcp_argument_name)) Then ' IsEmpty is a special case of exists but has no value, but is not "" which is different
-        gcp_Return_Value = NamedArgs.Item(gcp_argument_name)
-    End If
-    Set gcp_NamedArgs = Nothing
-End If
-vrdtvs_get_commandline_parameter = gcp_Return_Value
-End Function
 
 
 
@@ -173,6 +151,41 @@ WScript.Quit
 '----------------------------------------------------------------------------------------------------------------------------------------
 '
 ' Subroutines and Functions
+'
+Function vrdtvs_get_commandline_parameter(gcp_argument_name, gcp_default_value)
+    ' Parameters: 
+    '   gcp_argument_name       named argument specified on commandline like 
+    '                               /p1:"This is the value for p1"
+    '   gcp_default_value       a default value if the parameter is not specified on the commandline (or specified with no value)
+    ' Call like this:
+    '       x = vrdtvs_get_commandline_parameter("source_TS_Folder", "G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\")
+    '       x = vrdtvs_get_commandline_parameter("True_or_False", False)
+    ' NOTE: if the commandline parameter is a path or something, it is NOT checked or Absoluted by this function
+    Dim gcp_argument_count, gcp_NamedArgs, gcp_Return_Value
+    gcp_argument_count = WScript.Arguments.Count
+    gcp_Return_Value = gcp_default_value ' default to return the default_value
+    If vrdtvs_DEBUG Then 
+        WScript.StdOut.WriteLine "DEBUG: vrdtvs_get_commandline_parameter gcp_argument_name=" & gcp_argument_name
+        WScript.StdOut.WriteLine "DEBUG: vrdtvs_get_commandline_parameter gcp_default_value=" & gcp_default_value
+    End If
+    If gcp_argument_count > 0 Then
+        Set gcp_NamedArgs = WScript.Arguments.Named
+        If gcp_NamedArgs.Exists(gcp_argument_name) and NOT IsEmpty(gcp_NamedArgs(gcp_argument_name)) Then ' IsEmpty is a special case of exists but has no value, but is not "" which is different
+            gcp_Return_Value = gcp_NamedArgs.Item(gcp_argument_name)
+            If Ucase(gcp_Return_Value) = Ucase("True")  Then 
+                gcp_Return_Value = True    ' if required, convert to boolean True
+                WScript.StdOut.WriteLine "DEBUG: vrdtvs_get_commandline_parameter converted to boolean True gcp_Return_Value=" & gcp_Return_Value
+            End If
+            If Ucase(gcp_Return_Value) = Ucase("False") Then 
+                gcp_Return_Value = False   ' if required, convert to boolean False
+                WScript.StdOut.WriteLine "DEBUG: vrdtvs_get_commandline_parameter converted to boolean False gcp_Return_Value=" & gcp_Return_Value
+            End If
+        End If
+        Set gcp_NamedArgs = Nothing
+    End If
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_get_commandline_parameter exiting with gcp_Return_Value=" & gcp_Return_Value
+    vrdtvs_get_commandline_parameter = gcp_Return_Value
+End Function
 '
 Function vrdtvs_current_datetime_string ()
     'return format: YYYY.MM.DD-HH.MM.SS.mmm
