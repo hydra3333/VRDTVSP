@@ -105,9 +105,7 @@ Function vrdtvs_delete_a_file (filename_to_delete, do_it_silently)
     If NOT do_it_silently Then
         WScript.StdOut.WriteLine "Deleting file: """ & filename_to_delete & """"
     End If
-    If vrdtvs_DEBUG Then
-        WScript.StdOut.WriteLine "DEBUG: Deleting file: """ & filename_to_delete & """"
-    End If
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: Deleting file: """ & filename_to_delete & """"
     'If fso.FileExists(filename_to_delete) Then
     	On Error Resume Next
 	    fso.DeleteFile filename_to_delete, True ' fso.DeleteFile ( filespec[, force] ) ' it also supports wildcards, allowing delete of multiple files ...
@@ -119,20 +117,17 @@ Function vrdtvs_delete_a_file (filename_to_delete, do_it_silently)
             If NOT do_it_silently Then
                 WScript.StdOut.WriteLine "Error " &  daf_Err_number &  " " &  daf_Err_Description & " : raised when Deleting file """ & filename_to_delete & """"
             End If
-            If vrdtvs_DEBUG Then
-                WScript.StdOut.WriteLine "DEBUG: Error " &  daf_Err_number &  " " &  daf_Err_Description & " : raised when Deleting file """ & filename_to_delete & """"
-            End If
+            If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: Error " &  daf_Err_number &  " " &  daf_Err_Description & " : raised when Deleting file """ & filename_to_delete & """"
 	        Err.Clear
         Else
             If NOT do_it_silently Then
                 WScript.StdOut.WriteLine "Deleted file """ & filename_to_delete & """"
             End If
-            If vrdtvs_DEBUG Then
-                WScript.StdOut.WriteLine "DEBUG: Deleted file """ & filename_to_delete & """"
-            End If
+            If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: Deleted file """ & filename_to_delete & """"
         End if
 	    On Error Goto 0 ' now continue
     'End If
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_delete_a_file exiting with status=""" & daf_Err_number & """"
     vrdtvs_delete_a_file = daf_Err_number
 End Function
 '
@@ -141,15 +136,14 @@ Function vrdtvs_gimme_a_temporary_absolute_filename ()
     ' rely on global variable "vrdtvs_temp_path" being set to a valid path
     ' Parameters: none
     Dim atf_temp
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: entered vrdtvs_gimme_a_temporary_absolute_filename")
     atf_temp = fso.GetTempName & ".tmp"
     atf_temp = fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_temp_path,atf_temp)) ' rely on global variable "vrdtvs_temp_path" already being set to a valid path
-    If vrdtvs_DEBUG Then
-        WScript.StdOut.WriteLine "DEBUG: generated a_temporary_filename=""" & a_temporary_filename & """"
-    End If
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_gimme_a_temporary_absolute_filename generated a_temporary_filename=""" & atf_temp & """"
     vrdtvs_gimme_a_temporary_absolute_filename = atf_temp
 End Function
 '
-Function Calculate_ElapsedTime_ms (timer_StartTime, timer_EndTime)
+Function vrdtvs_Calculate_ElapsedTime_ms (timer_StartTime, timer_EndTime)
     ' Parameters:
     '   timer_StartTime
     '   timer_EndTime
@@ -158,11 +152,11 @@ Function Calculate_ElapsedTime_ms (timer_StartTime, timer_EndTime)
     '       timer_StartTime = Timer()
     '       Wscript.Sleep 750 ' milliseconds
     '       timer_EndTime = Timer()
-    '       Wscript.Echo "Function Elapsed Time in ms : " & Calculate_ElapsedTime_ms(timer_StartTime, timer_EndTime)
-    Calculate_ElapsedTime_ms = Round(timer_EndTime - timer_StartTime, 3) * 1000 ' round to 3 decimal places is milliseconds
+    '       Wscript.Echo "Function Elapsed Time in ms : " & vrdtvs_Calculate_ElapsedTime_ms(timer_StartTime, timer_EndTime)
+    vrdtvs_Calculate_ElapsedTime_ms = Round(timer_EndTime - timer_StartTime, 3) * 1000 ' round to 3 decimal places is milliseconds
 End Function
 '
-Function Calculate_ElapsedTime_string (timer_StartTime, timer_EndTime)
+Function vrdtvs_Calculate_ElapsedTime_string (timer_StartTime, timer_EndTime)
     ' Parameters:
     '   timer_StartTime
     '   timer_EndTime
@@ -171,7 +165,7 @@ Function Calculate_ElapsedTime_string (timer_StartTime, timer_EndTime)
     '       timer_StartTime = Timer()
     '       Wscript.Sleep 750 ' milliseconds
     '       timer_EndTime = Timer()
-    '       Wscript.Echo "Function Elapsed Time String: " & Calculate_ElapsedTime_string(timer_StartTime, timer_EndTime)
+    '       Wscript.Echo "Function Elapsed Time String: " & vrdtvs_Calculate_ElapsedTime_string(timer_StartTime, timer_EndTime)
     Const SECONDS_IN_DAY    = 86400
     Const SECONDS_IN_HOUR   = 3600
     Const SECONDS_IN_MINUTE = 60
@@ -184,20 +178,20 @@ Function Calculate_ElapsedTime_string (timer_StartTime, timer_EndTime)
 		seconds_plural = ""
 	End If
     If seconds < SECONDS_IN_MINUTE Then
-        Calculate_ElapsedTime_string = FormatNumber(seconds,3) & " second" & seconds_plural
+        vrdtvs_Calculate_ElapsedTime_string = FormatNumber(seconds,3) & " second" & seconds_plural
         Exit Function
     End If
     If seconds < SECONDS_IN_HOUR Then 
         minutes = seconds / SECONDS_IN_MINUTE
         seconds = seconds MOD SECONDS_IN_MINUTE
-        Calculate_ElapsedTime_string = Int(minutes) & " minutes " & FormatNumber(seconds,3) & " second" & seconds_plural
+        vrdtvs_Calculate_ElapsedTime_string = Int(minutes) & " minutes " & FormatNumber(seconds,3) & " second" & seconds_plural
         Exit Function
     End If
     If seconds < SECONDS_IN_DAY Then
         hours   = seconds / SECONDS_IN_HOUR
         minutes = (seconds MOD SECONDS_IN_HOUR) / SECONDS_IN_MINUTE
         seconds = (seconds MOD SECONDS_IN_HOUR) MOD SECONDS_IN_MINUTE
-        Calculate_ElapsedTime_string = Int(hours) & " hours " & Int(minutes) & " minutes " & FormatNumber(seconds,3) & " second" & seconds_plural
+        vrdtvs_Calculate_ElapsedTime_string = Int(hours) & " hours " & Int(minutes) & " minutes " & FormatNumber(seconds,3) & " second" & seconds_plural
         Exit Function
     End If
     If seconds < SECONDS_IN_WEEK Then
@@ -205,11 +199,64 @@ Function Calculate_ElapsedTime_string (timer_StartTime, timer_EndTime)
         hours   = (seconds MOD SECONDS_IN_DAY) / SECONDS_IN_HOUR
         minutes = ((seconds MOD SECONDS_IN_DAY) MOD SECONDS_IN_HOUR) / SECONDS_IN_MINUTE
         seconds = ((seconds MOD SECONDS_IN_DAY) MOD SECONDS_IN_HOUR) MOD SECONDS_IN_MINUTE
-        Calculate_ElapsedTime_string = Int(days) & " days " & Int(hours) & " hours " & Int(minutes) & " minutes " & FormatNumber(seconds,3) & " second" & seconds_plural
+        vrdtvs_Calculate_ElapsedTime_string = Int(days) & " days " & Int(hours) & " hours " & Int(minutes) & " minutes " & FormatNumber(seconds,3) & " second" & seconds_plural
         Exit Function
     End If
 End Function
-
+'
+Function vrdtvs_get_mediainfo_parameter (mi_Section, mi_Parameter, mi_MediaFilename, mi_Legacy) 
+    ' rely on global variable "fso"
+    ' rely on global variable vrdtvs_mediainfoexe64 exists pointing to the mediainfo exe
+    ' Note \r\n is Windows new-line, 
+    ' Which in the case of multiple audio streams, outputs a result for each stream on a new line, 
+    ' the first stream being the first entry, and the first audio stream should be the one we need. 
+    Dim mi_exe
+    Dim mi_cmd, mi_status, mi_tmp
+    'Dim mi_temp_Filename
+    If vrdtvs_DEBUG Then
+        WScript.StdOut.WriteLine("DEBUG: vrdtvs_get_mediainfo_parameter      mi_Section= " & mi_Section)
+        WScript.StdOut.WriteLine("DEBUG: vrdtvs_get_mediainfo_parameter    mi_Parameter= " & mi_Sectimi_Parameteron)
+        WScript.StdOut.WriteLine("DEBUG: vrdtvs_get_mediainfo_parameter mi_MediaFilename= " & mi_MediaFilename)
+        WScript.StdOut.WriteLine("DEBUG: vrdtvs_get_mediainfo_parameter        mi_Legacy= " & mi_Legacy)
+    End If
+    If Ucase(mi_Legacy) <> Ucase("--Legacy") AND Ucase(mi_Legacy) <> "" Then
+        WScript.StdOut.WriteLine("ERROR: vrdtvs_get_mediainfo_parameter UNRECOGNISED LEGACY PARAMETER: " & mi_Legacy & " : it should only be an empty string or --Legacy")
+        ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
+	    WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+    End If
+    '
+    ' If piping to a temporary file, cmd looks something like this:
+    ' mi_temp_Filename = vrdtvs_gimme_a_temporary_absolute_filename() ' generate a fully qualified temporary filename from the function
+    ' mi_status = delete_a_file (mi_temp_Filename, True)
+    ' mi_cmd =  """" & vrdtvs_mediainfoexe64 & """ " & mi_Legacy & " ""--Inform=" & mi_Section & ";%" & mi_Parameter & "%\r\n"" """ & mi_MediaFilename & """ > """ & mi_temp_Filename & """"
+    '
+    mi_cmd = """" & vrdtvs_mediainfoexe64 & """ " & mi_Legacy & " ""--Inform=" & mi_Section & ";%" & mi_Parameter & "%\r\n"" """ & mi_MediaFilename & """"
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_get_mediainfo_parameter Exec command: " & mi_cmd)
+    set mi_exe = wso.Exec(mi_cmd)
+    Do While mi_exe.Status = 0 '0 is running and 1 is ending
+        Wscript.Sleep 100
+    Loop
+    Do Until mi_exe.StdErr.AtEndOfStream
+        mi_tmp = mi_exe.StdErr.ReadLine()
+        WScript.StdOut.WriteLine("ERROR: vrdtvs_get_mediainfo_parameter StdErr: " & mi_tmp)
+    Loop
+    mi_status = mi_exe.ExitCode
+    If mi_status <> 0 then
+        WScript.StdOut.WriteLine("ERROR: vrdtvs_get_mediainfo_parameter ABORTING Exec command: " & mi_cmd)
+        WScript.StdOut.WriteLine("ERROR: vrdtvs_get_mediainfo_parameter ABORTING with Exit Status: " & mi_status)
+        ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
+	    WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+    End If
+    mi_tmp="" ' default to nothing
+    Do Until mi_exe.StdOut.AtEndOfStream ' we need to read only one line though
+        mi_tmp = mi_exe.StdOut.ReadLine()
+        If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_get_mediainfo_parameter StdOut: " & mi_tmp)
+        Exit Do ' we need to read only THE FIRST line so exit loop immediately after doing that
+    Loop
+    Set mi_exe = Nothing
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_get_mediainfo_parameter exiting with value: " & mi_tmp)
+    vrdtvs_get_mediainfo_parameter = mi_tmp
+End Function
 
 
 
@@ -311,55 +358,7 @@ Wscript.echo("V_DisplayAspectRatio_string=" & V_DisplayAspectRatio_string & " V_
 Wscript.echo("A_Video_Delay_ms=" & A_Video_Delay_ms)
 Wscript.echo("A_Audio_Delay_ms=" & A_Audio_Delay_ms)
 
-Function get_mediainfo_parameter (mi_Section, mi_Parameter, mi_MediaFilename, mi_Legacy) 
-    '        1. a global variable vrdtvs_mediainfoexe64 exists pointing to the mediainfo exe
-    ' Note \r\n is Windows new-line, 
-    ' Which in the case of multiple audio streams, outputs a result for each stream on a new line, 
-    ' the first stream being the first entry, and the first audio stream should be the one we need. 
-    Dim mi_fso, mi_status
-    'Dim mi_temp_Filename
-    Dim mi_wso, mi_exe, mi_cmd, mi_tmp
-    If Ucase(mi_Legacy) <> Ucase("--Legacy") AND Ucase(mi_Legacy) <> "" Then
-        WScript.StdOut.WriteLine("get_mediainfo_parameter UNRECOGNISED LEGACY PARAMETER: " & mi_Legacy & " : it should only be an empty string or --Legacy")
-        ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
-	    WScript.Quit 17 ' Error 17 = cannot perform the requested operation
-    End If
-    Set mi_fso = CreateObject("Scripting.FileSystemObject")
-    set mi_wso = CreateObject("Wscript.Shell")
-    '
-    ' If piping to a temporary file, cmd looks something like this:
-    ' mi_temp_Filename = gimme_a_temporary_absolute_filename() ' generate a fully qualified temporary filename from the function
-    ' mi_status = delete_a_file (mi_temp_Filename, True)
-    ' mi_cmd =  """" & vrdtvs_mediainfoexe64 & """ " & mi_Legacy & " ""--Inform=" & mi_Section & ";%" & mi_Parameter & "%\r\n"" """ & mi_MediaFilename & """ > """ & mi_temp_Filename & """"
-    '
-    mi_cmd = """" & vrdtvs_mediainfoexe64 & """ " & mi_Legacy & " ""--Inform=" & mi_Section & ";%" & mi_Parameter & "%\r\n"" """ & mi_MediaFilename & """"
-    'WScript.StdOut.WriteLine("DEBUG: get_mediainfo_parameter Exec command: " & mi_cmd)
-    set mi_exe = mi_wso.Exec(mi_cmd)
-    Do While mi_exe.Status = 0 '0 is running and 1 is ending
-        Wscript.Sleep 100
-    Loop
-    Do Until mi_exe.StdErr.AtEndOfStream
-        mi_tmp = mi_exe.StdErr.ReadLine()
-        WScript.StdOut.WriteLine("ERROR: get_mediainfo_parameter StdErr: " & mi_tmp)
-    Loop
-    mi_status = mi_exe.ExitCode
-    If mi_status <> 0 then
-        WScript.StdOut.WriteLine("ERROR: get_mediainfo_parameter ABORTING Exec command: " & mi_cmd)
-        WScript.StdOut.WriteLine("ERROR: get_mediainfo_parameter ABORTING with Exit Status: " & mi_status)
-        ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
-	    WScript.Quit 17 ' Error 17 = cannot perform the requested operation
-    End If
-    mi_tmp="" ' default to nothing
-    Do Until mi_exe.StdOut.AtEndOfStream ' we need to read only one line though
-        mi_tmp = mi_exe.StdOut.ReadLine()
-        'WScript.StdOut.WriteLine("DEBUG: get_mediainfo_parameter StdOut: " & mi_tmp)
-        Exit Do ' we need to read only one line so exit loop immediately
-    Loop
-    Set mi_exe = Nothing
-    Set mi_wso = Nothing
-    Set mi_fso = Nothing
-    get_mediainfo_parameter = mi_tmp
-End Function
+
 
 WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
 
