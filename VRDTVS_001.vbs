@@ -344,7 +344,7 @@ Function vrdtvs_get_ffprobe_video_stream_parameter (ffp_Parameter, ffp_MediaFile
     vrdtvs_get_ffprobe_video_stream_parameter = ffp_tmp
 End Function
 '
-Function vrdtvs_remove_special_character_from_string(rsp_string, rsp_is_an_AbsolutePath) 
+Function vrdtvs_remove_special_characters_from_string(rsp_string, rsp_is_an_AbsolutePath) 
     ' rely on global variable "fso"
     ' Parameters:
     '   rsp_string                  the string to Treat - ususally the "BaseName" component of a filename
@@ -363,8 +363,8 @@ Function vrdtvs_remove_special_character_from_string(rsp_string, rsp_is_an_Absol
     Dim rsp_tmp, rsp_result
     Dim rsp_AbsolutePath, rsp_ParentFolderName, rsp_BaseName, rsp_ExtName
     If vrdtvs_DEBUG Then
-        WScript.StdOut.WriteLine("DEBUG: vrdtvs_remove_special_character_from_string             rsp_string= " & rsp_string)
-        WScript.StdOut.WriteLine("DEBUG: vrdtvs_remove_special_character_from_string rsp_is_an_AbsolutePath= " & rsp_is_an_AbsolutePath)
+        WScript.StdOut.WriteLine("DEBUG: vrdtvs_remove_special_characters_from_string             rsp_string= " & rsp_string)
+        WScript.StdOut.WriteLine("DEBUG: vrdtvs_remove_special_characters_from_string rsp_is_an_AbsolutePath= " & rsp_is_an_AbsolutePath)
     End If
     rsp_tmp = rsp_string
     If rsp_is_an_AbsolutePath Then
@@ -374,9 +374,9 @@ Function vrdtvs_remove_special_character_from_string(rsp_string, rsp_is_an_Absol
         rsp_ExtName = fso.GetExtensionName(rsp_AbsolutePath)
         rsp_tmp = rsp_BaseName
         If vrdtvs_DEBUG Then
-            WScript.StdOut.WriteLine("DEBUG: vrdtvs_remove_special_character_from_string rsp_ParentFolderName= " & rsp_ParentFolderName)
-            WScript.StdOut.WriteLine("DEBUG: vrdtvs_remove_special_character_from_string         rsp_BaseName= " & rsp_BaseName)
-            WScript.StdOut.WriteLine("DEBUG: vrdtvs_remove_special_character_from_string          rsp_ExtName= " & rsp_ExtName)
+            WScript.StdOut.WriteLine("DEBUG: vrdtvs_remove_special_characters_from_string rsp_ParentFolderName= " & rsp_ParentFolderName)
+            WScript.StdOut.WriteLine("DEBUG: vrdtvs_remove_special_characters_from_string         rsp_BaseName= " & rsp_BaseName)
+            WScript.StdOut.WriteLine("DEBUG: vrdtvs_remove_special_characters_from_string          rsp_ExtName= " & rsp_ExtName)
         End If
     End If
     Set rsp_RegExp = New RegExp
@@ -388,8 +388,8 @@ Function vrdtvs_remove_special_character_from_string(rsp_string, rsp_is_an_Absol
     If rsp_is_an_AbsolutePath Then
         rsp_result = fso.GetAbsolutePathName(fso.BuildPath(rsp_ParentFolderName, rsp_result & "." & rsp_ExtName))
     End If
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_remove_special_character_from_string exiting with value: " & rsp_result)
-    vrdtvs_remove_special_character_from_string = rsp_result
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_remove_special_characters_from_string exiting with value: " & rsp_result)
+    vrdtvs_remove_special_characters_from_string = rsp_result
 End Function
 
 
