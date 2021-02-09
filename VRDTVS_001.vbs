@@ -38,6 +38,19 @@ WScript.StdOut.WriteLine(vrdtvs_ScriptName & " Started.")
 Dim vrdtvs_DEBUG
 vrdtvs_DEBUG = False
 '
+Dim vrd_version_for_qsf
+Dim vrd_path_for_qsf_vbs
+Dim vrd_version_for_adscan
+Dim vrd_path_for_adscan_vbs
+Dim vrd_profile_name_for_qsf_mpeg2
+Dim vrd_profile_name_for_qsf_mpeg4
+Const _vrd5_path = "C:\Program Files (x86)\VideoReDoTVSuite5"
+Const _vrd6_path =  "C:\Program Files (x86)\VideoReDoTVSuite6"
+vrd_version_for_qsf = 6
+vrd_version_for_adscan = 6
+
+
+'
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Setup Global Objects (remember to Set the_object=Nothing later)
 ' For Microsft Objects, see https://docs.microsoft.com/en-us/office/vba/language/reference/user-interface-help/filesystemobject-object
@@ -84,14 +97,33 @@ vrdtvs_temp_path = fso.GetAbsolutePathName("D:\VRDTVS-SCRATCH\")
 ' theParentFolderName = fso.GetParentFolderName(an_AbsolutePath) 
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
-' Check if parameters on the commandline over-ride our standard values. Ignore any other parameters
+' Check ifcommandline parameters over-ride our standard values. Ignore any other commandline parameters.
 '
 vrdtvs_source_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("source_Folder",vrdtvs_source_TS_Folder))                        ' /source_Folder:"g:\hdtv\"
 vrdtvs_done_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("done_Folder",vrdtvs_done_TS_Folder))                              ' /source_Folder:"g:\hdtv\"
 vrdtvs_destination_mp4_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("destination_Folder",vrdtvs_destination_mp4_Folder))       ' /source_Folder:"g:\hdtv\"
 vrdtvs_failed_conversion_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("failed_Folder",vrdtvs_failed_conversion_TS_Folder))  ' /source_Folder:"g:\hdtv\"
 vrdtvs_temp_path = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("temp_path",vrdtvs_temp_path))                                          ' /source_Folder:"g:\hdtv\"
-vrdtvs_DEBUG = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("DEBUG",vrdtvs_DEBUG))
+vrdtvs_DEBUG = vrdtvs_get_commandline_parameter("DEBUG",vrdtvs_DEBUG)
+vrd_version_for_qsf = vrdtvs_get_commandline_parameter("vrd_version_for_qsf",vrd_version_for_qsf)
+vrd_version_for_adscan = vrdtvs_get_commandline_parameter("vrd_version_for_adscan",vrd_version_for_adscan)
+If vrd_version_for_qsf = 5 Then '*** QSF
+    vrd_path_for_qsf_vbs = fso.GetAbsolutePathName(fso.BuildPath(_vrd5_path,"vp.vbs"))
+ElseIf vrd_version_for_qsf = 6 Then
+    vrd_path_for_qsf_vbs = fso.GetAbsolutePathName(fso.BuildPath(_vrd6_path,"vp.vbs"))
+Else
+    WScript.StdOut.WriteLine "VRDTVS - vrd_version_for_qsf can only be 5 or 6 ... Aborting ..."
+    WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+End If
+If vrd_version_for_adscan = 5 Then '*** AdScan
+    vrd_path_for_adscan_vbs = fso.GetAbsolutePathName(fso.BuildPath(_vrd5_path,"AdScan.vbs"))
+ElseIf vrd_version_for_adscan = 6 Then
+    vrd_path_for_adscan_vbs = fso.GetAbsolutePathName(fso.BuildPath(_vrd6_path,"AdScan2.vbs"))
+Else
+    WScript.StdOut.WriteLine "VRDTVS - vrd_path_for_adscan_vbs can only be 5 or 6 ... Aborting ..."
+    WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+End If
+
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Create the folders if they do not already exist
@@ -123,9 +155,11 @@ If NOT fso.FolderExists(vrdtvs_temp_path) Then
 End If
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
+'
 
-
-
+' on a per-file basis:
+Dim vrdtvs_saved_ffmpeg_commands
+vrdtvs_saved_ffmpeg_commands = fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_source_TS_Folder,"some_filename.bat"))
 
 
 
