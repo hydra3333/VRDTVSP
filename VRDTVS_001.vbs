@@ -31,7 +31,7 @@ WScript.StdOut.WriteLine "------------------------------------------------------
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Setup Global (default) variables
 '
-Dim vrdtvs_tmp, vrdtvs_status, vrdtvs_exit_code, vrdrvs_Err_Code, vrdrvs_Err_Description, vrdtvs_cmd, vrdtvs_exe ' a few working variables, for common use
+Dim vrdtvs_tmp, vrdtvs_status, vrdtvs_exit_code, vrdrvs_Err_Code, vrdrvs_Err_Description, vrdtvs_cmd, vrdtvs_exe_obj ' a few working variables, for common use
 '
 Dim vrdtvs_run_datetime
 vrdtvs_run_datetime = vrdtvs_current_datetime() ' start of runtime, for common use
@@ -201,10 +201,9 @@ End If
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Start a new copy of Insomnia so the PC does not go to sleep in the middle of conversions, do not wait for it to finish
 '
-Dim vrdtvs_Insomnia64_tmp_filename
+Dim vrdtvs_Insomnia64_tmp_filename, vrdtvs_Insomnia64_ProcessID
 vrdtvs_Insomnia64_tmp_filename = vrdtvs_gimme_a_temporary_absolute_filename("VRDTVS_Insomnia64_copy-" & vrdtvs_run_datetime & "-")
-
-If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: Creating and running vrdtvs_Insomnia64_tmp_filename=" & vrdtvs_Insomnia64_tmp_filename
+If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: Creating and running Insomnia vrdtvs_Insomnia64_tmp_filename=" & vrdtvs_Insomnia64_tmp_filename
 vrdtvs_exit_code = vrdtvs_delete_a_file (vrdtvs_Insomnia64_tmp_filename, True) ' silently delete it even though it shouold never pre-exist
 On Error Resume Next
 fso.CopyFile vrdtvs_Insomniaexe64, vrdtvs_Insomnia64_tmp_filename, True 
@@ -213,30 +212,29 @@ vrdrvs_Err_Description = Err.Description
 On Error Goto 0
 If vrdrvs_Err_Code <> 0 Then
     Err.Clear
-    WScript.StdOut.WriteLine("VRDTVS ERROR - Error " & vrdrvs_Err_Code & & " Creating vrdtvs_Insomnia64_tmp_filename=" & vrdtvs_Insomnia64_tmp_filename & "... Aborting ...")
-    WScript.StdOut.WriteLine("VRDTVS ERROR - " & vrdrvs_Err_Description
+    WScript.StdOut.WriteLine("VRDTVS Insomnia ERROR - Error " & vrdrvs_Err_Code & & " Creating vrdtvs_Insomnia64_tmp_filename=" & vrdtvs_Insomnia64_tmp_filename & "... Aborting ...")
+    WScript.StdOut.WriteLine("VRDTVS Insomnia ERROR - " & vrdrvs_Err_Description
     ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
     WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
 '
 ' Exec it asynchronously and do not wait for it to finish
+' Start "title" "file" 
+' NOTE: Exec object has a .Terminate - this type of process kill does NOT clean up properly and may cause memory leaks - use only as a last resort!
+'
+vrdtvs_cmd = "START /min """ &  fso.GetBaseName(vrdtvs_Insomnia64_tmp_filename) & """ """ & vrdtvs_Insomnia64_tmp_filename & """"
+WScript.StdOut.WriteLine("VTDRVS Insomnia Exec command: " & vrdtvs_cmd)
+set vrdtvs_exe_obj = wso.Exec(vrdtvs_cmd)
+vrdtvs_Insomnia64_ProcessID = vrdtvs_exe_obj.ProcessID
+Set vrdtvs_exe_obj = Nothing
+WScript.StdOut.WriteLine("VTDRVS Insomnia Exec command: " & vrdtvs_cmd & " has run asynchronously with vrdtvs_Insomnia64_ProcessID=" & vrdtvs_Insomnia64_ProcessID)
+If vrdtvs_Insomnia64_ProcessID = 0 Then
+    WScript.StdOut.WriteLine("VRDTVS Insomnia ERROR - Insomnia START command created ProcessID is zero ... Aborting ...")
+    ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
+    WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+End If
 '
 
- vrdtvs_tmp, vrdtvs_status, vrdtvs_exit_code, vrdrvs_Err_Code, vrdrvs_Err_Description, vrdtvs_cmd, vrdtvs_exe
-
-
- ???????????? start /min "!iFile!" "!source_TS_Folder!!iFile!"
-
-
-vrdtvs_cmd = "START /min """ & vrdtvs_Insomnia64_tmp_filename & """ "" """
-
-' Exec has a .Terminate ' note - this type of process kill does NOT clean up properly and may cause memory leaks - use only as a last resort!
-
-
-WScript.StdOut.WriteLine("VTDRVS Exec command: " & vrdtvs_cmd)
-set vrdtvs_exe = wso.Exec(vrdtvs_cmd)
-Set vrdtvs_exe = Nothing
-WScript.StdOut.WriteLine("VTDRVS Exec command: " & vrdtvs_cmd & " is run asynchronously and status is NOT checked.")
 
 
 
@@ -268,9 +266,47 @@ WScript.StdOut.WriteLine("VTDRVS Exec command: " & vrdtvs_cmd & " is run asynchr
 
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
+' Kill the Insomnia64 process that we started earlier
+'
+vrdtvs_cmd = "taskkill /t /f /pid " & vrdtvs_Insomnia64_ProcessID
+' taskkill /t /f /im "%iFile%" >> "!vrdlog!" 2>&1
+'   /f  Specifies that processes be forcefully ended.
+'   /t	Ends the specified process and any child processes started by it.
+'   /pid <processID>    Specifies the process ID of the process to be terminated.
+'   /im <imagename>     Specifies the image name of the process to be terminated.
+WScript.StdOut.WriteLine("VTDRVS Insomnia Exec command: " & vrdtvs_cmd)
+set vrdtvs_exe_obj = wso.Exec(vrdtvs_cmd)
+Do While vrdtvs_exe_obj.Status = 0 '0 is running and 1 is ending
+    Wscript.Sleep 100
+Loop
+Do Until vrdtvs_exe_obj.StdOut.AtEndOfStream
+    vrdtvs_tmp = vrdtvs_exe_obj.StdOut.ReadLine()
+    WScript.StdOut.WriteLine("VTDRVS Insomnia Exec StdOut: " & vrdtvs_tmp)
+Loop
+Do Until vrdtvs_exe_obj.StdErr.AtEndOfStream
+    vrdtvs_tmp = vrdtvs_exe_obj.StdErr.ReadLine()
+    WScript.StdOut.WriteLin("VTDRVS Insomnia Exec StdErr: " & vrdtvs_tmp)
+Loop
+vrdtvs_status = vrdtvs_exe_obj.ExitCode ' Ignore any error codes returned by taskkill
+WScript.StdOut.WriteLine("VTDRVS Insomnia Exec Exit Status: " & vrdtvs_status)
+Set vrdtvs_exe_obj = Nothing
+If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: VTDRVS Insomnia exiting with status=""" & vrdtvs_status & """"
+'
+'----------------------------------------------------------------------------------------------------------------------------------------
+' Finish and Quit
 '
 WScript.StdOut.WriteLine(vrdtvs_ScriptName & " " & vrdtvs_current_datetime_string() & " Finished.")
+If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: VTDRVS: " & vrdtvs_ScriptName & " " & vrdtvs_current_datetime_string() & " Finished."
 WScript.Quit
+'
+'----------------------------------------------------------------------------------------------------------------------------------------
+'----------------------------------------------------------------------------------------------------------------------------------------
+'----------------------------------------------------------------------------------------------------------------------------------------
+'----------------------------------------------------------------------------------------------------------------------------------------
+'----------------------------------------------------------------------------------------------------------------------------------------
+'----------------------------------------------------------------------------------------------------------------------------------------
+'----------------------------------------------------------------------------------------------------------------------------------------
+'----------------------------------------------------------------------------------------------------------------------------------------
 '----------------------------------------------------------------------------------------------------------------------------------------
 '----------------------------------------------------------------------------------------------------------------------------------------
 '
