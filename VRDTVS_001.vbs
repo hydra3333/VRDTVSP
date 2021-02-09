@@ -205,7 +205,7 @@ Function vrdtvs_Calculate_ElapsedTime_string (timer_StartTime, timer_EndTime)
 End Function
 '
 Function vrdtvs_get_mediainfo_parameter (mi_Section, mi_Parameter, mi_MediaFilename, mi_Legacy) 
-    ' rely on global variable "fso"
+    ' rely on global variable "wso"
     ' rely on global variable vrdtvs_mediainfoexe64 exists pointing to the mediainfo exe
     ' Note \r\n is Windows new-line, 
     '   Which in the case of multiple audio streams, outputs a result for each stream on a new line, 
@@ -238,8 +238,8 @@ Function vrdtvs_get_mediainfo_parameter (mi_Section, mi_Parameter, mi_MediaFilen
     Dim mi_cmd, mi_status, mi_tmp
     'Dim mi_temp_Filename
     If vrdtvs_DEBUG Then
-        WScript.StdOut.WriteLine("DEBUG: vrdtvs_get_mediainfo_parameter      mi_Section= " & mi_Section)
-        WScript.StdOut.WriteLine("DEBUG: vrdtvs_get_mediainfo_parameter    mi_Parameter= " & mi_Sectimi_Parameteron)
+        WScript.StdOut.WriteLine("DEBUG: vrdtvs_get_mediainfo_parameter       mi_Section= " & mi_Section)
+        WScript.StdOut.WriteLine("DEBUG: vrdtvs_get_mediainfo_parameter     mi_Parameter= " & mi_Parameter)
         WScript.StdOut.WriteLine("DEBUG: vrdtvs_get_mediainfo_parameter mi_MediaFilename= " & mi_MediaFilename)
         WScript.StdOut.WriteLine("DEBUG: vrdtvs_get_mediainfo_parameter        mi_Legacy= " & mi_Legacy)
     End If
@@ -282,6 +282,53 @@ Function vrdtvs_get_mediainfo_parameter (mi_Section, mi_Parameter, mi_MediaFilen
     vrdtvs_get_mediainfo_parameter = mi_tmp
 End Function
 '
+Function vrdtvs_get_ffprobe_video_stream_parameter (ffp_Parameter, ffp_MediaFilename) 
+    ' rely on global variable "wso"
+    ' rely on global variable vrdtvs_ffprobeexe64 exists pointing to the ffprobe exe
+    ' Note \r\n is Windows new-line, which is for the case of multiple audio streams, 
+    '      it outputs a result for each stream on a new line, the first stream being the first entry,
+    '      and the first audio stream should be the one we need. 
+    '      read the first line.
+    '      see if -probesize 5000M  makes any difference
+    Dim ffp_exe
+    Dim ffp_cmd, ffp_status, ffp_tmp
+    If vrdtvs_DEBUG Then
+        WScript.StdOut.WriteLine("DEBUG: vrdtvs_get_ffprobe_video_stream_parameter     ffp_Parameter= " & ffp_Parameter)
+        WScript.StdOut.WriteLine("DEBUG: vrdtvs_get_ffprobe_video_stream_parameter ffp_MediaFilename= " & ffp_MediaFilename)
+    End If
+    '
+    ' If piping to a temporary file, cmd looks something like this:
+    ' ffp_temp_Filename = gimme_a_temporary_absolute_filename() ' generate a fully qualified temporary filename from the function
+    ' ffp_status = delete_a_file (ffp_temp_Filename, True)
+    ' ffp_cmd =  """" & vrdtvs_ffprobeexe64 & ???  & ffp_MediaFilename & """ > """ & ffp_temp_Filename & """"
+    '
+    ffp_cmd = """" & vrdtvs_ffprobeexe64 & """ -hide_banner -v quiet -select_streams v:0 -show_entries stream=" & ffp_Parameter & " -of default=noprint_wrappers=1:nokey=1 """ & ffp_MediaFilename & """"
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_get_ffprobe_video_stream_parameter Exec command: " & ffp_cmd)
+    set ffp_exe = wso.Exec(ffp_cmd)
+    Do While ffp_exe.Status = 0 '0 is running and 1 is ending
+        Wscript.Sleep 100
+    Loop
+    Do Until ffp_exe.StdErr.AtEndOfStream
+        ffp_tmp = ffp_exe.StdErr.ReadLine()
+        WScript.StdOut.WriteLine("ERROR: vrdtvs_get_ffprobe_video_stream_parameter StdErr: " & ffp_tmp)
+    Loop
+    ffp_status = ffp_exe.ExitCode
+    If ffp_status <> 0 then
+        WScript.StdOut.WriteLine("ERROR: vrdtvs_get_ffprobe_video_stream_parameter ABORTING Exec command: " & ffp_cmd)
+        WScript.StdOut.WriteLine("ERROR: vrdtvs_get_ffprobe_video_stream_parameter ABORTING with Exit Status: " & ffp_status)
+        ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
+	    WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+    End If
+        ffp_tmp="" ' default to nothing
+    Do Until ffp_exe.StdOut.AtEndOfStream ' we need to read only one line though
+        ffp_tmp = ffp_exe.StdOut.ReadLine()
+        If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_get_ffprobe_video_stream_parameter StdOut: " & ffp_tmp)
+     Exit Do ' we need to read only one line so exit loop immediately
+    Loop
+    Set ffp_exe = Nothing
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_get_ffprobe_video_stream_parameter exiting with value: " & ffp_tmp)
+    vrdtvs_get_ffprobe_video_stream_parameter = ffp_tmp
+End Function
 
 
 
@@ -357,20 +404,6 @@ WScript.StdOut.WriteLine "------------------------------------------------------
 
 
 '----------------------------------
-' Can we somehow open and use external .DLL files such as mediainfo.dll
-'
-' Answer: NO.  use the old method and use it the same for ffprobe too
-
-WScript.StdOut.WriteLine "8. ------------------------------------------------------------------------------------------------------"
-
-Dim vrdtvs_mediainfoexe64
-vrdtvs_mediainfoexe64 = "C:\SOFTWARE\MediaInfo\MediaInfo.exe"
-
-
-WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
-
-
-'----------------------------------
 ' Can we somehow open and use external FFPROBE
 '
 ' Answer: Yes, like medianfo.exe
@@ -392,49 +425,3 @@ Wscript.echo("V_Duration_s_FF=" & V_Duration_s_FF)
 Wscript.echo("V_BitRate_FF=" & V_BitRate_FF)
 Wscript.echo("V_BitRate_Maximum_FF=" & V_BitRate_Maximum_FF)
 
-Function get_ffprobe_video_stream_parameter (ffp_Parameter, ffp_MediaFilename) 
-    '        1. a global variable vrdtvs_ffprobeexe64 exists pointing to the ffprobe exe
-    ' Note \r\n is Windows new-line, which is for the case of multiple audio streams, 
-    '      it outputs a result for each stream on a new line, the first stream being the first entry,
-    '      and the first audio stream should be the one we need. 
-    '      read the first line.
-    '      see if -probesize 5000M  makes any difference
-    Dim ffp_fso, ffp_status
-    'Dim ffp_temp_Filename
-    Dim ffp_wso, ffp_exe, ffp_cmd, ffp_tmp
-    Set ffp_fso = CreateObject("Scripting.FileSystemObject")
-    set ffp_wso = CreateObject("Wscript.Shell")
-    '
-    ' If piping to a temporary file, cmd looks something like this:
-    ' ffp_temp_Filename = gimme_a_temporary_absolute_filename() ' generate a fully qualified temporary filename from the function
-    ' ffp_status = delete_a_file (ffp_temp_Filename, True)
-    ' ffp_cmd =  """" & vrdtvs_ffprobeexe64 & ???  & ffp_MediaFilename & """ > """ & ffp_temp_Filename & """"
-    '
-    ffp_cmd = """" & vrdtvs_ffprobeexe64 & """ -hide_banner -v quiet -select_streams v:0 -show_entries stream=" & ffp_Parameter & " -of default=noprint_wrappers=1:nokey=1 """ & ffp_MediaFilename & """"
-    'WScript.StdOut.WriteLine("DEBUG: get_ffprobe_video_stream_parameter Exec command: " & ffp_cmd)
-    set ffp_exe = ffp_wso.Exec(ffp_cmd)
-    Do While ffp_exe.Status = 0 '0 is running and 1 is ending
-        Wscript.Sleep 100
-    Loop
-    Do Until ffp_exe.StdErr.AtEndOfStream
-        ffp_tmp = ffp_exe.StdErr.ReadLine()
-        WScript.StdOut.WriteLine("ERROR: get_ffprobe_video_stream_parameter StdErr: " & ffp_tmp)
-    Loop
-    ffp_status = ffp_exe.ExitCode
-    If ffp_status <> 0 then
-        WScript.StdOut.WriteLine("ERROR: get_ffprobe_video_stream_parameter ABORTING Exec command: " & ffp_cmd)
-        WScript.StdOut.WriteLine("ERROR: get_ffprobe_video_stream_parameter ABORTING with Exit Status: " & ffp_status)
-        ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
-	    WScript.Quit 17 ' Error 17 = cannot perform the requested operation
-End If
-ffp_tmp="" ' default to nothing
-Do Until ffp_exe.StdOut.AtEndOfStream ' we need to read only one line though
-    ffp_tmp = ffp_exe.StdOut.ReadLine()
-    'WScript.StdOut.WriteLine("DEBUG: get_ffprobe_video_stream_parameter StdOut: " & ffp_tmp)
-    Exit Do ' we need to read only one line so exit loop immediately
-Loop
-Set ffp_exe = Nothing
-Set ffp_wso = Nothing
-Set ffp_fso = Nothing
-get_ffprobe_video_stream_parameter = ffp_tmp
-End Function
