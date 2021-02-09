@@ -351,9 +351,6 @@ over-ride defaults from commandline arguments
 
 create .vbs and .ps1 files for various functions
 	
-	the Powershell script to calculate and display elapsed-time durations for something we run 
-		... instead can we use a start time and stop timer and display_elapsed_time - with datetime objects with something like a timediff inside vbscript ?
-	
 	the Powershell script to rename files in a path to remove all special characters
 		# BEFORE this powershell script is invoked by the calling batch file, ensure the incoming folder has no trailing "\"
 		# OTHERWISE the trailing double-quote ^" becomes 'escaped', thus everything on the commandline after it gets included in that parameter value.
