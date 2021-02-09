@@ -290,6 +290,20 @@ Function vrdtvs_get_ffprobe_video_stream_parameter (ffp_Parameter, ffp_MediaFile
     '      and the first audio stream should be the one we need. 
     '      read the first line.
     '      see if -probesize 5000M  makes any difference
+    ' Parameters:
+    '   ffp_Parameter       name of parameter to fetch eg "duration"
+    '   ffp_MediaFilename   fully qualified (Absolute) filename of the media file to query
+    ' Call like this:
+    '       dim V_Width_FF, V_Height_FF, V_Duration_s_FF, V_BitRate_FF, V_BitRate_Maximum_FF
+    '       V_Width_FF = get_ffprobe_video_stream_parameter("width","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4")
+    '       V_Height_FF = get_ffprobe_video_stream_parameter("height","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4")
+    '       V_Duration_s_FF = get_ffprobe_video_stream_parameter("duration","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4")
+    '       V_BitRate_FF = get_ffprobe_video_stream_parameter("bit_rate","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4")
+    '       V_BitRate_Maximum_FF = get_ffprobe_video_stream_parameter("max_bit_rate","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4")
+    '       Wscript.echo("V_Width_FF=" & V_Width_FF & " V_Height_FF=" & V_Height_FF)
+    '       Wscript.echo("V_Duration_s_FF=" & V_Duration_s_FF)
+    '       Wscript.echo("V_BitRate_FF=" & V_BitRate_FF)
+    '       Wscript.echo("V_BitRate_Maximum_FF=" & V_BitRate_Maximum_FF)
     Dim ffp_exe
     Dim ffp_cmd, ffp_status, ffp_tmp
     If vrdtvs_DEBUG Then
