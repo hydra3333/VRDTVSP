@@ -33,7 +33,7 @@ WScript.StdOut.WriteLine "------------------------------------------------------
 '
 Dim vrdtvs_ScriptName
 vrdtvs_ScriptName = Wscript.ScriptName
-WScript.StdOut.WriteLine(vrdtvs_ScriptName & " Started.")
+WScript.StdOut.WriteLine(vrdtvs_ScriptName & " " & vrdtvs_current_datetime_string() & " Started.")
 '
 Dim vrdtvs_DEBUG
 vrdtvs_DEBUG = True
@@ -150,7 +150,7 @@ If vrdtvs_DEBUG Then
     WScript.StdOut.WriteLine "DEBUG: final vrdtvs_failed_conversion_TS_Folder=" & vrdtvs_failed_conversion_TS_Folder
     WScript.StdOut.WriteLine "DEBUG: final                   vrdtvs_temp_path=" & vrdtvs_temp_path
     WScript.StdOut.WriteLine "DEBUG: final                       vrdtvs_DEBUG=" & vrdtvs_DEBUG
-    WScript.StdOut.WriteLine "DEBUG: final                vrd_version_for_qsf=" & vrd_version_for_qsf
+   WScript.StdOut.WriteLine "DEBUG: final                vrd_version_for_qsf=" & vrd_version_for_qsf
     WScript.StdOut.WriteLine "DEBUG: final               vrd_path_for_qsf_vbs=" & vrd_path_for_qsf_vbs
     WScript.StdOut.WriteLine "DEBUG: final     vrd_profile_name_for_qsf_mpeg2=" & vrd_profile_name_for_qsf_mpeg2
     WScript.StdOut.WriteLine "DEBUG: final       vrd_profile_name_for_qsf_avc=" & vrd_profile_name_for_qsf_avc
@@ -208,7 +208,7 @@ End If
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 '
-WScript.StdOut.WriteLine(vrdtvs_ScriptName & " Finished.")
+WScript.StdOut.WriteLine(vrdtvs_ScriptName & " " & vrdtvs_current_datetime_string() & " Finished.")
 WScript.Quit
 '----------------------------------------------------------------------------------------------------------------------------------------
 '----------------------------------------------------------------------------------------------------------------------------------------
