@@ -47,17 +47,17 @@ Dim vrd_profile_name_for_qsf_mpeg4
 Dim vrd_extension_mpeg2
 Dim vrd_extension_avc
 '
-Const _vrd5_path = "C:\Program Files (x86)\VideoReDoTVSuite5"
-Const _vrd5_profile_mpeg2 = "zzz-MPEG2ps"
-Const _vrd5_profile_avc = "zzz-H.264-MP4-general"
-Const _vrd5_extension_mpeg2 = "mpg"
-Const _vrd5_extension_avc = "mp4"
+Const const_vrd5_path = "C:\Program Files (x86)\VideoReDoTVSuite5"
+Const const_vrd5_profile_mpeg2 = "zzz-MPEG2ps"
+Const const_vrd5_profile_avc = "zzz-H.264-MP4-general"
+Const const_vrd5_extension_mpeg2 = "mpg"
+Const const_vrd5_extension_avc = "mp4"
 '
-Const _vrd6_path =  "C:\Program Files (x86)\VideoReDoTVSuite6"
-Const _vrd6_profile_mpeg2 = "VRDTVS-for-QSF-MPEG2"
-Const _vrd6_profile_avc = "VRDTVS-for-QSF-H264"
-Const _vrd6_extension_mpeg2 = "mpg"
-Const _vrd6_extension_avc = "mp4"
+Const const_vrd6_path =  "C:\Program Files (x86)\VideoReDoTVSuite6"
+Const const_vrd6_profile_mpeg2 = "VRDTVS-for-QSF-MPEG2"
+Const const_vrd6_profile_avc = "VRDTVS-for-QSF-H264"
+Const const_vrd6_extension_mpeg2 = "mpg"
+Const const_vrd6_extension_avc = "mp4"
 '
 vrd_version_for_qsf = 6
 vrd_version_for_adscan = 6
@@ -73,18 +73,18 @@ Set fso = CreateObject("Scripting.FileSystemObject")
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Setup Global exe file paths, resolving them to Absolute paths
 '
-Dim _vs_root
+Dim vs_root
 Dim vrdtvs_mediainfoexe64
 Dim vrdtvs_ffprobeexe64
 Dim vrdtvs_ffmpegexe64
 Dim vrdtvs_dgindexNVexe64
 Dim vrdtvs_mp4boxexex64
-_vs_root = fso.GetAbsolutePathName("C:\SOFTWARE\Vapoursynth-x64\")
+vs_root = fso.GetAbsolutePathName("C:\SOFTWARE\Vapoursynth-x64\")
 vrdtvs_mp4boxexex64 = fso.GetAbsolutePathName(fso.BuildPath("C:\SOFTWARE\ffmpeg\0-homebuilt-x64\","MP4Box.exe"))
 vrdtvs_mediainfoexe64 = fso.GetAbsolutePathName(fso.BuildPath("C:\SOFTWARE\MediaInfo\","MediaInfo.exe"))
-vrdtvs_ffprobeexe64 = fso.GetAbsolutePathName(fso.BuildPath(_vs_root,"ffprobe.exe"))
-vrdtvs_ffmpegexe64 = fso.GetAbsolutePathName(fso.BuildPath(_vs_root,"ffmpeg.exe"))
-vrdtvs_dgindexNVexe64 = fso.GetAbsolutePathName(fso.BuildPath(_vs_root,"DGIndex\DGIndexNV.exe"))
+vrdtvs_ffprobeexe64 = fso.GetAbsolutePathName(fso.BuildPath(vs_root,"ffprobe.exe"))
+vrdtvs_ffmpegexe64 = fso.GetAbsolutePathName(fso.BuildPath(vs_root,"ffmpeg.exe"))
+vrdtvs_dgindexNVexe64 = fso.GetAbsolutePathName(fso.BuildPath(vs_root,"DGIndex\DGIndexNV.exe"))
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Setup Global Paths, resolving them to Absolute paths
@@ -120,27 +120,27 @@ vrdtvs_DEBUG = vrdtvs_get_commandline_parameter("DEBUG",vrdtvs_DEBUG)
 vrd_version_for_qsf = vrdtvs_get_commandline_parameter("vrd_version_for_qsf",vrd_version_for_qsf)
 vrd_version_for_adscan = vrdtvs_get_commandline_parameter("vrd_version_for_adscan",vrd_version_for_adscan)
 If vrd_version_for_qsf = 5 Then '*** QSF
-    vrd_path_for_qsf_vbs = fso.GetAbsolutePathName(fso.BuildPath(_vrd5_path,"vp.vbs"))
-    vrd_profile_name_for_qsf_mpeg2 = _vrd5_profile_mpeg2
-    vrd_profile_name_for_qsf_avc = _vrd5_profile_avc
-    vrd_extension_mpeg2 = _vrd5_extension_mpeg2
-    vrd_extension_avc = _vrd5_extension_avc
+    vrd_path_for_qsf_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd5_path,"vp.vbs"))
+    vrd_profile_name_for_qsf_mpeg2 = const_vrd5_profile_mpeg2
+    vrd_profile_name_for_qsf_avc = const_vrd5_profile_avc
+    vrd_extension_mpeg2 = const_vrd5_extension_mpeg2
+    vrd_extension_avc = const_vrd5_extension_avc
 ElseIf vrd_version_for_qsf = 6 Then
-    vrd_path_for_qsf_vbs = fso.GetAbsolutePathName(fso.BuildPath(_vrd6_path,"vp.vbs"))
-    vrd_profile_name_for_qsf_mpeg2 = _vrd6_profile_mpeg2
-    vrd_profile_name_for_qsf_avc = _vrd6_profile_avc
-    vrd_extension_mpeg2 = _vrd6_extension_mpeg2
-    vrd_extension_avc = _vrd6_extension_avc
+    vrd_path_for_qsf_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd6_path,"vp.vbs"))
+    vrd_profile_name_for_qsf_mpeg2 = const_vrd6_profile_mpeg2
+    vrd_profile_name_for_qsf_avc = const_vrd6_profile_avc
+    vrd_extension_mpeg2 = const_vrd6_extension_mpeg2
+    vrd_extension_avc =const _vrd6_extension_avc
 Else
-    WScript.StdOut.WriteLine "VRDTVS - vrd_version_for_qsf can only be 5 or 6 ... Aborting ..."
+    WScript.StdOut.WriteLine "VRDTVS ERROR - vrd_version_for_qsf can only be 5 or 6 ... Aborting ..."
     WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
 If vrd_version_for_adscan = 5 Then '*** AdScan
-    vrd_path_for_adscan_vbs = fso.GetAbsolutePathName(fso.BuildPath(_vrd5_path,"AdScan.vbs"))
+    vrd_path_for_adscan_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd5_path,"AdScan.vbs"))
 ElseIf vrd_version_for_adscan = 6 Then
-    vrd_path_for_adscan_vbs = fso.GetAbsolutePathName(fso.BuildPath(_vrd6_path,"AdScan2.vbs"))
+    vrd_path_for_adscan_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd6_path,"AdScan2.vbs"))
 Else
-    WScript.StdOut.WriteLine "VRDTVS - vrd_path_for_adscan_vbs can only be 5 or 6 ... Aborting ..."
+    WScript.StdOut.WriteLine "VRDTVS ERROR - vrd_path_for_adscan_vbs can only be 5 or 6 ... Aborting ..."
     WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
 If vrdtvs_DEBUG Then 
