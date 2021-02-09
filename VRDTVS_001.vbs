@@ -43,7 +43,7 @@ Dim vrd_version_for_adscan
 Dim vrd_path_for_qsf_vbs
 Dim vrd_path_for_adscan_vbs
 Dim vrd_profile_name_for_qsf_mpeg2
-Dim vrd_profile_name_for_qsf_mpeg4
+Dim vrd_profile_name_for_qsf_avc
 Dim vrd_extension_mpeg2
 Dim vrd_extension_avc
 '
@@ -221,27 +221,27 @@ Function vrdtvs_get_commandline_parameter(gcp_argument_name, gcp_default_value)
     Dim gcp_argument_count, gcp_NamedArgs, gcp_Return_Value
     gcp_argument_count = WScript.Arguments.Count
     gcp_Return_Value = gcp_default_value ' default to return the default_value
-    If vrdtvs_DEBUG Then 
-        WScript.StdOut.WriteLine "DEBUG: vrdtvs_get_commandline_parameter gcp_argument_name=" & gcp_argument_name
-        WScript.StdOut.WriteLine "DEBUG: vrdtvs_get_commandline_parameter gcp_default_value=" & gcp_default_value
-    End If
+    'If vrdtvs_DEBUG Then 
+    '    WScript.StdOut.WriteLine "DEBUG: vrdtvs_get_commandline_parameter gcp_argument_name=" & gcp_argument_name
+    '    WScript.StdOut.WriteLine "DEBUG: vrdtvs_get_commandline_parameter gcp_default_value=" & gcp_default_value
+    'End If
     If gcp_argument_count > 0 Then
         Set gcp_NamedArgs = WScript.Arguments.Named
         If gcp_NamedArgs.Exists(gcp_argument_name) and NOT IsEmpty(gcp_NamedArgs(gcp_argument_name)) Then ' IsEmpty is a special case of exists but has no value, but is not "" which is different
             gcp_Return_Value = gcp_NamedArgs.Item(gcp_argument_name)
-            If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_get_commandline_parameter obtained commandline Argument: " & gcp_argument_name & "=" & gcp_Return_Value
+            If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_get_commandline_parameter obtained commandline Argument: " & gcp_argument_name & "=""" & gcp_Return_Value & """"
             If Ucase(gcp_Return_Value) = Ucase("True")  Then 
                 gcp_Return_Value = True    ' if required, convert to boolean True
-                If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_get_commandline_parameter converted to boolean True gcp_Return_Value=" & gcp_Return_Value
+                'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_get_commandline_parameter converted to boolean True gcp_Return_Value=" & gcp_Return_Value
             End If
             If Ucase(gcp_Return_Value) = Ucase("False") Then 
                 gcp_Return_Value = False   ' if required, convert to boolean False
-                If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_get_commandline_parameter converted to boolean False gcp_Return_Value=" & gcp_Return_Value
+                'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_get_commandline_parameter converted to boolean False gcp_Return_Value=" & gcp_Return_Value
             End If
         End If
         Set gcp_NamedArgs = Nothing
     End If
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_get_commandline_parameter exiting with gcp_Return_Value=" & gcp_Return_Value
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_get_commandline_parameter exiting with: " & gcp_argument_name & "=""" & gcp_Return_Value & """"
     vrdtvs_get_commandline_parameter = gcp_Return_Value
 End Function
 '
