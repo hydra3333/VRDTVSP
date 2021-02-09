@@ -343,10 +343,54 @@ Function vrdtvs_get_ffprobe_video_stream_parameter (ffp_Parameter, ffp_MediaFile
     If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_get_ffprobe_video_stream_parameter exiting with value: " & ffp_tmp)
     vrdtvs_get_ffprobe_video_stream_parameter = ffp_tmp
 End Function
-
-
-
-
+'
+Function vrdtvs_remove_special_character_from_string(rsp_string, rsp_is_an_AbsolutePath) 
+    ' rely on global variable "fso"
+    ' Parameters:
+    '   rsp_string                  the string to Treat - ususally the "BaseName" component of a filename
+    '   rsp_is_an_AbsolutePath      True if is an absolute path string, where we treat only the "BaseName" component and return the treated Absolute pathname
+    ' just examples of stuff for re-use in future BuildPath calls
+        ' an_AbsolutePath = fso.GetAbsolutePathName(fso.BuildPath("C:\SOFTWARE\ffmpeg\0-homebuilt-x64\","MP4Box.exe"))
+        ' theParentFolderName = fso.GetParentFolderName(an_AbsolutePath) ' the drive and folder name of the file without any trailing "\"
+        ' theBaseName = fso.GetBaseName(an_AbsolutePath)
+        ' theExtName = fso.GetExtensionName(an_AbsolutePath) ' does not include  the "."
+        ' theFileName = fso.GetFileName(an_AbsolutePath) ' includes filename and "." and extension
+        ' theDriveName = fso.GetDriveName(an_AbsolutePath) ' includes driver letter and ":"
+        ' theParentFolderName = fso.GetParentFolderName(an_AbsolutePath) 
+    Const rsp_replacement_character = "."
+    Const rsp_regex_pattern = "[^a-zA-Z0-9-_. ]+"      ' ^ means not matching
+    Dim rsp_RegExp
+    Dim rsp_tmp, rsp_result
+    Dim rsp_AbsolutePath, rsp_ParentFolderName, rsp_BaseName, rsp_ExtName
+    If vrdtvs_DEBUG Then
+        WScript.StdOut.WriteLine("DEBUG: vrdtvs_remove_special_character_from_string             rsp_string= " & rsp_string)
+        WScript.StdOut.WriteLine("DEBUG: vrdtvs_remove_special_character_from_string rsp_is_an_AbsolutePath= " & rsp_is_an_AbsolutePath)
+    End If
+    rsp_tmp = rsp_string
+    If rsp_is_an_AbsolutePath Then
+        rsp_AbsolutePath = fso.GetAbsolutePathName(rsp_string)
+        rsp_ParentFolderName = fso.GetParentFolderName(rsp_AbsolutePath) 
+        rsp_BaseName = fso.GetBaseName(rsp_AbsolutePath)
+        rsp_ExtName = fso.GetExtensionName(rsp_AbsolutePath)
+        rsp_tmp = rsp_BaseName
+        If vrdtvs_DEBUG Then
+            WScript.StdOut.WriteLine("DEBUG: vrdtvs_remove_special_character_from_string rsp_ParentFolderName= " & rsp_ParentFolderName)
+            WScript.StdOut.WriteLine("DEBUG: vrdtvs_remove_special_character_from_string         rsp_BaseName= " & rsp_BaseName)
+            WScript.StdOut.WriteLine("DEBUG: vrdtvs_remove_special_character_from_string          rsp_ExtName= " & rsp_ExtName)
+        End If
+    End If
+    Set rsp_RegExp = New RegExp
+    rsp_RegExp.IgnoreCase = False
+    rsp_RegExp.Global = True  
+    rsp_RegExp.Pattern = rsp_regex_pattern
+    rsp_result = rsp_RegExp.Replace(rsp_tmp,rsp_replacement_character) ' in this case replace all matching characters with ".", in this case all non-standard characters
+    Set rsp_RegExp = Nothing
+    If rsp_is_an_AbsolutePath Then
+        rsp_result = fso.GetAbsolutePathName(fso.BuildPath(rsp_ParentFolderName, rsp_result & "." & rsp_ExtName))
+    End If
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_remove_special_character_from_string exiting with value: " & rsp_result)
+    vrdtvs_remove_special_character_from_string = rsp_result
+End Function
 
 
 
@@ -413,29 +457,4 @@ WScript.StdOut.WriteLine "Result String        =""" & result_string & """"
 WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
 WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
 WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
-
-
-
-
-'----------------------------------
-' Can we somehow open and use external FFPROBE
-'
-' Answer: Yes, like medianfo.exe
-
-WScript.StdOut.WriteLine "9. ------------------------------------------------------------------------------------------------------"
-
-Dim vrdtvs_ffprobeexe64
-vrdtvs_ffprobeexe64 = "C:\SOFTWARE\Vapoursynth-x64\ffprobe.exe"
-
-dim V_Width_FF, V_Height_FF, V_Duration_s_FF, V_BitRate_FF, V_BitRate_Maximum_FF
-
-V_Width_FF = get_ffprobe_video_stream_parameter("width","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4")
-V_Height_FF = get_ffprobe_video_stream_parameter("height","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4")
-V_Duration_s_FF = get_ffprobe_video_stream_parameter("duration","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4")
-V_BitRate_FF = get_ffprobe_video_stream_parameter("bit_rate","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4")
-V_BitRate_Maximum_FF = get_ffprobe_video_stream_parameter("max_bit_rate","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4")
-Wscript.echo("V_Width_FF=" & V_Width_FF & " V_Height_FF=" & V_Height_FF)
-Wscript.echo("V_Duration_s_FF=" & V_Duration_s_FF)
-Wscript.echo("V_BitRate_FF=" & V_BitRate_FF)
-Wscript.echo("V_BitRate_Maximum_FF=" & V_BitRate_Maximum_FF)
 
