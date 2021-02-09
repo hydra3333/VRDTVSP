@@ -1,22 +1,64 @@
 Option explicit
-'' NOTE:    For ANY of this to work, the vb script MUST be run under Cscript host - or, things like stdout fail to work.
-''          Thus, call the vbscript like this:
-''              cscript //NOLOGO "vbscript_path_and_file" "parameter 1" "parameter 2"
-'----------------------------------
-WScript.StdOut.WriteLine "1. ------------------------------------------------------------------------------------------------------"
+'
+' VRDTVS - automatically parse, convert video/audio from TVSchedulerPro TV recordings, and perhaps adscan them too
+' copyright hydra3333@gmail.com 2021
+'----------------------------------------------------------------------------------------------------------------------------------------
+' 1. Check and Exit if this .vbs isn;t run under CSCRIPT (not WSCRIPT which is the default)
+'    NOTE:  For ANY of this to work, the vb script MUST be run under Cscript host - or, things like stdout fail to work.
+'           Thus, call the vbscript like this:
+'               cscript //NOLOGO "vbscript_path_and_file" "parameter 1" "parameter 2"
+WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
 Dim  cscript_wshShell, cscript_strEngine
 Set cscript_wshShell = CreateObject( "WScript.Shell" )
 cscript_strEngine = UCase( Right( WScript.FullName, 12 ) )
+WScript.Echo "Checked and CSCRIPT Engine = """ & cscript_strEngine & """" ' .Echo works in both wscript and cscript
 If UCase(cscript_strEngine) <> UCase("\CSCRIPT.EXE") Then
     ' exit immediately with error code 17 cannot perform the requested operation
     ' since it was not run like:
     '      cscript //NOLOGO "vbscript_path_and_file" "parameter 1" "parameter 2"
     '      cscript //NOLOGO "test.vbs" /p1:"This is the value for p1" /p2:500
     ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
+    WScript.Echo "CSCRIPT Engine MUST be CSCRIPT not WSCRIPT ... Aborting ..."
 	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
-WScript.StdOut.WriteLine "cscript Engine = """ & cscript_strEngine & """"
+WScript.StdOut.WriteLine "Checked and cscript Engine = """ & cscript_strEngine & """"
 WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
+'----------------------------------------------------------------------------------------------------------------------------------------
+' Setup Global Objects (remember to Set the_object=Nothing later)
+'
+dim fso, wso
+set wso = CreateObject("Wscript.Shell")
+Set fso = CreateObject("Scripting.FileSystemObject")
+'
+' Setup Global exe files, resolving them to Absolute paths
+'
+Dim _vs_root
+Dim vrdtvs_mediainfoexe64
+Dim vrdtvs_ffprobeexe64
+Dim vrdtvs_ffmpegexe64
+Dim vrdtvs_dgindexNVexe64
+Dim vrdtvs_mp4boxexex64
+_vs_root = fso.GetAbsolutePathName("C:\SOFTWARE\Vapoursynth-x64\")
+vrdtvs_mp4boxexex64 = fso.GetAbsolutePathName(fso.BuildPath("C:\SOFTWARE\ffmpeg\0-homebuilt-x64\","MP4Box.exe"))
+vrdtvs_mediainfoexe64 = fso.GetAbsolutePathName(fso.BuildPath("C:\SOFTWARE\MediaInfo\","MediaInfo.exe"))
+vrdtvs_ffprobeexe64 = fso.GetAbsolutePathName(fso.BuildPath(_vs_root,"ffprobe.exe"))
+vrdtvs_ffmpegexe64 = fso.GetAbsolutePathName(fso.BuildPath(_vs_root,"ffmpeg.exe"))
+vrdtvs_dgindexNVexe64 = fso.GetAbsolutePathName(fso.BuildPath(_vs_root,"DGIndex\DGIndexNV.exe"))
+'
+' Setup Global Paths
+'
+Dim vrdtvs_temp_path
+Dim _HDTV
+
+vrdtvs_source_TS_Folder = fso.GetAbsolutePathName("G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\"))
+vrdtvs_done_TS_Folder = fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_source_TS_Folder,"VRDTVS-done\"))
+vrdtvs_destination_mp4_Folder = fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_source_TS_Folder,"VRDTVS-Converted\"))
+vrdtvs_failed_conversion_TS_Folder = fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_source_TS_Folder,"VRDTVS-Failed-Conversio\"))
+vrdtvs_temp_path = fso.GetAbsolutePathName("D:\VRDTVS-SCRATCH\")
+
+
+
+
 
 '----------------------------------
 ' Run a command and capture output and errors
@@ -350,8 +392,8 @@ WScript.StdOut.WriteLine "------------------------------------------------------
 
 WScript.StdOut.WriteLine "8. ------------------------------------------------------------------------------------------------------"
 
-Dim vrdtvs_mediainfoexe
-vrdtvs_mediainfoexe = "C:\SOFTWARE\MediaInfo\MediaInfo.exe"
+Dim vrdtvs_mediainfoexe64
+vrdtvs_mediainfoexe64 = "C:\SOFTWARE\MediaInfo\MediaInfo.exe"
 dim V_Width, V_Height, V_DisplayAspectRatio, V_DisplayAspectRatio_string, V_DisplayAspectRatio_string_slash, A_Video_Delay_ms, A_Audio_Delay_ms
 
 V_Width = get_mediainfo_parameter("Video","Width","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4", "")
@@ -373,7 +415,7 @@ Wscript.echo("A_Video_Delay_ms=" & A_Video_Delay_ms)
 Wscript.echo("A_Audio_Delay_ms=" & A_Audio_Delay_ms)
 
 Function get_mediainfo_parameter (mi_Section, mi_Parameter, mi_MediaFilename, mi_Legacy) 
-    '        1. a global variable vrdtvs_mediainfoexe exists pointing to the mediainfo exe
+    '        1. a global variable vrdtvs_mediainfoexe64 exists pointing to the mediainfo exe
     ' Note \r\n is Windows new-line, 
     ' Which in the case of multiple audio streams, outputs a result for each stream on a new line, 
     ' the first stream being the first entry, and the first audio stream should be the one we need. 
@@ -391,9 +433,9 @@ Function get_mediainfo_parameter (mi_Section, mi_Parameter, mi_MediaFilename, mi
     ' If piping to a temporary file, cmd looks something like this:
     ' mi_temp_Filename = gimme_a_temporary_absolute_filename() ' generate a fully qualified temporary filename from the function
     ' mi_status = delete_a_file (mi_temp_Filename, True)
-    ' mi_cmd =  """" & vrdtvs_mediainfoexe & """ " & mi_Legacy & " ""--Inform=" & mi_Section & ";%" & mi_Parameter & "%\r\n"" """ & mi_MediaFilename & """ > """ & mi_temp_Filename & """"
+    ' mi_cmd =  """" & vrdtvs_mediainfoexe64 & """ " & mi_Legacy & " ""--Inform=" & mi_Section & ";%" & mi_Parameter & "%\r\n"" """ & mi_MediaFilename & """ > """ & mi_temp_Filename & """"
     '
-    mi_cmd = """" & vrdtvs_mediainfoexe & """ " & mi_Legacy & " ""--Inform=" & mi_Section & ";%" & mi_Parameter & "%\r\n"" """ & mi_MediaFilename & """"
+    mi_cmd = """" & vrdtvs_mediainfoexe64 & """ " & mi_Legacy & " ""--Inform=" & mi_Section & ";%" & mi_Parameter & "%\r\n"" """ & mi_MediaFilename & """"
     'WScript.StdOut.WriteLine("DEBUG: get_mediainfo_parameter Exec command: " & mi_cmd)
     set mi_exe = mi_wso.Exec(mi_cmd)
     Do While mi_exe.Status = 0 '0 is running and 1 is ending
@@ -432,8 +474,8 @@ WScript.StdOut.WriteLine "------------------------------------------------------
 
 WScript.StdOut.WriteLine "9. ------------------------------------------------------------------------------------------------------"
 
-Dim vrdtvs_ffprobeexe
-vrdtvs_ffprobeexe = "C:\SOFTWARE\Vapoursynth-x64\ffprobe.exe"
+Dim vrdtvs_ffprobeexe64
+vrdtvs_ffprobeexe64 = "C:\SOFTWARE\Vapoursynth-x64\ffprobe.exe"
 
 dim V_Width_FF, V_Height_FF, V_Duration_s_FF, V_BitRate_FF, V_BitRate_Maximum_FF
 
@@ -448,7 +490,7 @@ Wscript.echo("V_BitRate_FF=" & V_BitRate_FF)
 Wscript.echo("V_BitRate_Maximum_FF=" & V_BitRate_Maximum_FF)
 
 Function get_ffprobe_video_stream_parameter (ffp_Parameter, ffp_MediaFilename) 
-    '        1. a global variable vrdtvs_ffprobeexe exists pointing to the ffprobe exe
+    '        1. a global variable vrdtvs_ffprobeexe64 exists pointing to the ffprobe exe
     ' Note \r\n is Windows new-line, which is for the case of multiple audio streams, 
     '      it outputs a result for each stream on a new line, the first stream being the first entry,
     '      and the first audio stream should be the one we need. 
@@ -463,9 +505,9 @@ Function get_ffprobe_video_stream_parameter (ffp_Parameter, ffp_MediaFilename)
     ' If piping to a temporary file, cmd looks something like this:
     ' ffp_temp_Filename = gimme_a_temporary_absolute_filename() ' generate a fully qualified temporary filename from the function
     ' ffp_status = delete_a_file (ffp_temp_Filename, True)
-    ' ffp_cmd =  """" & vrdtvs_ffprobeexe & ???  & ffp_MediaFilename & """ > """ & ffp_temp_Filename & """"
+    ' ffp_cmd =  """" & vrdtvs_ffprobeexe64 & ???  & ffp_MediaFilename & """ > """ & ffp_temp_Filename & """"
     '
-    ffp_cmd = """" & vrdtvs_ffprobeexe & """ -hide_banner -v quiet -select_streams v:0 -show_entries stream=" & ffp_Parameter & " -of default=noprint_wrappers=1:nokey=1 """ & ffp_MediaFilename & """"
+    ffp_cmd = """" & vrdtvs_ffprobeexe64 & """ -hide_banner -v quiet -select_streams v:0 -show_entries stream=" & ffp_Parameter & " -of default=noprint_wrappers=1:nokey=1 """ & ffp_MediaFilename & """"
     'WScript.StdOut.WriteLine("DEBUG: get_ffprobe_video_stream_parameter Exec command: " & ffp_cmd)
     set ffp_exe = ffp_wso.Exec(ffp_cmd)
     Do While ffp_exe.Status = 0 '0 is running and 1 is ending
