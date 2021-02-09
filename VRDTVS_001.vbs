@@ -36,7 +36,7 @@ vrdtvs_ScriptName = Wscript.ScriptName
 WScript.StdOut.WriteLine(vrdtvs_ScriptName & " Started.")
 '
 Dim vrdtvs_DEBUG
-vrdtvs_DEBUG = False
+vrdtvs_DEBUG = True
 '
 Dim vrd_version_for_qsf
 Dim vrd_version_for_adscan
@@ -154,19 +154,8 @@ If vrdtvs_DEBUG Then
     WScript.StdOut.WriteLine "DEBUG: final        vrd_path_for_adscan_vbs=" & vrd_path_for_adscan_vbs
 End If
 '
-
-
-
-
-
-
-
-
-
-
-'
 '----------------------------------------------------------------------------------------------------------------------------------------
-' Create the folders if they do not already exist
+' Create the working folders if they do not already exist
 '
 If NOT fso.FolderExists(vrdtvs_source_TS_Folder) Then     
 	Set objFolder = fso.CreateFolder(vrdtvs_source_TS_Folder)
@@ -198,8 +187,8 @@ End If
 '
 
 ' on a per-file basis:
-Dim vrdtvs_saved_ffmpeg_commands
-vrdtvs_saved_ffmpeg_commands = fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_source_TS_Folder,"some_filename.bat"))
+'Dim vrdtvs_saved_ffmpeg_commands
+'vrdtvs_saved_ffmpeg_commands = fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_source_TS_Folder,"some_filename.bat"))
 
 
 
