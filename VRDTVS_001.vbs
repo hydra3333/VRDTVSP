@@ -31,12 +31,45 @@ WScript.StdOut.WriteLine "------------------------------------------------------
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Setup Global (default) variables
 '
+Dim vrdtvs_tmp, vrdtvs_status, vrdtvs_exit_code, vrdrvs_Err_Code, vrdrvs_Err_Description ' a few working variables, for common use
+'
+Dim vrdtvs_run_datetime
+vrdtvs_run_datetime = vrdtvs_current_datetime() ' start of runtime, for common use
+'
 Dim vrdtvs_ScriptName
 vrdtvs_ScriptName = Wscript.ScriptName
 WScript.StdOut.WriteLine(vrdtvs_ScriptName & " " & vrdtvs_current_datetime_string() & " Started.")
 '
 Dim vrdtvs_DEBUG
 vrdtvs_DEBUG = True
+'
+'----------------------------------------------------------------------------------------------------------------------------------------
+' Setup Global Objects (remember to Set the_object=Nothing later)
+' For Microsft Objects, see https://docs.microsoft.com/en-us/office/vba/language/reference/user-interface-help/filesystemobject-object
+'
+dim fso, wso, objFolder
+set wso = CreateObject("Wscript.Shell")
+Set fso = CreateObject("Scripting.FileSystemObject")
+'
+'----------------------------------------------------------------------------------------------------------------------------------------
+' Setup Global exe file paths, resolving them to Absolute paths
+'
+Dim vs_root
+Dim vrdtvs_mediainfoexe64
+Dim vrdtvs_ffprobeexe64
+Dim vrdtvs_ffmpegexe64
+Dim vrdtvs_dgindexNVexe64
+Dim vrdtvs_mp4boxexex64
+vs_root = fso.GetAbsolutePathName("C:\SOFTWARE\Vapoursynth-x64\")
+vrdtvs_mp4boxexex64 = fso.GetAbsolutePathName(fso.BuildPath("C:\SOFTWARE\ffmpeg\0-homebuilt-x64\","MP4Box.exe"))
+vrdtvs_mediainfoexe64 = fso.GetAbsolutePathName(fso.BuildPath("C:\SOFTWARE\MediaInfo\","MediaInfo.exe"))
+vrdtvs_ffprobeexe64 = fso.GetAbsolutePathName(fso.BuildPath(vs_root,"ffprobe.exe"))
+vrdtvs_ffmpegexe64 = fso.GetAbsolutePathName(fso.BuildPath(vs_root,"ffmpeg.exe"))
+vrdtvs_dgindexNVexe64 = fso.GetAbsolutePathName(fso.BuildPath(vs_root,"DGIndex\DGIndexNV.exe"))
+vrdtvs_Insomniaexe64 = fso.GetAbsolutePathName("C:\SOFTWARE\Insomnia\64-bit\Insomnia.exe")
+'
+'----------------------------------------------------------------------------------------------------------------------------------------
+' Setup Global QSF file paths and stuff
 '
 Dim vrd_version_for_qsf
 Dim vrd_version_for_adscan
@@ -63,30 +96,6 @@ vrd_version_for_qsf = 6
 vrd_version_for_adscan = 6
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
-' Setup Global Objects (remember to Set the_object=Nothing later)
-' For Microsft Objects, see https://docs.microsoft.com/en-us/office/vba/language/reference/user-interface-help/filesystemobject-object
-'
-dim fso, wso, objFolder
-set wso = CreateObject("Wscript.Shell")
-Set fso = CreateObject("Scripting.FileSystemObject")
-'
-'----------------------------------------------------------------------------------------------------------------------------------------
-' Setup Global exe file paths, resolving them to Absolute paths
-'
-Dim vs_root
-Dim vrdtvs_mediainfoexe64
-Dim vrdtvs_ffprobeexe64
-Dim vrdtvs_ffmpegexe64
-Dim vrdtvs_dgindexNVexe64
-Dim vrdtvs_mp4boxexex64
-vs_root = fso.GetAbsolutePathName("C:\SOFTWARE\Vapoursynth-x64\")
-vrdtvs_mp4boxexex64 = fso.GetAbsolutePathName(fso.BuildPath("C:\SOFTWARE\ffmpeg\0-homebuilt-x64\","MP4Box.exe"))
-vrdtvs_mediainfoexe64 = fso.GetAbsolutePathName(fso.BuildPath("C:\SOFTWARE\MediaInfo\","MediaInfo.exe"))
-vrdtvs_ffprobeexe64 = fso.GetAbsolutePathName(fso.BuildPath(vs_root,"ffprobe.exe"))
-vrdtvs_ffmpegexe64 = fso.GetAbsolutePathName(fso.BuildPath(vs_root,"ffmpeg.exe"))
-vrdtvs_dgindexNVexe64 = fso.GetAbsolutePathName(fso.BuildPath(vs_root,"DGIndex\DGIndexNV.exe"))
-'
-'----------------------------------------------------------------------------------------------------------------------------------------
 ' Setup Global Paths, resolving them to Absolute paths
 '
 Dim vrdtvs_source_TS_Folder
@@ -108,7 +117,7 @@ vrdtvs_temp_path = fso.GetAbsolutePathName("D:\VRDTVS-SCRATCH\")
 ' theParentFolderName = fso.GetParentFolderName(an_AbsolutePath) 
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
-' Check ifcommandline parameters over-ride our standard values. Ignore any other commandline parameters.
+' Check if commandline parameters over-ride our standard values. Ignore any other commandline parameters.
 '
 vrdtvs_source_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("source_Folder",vrdtvs_source_TS_Folder))                        ' /source_Folder:"g:\hdtv\"
 vrdtvs_done_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("done_Folder",vrdtvs_done_TS_Folder))                              ' /source_Folder:"g:\hdtv\"
@@ -150,7 +159,7 @@ If vrdtvs_DEBUG Then
     WScript.StdOut.WriteLine "DEBUG: final vrdtvs_failed_conversion_TS_Folder=" & vrdtvs_failed_conversion_TS_Folder
     WScript.StdOut.WriteLine "DEBUG: final                   vrdtvs_temp_path=" & vrdtvs_temp_path
     WScript.StdOut.WriteLine "DEBUG: final                       vrdtvs_DEBUG=" & vrdtvs_DEBUG
-   WScript.StdOut.WriteLine "DEBUG: final                vrd_version_for_qsf=" & vrd_version_for_qsf
+    WScript.StdOut.WriteLine "DEBUG: final                vrd_version_for_qsf=" & vrd_version_for_qsf
     WScript.StdOut.WriteLine "DEBUG: final               vrd_path_for_qsf_vbs=" & vrd_path_for_qsf_vbs
     WScript.StdOut.WriteLine "DEBUG: final     vrd_profile_name_for_qsf_mpeg2=" & vrd_profile_name_for_qsf_mpeg2
     WScript.StdOut.WriteLine "DEBUG: final       vrd_profile_name_for_qsf_avc=" & vrd_profile_name_for_qsf_avc
@@ -190,7 +199,42 @@ If NOT fso.FolderExists(vrdtvs_temp_path) Then
 End If
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
+' Start a new copy of Insomnia so the PC does not go to sleep in the middle of conversions, do not wait for it to finish
 '
+Dim vrdtvs_Insomnia64_tmp_filename
+vrdtvs_Insomnia64_tmp_filename = vrdtvs_gimme_a_temporary_absolute_filename("VRDTVS_Insomnia64_copy-" & vrdtvs_run_datetime & "-")
+
+If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: Creating and running vrdtvs_Insomnia64_tmp_filename=" & vrdtvs_Insomnia64_tmp_filename
+vrdtvs_exit_code = vrdtvs_delete_a_file (vrdtvs_Insomnia64_tmp_filename, True) ' silently delete it even though it shouold never pre-exist
+On Error Resume Next
+fso.CopyFile vrdtvs_Insomniaexe64, vrdtvs_Insomnia64_tmp_filename, True 
+vrdrvs_Err_Code = Err.Number
+vrdrvs_Err_Description = Err.Description
+On Error Goto 0
+If vrdrvs_Err_Code <> 0 Then
+    Err.Clear
+    WScript.StdOut.WriteLine("VRDTVS ERROR - Error " & vrdrvs_Err_Code & & " Creating vrdtvs_Insomnia64_tmp_filename=" & vrdtvs_Insomnia64_tmp_filename & "... Aborting ...")
+    WScript.StdOut.WriteLine("VRDTVS ERROR - " & vrdrvs_Err_Description
+    ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
+    WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+End If
+
+
+
+
+Exec it asynchronously and do not wait for it to finish
+
+
+
+
+
+'
+'----------------------------------------------------------------------------------------------------------------------------------------
+'
+'
+
+
+
 
 ' on a per-file basis:
 'Dim vrdtvs_saved_ffmpeg_commands
