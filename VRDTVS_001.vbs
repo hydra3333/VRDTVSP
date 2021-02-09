@@ -82,11 +82,11 @@ vrdtvs_temp_path = fso.GetAbsolutePathName("D:\VRDTVS-SCRATCH\")
 '----------------------------------------------------------------------------------------------------------------------------------------
 
 ' 1. Check if parameters on the commandline over-ride our values. Ignore any other parameters
-vrdtvs_source_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("source_Folder",vrdtvs_source_TS_Folder))
-vrdtvs_done_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("done_Folder",vrdtvs_done_TS_Folder))
-vrdtvs_destination_mp4_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("destination_Folder",vrdtvs_destination_mp4_Folder))
-vrdtvs_failed_conversion_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("failed_Folder",vrdtvs_failed_conversion_TS_Folder))
-vrdtvs_temp_path = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("temp_path",vrdtvs_temp_path))
+vrdtvs_source_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("source_Folder",vrdtvs_source_TS_Folder))                        ' /source_Folder:"g:\hdtv\"
+vrdtvs_done_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("done_Folder",vrdtvs_done_TS_Folder))                              ' /source_Folder:"g:\hdtv\"
+vrdtvs_destination_mp4_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("destination_Folder",vrdtvs_destination_mp4_Folder))       ' /source_Folder:"g:\hdtv\"
+vrdtvs_failed_conversion_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("failed_Folder",vrdtvs_failed_conversion_TS_Folder))  ' /source_Folder:"g:\hdtv\"
+vrdtvs_temp_path = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("temp_path",vrdtvs_temp_path))                                          ' /source_Folder:"g:\hdtv\"
 
 ????????????????
 vrdtvs_DEBUG = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("DEBUG",vrdtvs_DEBUG)) ' false = 0 true = -1 or 1
@@ -172,13 +172,14 @@ Function vrdtvs_get_commandline_parameter(gcp_argument_name, gcp_default_value)
         Set gcp_NamedArgs = WScript.Arguments.Named
         If gcp_NamedArgs.Exists(gcp_argument_name) and NOT IsEmpty(gcp_NamedArgs(gcp_argument_name)) Then ' IsEmpty is a special case of exists but has no value, but is not "" which is different
             gcp_Return_Value = gcp_NamedArgs.Item(gcp_argument_name)
+            If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_get_commandline_parameter obtained commandline Argument: " & gcp_argument_name & "=" & gcp_Return_Value
             If Ucase(gcp_Return_Value) = Ucase("True")  Then 
                 gcp_Return_Value = True    ' if required, convert to boolean True
-                WScript.StdOut.WriteLine "DEBUG: vrdtvs_get_commandline_parameter converted to boolean True gcp_Return_Value=" & gcp_Return_Value
+                If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_get_commandline_parameter converted to boolean True gcp_Return_Value=" & gcp_Return_Value
             End If
             If Ucase(gcp_Return_Value) = Ucase("False") Then 
                 gcp_Return_Value = False   ' if required, convert to boolean False
-                WScript.StdOut.WriteLine "DEBUG: vrdtvs_get_commandline_parameter converted to boolean False gcp_Return_Value=" & gcp_Return_Value
+                If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_get_commandline_parameter converted to boolean False gcp_Return_Value=" & gcp_Return_Value
             End If
         End If
         Set gcp_NamedArgs = Nothing
