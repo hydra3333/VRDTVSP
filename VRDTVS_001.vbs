@@ -78,6 +78,47 @@ vrdtvs_temp_path = fso.GetAbsolutePathName("D:\VRDTVS-SCRATCH\")
 ' theDriveName = fso.GetDriveName(an_AbsolutePath) ' includes driver letter and ":"
 ' theParentFolderName = fso.GetParentFolderName(an_AbsolutePath) 
 
+'----------------------------------------------------------------------------------------------------------------------------------------
+'----------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+' How to parse commandline aruments in vbscript
+
+' Firstly, using standard arguments
+' Example 1 cscript //nologo test.vbs /p1:"This is the value for p1" /p2:500dim i, c, NamedArgs, p1, p2
+WScript.StdOut.WriteLine "3. ------------------------------------------------------------------------------------------------------"
+dim NamedArgs
+dim c, i
+dim p1, p2
+c = WScript.Arguments.Count
+if c>0 then
+    for i=0 to (c-1)
+        WScript.StdOut.WriteLine "Unnamed Argument " & i & "=" & WScript.Arguments(i)
+    next
+end if
+' Secondly, using named arguments 
+' Example 2 cscript //nologo test.vbs /p1:"This is the value for p1" /p2:500
+c = WScript.Arguments.Count
+set NamedArgs = WScript.Arguments.Named
+if NamedArgs.Exists("p1") and NOT IsEmpty(NamedArgs("p1")) then 
+    p1 = NamedArgs.Item("p1")
+else
+    p1 = "some default for p1" ' default value if not specified on commandline
+end if
+if NamedArgs.Exists("p2")  and NOT  IsEmpty(NamedArgs("p2")) then 
+    p2 = NamedArgs.Item("p2")
+else
+    p2 = 2 ' default value if not specified on commandline
+end if
+WScript.StdOut.WriteLine "Named Argument value for p1=" & p1
+WScript.StdOut.WriteLine "Named Argument value for p2=" & p2
+WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
+
 
 
 
@@ -88,12 +129,42 @@ vrdtvs_temp_path = fso.GetAbsolutePathName("D:\VRDTVS-SCRATCH\")
 
 
 
+
+
 WScript.StdOut.WriteLine(vrdtvs_ScriptName & " Finished.")
 WScript.Quit
 '----------------------------------------------------------------------------------------------------------------------------------------
 '----------------------------------------------------------------------------------------------------------------------------------------
 '
 ' Subroutines and Functions
+'
+Function vrdtvs_current_datetime ()
+    'return format: YYYY.MM.DD-HH.MM.SS.mmm
+    ' Call like this:
+    '       x = vrdtvs_current_datetime()
+	Dim t, t_date, tmp, milliseconds
+	'capture the date and timer "close together" so if the date changes while the other code runs the values you are using don't change
+	t = Timer
+	t_date = Now()
+	tmp = Int(t)
+	milliseconds = Int((t-tmp) * 1000)
+    vrdtvs_current_datetime = year(t_date) & "." & Right("00" & month(t_date),2) & "." & Right("00" & day(t_date),2) & "-" & Right("00" & hour(t_date),2) & "." & Right("00" & minute(t_date),2) & "." & Right("00" & second(t_date),2) & "." & Right("000" & milliseconds,3)
+End Function
+'
+Function vrdtvs_gimme_a_temporary_absolute_filename ()
+    ' rely on global variable "fso"
+    ' rely on global variable "vrdtvs_temp_path" being set to a valid path
+    ' rely on function vrdtvs_current_datetime
+    ' Parameters: none
+    ' Call like this:
+    '       x = vrdtvs_gimme_a_temporary_absolute_filename()
+    Dim atf_temp
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: entered vrdtvs_gimme_a_temporary_absolute_filename")
+    atf_temp = vrdtvs_current_datetime() & "-" & fso.GetTempName & ".tmp"
+    atf_temp = fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_temp_path,atf_temp)) ' rely on global variable "vrdtvs_temp_path" already being set to a valid path
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_gimme_a_temporary_absolute_filename generated a_temporary_filename=""" & atf_temp & """"
+    vrdtvs_gimme_a_temporary_absolute_filename = atf_temp
+End Function
 '
 Function vrdtvs_delete_a_file (filename_to_delete, do_it_silently)
     ' rely on global variable "fso"
@@ -180,20 +251,6 @@ Function vrdtvs_move_files (mf_source_path_wildcard, mv_destination_path)
     Set mf_exe = Nothing
     If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_move_files exiting with status=""" & mf_status & """"
     vrdtvs_move_files = mf_status
-End Function
-'
-Function vrdtvs_gimme_a_temporary_absolute_filename ()
-    ' rely on global variable "fso"
-    ' rely on global variable "vrdtvs_temp_path" being set to a valid path
-    ' Parameters: none
-    ' Call like this:
-    '       ????
-    Dim atf_temp
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: entered vrdtvs_gimme_a_temporary_absolute_filename")
-    atf_temp = fso.GetTempName & ".tmp"
-    atf_temp = fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_temp_path,atf_temp)) ' rely on global variable "vrdtvs_temp_path" already being set to a valid path
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_gimme_a_temporary_absolute_filename generated a_temporary_filename=""" & atf_temp & """"
-    vrdtvs_gimme_a_temporary_absolute_filename = atf_temp
 End Function
 '
 Function vrdtvs_Calculate_ElapsedTime_ms (timer_StartTime, timer_EndTime)
@@ -446,47 +503,4 @@ Function vrdtvs_remove_special_characters_from_string(rsp_string, rsp_is_an_Abso
     If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_remove_special_characters_from_string exiting with value: " & rsp_result)
     vrdtvs_remove_special_characters_from_string = rsp_result
 End Function
-
-
-
-
-
-
-
-
-
-'----------------------------------------------------------------------------------------------------------------------------------------
-'----------------------------------------------------------------------------------------------------------------------------------------
-'----------------------------------
-' How to parse commandline aruments in vbscript
-
-' Firstly, using standard arguments
-' Example 1 cscript //nologo test.vbs /p1:"This is the value for p1" /p2:500dim i, c, NamedArgs, p1, p2
-WScript.StdOut.WriteLine "3. ------------------------------------------------------------------------------------------------------"
-dim NamedArgs
-dim c, i
-dim p1, p2
-c = WScript.Arguments.Count
-if c>0 then
-    for i=0 to (c-1)
-        WScript.StdOut.WriteLine "Unnamed Argument " & i & "=" & WScript.Arguments(i)
-    next
-end if
-' Secondly, using named arguments 
-' Example 2 cscript //nologo test.vbs /p1:"This is the value for p1" /p2:500
-c = WScript.Arguments.Count
-set NamedArgs = WScript.Arguments.Named
-if NamedArgs.Exists("p1") and NOT IsEmpty(NamedArgs("p1")) then 
-    p1 = NamedArgs.Item("p1")
-else
-    p1 = "some default for p1" ' default value if not specified on commandline
-end if
-if NamedArgs.Exists("p2")  and NOT  IsEmpty(NamedArgs("p2")) then 
-    p2 = NamedArgs.Item("p2")
-else
-    p2 = 2 ' default value if not specified on commandline
-end if
-WScript.StdOut.WriteLine "Named Argument value for p1=" & p1
-WScript.StdOut.WriteLine "Named Argument value for p2=" & p2
-WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
 
