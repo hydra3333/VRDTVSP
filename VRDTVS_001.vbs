@@ -138,17 +138,17 @@ WScript.Quit
 '
 ' Subroutines and Functions
 '
-Function vrdtvs_current_datetime ()
+Function vrdtvs_current_datetime_string ()
     'return format: YYYY.MM.DD-HH.MM.SS.mmm
     ' Call like this:
-    '       x = vrdtvs_current_datetime()
+    '       x = vrdtvs_current_datetime_string()
 	Dim t, t_date, tmp, milliseconds
 	'capture the date and timer "close together" so if the date changes while the other code runs the values you are using don't change
 	t = Timer
 	t_date = Now()
 	tmp = Int(t)
 	milliseconds = Int((t-tmp) * 1000)
-    vrdtvs_current_datetime = year(t_date) & "." & Right("00" & month(t_date),2) & "." & Right("00" & day(t_date),2) & "-" & Right("00" & hour(t_date),2) & "." & Right("00" & minute(t_date),2) & "." & Right("00" & second(t_date),2) & "." & Right("000" & milliseconds,3)
+    vrdtvs_current_datetime_string = year(t_date) & "." & Right("00" & month(t_date),2) & "." & Right("00" & day(t_date),2) & "-" & Right("00" & hour(t_date),2) & "." & Right("00" & minute(t_date),2) & "." & Right("00" & second(t_date),2) & "." & Right("000" & milliseconds,3)
 End Function
 '
 Function vrdtvs_gimme_a_temporary_absolute_filename (gataf_filename_prepend_string)
