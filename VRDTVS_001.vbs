@@ -130,7 +130,7 @@ ElseIf vrd_version_for_qsf = 6 Then
     vrd_profile_name_for_qsf_mpeg2 = const_vrd6_profile_mpeg2
     vrd_profile_name_for_qsf_avc = const_vrd6_profile_avc
     vrd_extension_mpeg2 = const_vrd6_extension_mpeg2
-    vrd_extension_avc =const _vrd6_extension_avc
+    vrd_extension_avc = const_vrd6_extension_avc
 Else
     WScript.StdOut.WriteLine "VRDTVS ERROR - vrd_version_for_qsf can only be 5 or 6 ... Aborting ..."
     WScript.Quit 17 ' Error 17 = cannot perform the requested operation
