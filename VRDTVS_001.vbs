@@ -173,13 +173,13 @@ Function vrdtvs_delete_a_file (filename_to_delete, do_it_silently)
     '   filename_to_delete      a fully qualified filename
     '   do_it_silently          true or false
     ' Call like this:
-    '       ????
+    '       x = vrdtvs_delete_a_file("c:\temp\temp.tmp",False)
     Dim daf_Err_number, daf_Err_Description, daf_Err_Helpfile, daf_Err_HelpContext
     Dim daf_filename_to_delete
     If NOT do_it_silently Then
-        WScript.StdOut.WriteLine "Deleting file: """ & filename_to_delete & """"
+        WScript.StdOut.WriteLine "vrdtvs_delete_a_file Deleting file: """ & filename_to_delete & """"
     End If
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: Deleting file: """ & filename_to_delete & """"
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_delete_a_file Deleting file: """ & filename_to_delete & """"
     'If fso.FileExists(filename_to_delete) Then
     	On Error Resume Next
 	    fso.DeleteFile filename_to_delete, True ' fso.DeleteFile ( filespec[, force] ) ' it also supports wildcards, allowing delete of multiple files ...
@@ -189,15 +189,15 @@ Function vrdtvs_delete_a_file (filename_to_delete, do_it_silently)
         daf_Err_HelpContext = Err.HelpContext
         If daf_Err_number <> 0 Then
             If NOT do_it_silently Then
-                WScript.StdOut.WriteLine "Error " &  daf_Err_number &  " " &  daf_Err_Description & " : raised when Deleting file """ & filename_to_delete & """"
+                WScript.StdOut.WriteLine "ERROR: vrdtvs_delete_a_file error " &  daf_Err_number &  " " &  daf_Err_Description & " : raised when Deleting file """ & filename_to_delete & """"
             End If
-            If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: Error " &  daf_Err_number &  " " &  daf_Err_Description & " : raised when Deleting file """ & filename_to_delete & """"
+            If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_delete_a_file Error " &  daf_Err_number &  " " &  daf_Err_Description & " : raised when Deleting file """ & filename_to_delete & """"
 	        Err.Clear
         Else
             If NOT do_it_silently Then
-                WScript.StdOut.WriteLine "Deleted file """ & filename_to_delete & """"
+                WScript.StdOut.WriteLine "vrdtvs_delete_a_file Deleted file """ & filename_to_delete & """"
             End If
-            If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: Deleted file """ & filename_to_delete & """"
+            If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_delete_a_file Deleted file """ & filename_to_delete & """"
         End if
 	    On Error Goto 0 ' now continue
     'End If
