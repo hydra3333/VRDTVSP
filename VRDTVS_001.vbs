@@ -208,8 +208,32 @@ Function vrdtvs_get_mediainfo_parameter (mi_Section, mi_Parameter, mi_MediaFilen
     ' rely on global variable "fso"
     ' rely on global variable vrdtvs_mediainfoexe64 exists pointing to the mediainfo exe
     ' Note \r\n is Windows new-line, 
-    ' Which in the case of multiple audio streams, outputs a result for each stream on a new line, 
-    ' the first stream being the first entry, and the first audio stream should be the one we need. 
+    '   Which in the case of multiple audio streams, outputs a result for each stream on a new line, 
+    '   the first stream being the first entry, and the first audio stream should be the one we need. 
+    ' Parameters:
+    '   mi_Section          eg "Video" "Auidio" "General"
+    '   mi_Parameter        name of parameter to fetch eg "DisplayAspectRatio/String"
+    '   mi_MediaFilename    fully qualified (Absolute) filename of the media file to query
+    '   mi_Legacy           "" or "--Legacy" to invoke old the old mediainfo parameter name/value pairs
+    ' Call like this:
+    '       dim V_Width, V_Height, V_DisplayAspectRatio, V_DisplayAspectRatio_string, V_DisplayAspectRatio_string_slash, A_Video_Delay_ms, A_Audio_Delay_ms
+    '       V_Width = get_mediainfo_parameter("Video","Width","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4", "")
+    '       V_Height = get_mediainfo_parameter("Video","Height","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4", "")
+    '       V_DisplayAspectRatio = get_mediainfo_parameter("Video","DisplayAspectRatio","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4", "")
+    '       V_DisplayAspectRatio_string = get_mediainfo_parameter("Video","DisplayAspectRatio/String","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4", "")
+    '       V_DisplayAspectRatio_string_slash = Replace(V_DisplayAspectRatio_string,":","/",1,-1,1)
+    '       A_Video_Delay_ms =  get_mediainfo_parameter("Audio","Video_Delay","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4", "")
+    '       If A_Video_Delay_ms = "" Then
+    '           A_Video_Delay_ms = 0
+    '           A_Audio_Delay_ms = 0
+    '       Else
+    '           A_Audio_Delay_ms = 0 - A_Video_Delay_ms
+    '       End If
+    '       Wscript.echo("V_Width=" & V_Width & " V_Height=" & V_Height)
+    '       Wscript.echo("V_DisplayAspectRatio=" & V_DisplayAspectRatio)
+    '       Wscript.echo("V_DisplayAspectRatio_string=" & V_DisplayAspectRatio_string & " V_DisplayAspectRatio_string_slash=" & V_DisplayAspectRatio_string_slash)
+    '       Wscript.echo("A_Video_Delay_ms=" & A_Video_Delay_ms)
+    '       Wscript.echo("A_Audio_Delay_ms=" & A_Audio_Delay_ms)
     Dim mi_exe
     Dim mi_cmd, mi_status, mi_tmp
     'Dim mi_temp_Filename
@@ -257,6 +281,9 @@ Function vrdtvs_get_mediainfo_parameter (mi_Section, mi_Parameter, mi_MediaFilen
     If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_get_mediainfo_parameter exiting with value: " & mi_tmp)
     vrdtvs_get_mediainfo_parameter = mi_tmp
 End Function
+'
+
+
 
 
 
@@ -338,26 +365,6 @@ WScript.StdOut.WriteLine "8. ---------------------------------------------------
 
 Dim vrdtvs_mediainfoexe64
 vrdtvs_mediainfoexe64 = "C:\SOFTWARE\MediaInfo\MediaInfo.exe"
-dim V_Width, V_Height, V_DisplayAspectRatio, V_DisplayAspectRatio_string, V_DisplayAspectRatio_string_slash, A_Video_Delay_ms, A_Audio_Delay_ms
-
-V_Width = get_mediainfo_parameter("Video","Width","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4", "")
-V_Height = get_mediainfo_parameter("Video","Height","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4", "")
-V_DisplayAspectRatio = get_mediainfo_parameter("Video","DisplayAspectRatio","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4", "")
-V_DisplayAspectRatio_string = get_mediainfo_parameter("Video","DisplayAspectRatio/String","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4", "")
-V_DisplayAspectRatio_string_slash = Replace(V_DisplayAspectRatio_string,":","/",1,-1,1)
-A_Video_Delay_ms =  get_mediainfo_parameter("Audio","Video_Delay","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Converted\News-ABC_Evening_News.2021-02-05.mp4", "")
-If A_Video_Delay_ms = "" Then
-	A_Video_Delay_ms = 0
-	A_Audio_Delay_ms = 0
-Else
-	A_Audio_Delay_ms = 0 - A_Video_Delay_ms
-End If
-Wscript.echo("V_Width=" & V_Width & " V_Height=" & V_Height)
-Wscript.echo("V_DisplayAspectRatio=" & V_DisplayAspectRatio)
-Wscript.echo("V_DisplayAspectRatio_string=" & V_DisplayAspectRatio_string & " V_DisplayAspectRatio_string_slash=" & V_DisplayAspectRatio_string_slash)
-Wscript.echo("A_Video_Delay_ms=" & A_Video_Delay_ms)
-Wscript.echo("A_Audio_Delay_ms=" & A_Audio_Delay_ms)
-
 
 
 WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
