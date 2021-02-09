@@ -35,7 +35,7 @@ vrdtvs_ScriptName = Wscript.ScriptName
 WScript.StdOut.WriteLine(vrdtvs_ScriptName & " Started.")
 '
 Dim vrdtvs_DEBUG
-vrdtvs_DEBUG = True
+vrdtvs_DEBUG = False
 '
 ' Setup Global Objects (remember to Set the_object=Nothing later)
 '
@@ -68,7 +68,7 @@ Dim vrdtvs_temp_path
 vrdtvs_source_TS_Folder = fso.GetAbsolutePathName("G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\"))
 vrdtvs_done_TS_Folder = fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_source_TS_Folder,"VRDTVS-done\"))
 vrdtvs_destination_mp4_Folder = fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_source_TS_Folder,"VRDTVS-Converted\"))
-vrdtvs_failed_conversion_TS_Folder = fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_source_TS_Folder,"VRDTVS-Failed-Conversio\"))
+vrdtvs_failed_conversion_TS_Folder = fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_source_TS_Folder,"VRDTVS-Failed-Conversion\"))
 vrdtvs_temp_path = fso.GetAbsolutePathName("D:\VRDTVS-SCRATCH\")
 ' just examples of stuff for re-use in future BuildPath calls
 ' theParentFolderName = fso.GetParentFolderName(an_AbsolutePath) ' the drive and folder name of the file without any trailing "\"
@@ -81,8 +81,43 @@ vrdtvs_temp_path = fso.GetAbsolutePathName("D:\VRDTVS-SCRATCH\")
 '----------------------------------------------------------------------------------------------------------------------------------------
 '----------------------------------------------------------------------------------------------------------------------------------------
 
+' 1. Check if parameters on the commandline over-ride our values. Ignore any other parameters
+vrdtvs_source_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("source_Folder",vrdtvs_source_TS_Folder))
+vrdtvs_done_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("done_Folder",vrdtvs_done_TS_Folder))
+vrdtvs_destination_mp4_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("destination_Folder",vrdtvs_destination_mp4_Folder))
+vrdtvs_failed_conversion_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("failed_Folder",vrdtvs_failed_conversion_TS_Folder))
+vrdtvs_temp_path = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("temp_path",vrdtvs_temp_path))
+
+????????????????
+vrdtvs_DEBUG = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("DEBUG",vrdtvs_DEBUG)) ' false = 0 true = -1
+????????????????
 
 
+
+create the folders if they do not already exist
+
+
+
+Function vrdtvs_get_commandline_parameter(gcp_argument_name, gcp_default_value)
+    ' Parameters: 
+    '   gcp_argument_name       named argument specified on commandline like 
+    '                               /p1:"This is the value for p1"
+    '   gcp_default_value       a default value if the parameter is not specified on the commandline (or specified with no value)
+    ' Call like this:
+    '       x = vrdtvs_get_commandline_parameter("source_TS_Folder","G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\")
+    ' NOTE: if the commandline parameter is a path or something, it is NOT checked or Absoluted by this function
+Dim gcp_argument_count, gcp_NamedArgs, gcp_Return_Value
+gcp_argument_count = WScript.Arguments.Count
+gcp_Return_Value = gcp_default_value ' default to return the default_value
+If gcp_argument_count > 0 Then
+    Set gcp_NamedArgs = WScript.Arguments.Named
+    If NamedArgs.Exists(gcp_argument_name) and NOT IsEmpty(NamedArgs(gcp_argument_name)) Then ' IsEmpty is a special case of exists but has no value, but is not "" which is different
+        gcp_Return_Value = NamedArgs.Item(gcp_argument_name)
+    End If
+    Set gcp_NamedArgs = Nothing
+End If
+vrdtvs_get_commandline_parameter = gcp_Return_Value
+End Function
 
 
 
@@ -90,7 +125,8 @@ vrdtvs_temp_path = fso.GetAbsolutePathName("D:\VRDTVS-SCRATCH\")
 ' How to parse commandline aruments in vbscript
 
 ' Firstly, using standard arguments
-' Example 1 cscript //nologo test.vbs /p1:"This is the value for p1" /p2:500dim i, c, NamedArgs, p1, p2
+' Example 1 cscript //nologo test.vbs /p1:"This is the value for p1" /p2:500
+dim i, c, NamedArgs, p1, p2
 WScript.StdOut.WriteLine "3. ------------------------------------------------------------------------------------------------------"
 dim NamedArgs
 dim c, i
