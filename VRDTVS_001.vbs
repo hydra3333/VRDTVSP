@@ -151,19 +151,20 @@ Function vrdtvs_current_datetime ()
     vrdtvs_current_datetime = year(t_date) & "." & Right("00" & month(t_date),2) & "." & Right("00" & day(t_date),2) & "-" & Right("00" & hour(t_date),2) & "." & Right("00" & minute(t_date),2) & "." & Right("00" & second(t_date),2) & "." & Right("000" & milliseconds,3)
 End Function
 '
-Function vrdtvs_gimme_a_temporary_absolute_filename ()
+Function vrdtvs_gimme_a_temporary_absolute_filename (gataf_filename_prepend_string)
     ' rely on global variable "fso"
-    ' rely on global variable "vrdtvs_temp_path" being set to a valid path
+    ' rely on global variable "vrdtvs_temp_path" being set to a valid path for the temporary file
     ' rely on function vrdtvs_current_datetime
-    ' Parameters: none
+    ' Parameters: 
+    '   gataf_filename_prepend_string       allows better identification of what the temporary file is associate with
     ' Call like this:
-    '       x = vrdtvs_gimme_a_temporary_absolute_filename()
-    Dim atf_temp
+    '       x = vrdtvs_gimme_a_temporary_absolute_filename("a_base_filename_text_string")
+    Dim gataf_temp
     If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: entered vrdtvs_gimme_a_temporary_absolute_filename")
-    atf_temp = vrdtvs_current_datetime() & "-" & fso.GetTempName & ".tmp"
-    atf_temp = fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_temp_path,atf_temp)) ' rely on global variable "vrdtvs_temp_path" already being set to a valid path
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_gimme_a_temporary_absolute_filename generated a_temporary_filename=""" & atf_temp & """"
-    vrdtvs_gimme_a_temporary_absolute_filename = atf_temp
+    gataf_temp = gataf_filename_prepend_string & "-" & vrdtvs_current_datetime() & "-" & fso.GetTempName & ".tmp"
+    gataf_temp = fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_temp_path,gataf_temp)) ' rely on global variable "vrdtvs_temp_path" already being set to a valid path
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_gimme_a_temporary_absolute_filename generated a_temporary_filename=""" & gataf_temp & """"
+    vrdtvs_gimme_a_temporary_absolute_filename = gataf_temp
 End Function
 '
 Function vrdtvs_delete_a_file (filename_to_delete, do_it_silently)
