@@ -2,6 +2,7 @@ Option explicit
 '
 ' VRDTVS - automatically parse, convert video/audio from TVSchedulerPro TV recordings, and perhaps adscan them too
 ' copyright hydra3333@gmail.com 2021
+'
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' 1. Check and Exit if this .vbs isn;t run under CSCRIPT (not WSCRIPT which is the default)
 '    NOTE:  For ANY of this to work, the vb script MUST be run under Cscript host - or, things like stdout fail to work.
@@ -26,8 +27,8 @@ WScript.StdOut.WriteLine "Checked and cscript Engine = """ & cscript_strEngine &
 WScript.StdOut.WriteLine "VRDTVS Script name: " & Wscript.ScriptName
 WScript.StdOut.WriteLine "VRDTVS Script path: " & Wscript.ScriptFullName
 WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
-'----------------------------------------------------------------------------------------------------------------------------------------
 '
+'----------------------------------------------------------------------------------------------------------------------------------------
 ' Setup Global variables
 '
 Dim vrdtvs_ScriptName
@@ -37,12 +38,15 @@ WScript.StdOut.WriteLine(vrdtvs_ScriptName & " Started.")
 Dim vrdtvs_DEBUG
 vrdtvs_DEBUG = False
 '
+'----------------------------------------------------------------------------------------------------------------------------------------
 ' Setup Global Objects (remember to Set the_object=Nothing later)
+' For Microsft Objects, see https://docs.microsoft.com/en-us/office/vba/language/reference/user-interface-help/filesystemobject-object
 '
-dim fso, wso
+dim fso, wso, objFolder
 set wso = CreateObject("Wscript.Shell")
 Set fso = CreateObject("Scripting.FileSystemObject")
 '
+'----------------------------------------------------------------------------------------------------------------------------------------
 ' Setup Global exe file paths, resolving them to Absolute paths
 '
 Dim _vs_root
@@ -58,6 +62,7 @@ vrdtvs_ffprobeexe64 = fso.GetAbsolutePathName(fso.BuildPath(_vs_root,"ffprobe.ex
 vrdtvs_ffmpegexe64 = fso.GetAbsolutePathName(fso.BuildPath(_vs_root,"ffmpeg.exe"))
 vrdtvs_dgindexNVexe64 = fso.GetAbsolutePathName(fso.BuildPath(_vs_root,"DGIndex\DGIndexNV.exe"))
 '
+'----------------------------------------------------------------------------------------------------------------------------------------
 ' Setup Global Paths, resolving them to Absolute paths
 '
 Dim vrdtvs_source_TS_Folder
@@ -77,61 +82,47 @@ vrdtvs_temp_path = fso.GetAbsolutePathName("D:\VRDTVS-SCRATCH\")
 ' theFileName = fso.GetFileName(an_AbsolutePath) ' includes filename and "." and extension
 ' theDriveName = fso.GetDriveName(an_AbsolutePath) ' includes driver letter and ":"
 ' theParentFolderName = fso.GetParentFolderName(an_AbsolutePath) 
-
+'
 '----------------------------------------------------------------------------------------------------------------------------------------
-'----------------------------------------------------------------------------------------------------------------------------------------
-
-' 1. Check if parameters on the commandline over-ride our values. Ignore any other parameters
+' Check if parameters on the commandline over-ride our standard values. Ignore any other parameters
+'
 vrdtvs_source_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("source_Folder",vrdtvs_source_TS_Folder))                        ' /source_Folder:"g:\hdtv\"
 vrdtvs_done_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("done_Folder",vrdtvs_done_TS_Folder))                              ' /source_Folder:"g:\hdtv\"
 vrdtvs_destination_mp4_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("destination_Folder",vrdtvs_destination_mp4_Folder))       ' /source_Folder:"g:\hdtv\"
 vrdtvs_failed_conversion_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("failed_Folder",vrdtvs_failed_conversion_TS_Folder))  ' /source_Folder:"g:\hdtv\"
 vrdtvs_temp_path = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("temp_path",vrdtvs_temp_path))                                          ' /source_Folder:"g:\hdtv\"
-
-????????????????
-vrdtvs_DEBUG = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("DEBUG",vrdtvs_DEBUG)) ' false = 0 true = -1 or 1
-????????????????
-
-
-
-create the folders if they do not already exist
-
-
-
-
-
-' How to parse commandline aruments in vbscript
-
-' Firstly, using standard arguments
-' Example 1 cscript //nologo test.vbs /p1:"This is the value for p1" /p2:500
-dim i, c, NamedArgs, p1, p2
-WScript.StdOut.WriteLine "3. ------------------------------------------------------------------------------------------------------"
-dim NamedArgs
-dim c, i
-dim p1, p2
-c = WScript.Arguments.Count
-if c>0 then
-    for i=0 to (c-1)
-        WScript.StdOut.WriteLine "Unnamed Argument " & i & "=" & WScript.Arguments(i)
-    next
-end if
-' Secondly, using named arguments 
-' Example 2 cscript //nologo test.vbs /p1:"This is the value for p1" /p2:500
-c = WScript.Arguments.Count
-set NamedArgs = WScript.Arguments.Named
-if NamedArgs.Exists("p1") and NOT IsEmpty(NamedArgs("p1")) then 
-    p1 = NamedArgs.Item("p1")
-else
-    p1 = "some default for p1" ' default value if not specified on commandline
-end if
-if NamedArgs.Exists("p2")  and NOT  IsEmpty(NamedArgs("p2")) then 
-    p2 = NamedArgs.Item("p2")
-else
-    p2 = 2 ' default value if not specified on commandline
-end if
-WScript.StdOut.WriteLine "Named Argument value for p1=" & p1
-WScript.StdOut.WriteLine "Named Argument value for p2=" & p2
-WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
+vrdtvs_DEBUG = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("DEBUG",vrdtvs_DEBUG))
+'
+'----------------------------------------------------------------------------------------------------------------------------------------
+' Create the folders if they do not already exist
+'
+If NOT fso.FolderExists(vrdtvs_source_TS_Folder) Then     
+	Set objFolder = fso.CreateFolder(vrdtvs_source_TS_Folder)
+	Set objFolder = Nothing
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: Created vrdtvs_source_TS_Folder folder=" & vrdtvs_source_TS_Folder
+End If
+If NOT fso.FolderExists(vrdtvs_done_TS_Folder) Then     
+	Set objFolder = fso.CreateFolder(vrdtvs_done_TS_Folder)
+	Set objFolder = Nothing
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: Created vrdtvs_done_TS_Folder folder=" & vrdtvs_done_TS_Folder
+End If
+If NOT fso.FolderExists(vrdtvs_destination_mp4_Folder) Then     
+	Set objFolder = fso.CreateFolder(vrdtvs_destination_mp4_Folder)
+	Set objFolder = Nothing
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: Created vrdtvs_destination_mp4_Folder folder=" & vrdtvs_destination_mp4_Folder
+End If
+If NOT fso.FolderExists(vrdtvs_failed_conversion_TS_Folder) Then     
+	Set objFolder = fso.CreateFolder(vrdtvs_failed_conversion_TS_Folder)
+	Set objFolder = Nothing
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: Created vrdtvs_failed_conversion_TS_Folder folder=" & vrdtvs_failed_conversion_TS_Folder
+End If
+If NOT fso.FolderExists(vrdtvs_temp_path) Then     
+	Set objFolder = fso.CreateFolder(vrdtvs_temp_path)
+	Set objFolder = Nothing
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: Created vrdtvs_temp_path folder=" & vrdtvs_temp_path
+End If
+'
+'----------------------------------------------------------------------------------------------------------------------------------------
 
 
 
@@ -145,6 +136,9 @@ WScript.StdOut.WriteLine "------------------------------------------------------
 
 
 
+'
+'----------------------------------------------------------------------------------------------------------------------------------------
+'
 WScript.StdOut.WriteLine(vrdtvs_ScriptName & " Finished.")
 WScript.Quit
 '----------------------------------------------------------------------------------------------------------------------------------------
