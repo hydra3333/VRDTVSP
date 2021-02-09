@@ -161,27 +161,26 @@ Function vrdtvs_move_files (mf_source_path_wildcard, mv_destination_path)
 
 
 
-    'mf_cmd = "cmd /c " &   & " 2>&1"
     mf_cmd = "MOVE """ & mf_source_AbsolutePath & """ """ & mf_destination_AbsolutePath & """ 2>&1"
     
 
-    WScript.StdOut.WriteLine("Exec command: " & mf_cmd)
+    WScript.StdOut.WriteLine("vrdtvs_move_files Exec command: " & mf_cmd)
     set mf_exe = wso.Exec(mf_cmd)
     Do While mf_exe.Status = 0 '0 is running and 1 is ending
          Wscript.Sleep 100
     Loop
     Do Until mf_exe.StdOut.AtEndOfStream
         mf_tmp = mf_exe.StdOut.ReadLine()
-        WScript.StdOut.WriteLine("StdOut: " & mf_tmp)
+        WScript.StdOut.WriteLine("vrdtvs_move_files StdOut: " & mf_tmp)
         'Wscript.echo x
     Loop
     Do Until mf_exe.StdErr.AtEndOfStream
         mf_tmp = mf_exe.StdErr.ReadLine()
-        WScript.StdOut.WriteLin("StdErr: " & mf_tmp)
+        WScript.StdOut.WriteLin("vrdtvs_move_files StdErr: " & mf_tmp)
         'Wscript.echo(x)
     Loop
     mf_status = mf_exe.ExitCode
-    WScript.StdOut.WriteLine("Exit Status: " & mf_status)
+    WScript.StdOut.WriteLine("vrdtvs_move_files Exit Status: " & mf_status)
     'Wscript.echo(mf_status)
     Set mf_exe = Nothing
 
@@ -189,6 +188,7 @@ Function vrdtvs_move_files (mf_source_path_wildcard, mv_destination_path)
 
 
     If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_move_files exiting with status=""" & mf_status & """"
+    vrdtvs_move_files = mf_status
 End Function
 
 
