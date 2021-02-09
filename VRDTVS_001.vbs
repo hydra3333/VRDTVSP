@@ -100,6 +100,8 @@ Function vrdtvs_delete_a_file (filename_to_delete, do_it_silently)
     ' Parameters:
     '   filename_to_delete      a fully qualified filename
     '   do_it_silently          true or false
+    ' Call like this:
+    '       ????
     Dim daf_Err_number, daf_Err_Description, daf_Err_Helpfile, daf_Err_HelpContext
     Dim daf_filename_to_delete
     If NOT do_it_silently Then
@@ -131,10 +133,51 @@ Function vrdtvs_delete_a_file (filename_to_delete, do_it_silently)
     vrdtvs_delete_a_file = daf_Err_number
 End Function
 '
+Function vrdtvs_move_files (mf_source_path_wildcard, mv_destination_path)
+    ' rely on global variable "fso"
+    ' Parameters:
+    '   mf_source_path_wildcard     
+    '   mv_destination_path
+    ' Call like this:
+    '       result = vrdtvs_move_files("G:/SOME_SOURCE_PATH/*.MPG", "G:/SOME_DESTINATION_PATH/")
+    '           resulting in a DOS command something like MOVE /Y "G:/SOME_SOURCE_PATH/*.MPG" "G:/SOME_DESTINATION_PATH/" 
+    ' Examples of some useful functions:
+        ' an_AbsolutePath = fso.GetAbsolutePathName(fso.BuildPath("C:\SOFTWARE\ffmpeg\0-homebuilt-x64\","MP4Box.exe"))
+        ' theParentFolderName = fso.GetParentFolderName(an_AbsolutePath) ' the drive and folder name of the file without any trailing "\"
+        ' theBaseName = fso.GetBaseName(an_AbsolutePath)
+        ' theExtName = fso.GetExtensionName(an_AbsolutePath) ' does not include  the "."
+        ' theFileName = fso.GetFileName(an_AbsolutePath) ' includes filename and "." and extension
+        ' theDriveName = fso.GetDriveName(an_AbsolutePath) ' includes driver letter and ":"
+        ' theParentFolderName = fso.GetParentFolderName(an_AbsolutePath) 
+    Dim mf_status
+    Dim mf_source_AbsolutePath, mf_destination_AbsolutePath
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_move_files: """ & mf_source_path_wildcard & """" & " to """ &  mf_source_path_wildcard & """"
+    mf_source_AbsolutePath = GetAbsolutePathName(mf_source_path_wildcard)
+    mf_destination_AbsolutePath = GetAbsolutePathName(mf_destination_AbsolutePath)
+
+
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_move_files exiting with status=""" & mf_status & """"
+End Function
+
+
+
+
+
+
+
+
+
+
+
+
+
+'
 Function vrdtvs_gimme_a_temporary_absolute_filename ()
     ' rely on global variable "fso"
     ' rely on global variable "vrdtvs_temp_path" being set to a valid path
     ' Parameters: none
+    ' Call like this:
+    '       ????
     Dim atf_temp
     If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: entered vrdtvs_gimme_a_temporary_absolute_filename")
     atf_temp = fso.GetTempName & ".tmp"
@@ -349,6 +392,8 @@ Function vrdtvs_remove_special_characters_from_string(rsp_string, rsp_is_an_Abso
     ' Parameters:
     '   rsp_string                  the string to Treat - ususally the "BaseName" component of a filename
     '   rsp_is_an_AbsolutePath      True if is an absolute path string, where we treat only the "BaseName" component and return the treated Absolute pathname
+    ' Call like this:
+    '       ????
     ' just examples of stuff for re-use in future BuildPath calls
         ' an_AbsolutePath = fso.GetAbsolutePathName(fso.BuildPath("C:\SOFTWARE\ffmpeg\0-homebuilt-x64\","MP4Box.exe"))
         ' theParentFolderName = fso.GetParentFolderName(an_AbsolutePath) ' the drive and folder name of the file without any trailing "\"
@@ -433,28 +478,5 @@ else
 end if
 WScript.StdOut.WriteLine "Named Argument value for p1=" & p1
 WScript.StdOut.WriteLine "Named Argument value for p2=" & p2
-WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
-
-'----------------------------------
-' REGEX
-WScript.StdOut.WriteLine "4. ------------------------------------------------------------------------------------------------------"
-Const replacement_character="."
-Const regex_pattern="[^a-zA-Z0-9-_. ]+"      ' ^ means not matching
-dim myRegExp
-dim input_string
-dim result_string
-input_string="ABCabc!@#$%^&*()_+-={}[}|\;:`~'""<>,.?/_-+=1234567890."
-Set myRegExp = New RegExp
-myRegExp.IgnoreCase = False
-myRegExp.Global = True  
-myRegExp.Pattern = regex_pattern
-result_string = myRegExp.Replace(input_string,replacement_character) ' in this case replace all matching characters with ".", in this case all non-standard characters
-Set myRegExp = Nothing
-WScript.StdOut.WriteLine "regex_pattern        =""" & regex_pattern & """"
-WScript.StdOut.WriteLine "replacement_character=""" & replacement_character & """"
-WScript.StdOut.WriteLine "Input String         =""" & input_string & """"
-WScript.StdOut.WriteLine "Result String        =""" & result_string & """"
-WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
-WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
 WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
 
