@@ -931,7 +931,7 @@ Sub vrdtvs_ffiaft_pfis_Process_a_File (objSpecifiedFile)
 	End If
 	local_timerEnd = Timer
     If vrdtvs_DEBUG Then 
-		WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: Sub Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(local_timerStart, local_timerEnd)))
+		WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: Sub Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(local_timerStart, local_timerEnd))
 	End If
 	' vrdtvs_ffiaft_pfis_Process_a_File is a Sub, hence no return values
 End Sub
