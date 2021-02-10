@@ -1545,7 +1545,7 @@ Function vrdtvs_Move_Date_to_End_of_String(theOriginalString)
             Exit For
         End If
     Next
-	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: is_a_date_there=" & is_a_date_there)
+	'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: is_a_date_there=" & is_a_date_there)
     Do While is_a_date_there ' loop forever ... setting up for cheeky way to exit all FOR loops at once
 		'for xyear = 2017 to 2040
         for xyear = 2021 to 2021 ' FORCE DEBUG OUTSIDE OF REAL DEBUG
@@ -1560,9 +1560,9 @@ Function vrdtvs_Move_Date_to_End_of_String(theOriginalString)
 						'	WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: About to process " & xDate & " with txtToSearchFor: """ & txtToSearchFor & """ in """ & theOriginalString & """")
 						'End If
 						If instr(1, theOriginalString, txtToSearchFor, vbTextCompare) > 0 then                                                                ' we found date within the string
-							'If vrdtvs_DEBUG Then 
-							'	WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: FOUND txtToSearchFor: """ & txtToSearchFor & """ in """ & theOriginalString & """")
-							'End If
+							If vrdtvs_DEBUG Then 
+								WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: FOUND txtToSearchFor: """ & txtToSearchFor & """ in """ & theOriginalString & """")
+							End If
                             If right(theOriginalString, len(xDate)) <> xDate then ' ensure it's not already at the end of the string
                                 theNewString = Replace(theOriginalString, txtToSearchFor, "", 1, -1, vbTextCompare) & theLeadingReplaceCharacter & xDate     ' move the date to the end of the string since it's not already there
 								If vrdtvs_DEBUG Then 
