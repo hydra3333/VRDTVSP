@@ -680,7 +680,7 @@ Function vrdtvs_get_ffprobe_video_stream_parameter (ffp_Parameter, ffp_MediaFile
     vrdtvs_get_ffprobe_video_stream_parameter = ffp_tmp
 End Function
 '
-Function vrdtvs_remove_special_characters_from_string(rsp_string, rsp_is_an_AbsolutePath) 
+Function vrdtvs_remove_special_characters_from_string(rsp_string, rsp_is_an_AbsolutePath) ' treat only the "BaseName" component of an Absolute Patch and return the treated Absolute Path
     ' rely on global variable "fso"
     ' Parameters:
     '   rsp_string                  the string to Treat - ususally the "BaseName" component of a filename
@@ -726,7 +726,7 @@ Function vrdtvs_remove_special_characters_from_string(rsp_string, rsp_is_an_Abso
     If rsp_is_an_AbsolutePath Then
         rsp_result = fso.GetAbsolutePathName(fso.BuildPath(rsp_ParentFolderName, rsp_result & "." & rsp_ExtName))
     End If
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_remove_special_characters_from_string exiting with value: " & rsp_result)
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_remove_special_characters_from_string exiting with return value: " & rsp_result)
     vrdtvs_remove_special_characters_from_string = rsp_result
 End Function
 '
@@ -753,11 +753,11 @@ Function vrdtvs_fix_filenames_in_a_folder_tree (the_folder_tree)
 	    Exit Function
     End If
     '
-	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Started basic renames for folder tree """ & ffiaft_folder_tree & """"
+	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Started basic file renames for folder tree """ & ffiaft_folder_tree & """"
 	Set vrdtvs_folder_object = fso.GetFolder(ffiaft_folder_tree)            ' get an object of the specified top level folder to process
 	Call vrdtvs_ffiaft_Process_Files_In_Subfolders (vrdtvs_folder_object)   ' recursively process the content (files, folders) of that specified top level folder
     Set vrdtvs_folder_object = Nothing                                      ' finished, disppose of the object
-	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Finished basic renames for folder tree """ & ffiaft_folder_tree & """"
+	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Finished basic file renames for folder tree """ & ffiaft_folder_tree & """"
     '
 
 
@@ -794,51 +794,80 @@ Sub vrdtvs_ffiaft_Process_Files_In_Subfolders (objSpecifiedFolder) ' Process all
     Next
     Set objCurrentFolder = Nothing
 End Sub
+'
 Sub vrdtvs_ffiaft_pfis_Process_a_File (objSpecifiedFile)
     ' Process a specific file ... fso.GetAbsolutePathName(objSpecifiedFile.Path) should be the fully qualified absolute filename of this file
+    Dim theAbsoluteFilename, theParentFolderName, theBaseName, theExtName
+    Dim NewFilename
+    theAbsoluteFilename = fso.GetAbsolutePathName(objSpecifiedFile.Path) ' should already be fully qualified but do it anyway just to be safe
+    theParentFolderName = fso.GetParentFolderName(theAbsoluteFilename)
+    theBaseName = fso.GetBaseName(theAbsoluteFilename)
+    theExtName = fso.GetExtensionName(theAbsoluteFilename) ' does not include  the "."
+    '
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: entered Sub with original BaseName """ & theBaseName & """ from """ & theAbsoluteFilename & """"
+    NewBaseName = theBaseName ' initialize so we can keep the original stuff if we need i in the future
+    NewBaseName = vrdtvs_remove_special_characters_from_string(NewBaseName, False) ' flag is not an Absolute filename by passing False to the function
+    NewBaseName = vrdtvs_remove_tvs_classifying_stuff_from_string(NewBaseName)
+    NewBaseName = vrdtvs_Move_Date_to_End_of_String(NewBaseName)
+    ' do not fix time stamps here, do that in powershell after processing all the filenames in a folder tree
 
+
+
+    ??? rename the file here right now, irnore errors
+
+
+
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: exiting Sub with fixed basename """ & NewBaseName & """ from """ & theAbsoluteFilename & """"
 End Sub
+'
+Function vrdtvs_remove_tvs_classifying_stuff_from_string (theOriginalString)
+    ' remove stuff in the string which was previously added by TVSchedulerPro, eg "Movie-" etc etc etc
 
-
-
-
-
-
-
-
-
-
-
+End Function
+'
 Function vrdtvs_Move_Date_to_End_of_String(theOriginalString)
-    ' if a theDate exists in a string, move it to the end of the string (used in renaming files with the date on the end)
+    ' if a Date exists in a string, move it to the end of the string (used in renaming files with the date on the end)
     Const theLeadingReplaceCharacter = "."
     Dim theLeadingSearchCharacter, txtToSearchFor
 	Dim searchformeArray(3) ' an array of valid leading characters to include in the search/replace
-    Dim xyear, xmonth, xday, xDate
+    Dim xyear, xmonth, xday, xDate, is_a_date_there
     Dim theNewString
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: entered with original value """ & theOriginalString & """"
     searchformeArray(0)="-"
 	searchformeArray(1)="_"
 	searchformeArray(2)=" "
 	searchformeArray(3)="."
     theNewString = theOriginalString
     ' Brute force through dates, nothing fancy here. Very slow but sure.
-    for xyear = 2017 to 2040
-	    for xmonth = 01 to 12
-	        for xday = 01 to 31
-	            xDate = Digits4(xyear) & "-" & Digits2(xmonth) & "-" & Digits2(xday) ' assume dates in the filename are always in format dd-mm-yyyy with leading zeroes
-                For Each theLeadingSearchCharacter In searchformeArray
-                    txtToSearchFor = theLeadingSearchCharacter & theDate
-                    If instr(1, theOriginalString, txtToSearchFor, vbTextCompare) > 0 then                                                                ' we found date withing the string
-                        If right(theOriginalString, len(theDate)) <> theDate then                                                                         ' ensure it's not already at the end of the string
-                            theNewString = Replace(theOriginalString, txtToSearchFor, "", 1, -1, vbTextCompare) & theLeadingReplaceCharacter & theDate     ' move the date to theend of the string
-                            ???? debug WScript.StdOut.WriteLine "vrdtvs_Move_Date_to_End_of_String: *** found filename with date not at end <" & txtToSearchFor & ">=<" & theOriginalString & "> ... Renaming to <" & theNewString & ">"
-                            Exit For
-                        End If
-                    End If
-                Next
-	        Next
-	    Next
+    ' But first, cheekily see if there's a date at all by checking for "20"
+    is_a_date_there = False
+    For Each theLeadingSearchCharacter In searchformeArray ' this is a quick FOR loop, only 4 iterations
+        txtToSearchFor = theLeadingSearchCharacter & "20" ' assuming start of a date in the "2000" years, eg "2021"
+        If instr(1, theOriginalString, txtToSearchFor, vbTextCompare) > 0 Then 
+            is_a_date_there = True
+            Exit For
+        End If
     Next
+    Do While is_a_date_there ' loop forever ... setting up for cheeky way to exit all FOR loops at once
+        for xyear = 2017 to 2040
+	        for xmonth = 01 to 12
+	            for xday = 01 to 31
+	                xDate = vrdtvs_Digits4(xyear) & "-" & vrdtvs_Digits2(xmonth) & "-" & vrdtvs_Digits2(xday) ' assume dates in the filename are always in format dd-mm-yyyy with leading zeroes
+                    For Each theLeadingSearchCharacter In searchformeArray
+                        txtToSearchFor = theLeadingSearchCharacter & theDate
+                        If instr(1, theOriginalString, txtToSearchFor, vbTextCompare) > 0 then                                                                ' we found date withing the string
+                            If right(theOriginalString, len(theDate)) <> theDate then                                                                         ' ensure it's not already at the end of the string
+                                theNewString = Replace(theOriginalString, txtToSearchFor, "", 1, -1, vbTextCompare) & theLeadingReplaceCharacter & theDate     ' move the date to theend of the string
+                                If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: found string with date not at end <" & txtToSearchFor & ">=<" & theOriginalString & "> ... changing to <" & theNewString & ">"
+                                Exit Do ' cheeky way to exit all the For loops at once, just Exit the outer Do Loop
+                            End If
+                        End If
+                    Next
+	            Next
+	        Next
+        Next
+    Loop
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: exiting with return value """ & theNewString & """"
 	vrdtvs_Move_Date_to_End_of_String = theNewString
 End Function
 Function vrdtvs_Digits2 (val)
