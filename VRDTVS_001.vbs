@@ -268,7 +268,7 @@ End If
 'vrdtvs_cmd = "CMD /C START /min """ &  vrdtvs_Insomnia64_tmp_filename & """ """ & vrdtvs_Insomnia64_tmp_filename & """"
 'vrdtvs_cmd = "START /min """ &  vrdtvs_Insomnia64_tmp_filename & """ """ & vrdtvs_Insomnia64_tmp_filename & """"
 vrdtvs_cmd = """" &  vrdtvs_Insomnia64_tmp_filename & """"
-WScript.StdOut.WriteLine("VTDRVS Insomnia: Exec command: " & vrdtvs_cmd)
+If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: Insomnia: Exec command: " & vrdtvs_cmd)
 set vrdtvs_exe_obj = wso.Exec(vrdtvs_cmd)
 vrdtvs_Insomnia64_ProcessID = vrdtvs_exe_obj.ProcessID
 vrdtvs_status = vrdtvs_exe_obj.ExitCode
@@ -281,7 +281,7 @@ If vrdtvs_Insomnia64_ProcessID = 0 Then
     WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
 WScript.StdOut.WriteLine("VTDRVS Insomnia: Exec Exit Status: " & vrdtvs_status)
-
+If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: Insomnia: Exec Exit Status: " & vrdtvs_status)
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Move .ts .mp4 .mpg .brpj files from the Source Folder to the source folder sincethat is where we process from
@@ -868,11 +868,11 @@ Function vrdtvs_fix_filenames_in_a_folder_tree (the_folder_tree)
 End Function
 Sub vrdtvs_ffiaft_Process_Files_In_Subfolders (objSpecifiedFolder) ' Process all files in specified folder tree
 	Dim objCurrentFolder, objColFiles, objSubFolder, objFile, ext
-    Set objCurrentFolder = objFSO.GetFolder(objSpecifiedFolder.Path) ' get a NEW instance of a folder object (keep for recursion)
+    Set objCurrentFolder = fso.GetFolder(objSpecifiedFolder.Path) ' get a NEW instance of a folder object (keep for recursion)
     ' Process all files in the current folder
     Set objColFiles = objCurrentFolder.Files ' get an object of a collection of files for the folder object
     For Each objFile in objColFiles
-        ext = UCase(objFSO.GetExtensionName(objFile.name))
+        ext = UCase(fso.GetExtensionName(objFile.name))
         If ext = Ucase("ts") OR ext = Ucase("mp4") OR ext = Ucase("mpg") OR ext = Ucase("bprj") Then ' only process specific file extensions
             Call vrdtvs_ffiaft_pfis_Process_a_File(objFile)'  fso.GetAbsolutePathName(objFile.Path) should be the fully qualified absolute filename of this file
         End If
