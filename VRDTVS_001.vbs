@@ -223,7 +223,7 @@ On Error Goto 0
 If vrdrvs_Err_Code <> 0 Then
     Err.Clear
     WScript.StdOut.WriteLine("VRDTVS Insomnia ERROR - Error " & vrdrvs_Err_Code & " Creating vrdtvs_Insomnia64_tmp_filename=" & vrdtvs_Insomnia64_tmp_filename & "... Aborting ...")
-    WScript.StdOut.WriteLine("VRDTVS Insomnia ERROR - " & vrdrvs_Err_Description
+    WScript.StdOut.WriteLine("VRDTVS Insomnia ERROR - " & vrdrvs_Err_Description)
     ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
     WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
@@ -749,7 +749,7 @@ Function vrdtvs_fix_filenames_in_a_folder_tree (the_folder_tree)
     Dim ffiaft_folder_tree
     Dim ffiaft_temp_powershell_filename
     Dim vrdtvs_folder_object
-    Dim vrdtvs_f_object, 
+    Dim vrdtvs_f_object
     '
     ffiaft_folder_tree = fso.GetAbsolutePathName(the_folder_tree)
     ffiaft_temp_powershell_filename = vrdtvs_gimme_a_temporary_absolute_filename("VRDTVS_fix_filenames_in_a_folder_tree-" & vrdtvs_run_datetime & "-") & ".ps1"
