@@ -124,6 +124,7 @@ vrdtvs_temp_path = fso.GetAbsolutePathName("D:\VRDTVS-SCRATCH\")
 '
 vrdtvs_DEBUG = vrdtvs_get_commandline_parameter("DEBUG",vrdtvs_DEBUG)                                                                               ' /DEBUG:True
 vrdtvs_DEVELOPMENT_NO_ACTIONS = vrdtvs_get_commandline_parameter("DEV",vrdtvs_DEVELOPMENT_NO_ACTIONS)                                               ' /DEV:True
+If vrdtvs_DEVELOPMENT_NO_ACTIONS Then vrdtvs_DEBUG = True ' if in Development then always force debug on
 '
 vrdtvs_CAPTURE_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("capture_Folder",vrdtvs_CAPTURE_TS_Folder))                     ' /capture_Folder:"g:\hdtv\" 
 vrdtvs_source_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("source_Folder",vrdtvs_source_TS_Folder))                        ' /source_Folder:"g:\hdtv\SOURCE_TS\"
@@ -246,7 +247,7 @@ End If
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Move .ts .mp4 .mpg .brpj files from the Source Folder to the source folder sincethat is where we process from
 '
-If vrdtvs_DEVELOPMENT_NO_ACTIONS Then vrdtvs_CAPTURE_TS_Folder = ""   ' if under vevelopment, do not copy any files
+If vrdtvs_DEVELOPMENT_NO_ACTIONS Then vrdtvs_CAPTURE_TS_Folder = ""   ' if under development, do not copy any files ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 If vrdtvs_CAPTURE_TS_Folder <> "" Then
     vrdtvs_status = vrdtvs_move_files(vrdtvs_CAPTURE_TS_Folder & "\*.ts", vrdtvs_source_TS_Folder & "\")    ' irnore any status
     vrdtvs_status = vrdtvs_move_files(vrdtvs_CAPTURE_TS_Folder & "\*.mp4", vrdtvs_source_TS_Folder & "\")   ' irnore any status
@@ -465,6 +466,7 @@ Function vrdtvs_move_files (mf_source_path_wildcard, mv_destination_path)
         WScript.StdOut.WriteLine "DEBUG: vrdtvs_move_files mf_destination_AbsolutePath=""" & mf_destination_AbsolutePath & """"
     End If
     mf_cmd = "MOVE /Y """ & mf_source_AbsolutePath & """ """ & mf_destination_AbsolutePath & """ 2>&1"
+    If vrdtvs_DEVELOPMENT_NO_ACTIONS Then mf_cmd = "REM " & mf_cmd ' do not move anything DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
     WScript.StdOut.WriteLine("vrdtvs_move_files Exec command: " & mf_cmd)
     set mf_exe = wso.Exec(mf_cmd)
     Do While mf_exe.Status = 0 '0 is running and 1 is ending
@@ -768,17 +770,17 @@ Function vrdtvs_fix_filenames_in_a_folder_tree (the_folder_tree)
 
 
 
-    ?????????????????????????????????
-    ' Here, create a temporary powershell script to fix the filename(s) then delete if after running it ... or do file by file (take too long ???)
-	if fix_timestamps = True then
-		Set objWscriptShell = CreateObject("Wscript.shell")
-		powershell_cmdline = "powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Normal -File """ & powershell_script_filename & """ -Folder """ & ffiaft_folder_tree & """ -logFile """ &  theLogfile & """"
-		WScript.StdOut.WriteLine "vbs_rename_files: ***** Fixing file dates using:<" & powershell_cmdline & ">"
-		objWscriptShell.run powershell_cmdline, True ?????????? use exec instead with stdout stderr etc
-		Set objWscriptShell = Nothing
-		WScript.StdOut.WriteLine "vbs_rename_files: --- FINISHED for folder <" & aPath & ">"
-	end if
-    ????????????????????????????
+    '?????????????????????????????????
+    '' Here, create a temporary powershell script to fix the filename(s) then delete if after running it ... or do file by file (take too long ???)
+	'if fix_timestamps = True then
+	'	Set objWscriptShell = CreateObject("Wscript.shell")
+	'	powershell_cmdline = "powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Normal -File """ & powershell_script_filename & """ -Folder """ & ffiaft_folder_tree & """ -logFile """ &  theLogfile & """"
+	'	WScript.StdOut.WriteLine "vbs_rename_files: ***** Fixing file dates using:<" & powershell_cmdline & ">"
+	'	objWscriptShell.run powershell_cmdline, True ?????????? use exec instead with stdout stderr etc
+	'	Set objWscriptShell = Nothing
+	'	WScript.StdOut.WriteLine "vbs_rename_files: --- FINISHED for folder <" & aPath & ">"
+	'end if
+    '????????????????????????????
 
 
 End Function
@@ -819,9 +821,11 @@ Sub vrdtvs_ffiaft_pfis_Process_a_File (objSpecifiedFile)
 
 
 
-    ???????????????????????????????????? rename the file here, right now, 
-    ???????????????????????????????????? taking care of "file already exists"
-    ???????????????????????????????????? taking care of editing the content .bprj files (which are just XML files) ... text for Ucase(theExtName) = Ucase("bprj")
+
+    '???????????????????????????????????? rename the file here, right now, 
+    '???????????????????????????????????? taking care of "file already exists"
+    '???????????????????????????????????? taking care of editing the content .bprj files (which are just XML files) ... text for Ucase(theExtName) = Ucase("bprj")
+
 
 
 
