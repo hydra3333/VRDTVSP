@@ -239,20 +239,26 @@ If vrdtvs_Insomnia64_ProcessID = 0 Then
 End If
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
-' Move .ts .mp4 .mpg .brpj files from the Source Folder to the 
-
+' Move .ts .mp4 .mpg .brpj files from the Source Folder to the source folder sincethat is where we process from
+'
 If vrdtvs_CAPTURE_TS_Folder <> "" Then
-    vrdtvs_status = vrdtvs_move_files(vrdtvs_CAPTURE_TS_Folder & "\*.mp4", vrdtvs_source_TS_Folder & "\")
-
-
-
+    vrdtvs_status = vrdtvs_move_files(vrdtvs_CAPTURE_TS_Folder & "\*.ts", vrdtvs_source_TS_Folder & "\")    ' irnore any status
+    vrdtvs_status = vrdtvs_move_files(vrdtvs_CAPTURE_TS_Folder & "\*.mp4", vrdtvs_source_TS_Folder & "\")   ' irnore any status
+    vrdtvs_status = vrdtvs_move_files(vrdtvs_CAPTURE_TS_Folder & "\*.mpg", vrdtvs_source_TS_Folder & "\")   ' irnore any status
+    vrdtvs_status = vrdtvs_move_files(vrdtvs_CAPTURE_TS_Folder & "\*.bprj", vrdtvs_source_TS_Folder & "\")  ' irnore any status
+End If
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
-' In Source and Destination folder trees, for file Extensions: .ts .mp4 .mpg .bprj .mp3 
-'   a) Remove special characters in filenames in a folder tree, for file Extensions: .ts .mp4 .mpg .bprj .mp3 
+' In Folder trees Source and Destination, for file Extensions: .ts .mp4 .mpg .bprj
+'   a) Remove special characters in filenames for file Extensions: .ts .mp4 .mpg .bprj
 '   b) modify the filenames based on the filename content including reformatting the date in the filename
 '   c) fix the DateCreated and DateModified timestamps based onthe date in the filename (a PowerShell command ... learn how to do that on the commandline)
 '
+
+
+
+
+
 
 
 
