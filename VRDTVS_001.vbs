@@ -863,17 +863,18 @@ Sub vrdtvs_ffiaft_Process_Files_In_Subfolders (objSpecifiedFolder) ' Process all
     Set objCurrentFolder = Nothing
 End Sub
 '
-Sub vrdtvs_ffiaft_pfis_Process_a_File (objSpecifiedFile)
+Sub vrdtvs_ffiaft_pfis_Process_a_File (objSpecifiedFile) 
+	' objSpecifiedFile is already pre-filtered beforehand to be one of ts mp4 mpg bprj
     ' Process a specific file ... fso.GetAbsolutePathName(objSpecifiedFile.Path) should be the fully qualified absolute filename of this file
     Dim theAbsoluteFilename, theParentFolderName, theBaseName, theExtName
-    Dim NewFilename
-    theAbsoluteFilename = fso.GetAbsolutePathName(objSpecifiedFile.Path) ' should already be fully qualified but do it anyway just to be safe
-    theParentFolderName = fso.GetParentFolderName(theAbsoluteFilename)
-    theBaseName = fso.GetBaseName(theAbsoluteFilename)
-    theExtName = fso.GetExtensionName(theAbsoluteFilename) ' does not include  the "."
+    Dim NewBaseName, newAbsoluteFilename
+    theOriginalAbsoluteFilename = fso.GetAbsolutePathName(objSpecifiedFile.Path) ' should already be fully qualified but do it anyway just to be safe
+    theOriginalParentFolderName = fso.GetParentFolderName(theOriginalAbsoluteFilename)
+    theOriginalBaseName = fso.GetBaseName(theOriginalAbsoluteFilename)
+    theOriginalExtName = fso.GetExtensionName(theOriginalAbsoluteFilename) ' does not include  the "."
     '
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: entered Sub with original BaseName """ & theBaseName & """ from """ & theAbsoluteFilename & """")
-    NewBaseName = theBaseName ' initialize so we can keep the original stuff if we need i in the future
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: entered Sub with original BaseName """ & theOriginalBaseName & """ from """ & theOriginalAbsoluteFilename & """")
+    NewBaseName = theOriginalBaseName ' initialize so we can keep the original stuff if we need i in the future
     NewBaseName = vrdtvs_remove_special_characters_from_string(NewBaseName, False) ' flag is not an Absolute filename by passing False to the function
     NewBaseName = vrdtvs_remove_tvs_classifying_stuff_from_string(NewBaseName)
     NewBaseName = vrdtvs_Move_Date_to_End_of_String(NewBaseName)
@@ -882,14 +883,27 @@ Sub vrdtvs_ffiaft_pfis_Process_a_File (objSpecifiedFile)
 
 
 
-    '???????????????????????????????????? rename the file here, right now, 
+    '???????????????????????????????????? rename the file here, right now, if required (test for NewBaseName <> theOriginalBaseName )
     '???????????????????????????????????? taking care of "file already exists"
     '???????????????????????????????????? taking care of editing and rewriting the content .bprj files (which are just XML files) ... test for Ucase(theExtName) = Ucase("bprj")
+	newAbsoluteFilename = fso.GetAbsolutePathName(fso.BuildPath(theOriginalParentFolderName,NewBaseName))
+	if ucase(NewBaseName) = Ucase(theOriginalBaseName) Then
+		'cater "file already exists" and loop try up to 100 times to add a 2 digit number ".00" to ".99" to the end of NewBaseName if needed
+		If vrdtvs_DEBUG Then 
+			WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: no need for a Rename, no change: theOriginalBaseName=""" & theOriginalBaseName & """ NewBaseName=""" & NewBaseName & """" )
+			WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: no need for a Rename, no change: theOriginalAbsoluteFilename=""" & theOriginalAbsoluteFilename & """ newAbsoluteFilename=""" & newAbsoluteFilename & """" )
+		End If
+	Else
+		If vrdtvs_DEBUG Then 
+			WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: needs a Rename using theOriginalBaseName=""" & theOriginalBaseName & """ NewBaseName=""" & NewBaseName & """" )
+			WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: needs a Rename using theOriginalAbsoluteFilename=""" & theOriginalAbsoluteFilename & """ newAbsoluteFilename=""" & newAbsoluteFilename & """" )
+		End If
+	End If
 
 
 
-
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: exiting Sub with fixed basename """ & NewBaseName & """ from """ & theAbsoluteFilename & """")
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: Exiting Sub with fixed basename """ & NewBaseName & """ from """ & theOriginalBaseName & """")
+	vrdtvs_ffiaft_pfis_Process_a_File = 0 ' for the time being exit with no error
 End Sub
 '
 Function vrdtvs_remove_tvs_classifying_stuff_from_string (theOriginalString)
