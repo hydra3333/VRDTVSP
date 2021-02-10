@@ -1525,6 +1525,8 @@ Function vrdtvs_Move_Date_to_End_of_String(theOriginalString)
 	Dim searchformeArray(3) ' an array of valid leading characters to include in the search/replace
     Dim xyear, xmonth, xday, xDate, is_a_date_there
     Dim theNewString
+	Dim timerStart_MDES, timerEnd_MDES
+	timerStart_MDES = Timer
     If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: entered with original value """ & theOriginalString & """")
     searchformeArray(0)="-"
 	searchformeArray(1)="_"
@@ -1536,10 +1538,10 @@ Function vrdtvs_Move_Date_to_End_of_String(theOriginalString)
     is_a_date_there = False
     For Each theLeadingSearchCharacter In searchformeArray ' this is a QUICK FOR loop, only 4 iterations
         txtToSearchFor = theLeadingSearchCharacter & "20" ' assuming start of a date in the "2000" years, eg "2021"
-		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: QUICK searching for """ & txtToSearchFor & """ in """ & theNewString & """") 
+		'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: QUICK searching for """ & txtToSearchFor & """ in """ & theNewString & """") 
         If instr(1, theNewString, txtToSearchFor, vbTextCompare) > 0 Then 
             is_a_date_there = True
-			If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: QUICK FOUND """ & txtToSearchFor & """ in """ & theNewString & """ exiting Quick FOR Loop") 
+			'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: QUICK FOUND """ & txtToSearchFor & """ in """ & theNewString & """ exiting Quick FOR Loop") 
             Exit For
         End If
     Next
@@ -1547,24 +1549,24 @@ Function vrdtvs_Move_Date_to_End_of_String(theOriginalString)
     Do While is_a_date_there ' loop forever ... setting up for cheeky way to exit all FOR loops at once
 		'for xyear = 2017 to 2040
         for xyear = 2021 to 2021 ' FORCE DEBUG OUTSIDE OF REAL DEBUG
-			If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: Start    processing Year " & xyear & " ... with original value """ & theOriginalString & """")
+			'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: Start    processing Year " & xyear & " ... with original value """ & theOriginalString & """")
 	        for xmonth = 01 to 12
 	            for xday = 01 to 31
 	                xDate = vrdtvs_Digits4(xyear) & "-" & vrdtvs_Digits2(xmonth) & "-" & vrdtvs_Digits2(xday) ' assume dates in the filename are always in format dd-mm-yyyy with leading zeroes
-					If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: About to process date " & xDate & " ")
+					'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: About to process date " & xDate & " ")
                     For Each theLeadingSearchCharacter In searchformeArray
                         txtToSearchFor = theLeadingSearchCharacter & xDate
 						'If vrdtvs_DEBUG Then 
 						'	WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: About to process " & xDate & " with txtToSearchFor: """ & txtToSearchFor & """ in """ & theOriginalString & """")
 						'End If
 						If instr(1, theOriginalString, txtToSearchFor, vbTextCompare) > 0 then                                                                ' we found date within the string
-							If vrdtvs_DEBUG Then 
-								WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: FOUND txtToSearchFor: """ & txtToSearchFor & """ in """ & theOriginalString & """")
-							End If
+							'If vrdtvs_DEBUG Then 
+							'	WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: FOUND txtToSearchFor: """ & txtToSearchFor & """ in """ & theOriginalString & """")
+							'End If
                             If right(theOriginalString, len(xDate)) <> xDate then ' ensure it's not already at the end of the string
-                                theNewString = Replace(theOriginalString, txtToSearchFor, "", 1, -1, vbTextCompare) & theLeadingReplaceCharacter & xDate     ' move the date to theend of the string
+                                theNewString = Replace(theOriginalString, txtToSearchFor, "", 1, -1, vbTextCompare) & theLeadingReplaceCharacter & xDate     ' move the date to the end of the string since it's not already there
 								If vrdtvs_DEBUG Then 
-                                	WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: found string with date not at end <" & txtToSearchFor & ">=<" & theOriginalString & "> ... changing to <" & theNewString & ">")
+                                	WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: FOUND string with DATE NOT AT END <" & txtToSearchFor & ">=<" & theOriginalString & "> ... changing to <" & theNewString & ">")
 									'Wscript.Sleep 1000 * 2
 								End If
                             End If
@@ -1578,15 +1580,16 @@ Function vrdtvs_Move_Date_to_End_of_String(theOriginalString)
                     Next
 	            Next
 	        Next
-			If vrdtvs_DEBUG Then 
-				WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: Finished processing Year " & xyear & " YEAR NOT IN STRING ... with original value """ & theOriginalString & """")
-				'Wscript.Sleep 1000 * 2
-			End If
+			'If vrdtvs_DEBUG Then 
+			'	WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: Finished processing Year " & xyear & " YEAR NOT IN STRING ... with original value """ & theOriginalString & """")
+			'	'Wscript.Sleep 1000 * 2
+			'End If
 		Next
 		is_a_date_there = False ' this only means exit the Do loop !!!
 		Exit Do
     Loop
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: exiting with return value   """ & theNewString & """")
+	timerEnd_MDES = Timer
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: exiting with return value   """ & theNewString & """ having Loop ELapsed Time " & vrdtvs_Calculate_ElapsedTime_string(timerStart_MDES, timerEnd_MDES))
 	vrdtvs_Move_Date_to_End_of_String = theNewString
 End Function
 '
