@@ -1546,7 +1546,7 @@ Function vrdtvs_Move_Date_to_End_of_String(theOriginalString)
 	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: is_a_date_there=" & is_a_date_there)
     Do While is_a_date_there ' loop forever ... setting up for cheeky way to exit all FOR loops at once
 		'for xyear = 2017 to 2040
-        for xyear = 2020 to 2021 ' FORCE DEBUG OUTSIDE OF REAL DEBUG
+        for xyear = 2021 to 2021 ' FORCE DEBUG OUTSIDE OF REAL DEBUG
 			If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: Start    processing Year " & xyear & " ... with original value """ & theOriginalString & """")
 	        for xmonth = 01 to 12
 	            for xday = 01 to 31
@@ -1555,23 +1555,26 @@ Function vrdtvs_Move_Date_to_End_of_String(theOriginalString)
                     For Each theLeadingSearchCharacter In searchformeArray
                         txtToSearchFor = theLeadingSearchCharacter & xDate
 						'If vrdtvs_DEBUG Then 
-						'	WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: About to process " & xDate & " with theLeadingSearchCharacter: """ & theLeadingSearchCharacter & """")
+						'	WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: About to process " & xDate & " with txtToSearchFor: """ & txtToSearchFor & """ in """ & theOriginalString & """")
 						'End If
-						If instr(1, theOriginalString, txtToSearchFor, vbTextCompare) > 0 then                                                                ' we found date withing the string
-                            If right(theOriginalString, len(xDate)) <> xDate then                                                                         ' ensure it's not already at the end of the string
+						If instr(1, theOriginalString, txtToSearchFor, vbTextCompare) > 0 then                                                                ' we found date within the string
+							If vrdtvs_DEBUG Then 
+								WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: FOUND txtToSearchFor: """ & txtToSearchFor & """ in """ & theOriginalString & """")
+							End If
+                            If right(theOriginalString, len(xDate)) <> xDate then ' ensure it's not already at the end of the string
                                 theNewString = Replace(theOriginalString, txtToSearchFor, "", 1, -1, vbTextCompare) & theLeadingReplaceCharacter & xDate     ' move the date to theend of the string
 								If vrdtvs_DEBUG Then 
                                 	WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: found string with date not at end <" & txtToSearchFor & ">=<" & theOriginalString & "> ... changing to <" & theNewString & ">")
 									'Wscript.Sleep 1000 * 2
 								End If
-                                is_a_date_there = False
-								Exit Do ' cheeky way to exit all the For loops at once, just Exit the outer Do Loop
-								If vrdtvs_DEBUG Then 
-									WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: ?????? vrdtvs_Move_Date_to_End_of_String should have exited Loop with Exit Do but has not ??????")
-									WScript.Quit 17 ' Error 17 = cannot perform the requested operation
-								End If
                             End If
-                        End If
+							is_a_date_there = False ' this only means exit the Do loop, not that there isn't one !!!
+							Exit Do ' cheeky way to exit all the For loops at once, just Exit the outer Do Loop
+							If vrdtvs_DEBUG Then 
+								WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: ?????? vrdtvs_Move_Date_to_End_of_String should have exited Loop with Exit Do but has not ??????")
+								WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+						End If
+					End If
                     Next
 	            Next
 	        Next
@@ -1580,6 +1583,8 @@ Function vrdtvs_Move_Date_to_End_of_String(theOriginalString)
 				'Wscript.Sleep 1000 * 2
 			End If
 		Next
+		is_a_date_there = False ' this only means exit the Do loop !!!
+		Exit Do
     Loop
     If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: exiting with return value   """ & theNewString & """")
 	vrdtvs_Move_Date_to_End_of_String = theNewString
