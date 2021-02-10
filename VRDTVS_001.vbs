@@ -40,9 +40,8 @@ Dim vrdtvs_ScriptName
 vrdtvs_ScriptName = Wscript.ScriptName
 WScript.StdOut.WriteLine(vrdtvs_ScriptName & " " & vrdtvs_current_datetime_string() & " Started.")
 '
-Dim vrdtvs_DEBUG
+Dim vrdtvs_DEBUG, vrdtvs_DEVELOPMENT_NO_ACTIONS
 vrdtvs_DEBUG = True
-Dim vrdtvs_DEVELOPMENT_NO_ACTIONS
 vrdtvs_DEVELOPMENT_NO_ACTIONS = True
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
@@ -159,6 +158,8 @@ Else
     WScript.StdOut.WriteLine "VRDTVS ERROR - vrd_path_for_adscan_vbs can only be 5 or 6 ... Aborting ..."
     WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
+WScript.StdOut.WriteLine "NOTE: final                       vrdtvs_DEBUG=" & vrdtvs_DEBUG
+WScript.StdOut.WriteLine "NOTE: final      vrdtvs_DEVELOPMENT_NO_ACTIONS=" & vrdtvs_DEVELOPMENT_NO_ACTIONS
 If vrdtvs_DEBUG Then 
     WScript.StdOut.WriteLine "DEBUG: final           vrdtvs_CAPTURE_TS_Folder=" & vrdtvs_CAPTURE_TS_Folder
     WScript.StdOut.WriteLine "DEBUG: final            vrdtvs_source_TS_Folder=" & vrdtvs_source_TS_Folder
@@ -288,7 +289,7 @@ End If
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Kill the Insomnia64 process that we started earlier
 '
-vrdtvs_cmd = "taskkill /t /f /pid " & vrdtvs_Insomnia64_ProcessID ' we saved the ProcessId when we started it
+vrdtvs_cmd = "TaskKill /t /f /pid " & vrdtvs_Insomnia64_ProcessID ' we saved the ProcessId when we started it
 ' taskkill /t /f /im "%iFile%" >> "!vrdlog!" 2>&1
 '   /f  Specifies that processes be forcefully ended.
 '   /t	Ends the specified process and any child processes started by it.
