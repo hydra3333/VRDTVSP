@@ -9,20 +9,21 @@ Option explicit
 ' using a single one-line commndline.
 ' All options are, well, optional and are based on a default source_Folder
 '
-' 	cscript //nologo "E:\GIT-REPOSITORIES\VRDTVSP\VRDTVS_001.vbs" ^
-'			/DEBUG:True ^
-'			/DEV:True ^
-'			/capture_Folder:"G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\0save\" ^
-'			/source_Folder:"G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\" ^
-'			/done_Folder:"G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\DONE\" ^	
-'			/failed_Folder:"G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\FAILED\" ^
-'			/temp_path:"D:\VRDTVS-SCRATCH\" ^
-'			/vrd_version_for_qsf:6 ^
-'			/vrd_version_for_adscan:6
+'cscript //nologo "E:\GIT-REPOSITORIES\VRDTVSP\VRDTVS_001.vbs" ^
+'/DEBUG:True ^
+'/DEV:True ^
+'/capture_Folder:"G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\0save\" ^
+'/source_Folder:"G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\" ^
+'/done_Folder:"G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS_done\" ^
+'/destination_Folder:"G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS_Converted\" ^
+'/failed_Folder:"G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Failed-Conversion\" ^
+'/temp_path:"D:\VRDTVS-SCRATCH\" ^
+'/vrd_version_for_qsf:6 ^
+'/vrd_version_for_adscan:6
 '
 ' ... use /capture_Folder:"" to prevent the moving of files from a capture folder, eg when testing
 ' ... note
-'		that carat (^) is the normal DOS commandline-continuation flag
+'		that carat (^) is the normal DOS commandline-continuation flag ... do NOT purt a trailing space after one
 '		there are a range of dependencies for locations of .exe files and whatnot, 
 '			including Vapoursynth and DG-tools and ffmpeg and ffprobe and mediainfo
 '
