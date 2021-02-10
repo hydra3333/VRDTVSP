@@ -23,9 +23,9 @@ If UCase(cscript_strEngine) <> UCase("\CSCRIPT.EXE") Then
     WScript.Echo "CSCRIPT Engine MUST be CSCRIPT not WSCRIPT ... Aborting ..."
 	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
-WScript.StdOut.WriteLine "Checked and cscript Engine = """ & cscript_strEngine & """"
-WScript.StdOut.WriteLine "VRDTVS Script name: " & Wscript.ScriptName
-WScript.StdOut.WriteLine "VRDTVS Script path: " & Wscript.ScriptFullName
+WScript.StdOut.WriteLine "VRDTVS cscript Engine: """ & cscript_strEngine & """"
+WScript.StdOut.WriteLine "VRDTVS    Script name: " & Wscript.ScriptName
+WScript.StdOut.WriteLine "VRDTVS    Script path: " & Wscript.ScriptFullName
 WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
