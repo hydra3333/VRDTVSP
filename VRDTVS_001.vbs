@@ -195,7 +195,7 @@ End If
 If NOT fso.FolderExists(vrdtvs_destination_mp4_Folder) Then     
 	Set objFolder = fso.CreateFolder(vrdtvs_destination_mp4_Folder)
 	Set objFolder = Nothing
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: Created vrdtvs_destination_mp4_Folder folder=" & vrdtvs_destination_mp4_Folder()
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: Created vrdtvs_destination_mp4_Folder folder=" & vrdtvs_destination_mp4_Folder)
 End If
 If NOT fso.FolderExists(vrdtvs_failed_conversion_TS_Folder) Then     
 	Set objFolder = fso.CreateFolder(vrdtvs_failed_conversion_TS_Folder)
@@ -1093,7 +1093,7 @@ Function vrdtvs_remove_tvs_classifying_stuff_from_string (theOriginalString)
 	theNewString = Replace(theNewString, "The_Two_Ronnies_", "The_Two_Ronnies-", 1, -1, vbTextCompare)
 	theNewString = Replace(theNewString, "The_Games_", "The_Games-", 1, -1, vbTextCompare)
 	theNewString = Replace(theNewString, "Utopia_", "Utopia-", 1, -1, vbTextCompare)
-	then theNewString = Replace(theNewString, "The_X-Files_", "The_X-Files-", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "The_X-Files_", "The_X-Files-", 1, -1, vbTextCompare)
 	'
 	If instr(1, theNewString, "-Movie-", vbTextCompare) > 0 then ' move "movie" to the front of the string
 		theNewString = "Movie-" & Replace(theNewString, "-Movie-", "-", 1, -1, vbTextCompare)
