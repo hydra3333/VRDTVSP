@@ -796,7 +796,7 @@ Sub vrdtvs_ffiaft_Process_Files_In_Subfolders (objSpecifiedFolder) ' Process all
 End Sub
 Sub vrdtvs_ffiaft_pfis_Process_a_File (objSpecifiedFile)
     ' Process a specific file ... fso.GetAbsolutePathName(objSpecifiedFile.Path) should be the fully qualified absolute filename of this file
-    
+
 End Sub
 
 
@@ -808,6 +808,29 @@ End Sub
 
 
 
+
+Function vrdtvs_Move_Date_to_End(theFilename, theDate, theLeadingReplaceCharacter)
+    ' if a theDate exists in a string, move it to the end of the string (used in renaming files with the date on the end)
+    ' Call like this:
+    '       ????
+    Dim theLeadingSearchCharacter, txtToSearchFor, newFilename
+	Dim searchformeArray(3)
+	searchformeArray(0)="-"
+	searchformeArray(1)="_"
+	searchformeArray(2)=" "
+	searchformeArray(3)="."
+	newFilename = theFilename
+	For Each theLeadingSearchCharacter In searchformeArray
+		txtToSearchFor = theLeadingSearchCharacter & theDate
+		If instr(1, theFilename, txtToSearchFor, vbTextCompare) > 0 then ' found date withing the filename	
+			If right(theFilename, len(theDate)) <> theDate then ' ensure it's not already at the end of the string
+				newFilename = Replace(theFilename, txtToSearchFor, "", 1, -1, vbTextCompare) & theLeadingReplaceCharacter & theDate
+				WScript.StdOut.WriteLine "vbs_rename_files: *** found filename with date not at end <" & txtToSearchFor & ">=<" & theFilename & "> ... Renaming to <" & newFilename & ">"
+			End if
+		End if
+	Next
+	vrdtvs_Move_Date_to_End = newFilename
+End Function
 
 
 
@@ -834,4 +857,16 @@ Function vrdtvs_ReplaceEndStringCaseIndependent(theString, theSearchString, theR
 	else
 		vrdtvs_ReplaceEndStringCaseIndependent = theString
 	end if
+End Function
+Function vrdtvs_Digits2 (val)
+    ' pad a number with leading zeroes, up to 2 characters in size total
+    vrdtvs_Digits2 = vrdtvs_PadDigits(val, 2)
+End Function
+Function vrdtvs_Digits4(val)
+    ' pad a number with leading zeroes, up to 4 characters in size total
+    vrdtvs_Digits4 = vrdtvs_PadDigits(val, 4)
+End Function
+Function vrdtvs_PadDigits(val, digits) 
+    ' pad a number with leading zeroes, up to a speified number of characters in size total
+    vrdtvs_PadDigits = Right(String(digits,"0") & val, digits)
 End Function
