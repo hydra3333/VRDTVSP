@@ -216,17 +216,19 @@ End If
 '
 Dim vrdtvs_Insomnia64_tmp_filename, vrdtvs_Insomnia64_ProcessID
 vrdtvs_Insomnia64_tmp_filename = vrdtvs_gimme_a_temporary_absolute_filename("VRDTVS_Insomnia64_copy-" & vrdtvs_run_datetime) & ".exe"
-If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: Creating and running Insomnia vrdtvs_Insomnia64_tmp_filename=" & vrdtvs_Insomnia64_tmp_filename)
+If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: Insomnia: Creating and running Insomnia vrdtvs_Insomnia64_tmp_filename=" & vrdtvs_Insomnia64_tmp_filename)
 vrdtvs_exit_code = vrdtvs_delete_a_file (vrdtvs_Insomnia64_tmp_filename, True) ' silently delete it even though it shouold never pre-exist
+If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: Insomnia: Copying """ & vrdtvs_Insomniaexe64 & """ to """ & vrdtvs_Insomnia64_tmp_filename & """")
 On Error Resume Next
 fso.CopyFile vrdtvs_Insomniaexe64, vrdtvs_Insomnia64_tmp_filename, True 
 vrdrvs_Err_Code = Err.Number
 vrdrvs_Err_Description = Err.Description
 On Error Goto 0
+If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: Insomnia: File Copy retruned error code: " & vrdrvs_Err_Code & " Descrption: " & vrdrvs_Err_Description)
 If vrdrvs_Err_Code <> 0 Then
     Err.Clear
-    WScript.StdOut.WriteLine("VRDTVS Insomnia ERROR - Error " & vrdrvs_Err_Code & " Creating vrdtvs_Insomnia64_tmp_filename=" & vrdtvs_Insomnia64_tmp_filename & "... Aborting ...")
-    WScript.StdOut.WriteLine("VRDTVS Insomnia ERROR - " & vrdrvs_Err_Description)
+    WScript.StdOut.WriteLine("VRDTVS Insomnia: ERROR - Error " & vrdrvs_Err_Code & " Creating vrdtvs_Insomnia64_tmp_filename=" & vrdtvs_Insomnia64_tmp_filename & "... Aborting ...")
+    WScript.StdOut.WriteLine("VRDTVS Insomnia: ERROR - " & vrdrvs_Err_Description)
     ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
     WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
@@ -235,14 +237,14 @@ End If
 ' Start "title" "file" 
 ' NOTE: Exec object has a .Terminate - this type of process kill does NOT clean up properly and may cause memory leaks - use only as a last resort!
 '
-vrdtvs_cmd = "START /min """ &  fso.GetBaseName(vrdtvs_Insomnia64_tmp_filename) & """ """ & vrdtvs_Insomnia64_tmp_filename & """"
-WScript.StdOut.WriteLine("VTDRVS Insomnia Exec command: " & vrdtvs_cmd)
+vrdtvs_cmd = "START /min """ &  vrdtvs_Insomnia64_tmp_filename & """ """ & vrdtvs_Insomnia64_tmp_filename & """"
+WScript.StdOut.WriteLine("VTDRVS Insomnia: Exec command: " & vrdtvs_cmd)
 set vrdtvs_exe_obj = wso.Exec(vrdtvs_cmd)
 vrdtvs_Insomnia64_ProcessID = vrdtvs_exe_obj.ProcessID
 Set vrdtvs_exe_obj = Nothing
-WScript.StdOut.WriteLine("VTDRVS Insomnia Exec command: " & vrdtvs_cmd & " has run asynchronously with vrdtvs_Insomnia64_ProcessID=" & vrdtvs_Insomnia64_ProcessID)
+WScript.StdOut.WriteLine("VTDRVS Insomnia: Exec command: " & vrdtvs_cmd & " has run asynchronously with vrdtvs_Insomnia64_ProcessID=" & vrdtvs_Insomnia64_ProcessID)
 If vrdtvs_Insomnia64_ProcessID = 0 Then
-    WScript.StdOut.WriteLine("VRDTVS Insomnia ERROR - Insomnia START command created ProcessID is zero ... Aborting ...")
+    WScript.StdOut.WriteLine("VRDTVS Insomnia: ERROR - Insomnia START command created ProcessID is zero ... Aborting ...")
     ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
     WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
