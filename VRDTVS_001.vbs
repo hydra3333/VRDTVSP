@@ -336,7 +336,7 @@ If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: VTDRVS TaskKill Insomnia e
 '
 vrdtvs_timer_EndTime_overall = Timer
 WScript.StdOut.WriteLine(vrdtvs_ScriptName & " Finished: " & vrdtvs_current_datetime_string() & "  Elapsed Time: " & vrdtvs_Calculate_ElapsedTime_string(vrdtvs_timer_StartTime_overall, vrdtvs_timer_EndTime_overall))
-If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: VTDRVS: " & vrdtvs_ScriptName & " " & vrdtvs_current_datetime_string() & " Finished.  Elapsed Time: " & vrdtvs_Calculate_ElapsedTime_string(vrdtvs_timer_StartTime_overall, vrdtvs_timer_EndTime_overall))
+If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: VTDRVS: " & vrdtvs_ScriptName & " Finished: " & vrdtvs_current_datetime_string() & "  Elapsed Time: " & vrdtvs_Calculate_ElapsedTime_string(vrdtvs_timer_StartTime_overall, vrdtvs_timer_EndTime_overall))
 WScript.Quit
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
@@ -477,9 +477,11 @@ Function vrdtvs_move_files (mf_source_path_wildcard, mv_destination_path)
         WScript.StdOut.WriteLine("DEBUG: vrdtvs_move_files      mf_source_AbsolutePath=""" & mf_source_AbsolutePath & """")
         WScript.StdOut.WriteLine("DEBUG: vrdtvs_move_files mf_destination_AbsolutePath=""" & mf_destination_AbsolutePath & """")
     End If
-    mf_cmd = "MOVE /Y """ & mf_source_AbsolutePath & """ """ & mf_destination_AbsolutePath & """ 2>&1"
-    If vrdtvs_DEVELOPMENT_NO_ACTIONS Then mf_cmd = "REM " & mf_cmd ' do not move anything DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
-    WScript.StdOut.WriteLine("vrdtvs_move_files Exec command: " & mf_cmd)
+    ' Ugh, a DOS MOVE requires CMD /C  to work !! Let's look into fso movefiles ...
+	'mf_cmd = "MOVE /Y """ & mf_source_AbsolutePath & """ """ & mf_destination_AbsolutePath & """ 2>&1"
+    mf_cmd = "CMD /C MOVE /Y """ & mf_source_AbsolutePath & """ """ & mf_destination_AbsolutePath & """ 2>&1"
+	If vrdtvs_DEVELOPMENT_NO_ACTIONS Then mf_cmd = "REM " & mf_cmd ' do not move anything DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
+	    WScript.StdOut.WriteLine("vrdtvs_move_files Exec command: " & mf_cmd)
     set mf_exe = wso.Exec(mf_cmd)
     Do While mf_exe.Status = 0 '0 is running and 1 is ending
          Wscript.Sleep 100
