@@ -890,6 +890,9 @@ Sub vrdtvs_ffiaft_pfis_Process_a_File (objSpecifiedFile)
     ' Process a specific file ... fso.GetAbsolutePathName(objSpecifiedFile.Path) should be the fully qualified absolute filename of this file
     Dim theOriginalAbsoluteFilename, theOriginalParentFolderName, theOriginalBaseName, theOriginalExtName
     Dim NewBaseName, newAbsoluteFilename
+	Dim local_timerStart, local_timerEnd
+	local_timerStart = Timer
+	local_timerEnd = Timer
     theOriginalAbsoluteFilename = fso.GetAbsolutePathName(objSpecifiedFile.Path) ' should already be fully qualified but do it anyway just to be safe
     theOriginalParentFolderName = fso.GetParentFolderName(theOriginalAbsoluteFilename)
     theOriginalBaseName = fso.GetBaseName(theOriginalAbsoluteFilename)
@@ -911,23 +914,25 @@ Sub vrdtvs_ffiaft_pfis_Process_a_File (objSpecifiedFile)
     '???????????????????????????????????? rename the file here, right now, if required (test for NewBaseName <> theOriginalBaseName )
     '???????????????????????????????????? taking care of "file already exists"
     '???????????????????????????????????? taking care of editing and rewriting the content .bprj files (which are just XML files) ... test for Ucase(theExtName) = Ucase("bprj")
+
+
 	newAbsoluteFilename = fso.GetAbsolutePathName(fso.BuildPath(theOriginalParentFolderName,NewBaseName))
 	if ucase(NewBaseName) = Ucase(theOriginalBaseName) Then
 		'cater "file already exists" and loop try up to 100 times to add a 2 digit number ".00" to ".99" to the end of NewBaseName if needed
 		If vrdtvs_DEBUG Then 
-			WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: no need for a Rename, no change: theOriginalBaseName=""" & theOriginalBaseName & """ NewBaseName=""" & NewBaseName & """" )
-			WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: no need for a Rename, no change: theOriginalAbsoluteFilename=""" & theOriginalAbsoluteFilename & """ newAbsoluteFilename=""" & newAbsoluteFilename & """" )
+			'WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: NO NEED for a Rename, no change: theOriginalBaseName=""" & theOriginalBaseName & """ NewBaseName=""" & NewBaseName & """" )
+			WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: NO NEED for a Rename, no change: theOriginalAbsoluteFilename=""" & theOriginalAbsoluteFilename & """ newAbsoluteFilename=""" & newAbsoluteFilename & """" )
 		End If
 	Else
 		If vrdtvs_DEBUG Then 
-			WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: needs a Rename using theOriginalBaseName=""" & theOriginalBaseName & """ NewBaseName=""" & NewBaseName & """" )
+			'WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: needs a Rename using theOriginalBaseName=""" & theOriginalBaseName & """ NewBaseName=""" & NewBaseName & """" )
 			WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: needs a Rename using theOriginalAbsoluteFilename=""" & theOriginalAbsoluteFilename & """ newAbsoluteFilename=""" & newAbsoluteFilename & """" )
 		End If
 	End If
-
-
-
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: Exiting Sub with fixed basename """ & NewBaseName & """ from """ & theOriginalBaseName & """")
+	local_timerEnd = Timer
+    If vrdtvs_DEBUG Then 
+		WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: Sub Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(local_timerStart, local_timerEnd)))
+	End If
 	' vrdtvs_ffiaft_pfis_Process_a_File is a Sub, hence no return values
 End Sub
 '
@@ -1527,7 +1532,8 @@ Function vrdtvs_Move_Date_to_End_of_String(theOriginalString)
     Dim theNewString
 	Dim timerStart_MDES, timerEnd_MDES
 	timerStart_MDES = Timer
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: entered with original value """ & theOriginalString & """")
+	timerEnd_MDES = Timer
+    'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: entered with original value """ & theOriginalString & """")
     searchformeArray(0)="-"
 	searchformeArray(1)="_"
 	searchformeArray(2)="."
@@ -1560,15 +1566,15 @@ Function vrdtvs_Move_Date_to_End_of_String(theOriginalString)
 						'	WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: About to process " & xDate & " with txtToSearchFor: """ & txtToSearchFor & """ in """ & theOriginalString & """")
 						'End If
 						If instr(1, theOriginalString, txtToSearchFor, vbTextCompare) > 0 then                                                                ' we found date within the string
-							If vrdtvs_DEBUG Then 
-								WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: FOUND txtToSearchFor: """ & txtToSearchFor & """ in """ & theOriginalString & """")
-							End If
+							'If vrdtvs_DEBUG Then 
+							'	WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: FOUND txtToSearchFor: """ & txtToSearchFor & """ in """ & theOriginalString & """")
+							'End If
                             If right(theOriginalString, len(xDate)) <> xDate then ' ensure it's not already at the end of the string
                                 theNewString = Replace(theOriginalString, txtToSearchFor, "", 1, -1, vbTextCompare) & theLeadingReplaceCharacter & xDate     ' move the date to the end of the string since it's not already there
-								If vrdtvs_DEBUG Then 
-                                	WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: FOUND string with DATE NOT AT END <" & txtToSearchFor & ">=<" & theOriginalString & "> ... changing to <" & theNewString & ">")
-									'Wscript.Sleep 1000 * 2
-								End If
+								'If vrdtvs_DEBUG Then 
+                                '	WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: FOUND string with DATE NOT AT END <" & txtToSearchFor & ">=<" & theOriginalString & "> ... changing to <" & theNewString & ">")
+								'	'Wscript.Sleep 1000 * 2
+								'End If
                             End If
 							is_a_date_there = False ' this only means exit the Do loop, not that there isn't one !!!
 							Exit Do ' cheeky way to exit all the For loops at once, just Exit the outer Do Loop
