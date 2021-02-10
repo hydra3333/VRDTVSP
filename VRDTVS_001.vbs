@@ -1542,6 +1542,7 @@ Function vrdtvs_Move_Date_to_End_of_String(theOriginalString)
             Exit For
         End If
     Next
+	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: is_a_date_there=" & is_a_date_there)
     Do While is_a_date_there ' loop forever ... setting up for cheeky way to exit all FOR loops at once
 		'for xyear = 2017 to 2040
         for xyear = 2020 to 2021 ' FORCE DEBUG OUTSIDE OF REAL DEBUG
