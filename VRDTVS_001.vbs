@@ -222,7 +222,7 @@ vrdrvs_Err_Description = Err.Description
 On Error Goto 0
 If vrdrvs_Err_Code <> 0 Then
     Err.Clear
-    WScript.StdOut.WriteLine("VRDTVS Insomnia ERROR - Error " & vrdrvs_Err_Code & & " Creating vrdtvs_Insomnia64_tmp_filename=" & vrdtvs_Insomnia64_tmp_filename & "... Aborting ...")
+    WScript.StdOut.WriteLine("VRDTVS Insomnia ERROR - Error " & vrdrvs_Err_Code & " Creating vrdtvs_Insomnia64_tmp_filename=" & vrdtvs_Insomnia64_tmp_filename & "... Aborting ...")
     WScript.StdOut.WriteLine("VRDTVS Insomnia ERROR - " & vrdrvs_Err_Description
     ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
     WScript.Quit 17 ' Error 17 = cannot perform the requested operation
