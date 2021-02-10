@@ -215,7 +215,7 @@ End If
 ' Start a new copy of Insomnia so the PC does not go to sleep in the middle of conversions, do not wait for it to finish
 '
 Dim vrdtvs_Insomnia64_tmp_filename, vrdtvs_Insomnia64_ProcessID
-vrdtvs_Insomnia64_tmp_filename = vrdtvs_gimme_a_temporary_absolute_filename("VRDTVS_Insomnia64_copy-" & vrdtvs_run_datetime & "-") & ".exe"
+vrdtvs_Insomnia64_tmp_filename = vrdtvs_gimme_a_temporary_absolute_filename("VRDTVS_Insomnia64_copy-" & vrdtvs_run_datetime) & ".exe"
 If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: Creating and running Insomnia vrdtvs_Insomnia64_tmp_filename=" & vrdtvs_Insomnia64_tmp_filename)
 vrdtvs_exit_code = vrdtvs_delete_a_file (vrdtvs_Insomnia64_tmp_filename, True) ' silently delete it even though it shouold never pre-exist
 On Error Resume Next
@@ -395,7 +395,7 @@ Function vrdtvs_gimme_a_temporary_absolute_filename (gataf_filename_prepend_stri
     '       x = vrdtvs_gimme_a_temporary_absolute_filename("a_base_filename_text_string")
     Dim gataf_temp
     If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: entered vrdtvs_gimme_a_temporary_absolute_filename")
-    gataf_temp = gataf_filename_prepend_string & "-" & vrdtvs_current_datetime_string() & "-" & fso.GetTempName & ".tmp"
+    gataf_temp = gataf_filename_prepend_string & "-" & vrdtvs_current_datetime_string() & "-" & fso.GetTempName ' ".tmp" already added
     gataf_temp = fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_temp_path,gataf_temp)) ' rely on global variable "vrdtvs_temp_path" already being set to a valid path
     If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_gimme_a_temporary_absolute_filename generated a_temporary_filename=""" & gataf_temp & """")
     vrdtvs_gimme_a_temporary_absolute_filename = gataf_temp
