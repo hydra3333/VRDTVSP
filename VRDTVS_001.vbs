@@ -898,8 +898,11 @@ Sub vrdtvs_ffiaft_pfis_Process_a_File (objSpecifiedFile)
     If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: entered Sub with original BaseName """ & theOriginalBaseName & """ from """ & theOriginalAbsoluteFilename & """")
     NewBaseName = theOriginalBaseName ' initialize so we can keep the original stuff if we need i in the future
     NewBaseName = vrdtvs_remove_special_characters_from_string(NewBaseName, False) ' flag is not an Absolute filename by passing False to the function
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: after vrdtvs_remove_special_characters_from_string original BaseName """ & theOriginalBaseName & """ NewBaseName """ & NewBaseName & """")
     NewBaseName = vrdtvs_remove_tvs_classifying_stuff_from_string(NewBaseName)
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: after vrdtvs_remove_tvs_classifying_stuff_from_string original BaseName """ & theOriginalBaseName & """ NewBaseName """ & NewBaseName & """")
     NewBaseName = vrdtvs_Move_Date_to_End_of_String(NewBaseName)
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File :after vrdtvs_Move_Date_to_End_of_String original BaseName """ & theOriginalBaseName & """ NewBaseName """ & NewBaseName & """")
     ' do not fix the file time stamps here, do that later in powershell for the whole tree at once, AFTER processing all the filenames in a folder tree here
 
 
@@ -1527,6 +1530,7 @@ Function vrdtvs_Move_Date_to_End_of_String(theOriginalString)
 	searchformeArray(1)="_"
 	searchformeArray(2)=" "
 	searchformeArray(3)="."
+	searchformeArray(3)=" " ' a space should not exist by the time it gets to here, but check/fix anyway
     theNewString = theOriginalString
     ' Brute force through dates, nothing fancy here. Very slow but sure.
     ' But first, cheekily see if there's a date at all by checking for "20"
@@ -1562,7 +1566,7 @@ Function vrdtvs_Move_Date_to_End_of_String(theOriginalString)
 								Exit Do ' cheeky way to exit all the For loops at once, just Exit the outer Do Loop
 								If vrdtvs_DEBUG Then 
 									WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: ?????? vrdtvs_Move_Date_to_End_of_String should have exited Loop with Exit Do but has not ??????")
-									Wscript.Sleep 1000 * 10
+									WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 								End If
                             End If
                         End If
