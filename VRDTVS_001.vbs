@@ -32,6 +32,9 @@ WScript.StdOut.WriteLine "------------------------------------------------------
 ' Setup Global (default) variables
 '
 Dim vrdtvs_tmp, vrdtvs_status, vrdtvs_exit_code, vrdrvs_Err_Code, vrdrvs_Err_Description, vrdtvs_cmd, vrdtvs_exe_obj ' a few working variables, for common use
+Dim vrdtvs_timer_StartTime_overall, vrdtvs_timer_EndTime_overall
+vrdtvs_timer_StartTime_overall = Timer
+vrdtvs_timer_EndTime_overall = Timer
 '
 Dim vrdtvs_run_datetime
 vrdtvs_run_datetime = vrdtvs_current_datetime_string() ' start of runtime, for common use
@@ -243,6 +246,7 @@ vrdtvs_cmd = """" &  vrdtvs_Insomnia64_tmp_filename & """"
 WScript.StdOut.WriteLine("VTDRVS Insomnia: Exec command: " & vrdtvs_cmd)
 set vrdtvs_exe_obj = wso.Exec(vrdtvs_cmd)
 vrdtvs_Insomnia64_ProcessID = vrdtvs_exe_obj.ProcessID
+vrdtvs_status = vrdtvs_exe_obj.ExitCode
 Set vrdtvs_exe_obj = Nothing
 WScript.StdOut.WriteLine("VTDRVS Insomnia: Exec command: " & vrdtvs_cmd)
 WScript.StdOut.WriteLine("VTDRVS Insomnia: has run asynchronously with vrdtvs_Insomnia64_ProcessID=" & vrdtvs_Insomnia64_ProcessID)
@@ -327,8 +331,9 @@ If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: VTDRVS TaskKill Insomnia e
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Finish and Quit
 '
-WScript.StdOut.WriteLine(vrdtvs_ScriptName & " " & vrdtvs_current_datetime_string() & " Finished.")
-If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: VTDRVS: " & vrdtvs_ScriptName & " " & vrdtvs_current_datetime_string() & " Finished.")
+vrdtvs_timer_EndTime_overall = Timer
+WScript.StdOut.WriteLine(vrdtvs_ScriptName & " " & vrdtvs_current_datetime_string() & " Finished.  Elapsed Time: " & vrdtvs_Calculate_ElapsedTime_string(vrdtvs_timer_StartTime_overall, vrdtvs_timer_EndTime_overall))
+If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: VTDRVS: " & vrdtvs_ScriptName & " " & vrdtvs_current_datetime_string() & " Finished.  Elapsed Time: " & vrdtvs_Calculate_ElapsedTime_string(vrdtvs_timer_StartTime_overall, vrdtvs_timer_EndTime_overall))
 WScript.Quit
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
