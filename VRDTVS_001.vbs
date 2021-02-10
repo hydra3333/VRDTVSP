@@ -148,7 +148,7 @@ ElseIf vrd_version_for_qsf = 6 Then
     vrd_extension_mpeg2 = const_vrd6_extension_mpeg2
     vrd_extension_avc = const_vrd6_extension_avc
 Else
-    WScript.StdOut.WriteLine "VRDTVS ERROR - vrd_version_for_qsf can only be 5 or 6 ... Aborting ..."
+    WScript.StdOut.WriteLine("VRDTVS ERROR - vrd_version_for_qsf can only be 5 or 6 ... Aborting ...")
     WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
 If vrd_version_for_adscan = 5 Then '*** AdScan
@@ -156,27 +156,27 @@ If vrd_version_for_adscan = 5 Then '*** AdScan
 ElseIf vrd_version_for_adscan = 6 Then
     vrd_path_for_adscan_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd6_path,"AdScan2.vbs"))
 Else
-    WScript.StdOut.WriteLine "VRDTVS ERROR - vrd_path_for_adscan_vbs can only be 5 or 6 ... Aborting ..."
+    WScript.StdOut.WriteLine("VRDTVS ERROR - vrd_path_for_adscan_vbs can only be 5 or 6 ... Aborting ...")
     WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
-WScript.StdOut.WriteLine "NOTE: final                       vrdtvs_DEBUG=" & vrdtvs_DEBUG
-WScript.StdOut.WriteLine "NOTE: final      vrdtvs_DEVELOPMENT_NO_ACTIONS=" & vrdtvs_DEVELOPMENT_NO_ACTIONS
+WScript.StdOut.WriteLine("NOTE: final                       vrdtvs_DEBUG=" & vrdtvs_DEBUG)
+WScript.StdOut.WriteLine("NOTE: final      vrdtvs_DEVELOPMENT_NO_ACTIONS=" & vrdtvs_DEVELOPMENT_NO_ACTIONS)
 If vrdtvs_DEBUG Then 
-    WScript.StdOut.WriteLine "DEBUG: final           vrdtvs_CAPTURE_TS_Folder=" & vrdtvs_CAPTURE_TS_Folder
-    WScript.StdOut.WriteLine "DEBUG: final            vrdtvs_source_TS_Folder=" & vrdtvs_source_TS_Folder
-    WScript.StdOut.WriteLine "DEBUG: final              vrdtvs_done_TS_Folder=" & vrdtvs_done_TS_Folder
-    WScript.StdOut.WriteLine "DEBUG: final      vrdtvs_destination_mp4_Folder=" & vrdtvs_destination_mp4_Folder
-    WScript.StdOut.WriteLine "DEBUG: final vrdtvs_failed_conversion_TS_Folder=" & vrdtvs_failed_conversion_TS_Folder
-    WScript.StdOut.WriteLine "DEBUG: final                   vrdtvs_temp_path=" & vrdtvs_temp_path
-    WScript.StdOut.WriteLine "DEBUG: final                       vrdtvs_DEBUG=" & vrdtvs_DEBUG
-    WScript.StdOut.WriteLine "DEBUG: final                vrd_version_for_qsf=" & vrd_version_for_qsf
-    WScript.StdOut.WriteLine "DEBUG: final               vrd_path_for_qsf_vbs=" & vrd_path_for_qsf_vbs
-    WScript.StdOut.WriteLine "DEBUG: final     vrd_profile_name_for_qsf_mpeg2=" & vrd_profile_name_for_qsf_mpeg2
-    WScript.StdOut.WriteLine "DEBUG: final       vrd_profile_name_for_qsf_avc=" & vrd_profile_name_for_qsf_avc
-    WScript.StdOut.WriteLine "DEBUG: final                vrd_extension_mpeg2=" & vrd_extension_mpeg2
-    WScript.StdOut.WriteLine "DEBUG: final                  vrd_extension_avc=" & vrd_extension_avc
-    WScript.StdOut.WriteLine "DEBUG: final             vrd_version_for_adscan=" & vrd_version_for_adscan
-    WScript.StdOut.WriteLine "DEBUG: final            vrd_path_for_adscan_vbs=" & vrd_path_for_adscan_vbs
+    WScript.StdOut.WriteLine("DEBUG: final           vrdtvs_CAPTURE_TS_Folder=" & vrdtvs_CAPTURE_TS_Folder)
+    WScript.StdOut.WriteLine("DEBUG: final            vrdtvs_source_TS_Folder=" & vrdtvs_source_TS_Folder)
+    WScript.StdOut.WriteLine("DEBUG: final              vrdtvs_done_TS_Folder=" & vrdtvs_done_TS_Folder)
+    WScript.StdOut.WriteLine("DEBUG: final      vrdtvs_destination_mp4_Folder=" & vrdtvs_destination_mp4_Folder)
+    WScript.StdOut.WriteLine("DEBUG: final vrdtvs_failed_conversion_TS_Folder=" & vrdtvs_failed_conversion_TS_Folder)
+    WScript.StdOut.WriteLine("DEBUG: final                   vrdtvs_temp_path=" & vrdtvs_temp_path)
+    WScript.StdOut.WriteLine("DEBUG: final                       vrdtvs_DEBUG=" & vrdtvs_DEBUG)
+    WScript.StdOut.WriteLine("DEBUG: final                vrd_version_for_qsf=" & vrd_version_for_qsf)
+    WScript.StdOut.WriteLine("DEBUG: final               vrd_path_for_qsf_vbs=" & vrd_path_for_qsf_vbs)
+    WScript.StdOut.WriteLine("DEBUG: final     vrd_profile_name_for_qsf_mpeg2=" & vrd_profile_name_for_qsf_mpeg2)
+    WScript.StdOut.WriteLine("DEBUG: final       vrd_profile_name_for_qsf_avc=" & vrd_profile_name_for_qsf_avc)
+    WScript.StdOut.WriteLine("DEBUG: final                vrd_extension_mpeg2=" & vrd_extension_mpeg2)
+    WScript.StdOut.WriteLine("DEBUG: final                  vrd_extension_avc=" & vrd_extension_avc)
+    WScript.StdOut.WriteLine("DEBUG: final             vrd_version_for_adscan=" & vrd_version_for_adscan)
+    WScript.StdOut.WriteLine("DEBUG: final            vrd_path_for_adscan_vbs=" & vrd_path_for_adscan_vbs)
 End If
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
@@ -185,27 +185,27 @@ End If
 If NOT fso.FolderExists(vrdtvs_source_TS_Folder) Then     
 	Set objFolder = fso.CreateFolder(vrdtvs_source_TS_Folder)
 	Set objFolder = Nothing
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: Created vrdtvs_source_TS_Folder folder=" & vrdtvs_source_TS_Folder
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: Created vrdtvs_source_TS_Folder folder=" & vrdtvs_source_TS_Folder)
 End If
 If NOT fso.FolderExists(vrdtvs_done_TS_Folder) Then     
 	Set objFolder = fso.CreateFolder(vrdtvs_done_TS_Folder)
 	Set objFolder = Nothing
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: Created vrdtvs_done_TS_Folder folder=" & vrdtvs_done_TS_Folder
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: Created vrdtvs_done_TS_Folder folder=" & vrdtvs_done_TS_Folder)
 End If
 If NOT fso.FolderExists(vrdtvs_destination_mp4_Folder) Then     
 	Set objFolder = fso.CreateFolder(vrdtvs_destination_mp4_Folder)
 	Set objFolder = Nothing
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: Created vrdtvs_destination_mp4_Folder folder=" & vrdtvs_destination_mp4_Folder
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: Created vrdtvs_destination_mp4_Folder folder=" & vrdtvs_destination_mp4_Folder()
 End If
 If NOT fso.FolderExists(vrdtvs_failed_conversion_TS_Folder) Then     
 	Set objFolder = fso.CreateFolder(vrdtvs_failed_conversion_TS_Folder)
 	Set objFolder = Nothing
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: Created vrdtvs_failed_conversion_TS_Folder folder=" & vrdtvs_failed_conversion_TS_Folder
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: Created vrdtvs_failed_conversion_TS_Folder folder=" & vrdtvs_failed_conversion_TS_Folder)
 End If
 If NOT fso.FolderExists(vrdtvs_temp_path) Then     
 	Set objFolder = fso.CreateFolder(vrdtvs_temp_path)
 	Set objFolder = Nothing
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: Created vrdtvs_temp_path folder=" & vrdtvs_temp_path
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: Created vrdtvs_temp_path folder=" & vrdtvs_temp_path)
 End If
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
@@ -213,7 +213,7 @@ End If
 '
 Dim vrdtvs_Insomnia64_tmp_filename, vrdtvs_Insomnia64_ProcessID
 vrdtvs_Insomnia64_tmp_filename = vrdtvs_gimme_a_temporary_absolute_filename("VRDTVS_Insomnia64_copy-" & vrdtvs_run_datetime & "-") & ".exe"
-If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: Creating and running Insomnia vrdtvs_Insomnia64_tmp_filename=" & vrdtvs_Insomnia64_tmp_filename
+If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: Creating and running Insomnia vrdtvs_Insomnia64_tmp_filename=" & vrdtvs_Insomnia64_tmp_filename)
 vrdtvs_exit_code = vrdtvs_delete_a_file (vrdtvs_Insomnia64_tmp_filename, True) ' silently delete it even though it shouold never pre-exist
 On Error Resume Next
 fso.CopyFile vrdtvs_Insomniaexe64, vrdtvs_Insomnia64_tmp_filename, True 
@@ -312,13 +312,13 @@ Loop
 vrdtvs_status = vrdtvs_exe_obj.ExitCode ' Ignore any error codes returned by taskkill
 WScript.StdOut.WriteLine("VTDRVS TaskKill Insomnia Exec Exit Status: " & vrdtvs_status)
 Set vrdtvs_exe_obj = Nothing
-If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: VTDRVS TaskKill Insomnia exiting with status=""" & vrdtvs_status & """"
+If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: VTDRVS TaskKill Insomnia exiting with status=""" & vrdtvs_status & """")
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Finish and Quit
 '
 WScript.StdOut.WriteLine(vrdtvs_ScriptName & " " & vrdtvs_current_datetime_string() & " Finished.")
-If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: VTDRVS: " & vrdtvs_ScriptName & " " & vrdtvs_current_datetime_string() & " Finished."
+If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: VTDRVS: " & vrdtvs_ScriptName & " " & vrdtvs_current_datetime_string() & " Finished.")
 WScript.Quit
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
@@ -347,26 +347,26 @@ Function vrdtvs_get_commandline_parameter(gcp_argument_name, gcp_default_value)
     gcp_argument_count = WScript.Arguments.Count
     gcp_Return_Value = gcp_default_value ' default to return the default_value
     'If vrdtvs_DEBUG Then 
-    '    WScript.StdOut.WriteLine "DEBUG: vrdtvs_get_commandline_parameter gcp_argument_name=" & gcp_argument_name
-    '    WScript.StdOut.WriteLine "DEBUG: vrdtvs_get_commandline_parameter gcp_default_value=" & gcp_default_value
+    '    WScript.StdOut.WriteLine("DEBUG: vrdtvs_get_commandline_parameter gcp_argument_name=" & gcp_argument_name)
+    '    WScript.StdOut.WriteLine("DEBUG: vrdtvs_get_commandline_parameter gcp_default_value=" & gcp_default_value)
     'End If
     If gcp_argument_count > 0 Then
         Set gcp_NamedArgs = WScript.Arguments.Named
         If gcp_NamedArgs.Exists(gcp_argument_name) and NOT IsEmpty(gcp_NamedArgs(gcp_argument_name)) Then ' IsEmpty is a special case of exists but has no value, but is not "" which is different
             gcp_Return_Value = gcp_NamedArgs.Item(gcp_argument_name)
-            If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_get_commandline_parameter obtained commandline Argument: " & gcp_argument_name & "=""" & gcp_Return_Value & """"
+            If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_get_commandline_parameter obtained commandline Argument: " & gcp_argument_name & "=""" & gcp_Return_Value & """")
             If Ucase(gcp_Return_Value) = Ucase("True")  Then 
                 gcp_Return_Value = True    ' if required, convert to boolean True
-                'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_get_commandline_parameter converted to boolean True gcp_Return_Value=" & gcp_Return_Value
+                'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_get_commandline_parameter converted to boolean True gcp_Return_Value=" & gcp_Return_Value)
             End If
             If Ucase(gcp_Return_Value) = Ucase("False") Then 
                 gcp_Return_Value = False   ' if required, convert to boolean False
-                'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_get_commandline_parameter converted to boolean False gcp_Return_Value=" & gcp_Return_Value
+                'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_get_commandline_parameter converted to boolean False gcp_Return_Value=" & gcp_Return_Value)
             End If
         End If
         Set gcp_NamedArgs = Nothing
     End If
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_get_commandline_parameter exiting with: " & gcp_argument_name & "=""" & gcp_Return_Value & """"
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_get_commandline_parameter exiting with: " & gcp_argument_name & "=""" & gcp_Return_Value & """")
     vrdtvs_get_commandline_parameter = gcp_Return_Value
 End Function
 '
@@ -395,7 +395,7 @@ Function vrdtvs_gimme_a_temporary_absolute_filename (gataf_filename_prepend_stri
     If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: entered vrdtvs_gimme_a_temporary_absolute_filename")
     gataf_temp = gataf_filename_prepend_string & "-" & vrdtvs_current_datetime() & "-" & fso.GetTempName & ".tmp"
     gataf_temp = fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_temp_path,gataf_temp)) ' rely on global variable "vrdtvs_temp_path" already being set to a valid path
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_gimme_a_temporary_absolute_filename generated a_temporary_filename=""" & gataf_temp & """"
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_gimme_a_temporary_absolute_filename generated a_temporary_filename=""" & gataf_temp & """")
     vrdtvs_gimme_a_temporary_absolute_filename = gataf_temp
 End Function
 '
@@ -408,10 +408,8 @@ Function vrdtvs_delete_a_file (filename_to_delete, do_it_silently)
     '       x = vrdtvs_delete_a_file("c:\temp\temp.tmp",False)
     Dim daf_Err_number, daf_Err_Description, daf_Err_Helpfile, daf_Err_HelpContext
     Dim daf_filename_to_delete
-    If NOT do_it_silently Then
-        WScript.StdOut.WriteLine "vrdtvs_delete_a_file Deleting file: """ & filename_to_delete & """"
-    End If
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_delete_a_file Deleting file: """ & filename_to_delete & """"
+    If NOT do_it_silently Then WScript.StdOut.WriteLine("vrdtvs_delete_a_file Deleting file: """ & filename_to_delete & """")
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_delete_a_file Deleting file: """ & filename_to_delete & """")
     'If fso.FileExists(filename_to_delete) Then
     	On Error Resume Next
 	    fso.DeleteFile filename_to_delete, True ' fso.DeleteFile ( filespec[, force] ) ' it also supports wildcards, allowing delete of multiple files ...
@@ -420,20 +418,16 @@ Function vrdtvs_delete_a_file (filename_to_delete, do_it_silently)
         daf_Err_Helpfile = Err.Helpfile
         daf_Err_HelpContext = Err.HelpContext
         If daf_Err_number <> 0 Then
-            If NOT do_it_silently Then
-                WScript.StdOut.WriteLine "ERROR: vrdtvs_delete_a_file error " &  daf_Err_number &  " " &  daf_Err_Description & " : raised when Deleting file """ & filename_to_delete & """"
-            End If
-            If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_delete_a_file Error " &  daf_Err_number &  " " &  daf_Err_Description & " : raised when Deleting file """ & filename_to_delete & """"
+            If NOT do_it_silently Then WScript.StdOut.WriteLine("ERROR: vrdtvs_delete_a_file error " &  daf_Err_number &  " " &  daf_Err_Description & " : raised when Deleting file """ & filename_to_delete & """")
+            If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_delete_a_file Error " &  daf_Err_number &  " " &  daf_Err_Description & " : raised when Deleting file """ & filename_to_delete & """")
 	        Err.Clear
         Else
-            If NOT do_it_silently Then
-                WScript.StdOut.WriteLine "vrdtvs_delete_a_file Deleted file """ & filename_to_delete & """"
-            End If
-            If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_delete_a_file Deleted file """ & filename_to_delete & """"
+            If NOT do_it_silently Then WScript.StdOut.WriteLine("vrdtvs_delete_a_file Deleted file """ & filename_to_delete & """")
+            If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_delete_a_file Deleted file """ & filename_to_delete & """")
         End if
 	    On Error Goto 0 ' now continue
     'End If
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_delete_a_file exiting with status=""" & daf_Err_number & """"
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_delete_a_file exiting with status=""" & daf_Err_number & """")
     vrdtvs_delete_a_file = daf_Err_number
 End Function
 '
@@ -756,16 +750,16 @@ Function vrdtvs_fix_filenames_in_a_folder_tree (the_folder_tree)
     '    
     If NOT fso.FolderExists(ffiaft_folder_tree) Then
 	    WScript.StdOut.WriteLine "vrdtvs_fix_filenames_in_a_folder_tree: Folder does NOT EXIST """ & ffiaft_folder_tree & """ ... not processed"
-	    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Folder does NOT EXIST """ & ffiaft_folder_tree & """ ... not processed"
+	    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Folder does NOT EXIST """ & ffiaft_folder_tree & """ ... not processed")
         vrdtvs_fix_filenames_in_a_folder_tree = 53 ' 53 = File not found
 	    Exit Function
     End If
     '
-	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Started basic file renames for folder tree """ & ffiaft_folder_tree & """"
+	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Started basic file renames for folder tree """ & ffiaft_folder_tree & """")
 	Set vrdtvs_folder_object = fso.GetFolder(ffiaft_folder_tree)            ' get an object of the specified top level folder to process
 	Call vrdtvs_ffiaft_Process_Files_In_Subfolders (vrdtvs_folder_object)   ' recursively process the content (files, folders) of that specified top level folder
     Set vrdtvs_folder_object = Nothing                                      ' finished, disppose of the object
-	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Finished basic file renames for folder tree """ & ffiaft_folder_tree & """"
+	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Finished basic file renames for folder tree """ & ffiaft_folder_tree & """")
     '
 
 
@@ -812,7 +806,7 @@ Sub vrdtvs_ffiaft_pfis_Process_a_File (objSpecifiedFile)
     theBaseName = fso.GetBaseName(theAbsoluteFilename)
     theExtName = fso.GetExtensionName(theAbsoluteFilename) ' does not include  the "."
     '
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: entered Sub with original BaseName """ & theBaseName & """ from """ & theAbsoluteFilename & """"
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: entered Sub with original BaseName """ & theBaseName & """ from """ & theAbsoluteFilename & """")
     NewBaseName = theBaseName ' initialize so we can keep the original stuff if we need i in the future
     NewBaseName = vrdtvs_remove_special_characters_from_string(NewBaseName, False) ' flag is not an Absolute filename by passing False to the function
     NewBaseName = vrdtvs_remove_tvs_classifying_stuff_from_string(NewBaseName)
@@ -829,7 +823,7 @@ Sub vrdtvs_ffiaft_pfis_Process_a_File (objSpecifiedFile)
 
 
 
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: exiting Sub with fixed basename """ & NewBaseName & """ from """ & theAbsoluteFilename & """"
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: exiting Sub with fixed basename """ & NewBaseName & """ from """ & theAbsoluteFilename & """")
 End Sub
 '
 Function vrdtvs_remove_tvs_classifying_stuff_from_string (theOriginalString)
@@ -1409,7 +1403,7 @@ Function vrdtvs_Move_Date_to_End_of_String(theOriginalString)
 	Dim searchformeArray(3) ' an array of valid leading characters to include in the search/replace
     Dim xyear, xmonth, xday, xDate, is_a_date_there
     Dim theNewString
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: entered with original value """ & theOriginalString & """"
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: entered with original value """ & theOriginalString & """")
     searchformeArray(0)="-"
 	searchformeArray(1)="_"
 	searchformeArray(2)=" "
@@ -1435,7 +1429,7 @@ Function vrdtvs_Move_Date_to_End_of_String(theOriginalString)
                         If instr(1, theOriginalString, txtToSearchFor, vbTextCompare) > 0 then                                                                ' we found date withing the string
                             If right(theOriginalString, len(theDate)) <> theDate then                                                                         ' ensure it's not already at the end of the string
                                 theNewString = Replace(theOriginalString, txtToSearchFor, "", 1, -1, vbTextCompare) & theLeadingReplaceCharacter & theDate     ' move the date to theend of the string
-                                If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: found string with date not at end <" & txtToSearchFor & ">=<" & theOriginalString & "> ... changing to <" & theNewString & ">"
+                                If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: found string with date not at end <" & txtToSearchFor & ">=<" & theOriginalString & "> ... changing to <" & theNewString & ">")
                                 Exit Do ' cheeky way to exit all the For loops at once, just Exit the outer Do Loop
                             End If
                         End If
@@ -1444,7 +1438,7 @@ Function vrdtvs_Move_Date_to_End_of_String(theOriginalString)
 	        Next
         Next
     Loop
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: exiting with return value """ & theNewString & """"
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: exiting with return value """ & theNewString & """")
 	vrdtvs_Move_Date_to_End_of_String = theNewString
 End Function
 '
