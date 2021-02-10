@@ -1553,13 +1553,13 @@ Function vrdtvs_Move_Date_to_End_of_String(theOriginalString)
                                 theNewString = Replace(theOriginalString, txtToSearchFor, "", 1, -1, vbTextCompare) & theLeadingReplaceCharacter & xDate     ' move the date to theend of the string
 								If vrdtvs_DEBUG Then 
                                 	WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: found string with date not at end <" & txtToSearchFor & ">=<" & theOriginalString & "> ... changing to <" & theNewString & ">")
-									Wscript.Sleep 1000 * 15
+									Wscript.Sleep 1000 * 10
 								End If
                                 is_a_date_there = False
 								Exit Do ' cheeky way to exit all the For loops at once, just Exit the outer Do Loop
 								If vrdtvs_DEBUG Then 
 									WScript.StdOut.WriteLine("DEBUG: ?????? vrdtvs_Move_Date_to_End_of_String should have exited Loop with Exit Do but has not ??????")
-									vrdtvs_DEBUG Then Wscript.Sleep 1000 * 15
+									Wscript.Sleep 1000 * 10
 								End If
                             End If
                         End If
