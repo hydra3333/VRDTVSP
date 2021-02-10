@@ -299,7 +299,7 @@ End If
 '   b) Modify the filenames based on the filename content including reformatting the date in the filename
 '   c) Fix the DateCreated and DateModified timestamps based onthe date in the filename (a PowerShell command ... learn how to do that on the commandline)
 '
-vrdtvs_status = vrdtvs_fix_filenames_in_a_folder_tree(vrdtvs_source_TS_Folder) ' this does (a) abd (b)
+vrdtvs_status = vrdtvs_fix_filenames_in_a_folder_tree(vrdtvs_source_TS_Folder, False) ' this does (a) and (b).  False flags to process only the top level folder with NO SUBFOLDERS
 If vrdtvs_status <> 0 Then ' Something went wrong with processing files in the Source folder ...
 	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_fix_filenames_in_a_folder_tree in """ & vrdtvs_source_TS_Folder & """... Aborting ...")
 	WScript.StdOut.WriteLine("VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_fix_filenames_in_a_folder_tree in """ & vrdtvs_source_TS_Folder & """... Aborting ...")
@@ -822,13 +822,19 @@ End Function
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 '****************************************************************************************************************************************
-' Function to traverse a folder tree for file Extensions: .ts .mp4 .mpg .bprj
-'   a) Remove special characters in filenames for file Extensions: .ts .mp4 .mpg .bprj
-'   b) modify the filenames based on the filename content including reformatting the date in the filename
-'   c) fix the file DateCreated and DateModified timestamps based on the date in the filename (a PowerShell command ... since DateCreated can't be modified in vbscript)
 '
-Function vrdtvs_fix_filenames_in_a_folder_tree (the_folder_tree)
-    Dim ffiaft_folder_tree
+Function vrdtvs_fix_filenames_in_a_folder_tree (the_folder_tree, do_subfolders_as_well) 
+	' Function to traverse a folder tree ( a called function filters for file Extensions: .ts .mp4 .mpg .bprj)
+	'   a) Remove special characters in filenames for file Extensions: .ts .mp4 .mpg .bprj
+	'   b) modify the filenames based on the filename content including reformatting the date in the filename
+	'   c) *** NOT THIS, do it outside ... fix the file DateCreated and DateModified timestamps based on the date in the filename (a PowerShell command ... since DateCreated can't be modified in vbscript)
+    ' rely on global variable "fso"
+    ' Parameters:
+	'	the_folder_tree			the top level folder to process
+    '   do_subfolders_as_well	False flags to process only the top level folder with NO SUBFOLDERS
+    ' Call like this:
+    '       status = vrdtvs_fix_filenames_in_a_folder_tree ("G:\HDTV\", False) 
+	Dim ffiaft_folder_tree
     Dim ffiaft_temp_powershell_filename
     Dim vrdtvs_folder_object
     Dim vrdtvs_f_object
@@ -851,7 +857,7 @@ Function vrdtvs_fix_filenames_in_a_folder_tree (the_folder_tree)
     '
 	'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Started basic file renames for folder tree """ & ffiaft_folder_tree & """")
 	Set vrdtvs_folder_object = fso.GetFolder(ffiaft_folder_tree)            ' get an object of the specified top level folder to process
-	Call vrdtvs_ffiaft_Process_Files_In_Subfolders (vrdtvs_folder_object)   ' recursively process the content (files, folders) of that specified top level folder
+	Call vrdtvs_ffiaft_Process_Files_In_Subfolders (vrdtvs_folder_object, do_subfolders_as_well)   ' process the content (files, folders) of that specified top level folder and if specified the SUBFOLDERS too
     Set vrdtvs_folder_object = Nothing                                      ' finished, disppose of the object
 	local_timerEnd = Timer
 	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Finished basic file renames for folder tree """ & ffiaft_folder_tree & """ with Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(local_timerStart, local_timerEnd))
@@ -860,7 +866,8 @@ Function vrdtvs_fix_filenames_in_a_folder_tree (the_folder_tree)
 
 	local_timerStart = Timer
     '?????????????????????????????????
-    '' Here, create a temporary powershell script to fix the filename(s) then delete if after running it ... or do file by file (take too long ???)
+	' DO THIS IN A SEPARATE FUNCTION:
+    '' Here, create a temporary powershell script to fix the filename(s) TIMESTAMPS then delete the powershell script after running it ... or do file by file (take too long ???)
 	'if fix_timestamps = True then
 	'	Set objWscriptShell = CreateObject("Wscript.shell")
 	'	powershell_cmdline = "powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Normal -File """ & powershell_script_filename & """ -Folder """ & ffiaft_folder_tree & """ -logFile """ &  theLogfile & """"
@@ -881,23 +888,37 @@ Function vrdtvs_fix_filenames_in_a_folder_tree (the_folder_tree)
 	End If
 	vrdtvs_fix_filenames_in_a_folder_tree = 0 ' return with status 0
 End Function
-Sub vrdtvs_ffiaft_Process_Files_In_Subfolders (objSpecifiedFolder) ' Process all files in specified folder tree
+Sub vrdtvs_ffiaft_Process_Files_In_Subfolders (objSpecifiedFolder, do_subfolders_as_well) ' Process all files in specified folder tree
+	' Function to Process all files in specified folder tree OBJECT with file Extensions: .ts .mp4 .mpg .bprj
+	'   a) Remove special characters in filenames for file Extensions: .ts .mp4 .mpg .bprj
+	'   b) modify the filenames based on the filename content including reformatting the date in the filename
+	'   c) *** NOT THIS, do it outside ... fix the file DateCreated and DateModified timestamps based on the date in the filename (a PowerShell command ... since DateCreated can't be modified in vbscript)
+    ' rely on global variable "fso"
+    ' Parameters:
+	'	objSpecifiedFolder		Object from fso.GETFOLDER of the top level folder to process
+    '   do_subfolders_as_well	False flags to process only the top level folder with NO SUBFOLDERS
+    ' Call like this:
+    '       status = vrdtvs_ffiaft_Process_Files_In_Subfolders (folder_object, False) 
 	Dim objCurrentFolder, objColFiles, objSubFolder, objFile, ext
     Set objCurrentFolder = fso.GetFolder(objSpecifiedFolder.Path) ' get a NEW instance of a folder object (keep for recursion)
     ' Process all files in the current folder
     Set objColFiles = objCurrentFolder.Files ' get an object of a collection of files for the folder object
     For Each objFile in objColFiles
         ext = UCase(fso.GetExtensionName(objFile.name))
-        If ext = Ucase("ts") OR ext = Ucase("mp4") OR ext = Ucase("mpg") OR ext = Ucase("bprj") Then ' only process specific file extensions
+        '*********
+		If ext = Ucase("ts") OR ext = Ucase("mp4") OR ext = Ucase("mpg") OR ext = Ucase("bprj") Then ' ********** only process specific file extensions
             Call vrdtvs_ffiaft_pfis_Process_a_File(objFile)'  fso.GetAbsolutePathName(objFile.Path) should be the fully qualified absolute filename of this file
         End If
-    Next
+        '*********
+		Next
     Set objColFiles = Nothing
-    ' Then locate and recursively process subfolders of the current folder
-    For Each objSubFolder in objCurrentFolder.SubFolders
-        Call vrdtvs_ffiaft_Process_Files_In_Subfolders(objSubFolder)
-    Next
-    Set objCurrentFolder = Nothing
+	If do_subfolders_as_well Then
+    	' If specified, locate and recursively process subfolders of the current folder
+    	For Each objSubFolder in objCurrentFolder.SubFolders
+        	Call vrdtvs_ffiaft_Process_Files_In_Subfolders(objSubFolder)
+    	Next
+    	Set objCurrentFolder = Nothing
+	End If
 End Sub
 '
 Sub vrdtvs_ffiaft_pfis_Process_a_File (objSpecifiedFile) 
