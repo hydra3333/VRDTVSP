@@ -98,11 +98,13 @@ vrd_version_for_adscan = 6
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Setup Global Paths, resolving them to Absolute paths
 '
+Dim vrdtvs_CAPTURE_TS_Folder
 Dim vrdtvs_source_TS_Folder
 Dim vrdtvs_done_TS_Folder
 Dim vrdtvs_destination_mp4_Folder
 Dim vrdtvs_failed_conversion_TS_Folder
 Dim vrdtvs_temp_path
+vrdtvs_CAPTURE_TS_Folder = fso.GetAbsolutePathName("G:\HDTV\")
 vrdtvs_source_TS_Folder = fso.GetAbsolutePathName("G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\")
 vrdtvs_done_TS_Folder = fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_source_TS_Folder,"VRDTVS-done\"))
 vrdtvs_destination_mp4_Folder = fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_source_TS_Folder,"VRDTVS-Converted\"))
@@ -119,11 +121,12 @@ vrdtvs_temp_path = fso.GetAbsolutePathName("D:\VRDTVS-SCRATCH\")
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Check if commandline parameters over-ride our standard values. Ignore any other commandline parameters.
 '
-vrdtvs_source_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("source_Folder",vrdtvs_source_TS_Folder))                        ' /source_Folder:"g:\hdtv\"
-vrdtvs_done_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("done_Folder",vrdtvs_done_TS_Folder))                              ' /done_Folder:"g:\hdtv\"
-vrdtvs_destination_mp4_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("destination_Folder",vrdtvs_destination_mp4_Folder))       ' /destination_Folder:"g:\hdtv\"
-vrdtvs_failed_conversion_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("failed_Folder",vrdtvs_failed_conversion_TS_Folder))  ' /failed_Folder:"g:\hdtv\"
-vrdtvs_temp_path = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("temp_path",vrdtvs_temp_path))                                          ' /temp_path:"g:\hdtv\"
+vrdtvs_CAPTURE_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("capture_Folder",vrdtvs_CAPTURE_TS_Folder))                     ' /capture_Folder:"g:\hdtv\" 
+vrdtvs_source_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("source_Folder",vrdtvs_source_TS_Folder))                        ' /source_Folder:"g:\hdtv\SOURCE_TS\"
+vrdtvs_done_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("done_Folder",vrdtvs_done_TS_Folder))                              ' /done_Folder:"g:\hdtv\SOURCE_TS\DONE\"
+vrdtvs_destination_mp4_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("destination_Folder",vrdtvs_destination_mp4_Folder))       ' /destination_Folder:"g:\hdtv\SOURCE_TS\CONVERTED\"
+vrdtvs_failed_conversion_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("failed_Folder",vrdtvs_failed_conversion_TS_Folder))  ' /failed_Folder:"g:\hdtv\SOURCE_TS\FAILED\"
+vrdtvs_temp_path = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("temp_path",vrdtvs_temp_path))                                          ' /temp_path:"D:\VRDTVS-SCRATCH\"
 vrdtvs_DEBUG = vrdtvs_get_commandline_parameter("DEBUG",vrdtvs_DEBUG)                                                                               ' /DEBUG:True
 '
 vrd_version_for_qsf = vrdtvs_get_commandline_parameter("vrd_version_for_qsf",vrd_version_for_qsf)                                                   ' /vrd_version_for_qsf:6
@@ -153,6 +156,7 @@ Else
     WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
 If vrdtvs_DEBUG Then 
+    WScript.StdOut.WriteLine "DEBUG: final           vrdtvs_CAPTURE_TS_Folder=" & vrdtvs_CAPTURE_TS_Folder
     WScript.StdOut.WriteLine "DEBUG: final            vrdtvs_source_TS_Folder=" & vrdtvs_source_TS_Folder
     WScript.StdOut.WriteLine "DEBUG: final              vrdtvs_done_TS_Folder=" & vrdtvs_done_TS_Folder
     WScript.StdOut.WriteLine "DEBUG: final      vrdtvs_destination_mp4_Folder=" & vrdtvs_destination_mp4_Folder
@@ -237,15 +241,8 @@ End If
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Move .ts .mp4 .mpg .brpj files from the Source Folder to the 
 
-
-Function vrdtvs_move_files (mf_source_path_wildcard, mv_destination_path)
-    ' rely on global variable "fso"
-    ' Parameters:
-    '   mf_source_path_wildcard     
-    '   mv_destination_path
-    ' Call like this:
-    '       result = vrdtvs_move_files("G:/SOME_SOURCE_PATH/*.MPG", "G:/SOME_DESTINATION_PATH/")
-    '            which does a DOS command something like MOVE /Y "G:/SOME_SOURCE_PATH/*.MPG" "G:/SOME_DESTINATION_PATH/" 
+If vrdtvs_CAPTURE_TS_Folder <> "" Then
+    vrdtvs_status = vrdtvs_move_files(vrdtvs_CAPTURE_TS_Folder & "\*.mp4", vrdtvs_source_TS_Folder & "\")
 
 
 
@@ -433,8 +430,8 @@ Function vrdtvs_move_files (mf_source_path_wildcard, mv_destination_path)
     '   mf_source_path_wildcard     
     '   mv_destination_path
     ' Call like this:
-    '       result = vrdtvs_move_files("G:/SOME_SOURCE_PATH/*.MPG", "G:/SOME_DESTINATION_PATH/")
-    '            which does a DOS command something like MOVE /Y "G:/SOME_SOURCE_PATH/*.MPG" "G:/SOME_DESTINATION_PATH/" 
+    '       result = vrdtvs_move_files("G:\SOME_SOURCE_PATH\*.MPG", "G:\SOME_DESTINATION_PATH\")
+    '            which does a DOS command something like MOVE /Y "G:\SOME_SOURCE_PATH\*.MPG" "G:\SOME_DESTINATION_PATH\" 
     ' Examples of some useful functions:
         ' an_AbsolutePath = fso.GetAbsolutePathName(fso.BuildPath("C:\SOFTWARE\ffmpeg\0-homebuilt-x64\","MP4Box.exe"))
         ' theParentFolderName = fso.GetParentFolderName(an_AbsolutePath) ' the drive and folder name of the file without any trailing "\"
