@@ -5,7 +5,8 @@ Option explicit
 '
 ' Copyright hydra3333@gmail.com 2021
 '
-' Invoke from a commandline or a .bat, Interactively or a Scheduled task with a single one-line commndline.
+' Invoke from a DOS commandline or a .bat, Interactively or in a Scheduled Task 
+' using a single one-line commndline.
 ' All options are, well, optional and are based on a default source_Folder
 '
 ' 	cscript //nologo "E:\GIT-REPOSITORIES\VRDTVSP\VRDTVS_001.vbs" ^
@@ -20,7 +21,10 @@ Option explicit
 '			/vrd_version_for_adscan:6
 '
 ' ... use /capture_Folder:"" to prevent the moving of files from the capture folder, for testing
-' ... note that carat (^) is the normal DOS commandline-continuation flag
+' ... note
+'		that carat (^) is the normal DOS commandline-continuation flag
+'		there are a range of dependencies for locations of .exe files and whatnot, 
+'			including Vapoursynth and DG-tools and ffmpeg and ffprobe and mediainfo
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' 1. Check and Exit if this .vbs isn't run under CSCRIPT (not WSCRIPT which is the default)
