@@ -274,12 +274,15 @@ End If
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' In Folder trees Source and Destination, for file Extensions: .ts .mp4 .mpg .bprj
 '   a) Remove special characters in filenames for file Extensions: .ts .mp4 .mpg .bprj
-'   b) modify the filenames based on the filename content including reformatting the date in the filename
-'   c) fix the DateCreated and DateModified timestamps based onthe date in the filename (a PowerShell command ... learn how to do that on the commandline)
+'   b) Modify the filenames based on the filename content including reformatting the date in the filename
+'   c) Fix the DateCreated and DateModified timestamps based onthe date in the filename (a PowerShell command ... learn how to do that on the commandline)
 '
-
-
-
+vrdtvs_status = vrdtvs_fix_filenames_in_a_folder_tree(vrdtvs_source_TS_Folder) ' this does (a) abd (b)
+If vrdtvs_status <> 0 Then ' Something went wrong with processing files in the Source folder ...
+	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_fix_filenames_in_a_folder_tree in """ & vrdtvs_source_TS_Folder & """... Aborting ...")
+	WScript.StdOut.WriteLine("VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_fix_filenames_in_a_folder_tree in """ & vrdtvs_source_TS_Folder & """... Aborting ...")
+	Wscript.Quit vrdtvs_status
+End If
 
 
 
@@ -296,6 +299,8 @@ End If
 
 
 ' .... code goes in here
+
+
 
 
 
@@ -807,7 +812,7 @@ Function vrdtvs_fix_filenames_in_a_folder_tree (the_folder_tree)
     Dim vrdtvs_f_object
     '
     ffiaft_folder_tree = fso.GetAbsolutePathName(the_folder_tree)
-    ffiaft_temp_powershell_filename = vrdtvs_gimme_a_temporary_absolute_filename("VRDTVS_fix_filenames_in_a_folder_tree-" & vrdtvs_run_datetime) & ".ps1"
+    ffiaft_temp_powershell_filename = vrdtvs_gimme_a_temporary_absolute_filename("vrdtvs_fix_filenames_in_a_folder_tree-" & vrdtvs_run_datetime) & ".ps1"
     '    
     If NOT fso.FolderExists(ffiaft_folder_tree) Then
 	    WScript.StdOut.WriteLine("vrdtvs_fix_filenames_in_a_folder_tree: Folder does NOT EXIST """ & ffiaft_folder_tree & """ ... not processed")
@@ -837,7 +842,7 @@ Function vrdtvs_fix_filenames_in_a_folder_tree (the_folder_tree)
 	'end if
     '????????????????????????????
 
-
+	vrdtvs_fix_filenames_in_a_folder_tree = 0 ' return with status 0
 End Function
 Sub vrdtvs_ffiaft_Process_Files_In_Subfolders (objSpecifiedFolder) ' Process all files in specified folder tree
 	Dim objCurrentFolder, objColFiles, objSubFolder, objFile, ext
@@ -879,7 +884,7 @@ Sub vrdtvs_ffiaft_pfis_Process_a_File (objSpecifiedFile)
 
     '???????????????????????????????????? rename the file here, right now, 
     '???????????????????????????????????? taking care of "file already exists"
-    '???????????????????????????????????? taking care of editing the content .bprj files (which are just XML files) ... text for Ucase(theExtName) = Ucase("bprj")
+    '???????????????????????????????????? taking care of editing and rewriting the content .bprj files (which are just XML files) ... test for Ucase(theExtName) = Ucase("bprj")
 
 
 
