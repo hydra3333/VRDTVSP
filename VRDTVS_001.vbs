@@ -902,7 +902,7 @@ Sub vrdtvs_ffiaft_pfis_Process_a_File (objSpecifiedFile)
     NewBaseName = vrdtvs_remove_tvs_classifying_stuff_from_string(NewBaseName)
     If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: after vrdtvs_remove_tvs_classifying_stuff_from_string original BaseName """ & theOriginalBaseName & """ NewBaseName """ & NewBaseName & """")
     NewBaseName = vrdtvs_Move_Date_to_End_of_String(NewBaseName)
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File :after vrdtvs_Move_Date_to_End_of_String original BaseName """ & theOriginalBaseName & """ NewBaseName """ & NewBaseName & """")
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: after vrdtvs_Move_Date_to_End_of_String original BaseName """ & theOriginalBaseName & """ NewBaseName """ & NewBaseName & """")
     ' do not fix the file time stamps here, do that later in powershell for the whole tree at once, AFTER processing all the filenames in a folder tree here
 
 
@@ -941,7 +941,7 @@ Function vrdtvs_remove_tvs_classifying_stuff_from_string (theOriginalString)
 	searchformeArray(3)="."
     '
 	theNewString = theOriginalString ' start with the original string
-	theNewString = Replace(theNewString, "_", "_", 1, -1, vbTextCompare) ' replace spaces with underscores ... Remember we've done this !
+	theNewString = Replace(theNewString, " ", "_", 1, -1, vbTextCompare) ' replace spaces with underscores ... so, Remember we've done this !
 	'
 	' search for a year with a combination of leading and trailing characters and replace with a standard formatted year
 	for xyear = 2017 to 2040 ' too lazy to figure out a regex to do this 
@@ -1535,9 +1535,10 @@ Function vrdtvs_Move_Date_to_End_of_String(theOriginalString)
     ' Brute force through dates, nothing fancy here. Very slow but sure.
     ' But first, cheekily see if there's a date at all by checking for "20"
     is_a_date_there = False
-    For Each theLeadingSearchCharacter In searchformeArray ' this is a quick FOR loop, only 4 iterations
+    For Each theLeadingSearchCharacter In searchformeArray ' this is a QUICK FOR loop, only 4 iterations
         txtToSearchFor = theLeadingSearchCharacter & "20" ' assuming start of a date in the "2000" years, eg "2021"
-        If instr(1, theOriginalString, txtToSearchFor, vbTextCompare) > 0 Then 
+		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: QUICK searching for """ & txtToSearchFor & """ in """ & theNewString & """") 
+        If instr(1, theNewString, txtToSearchFor, vbTextCompare) > 0 Then 
             is_a_date_there = True
             Exit For
         End If
@@ -1579,7 +1580,7 @@ Function vrdtvs_Move_Date_to_End_of_String(theOriginalString)
 			End If
 		Next
     Loop
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: exiting with return value """ & theNewString & """")
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: exiting with return value   """ & theNewString & """")
 	vrdtvs_Move_Date_to_End_of_String = theNewString
 End Function
 '
