@@ -1539,6 +1539,7 @@ Function vrdtvs_Move_Date_to_End_of_String(theOriginalString)
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: QUICK searching for """ & txtToSearchFor & """ in """ & theNewString & """") 
         If instr(1, theNewString, txtToSearchFor, vbTextCompare) > 0 Then 
             is_a_date_there = True
+			If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: QUICK FOUND """ & txtToSearchFor & """ in """ & theNewString & """ exiting Quick FOR Loop") 
             Exit For
         End If
     Next
