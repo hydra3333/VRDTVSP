@@ -888,7 +888,7 @@ End Sub
 Sub vrdtvs_ffiaft_pfis_Process_a_File (objSpecifiedFile) 
 	' objSpecifiedFile is already pre-filtered beforehand to be one of ts mp4 mpg bprj
     ' Process a specific file ... fso.GetAbsolutePathName(objSpecifiedFile.Path) should be the fully qualified absolute filename of this file
-    Dim theAbsoluteFilename, theParentFolderName, theBaseName, theExtName
+    Dim theOriginalAbsoluteFilename, theOriginalParentFolderName, theOriginalBaseName, theOriginalExtName
     Dim NewBaseName, newAbsoluteFilename
     theOriginalAbsoluteFilename = fso.GetAbsolutePathName(objSpecifiedFile.Path) ' should already be fully qualified but do it anyway just to be safe
     theOriginalParentFolderName = fso.GetParentFolderName(theOriginalAbsoluteFilename)
@@ -930,7 +930,7 @@ End Sub
 '
 Function vrdtvs_remove_tvs_classifying_stuff_from_string (theOriginalString)
     ' remove stuff in the string which was previously added by TVSchedulerPro, eg "Movie-" etc etc etc
-	Dim xyear, std_year, ss, se, findme
+	Dim xyear, std_year, ss, se, findme, theNewString
 	Dim searchformeArray(3)
 	searchformeArray(0)="-"
 	searchformeArray(1)="_"
@@ -966,17 +966,16 @@ Function vrdtvs_remove_tvs_classifying_stuff_from_string (theOriginalString)
 	theNewString = Replace(theNewString, "(", "_", 1, -1, vbTextCompare)
 	theNewString = Replace(theNewString, ")", "_", 1, -1, vbTextCompare)
 	'
+	theNewString = Replace(theNewString, "_-_", "-", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "-_", "-", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "_-", "-", 1, -1, vbTextCompare)
+	'
 	theNewString = Replace(theNewString, "__", "_", 1, -1, vbTextCompare)
 	theNewString = Replace(theNewString, "__", "_", 1, -1, vbTextCompare) ' yes again to catch all  replaces
 	theNewString = Replace(theNewString, "__", "_", 1, -1, vbTextCompare) ' yes again to catch all  replaces
 	theNewString = Replace(theNewString, "__", "_", 1, -1, vbTextCompare) ' yes again to catch all  replaces
 	theNewString = Replace(theNewString, "__", "_", 1, -1, vbTextCompare) ' yes again to catch all  replaces
-	'
-	theNewString = Replace(theNewString, "_-_", "-", 1, -1, vbTextCompare)
-	theNewString = Replace(theNewString, "-_", "-", 1, -1, vbTextCompare)
-	theNewString = Replace(theNewString, "_-", "-", 1, -1, vbTextCompare)
-	'
-	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
+
 	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
 	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
 	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
@@ -1489,6 +1488,24 @@ Function vrdtvs_remove_tvs_classifying_stuff_from_string (theOriginalString)
 	theNewString = vrdtvs_ReplaceStartStringCaseIndependent(theNewString, "Travel_", "")
 	theNewString = vrdtvs_ReplaceStartStringCaseIndependent(theNewString, "Travel-", "")
 	'
+	theNewString = Replace(theNewString, "__", "_", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "__", "_", 1, -1, vbTextCompare) ' yes again to catch all  replaces
+	theNewString = Replace(theNewString, "__", "_", 1, -1, vbTextCompare) ' yes again to catch all  replaces
+	theNewString = Replace(theNewString, "__", "_", 1, -1, vbTextCompare) ' yes again to catch all  replaces
+	theNewString = Replace(theNewString, "__", "_", 1, -1, vbTextCompare) ' yes again to catch all  replaces
+
+	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
+	'
+	theNewString = Replace(theNewString, "..", ".", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "..", ".", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "..", ".", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "..", ".", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "..", ".", 1, -1, vbTextCompare)
+	'
 	theNewString = vrdtvs_ReplaceStartStringCaseIndependent(theNewString, "-", "")
 	theNewString = vrdtvs_ReplaceStartStringCaseIndependent(theNewString, "_", "")
 	theNewString = vrdtvs_ReplaceStartStringCaseIndependent(theNewString, ".", "")
@@ -1527,10 +1544,10 @@ Function vrdtvs_Move_Date_to_End_of_String(theOriginalString)
 	            for xday = 01 to 31
 	                xDate = vrdtvs_Digits4(xyear) & "-" & vrdtvs_Digits2(xmonth) & "-" & vrdtvs_Digits2(xday) ' assume dates in the filename are always in format dd-mm-yyyy with leading zeroes
                     For Each theLeadingSearchCharacter In searchformeArray
-                        txtToSearchFor = theLeadingSearchCharacter & theDate
+                        txtToSearchFor = theLeadingSearchCharacter & xDate
                         If instr(1, theOriginalString, txtToSearchFor, vbTextCompare) > 0 then                                                                ' we found date withing the string
-                            If right(theOriginalString, len(theDate)) <> theDate then                                                                         ' ensure it's not already at the end of the string
-                                theNewString = Replace(theOriginalString, txtToSearchFor, "", 1, -1, vbTextCompare) & theLeadingReplaceCharacter & theDate     ' move the date to theend of the string
+                            If right(theOriginalString, len(xDate)) <> xDate then                                                                         ' ensure it's not already at the end of the string
+                                theNewString = Replace(theOriginalString, txtToSearchFor, "", 1, -1, vbTextCompare) & theLeadingReplaceCharacter & xDate     ' move the date to theend of the string
                                 If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: found string with date not at end <" & txtToSearchFor & ">=<" & theOriginalString & "> ... changing to <" & theNewString & ">")
                                 Exit Do ' cheeky way to exit all the For loops at once, just Exit the outer Do Loop
                             End If
