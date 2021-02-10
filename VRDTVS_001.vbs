@@ -790,10 +790,10 @@ Function vrdtvs_remove_special_characters_from_string(rsp_string, rsp_is_an_Abso
     Dim rsp_RegExp
     Dim rsp_tmp, rsp_result
     Dim rsp_AbsolutePath, rsp_ParentFolderName, rsp_BaseName, rsp_ExtName
-    If vrdtvs_DEBUG Then
-        WScript.StdOut.WriteLine("DEBUG: vrdtvs_remove_special_characters_from_string             rsp_string= " & rsp_string)
-        WScript.StdOut.WriteLine("DEBUG: vrdtvs_remove_special_characters_from_string rsp_is_an_AbsolutePath= " & rsp_is_an_AbsolutePath)
-    End If
+    'If vrdtvs_DEBUG Then
+    '    WScript.StdOut.WriteLine("DEBUG: vrdtvs_remove_special_characters_from_string             rsp_string= " & rsp_string)
+    '    WScript.StdOut.WriteLine("DEBUG: vrdtvs_remove_special_characters_from_string rsp_is_an_AbsolutePath= " & rsp_is_an_AbsolutePath)
+    'End If
     rsp_tmp = rsp_string
     If rsp_is_an_AbsolutePath Then
         rsp_AbsolutePath = fso.GetAbsolutePathName(rsp_string)
@@ -801,11 +801,11 @@ Function vrdtvs_remove_special_characters_from_string(rsp_string, rsp_is_an_Abso
         rsp_BaseName = fso.GetBaseName(rsp_AbsolutePath)
         rsp_ExtName = fso.GetExtensionName(rsp_AbsolutePath)
         rsp_tmp = rsp_BaseName
-        If vrdtvs_DEBUG Then
-            WScript.StdOut.WriteLine("DEBUG: vrdtvs_remove_special_characters_from_string rsp_ParentFolderName= " & rsp_ParentFolderName)
-            WScript.StdOut.WriteLine("DEBUG: vrdtvs_remove_special_characters_from_string         rsp_BaseName= " & rsp_BaseName)
-            WScript.StdOut.WriteLine("DEBUG: vrdtvs_remove_special_characters_from_string          rsp_ExtName= " & rsp_ExtName)
-        End If
+        'If vrdtvs_DEBUG Then
+        '    WScript.StdOut.WriteLine("DEBUG: vrdtvs_remove_special_characters_from_string rsp_ParentFolderName= " & rsp_ParentFolderName)
+        '    WScript.StdOut.WriteLine("DEBUG: vrdtvs_remove_special_characters_from_string         rsp_BaseName= " & rsp_BaseName)
+        '    WScript.StdOut.WriteLine("DEBUG: vrdtvs_remove_special_characters_from_string          rsp_ExtName= " & rsp_ExtName)
+        'End If
     End If
     Set rsp_RegExp = New RegExp
     rsp_RegExp.IgnoreCase = False
@@ -816,7 +816,7 @@ Function vrdtvs_remove_special_characters_from_string(rsp_string, rsp_is_an_Abso
     If rsp_is_an_AbsolutePath Then
         rsp_result = fso.GetAbsolutePathName(fso.BuildPath(rsp_ParentFolderName, rsp_result & "." & rsp_ExtName))
     End If
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_remove_special_characters_from_string exiting with return value: " & rsp_result)
+    'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_remove_special_characters_from_string exiting with return value: " & rsp_result)
     vrdtvs_remove_special_characters_from_string = rsp_result
 End Function
 '
@@ -849,7 +849,7 @@ Function vrdtvs_fix_filenames_in_a_folder_tree (the_folder_tree)
 	    Exit Function
     End If
     '
-	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Started basic file renames for folder tree """ & ffiaft_folder_tree & """")
+	'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Started basic file renames for folder tree """ & ffiaft_folder_tree & """")
 	Set vrdtvs_folder_object = fso.GetFolder(ffiaft_folder_tree)            ' get an object of the specified top level folder to process
 	Call vrdtvs_ffiaft_Process_Files_In_Subfolders (vrdtvs_folder_object)   ' recursively process the content (files, folders) of that specified top level folder
     Set vrdtvs_folder_object = Nothing                                      ' finished, disppose of the object
