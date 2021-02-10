@@ -809,30 +809,50 @@ End Sub
 
 
 
-Function vrdtvs_Move_Date_to_End(theFilename, theDate, theLeadingReplaceCharacter)
+Function vrdtvs_Move_Date_to_End_of_String(theOriginalString)
     ' if a theDate exists in a string, move it to the end of the string (used in renaming files with the date on the end)
-    ' Call like this:
-    '       ????
-    Dim theLeadingSearchCharacter, txtToSearchFor, newFilename
-	Dim searchformeArray(3)
-	searchformeArray(0)="-"
+    Const theLeadingReplaceCharacter = "."
+    Dim theLeadingSearchCharacter, txtToSearchFor
+	Dim searchformeArray(3) ' an array of valid leading characters to include in the search/replace
+    Dim xyear, xmonth, xday, xDate
+    Dim theNewString
+    searchformeArray(0)="-"
 	searchformeArray(1)="_"
 	searchformeArray(2)=" "
 	searchformeArray(3)="."
-	newFilename = theFilename
-	For Each theLeadingSearchCharacter In searchformeArray
-		txtToSearchFor = theLeadingSearchCharacter & theDate
-		If instr(1, theFilename, txtToSearchFor, vbTextCompare) > 0 then ' found date withing the filename	
-			If right(theFilename, len(theDate)) <> theDate then ' ensure it's not already at the end of the string
-				newFilename = Replace(theFilename, txtToSearchFor, "", 1, -1, vbTextCompare) & theLeadingReplaceCharacter & theDate
-				WScript.StdOut.WriteLine "vbs_rename_files: *** found filename with date not at end <" & txtToSearchFor & ">=<" & theFilename & "> ... Renaming to <" & newFilename & ">"
-			End if
-		End if
-	Next
-	vrdtvs_Move_Date_to_End = newFilename
+    theNewString = theOriginalString
+    ' Brute force through dates, nothing fancy here. Very slow but sure.
+    for xyear = 2017 to 2040
+	    for xmonth = 01 to 12
+	        for xday = 01 to 31
+	            xDate = Digits4(xyear) & "-" & Digits2(xmonth) & "-" & Digits2(xday) ' assume dates in the filename are always in format dd-mm-yyyy with leading zeroes
+                For Each theLeadingSearchCharacter In searchformeArray
+                    txtToSearchFor = theLeadingSearchCharacter & theDate
+                    If instr(1, theOriginalString, txtToSearchFor, vbTextCompare) > 0 then                                                                ' we found date withing the string
+                        If right(theOriginalString, len(theDate)) <> theDate then                                                                         ' ensure it's not already at the end of the string
+                            theNewString = Replace(theOriginalString, txtToSearchFor, "", 1, -1, vbTextCompare) & theLeadingReplaceCharacter & theDate     ' move the date to theend of the string
+                            ???? debug WScript.StdOut.WriteLine "vrdtvs_Move_Date_to_End_of_String: *** found filename with date not at end <" & txtToSearchFor & ">=<" & theOriginalString & "> ... Renaming to <" & theNewString & ">"
+                            Exit For
+                        End If
+                    End If
+                Next
+	        Next
+	    Next
+    Next
+	vrdtvs_Move_Date_to_End_of_String = theNewString
 End Function
-
-
+Function vrdtvs_Digits2 (val)
+    ' pad a number with leading zeroes, up to 2 characters in size total
+    vrdtvs_Digits2 = vrdtvs_PadDigits(val, 2)
+End Function
+Function vrdtvs_Digits4(val)
+    ' pad a number with leading zeroes, up to 4 characters in size total
+    vrdtvs_Digits4 = vrdtvs_PadDigits(val, 4)
+End Function
+Function vrdtvs_PadDigits(val, digits) 
+    ' pad a number with leading zeroes, up to a speified number of characters in size total
+    vrdtvs_PadDigits = Right(String(digits,"0") & val, digits)
+End Function
 
 
 
@@ -857,16 +877,4 @@ Function vrdtvs_ReplaceEndStringCaseIndependent(theString, theSearchString, theR
 	else
 		vrdtvs_ReplaceEndStringCaseIndependent = theString
 	end if
-End Function
-Function vrdtvs_Digits2 (val)
-    ' pad a number with leading zeroes, up to 2 characters in size total
-    vrdtvs_Digits2 = vrdtvs_PadDigits(val, 2)
-End Function
-Function vrdtvs_Digits4(val)
-    ' pad a number with leading zeroes, up to 4 characters in size total
-    vrdtvs_Digits4 = vrdtvs_PadDigits(val, 4)
-End Function
-Function vrdtvs_PadDigits(val, digits) 
-    ' pad a number with leading zeroes, up to a speified number of characters in size total
-    vrdtvs_PadDigits = Right(String(digits,"0") & val, digits)
 End Function
