@@ -924,28 +924,27 @@ Sub vrdtvs_ffiaft_pfis_Process_a_File (objSpecifiedFile)
     ' do not fix the file time stamps here, do that later in powershell for the whole tree at once, AFTER processing all the filenames in a folder tree here
 
 
-    '???????????????????????????????????? rename the individual file here, right now, if required (test for NewBaseName <> theOriginalBaseName )
+    '???????????????????????????????????? rename the individual file here, right now, IF REQUIRED (test for NewBaseName <> theOriginalBaseName )
     '???????????????????????????????????? taking care of "file already exists"
     '???????????????????????????????????? taking care of editing and rewriting the content .bprj files (which are just XML files) ... test for Ucase(theExtName) = Ucase("bprj")
 
-
 	newAbsoluteFilename = fso.GetAbsolutePathName(fso.BuildPath(theOriginalParentFolderName,NewBaseName))
 	if ucase(NewBaseName) = Ucase(theOriginalBaseName) Then
-		'cater "file already exists" and loop try up to 100 times to add a 2 digit number ".00" to ".99" to the end of NewBaseName if needed
-		'If vrdtvs_DEBUG Then 
+		If vrdtvs_DEBUG Then 
 		'	WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: NO NEED for a Rename, no change: theOriginalBaseName=""" & theOriginalBaseName & """ NewBaseName=""" & NewBaseName & """" )
-		'	WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: NO NEED for a Rename, no change: theOriginalAbsoluteFilename=""" & theOriginalAbsoluteFilename & """ newAbsoluteFilename=""" & newAbsoluteFilename & """" )
-		'End If
+			WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: NO NEED for a Rename, no change: theOriginalAbsoluteFilename=""" & theOriginalAbsoluteFilename & """ newAbsoluteFilename=""" & newAbsoluteFilename & """" )
+		End If
 	Else
-		'If vrdtvs_DEBUG Then 
+		'cater "file already exists" and loop try up to 100 times to add a 2 digit number ".00" to ".99" to the end of NewBaseName if needed
+		If vrdtvs_DEBUG Then 
 		'	WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: needs a Rename using theOriginalBaseName=""" & theOriginalBaseName & """ NewBaseName=""" & NewBaseName & """" )
-		'	WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: needs a Rename using theOriginalAbsoluteFilename=""" & theOriginalAbsoluteFilename & """ newAbsoluteFilename=""" & newAbsoluteFilename & """" )
-		'End If
+			WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: needs a Rename using theOriginalAbsoluteFilename=""" & theOriginalAbsoluteFilename & """ newAbsoluteFilename=""" & newAbsoluteFilename & """" )
+		End If
 	End If
 	local_timerEnd = Timer
-    If vrdtvs_DEBUG Then 
-		WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: Exit Sub with Rename, having Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(local_timerStart, local_timerEnd))
-	End If
+    'If vrdtvs_DEBUG Then 
+	'	WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: Exit having Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(local_timerStart, local_timerEnd))
+	'End If
 	' vrdtvs_ffiaft_pfis_Process_a_File is a Sub, hence no return values
 End Sub
 '
@@ -1608,7 +1607,7 @@ Function vrdtvs_Move_Date_to_End_of_String(theOriginalString)
 		Exit Do
     Loop
 	timerEnd_MDES = Timer
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: exiting with return value   """ & theNewString & """ having Loop ELapsed Time " & vrdtvs_Calculate_ElapsedTime_string(timerStart_MDES, timerEnd_MDES))
+    'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: exiting with return value   """ & theNewString & """ having Loop ELapsed Time " & vrdtvs_Calculate_ElapsedTime_string(timerStart_MDES, timerEnd_MDES))
 	vrdtvs_Move_Date_to_End_of_String = theNewString
 End Function
 '
