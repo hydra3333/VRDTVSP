@@ -465,8 +465,8 @@ Function vrdtvs_move_files (mf_source_path_wildcard, mv_destination_path)
     Dim mf_exe, mf_cmd, mf_status, mf_tmp
     Dim mf_source_AbsolutePath, mf_destination_AbsolutePath
     If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_move_files: """ & mf_source_path_wildcard & """" & " to """ &  mf_source_path_wildcard & """")
-    mf_source_AbsolutePath = GetAbsolutePathName(mf_source_path_wildcard)
-    mf_destination_AbsolutePath = GetAbsolutePathName(mf_destination_AbsolutePath)
+    mf_source_AbsolutePath = fso.GetAbsolutePathName(mf_source_path_wildcard)
+    mf_destination_AbsolutePath = fso.GetAbsolutePathName(mf_destination_AbsolutePath)
     If Right(mf_destination_AbsolutePath,1) <> "\" Then
         mf_destination_AbsolutePath = mf_destination_AbsolutePath & "\"     ' add a trailing backslash for DOS MOVE to recognise the destination pathname
     End If
