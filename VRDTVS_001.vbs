@@ -238,7 +238,8 @@ End If
 ' NOTE: Exec object has a .Terminate - this type of process kill does NOT clean up properly and may cause memory leaks - use only as a last resort!
 '
 'vrdtvs_cmd = "CMD /C START /min """ &  vrdtvs_Insomnia64_tmp_filename & """ """ & vrdtvs_Insomnia64_tmp_filename & """"
-vrdtvs_cmd = "START /min """ &  vrdtvs_Insomnia64_tmp_filename & """ """ & vrdtvs_Insomnia64_tmp_filename & """"
+'vrdtvs_cmd = "START /min """ &  vrdtvs_Insomnia64_tmp_filename & """ """ & vrdtvs_Insomnia64_tmp_filename & """"
+vrdtvs_cmd = """" &  vrdtvs_Insomnia64_tmp_filename & """"
 WScript.StdOut.WriteLine("VTDRVS Insomnia: Exec command: " & vrdtvs_cmd)
 set vrdtvs_exe_obj = wso.Exec(vrdtvs_cmd)
 vrdtvs_Insomnia64_ProcessID = vrdtvs_exe_obj.ProcessID
@@ -250,6 +251,8 @@ If vrdtvs_Insomnia64_ProcessID = 0 Then
     ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
     WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
+WScript.StdOut.WriteLine("VTDRVS Insomnia: Exec Exit Status: " & vrdtvs_status)
+
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Move .ts .mp4 .mpg .brpj files from the Source Folder to the source folder sincethat is where we process from
@@ -296,28 +299,28 @@ End If
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Kill the Insomnia64 process that we started earlier
 '
-'vrdtvs_cmd = "TaskKill /t /f /pid " & vrdtvs_Insomnia64_ProcessID ' we saved the ProcessId when we started it
-vrdtvs_cmd = "TaskKill /t /f /im """ & vrdtvs_Insomnia64_tmp_filename & """" ' we saved the ProcessId when we started it
+'vrdtvs_cmd = "TaskKill /t /f /im """ & vrdtvs_Insomnia64_tmp_filename & """" ' we saved the ProcessId when we started it
+vrdtvs_cmd = "TaskKill /t /f /pid " & vrdtvs_Insomnia64_ProcessID ' we saved the ProcessId when we started it
 ' taskkill /t /f /im "%iFile%" >> "!vrdlog!" 2>&1
 '   /f  Specifies that processes be forcefully ended.
 '   /t	Ends the specified process and any child processes started by it.
 '   /pid <processID>    Specifies the process ID of the process to be terminated.
 '   /im <imagename>     Specifies the image name of the process to be terminated.
-WScript.StdOut.WriteLine("VTDRVS TaskKill Insomnia Exec command: " & vrdtvs_cmd)
+WScript.StdOut.WriteLine("VTDRVS TaskKill: Insomnia Exec command: " & vrdtvs_cmd)
 set vrdtvs_exe_obj = wso.Exec(vrdtvs_cmd)
 Do While vrdtvs_exe_obj.Status = 0 '0 is running and 1 is ending
     Wscript.Sleep 100
 Loop
 Do Until vrdtvs_exe_obj.StdOut.AtEndOfStream
     vrdtvs_tmp = vrdtvs_exe_obj.StdOut.ReadLine()
-    WScript.StdOut.WriteLine("VTDRVS TaskKill Insomnia Exec StdOut: " & vrdtvs_tmp)
+    WScript.StdOut.WriteLine("VTDRVS TaskKill: Insomnia Exec StdOut: " & vrdtvs_tmp)
 Loop
 Do Until vrdtvs_exe_obj.StdErr.AtEndOfStream
     vrdtvs_tmp = vrdtvs_exe_obj.StdErr.ReadLine()
-    WScript.StdOut.WriteLine("VTDRVS TaskKill Insomnia Exec StdErr: " & vrdtvs_tmp)
+    WScript.StdOut.WriteLine("VTDRVS TaskKill: Insomnia Exec StdErr: " & vrdtvs_tmp)
 Loop
 vrdtvs_status = vrdtvs_exe_obj.ExitCode ' Ignore any error codes returned by taskkill
-WScript.StdOut.WriteLine("VTDRVS TaskKill Insomnia Exec Exit Status: " & vrdtvs_status)
+WScript.StdOut.WriteLine("VTDRVS TaskKill: Insomnia Exec Exit Status: " & vrdtvs_status)
 Set vrdtvs_exe_obj = Nothing
 If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: VTDRVS TaskKill Insomnia exiting with status=""" & vrdtvs_status & """")
 '
