@@ -449,15 +449,15 @@ Function vrdtvs_move_files (mf_source_path_wildcard, mv_destination_path)
         ' theParentFolderName = fso.GetParentFolderName(an_AbsolutePath) 
     Dim mf_exe, mf_cmd, mf_status, mf_tmp
     Dim mf_source_AbsolutePath, mf_destination_AbsolutePath
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_move_files: """ & mf_source_path_wildcard & """" & " to """ &  mf_source_path_wildcard & """"
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_move_files: """ & mf_source_path_wildcard & """" & " to """ &  mf_source_path_wildcard & """")
     mf_source_AbsolutePath = GetAbsolutePathName(mf_source_path_wildcard)
     mf_destination_AbsolutePath = GetAbsolutePathName(mf_destination_AbsolutePath)
     If Right(mf_destination_AbsolutePath,1) <> "\" Then
         mf_destination_AbsolutePath = mf_destination_AbsolutePath & "\"     ' add a trailing backslash for DOS MOVE to recognise the destination pathname
     End If
     If vrdtvs_DEBUG Then
-        WScript.StdOut.WriteLine "DEBUG: vrdtvs_move_files      mf_source_AbsolutePath=""" & mf_source_AbsolutePath & """"
-        WScript.StdOut.WriteLine "DEBUG: vrdtvs_move_files mf_destination_AbsolutePath=""" & mf_destination_AbsolutePath & """"
+        WScript.StdOut.WriteLine("DEBUG: vrdtvs_move_files      mf_source_AbsolutePath=""" & mf_source_AbsolutePath & """")
+        WScript.StdOut.WriteLine("DEBUG: vrdtvs_move_files mf_destination_AbsolutePath=""" & mf_destination_AbsolutePath & """")
     End If
     mf_cmd = "MOVE /Y """ & mf_source_AbsolutePath & """ """ & mf_destination_AbsolutePath & """ 2>&1"
     If vrdtvs_DEVELOPMENT_NO_ACTIONS Then mf_cmd = "REM " & mf_cmd ' do not move anything DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
@@ -477,7 +477,7 @@ Function vrdtvs_move_files (mf_source_path_wildcard, mv_destination_path)
     mf_status = mf_exe.ExitCode
     WScript.StdOut.WriteLine("vrdtvs_move_files Exit Status: " & mf_status)
     Set mf_exe = Nothing
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: vrdtvs_move_files exiting with status=""" & mf_status & """"
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_move_files exiting with status=""" & mf_status & """")
     vrdtvs_move_files = mf_status
 End Function
 '
@@ -749,7 +749,7 @@ Function vrdtvs_fix_filenames_in_a_folder_tree (the_folder_tree)
     ffiaft_temp_powershell_filename = vrdtvs_gimme_a_temporary_absolute_filename("VRDTVS_fix_filenames_in_a_folder_tree-" & vrdtvs_run_datetime & "-") & ".ps1"
     '    
     If NOT fso.FolderExists(ffiaft_folder_tree) Then
-	    WScript.StdOut.WriteLine "vrdtvs_fix_filenames_in_a_folder_tree: Folder does NOT EXIST """ & ffiaft_folder_tree & """ ... not processed"
+	    WScript.StdOut.WriteLine("vrdtvs_fix_filenames_in_a_folder_tree: Folder does NOT EXIST """ & ffiaft_folder_tree & """ ... not processed")
 	    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Folder does NOT EXIST """ & ffiaft_folder_tree & """ ... not processed")
         vrdtvs_fix_filenames_in_a_folder_tree = 53 ' 53 = File not found
 	    Exit Function
