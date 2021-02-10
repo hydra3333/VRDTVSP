@@ -224,7 +224,7 @@ fso.CopyFile vrdtvs_Insomniaexe64, vrdtvs_Insomnia64_tmp_filename, True
 vrdrvs_Err_Code = Err.Number
 vrdrvs_Err_Description = Err.Description
 On Error Goto 0
-If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: Insomnia: File Copy retruned error code: " & vrdrvs_Err_Code & " Descrption: " & vrdrvs_Err_Description)
+If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: Insomnia: File Copy returned error code: " & vrdrvs_Err_Code & " Descrption: " & vrdrvs_Err_Description)
 If vrdrvs_Err_Code <> 0 Then
     Err.Clear
     WScript.StdOut.WriteLine("VRDTVS Insomnia: ERROR - Error " & vrdrvs_Err_Code & " Creating vrdtvs_Insomnia64_tmp_filename=" & vrdtvs_Insomnia64_tmp_filename & "... Aborting ...")
