@@ -294,10 +294,10 @@ If vrdtvs_CAPTURE_TS_Folder <> "" Then
 End If
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
-' In Folder trees Source and Destination, for file Extensions: .ts .mp4 .mpg .bprj
+' In Top Level Folders: Source and Destination (the function filters for file Extensions: .ts .mp4 .mpg .bprj)
 '   a) Remove special characters in filenames for file Extensions: .ts .mp4 .mpg .bprj
 '   b) Modify the filenames based on the filename content including reformatting the date in the filename
-'   c) Fix the DateCreated and DateModified timestamps based onthe date in the filename (a PowerShell command ... learn how to do that on the commandline)
+'	c) Modily content of .bprj files (they are .xml content) to link to the new media filename since we presumably are modifying the pair
 '
 vrdtvs_status = vrdtvs_fix_filenames_in_a_folder_tree(vrdtvs_source_TS_Folder, False) ' this does (a) and (b).  False flags to process only the top level folder with NO SUBFOLDERS
 If vrdtvs_status <> 0 Then ' Something went wrong with processing files in the Source folder ...
@@ -307,8 +307,12 @@ If vrdtvs_status <> 0 Then ' Something went wrong with processing files in the S
 End If
 
 
-
-
+vrdtvs_status = vrdtvs_fix_filenames_in_a_folder_tree(vrdtvs_source_TS_Folder, False) ' this does (a) and (b).  False flags to process only the top level folder with NO SUBFOLDERS
+If vrdtvs_status <> 0 Then ' Something went wrong with processing files in the Source folder ...
+	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_fix_filenames_in_a_folder_tree in """ & vrdtvs_source_TS_Folder & """... Aborting ...")
+	WScript.StdOut.WriteLine("VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_fix_filenames_in_a_folder_tree in """ & vrdtvs_source_TS_Folder & """... Aborting ...")
+	Wscript.Quit vrdtvs_status
+End If
 
 
 
@@ -325,7 +329,8 @@ End If
 
 
 
-
+' In Top Level Folders and Subfolders: Source and Destination (the function filters for file Extensions: .ts .mp4 .mpg .bprj)
+'   d) Fix the DateCreated and DateModified timestamps based onthe date in the filename (a PowerShell command ... learn how to do that on the commandline)
 
 
 
@@ -1005,7 +1010,7 @@ Function vrdtvs_remove_tvs_classifying_stuff_from_string (theOriginalString)
 	theNewString = vrdtvs_ReplaceEndStringCaseIndependent(theNewString, ".h265", "")
 	theNewString = vrdtvs_ReplaceEndStringCaseIndependent(theNewString, ".aac", "")
 	'
-	' THIS NEXT LEGACY CODE ALL IN A SPECIAL ORDER !  YUKKY.
+	' THIS NEXT LEGACY CODE ALL IN A SPECIAL ORDER !  YUK.
 	' DO NOT CHANGE THE ORDER OF THE STATEMENTS
 	'
 	theNewString = Replace(theNewString, "[", "_", 1, -1, vbTextCompare)
