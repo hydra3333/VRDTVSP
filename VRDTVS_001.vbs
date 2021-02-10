@@ -34,7 +34,7 @@ WScript.StdOut.WriteLine "------------------------------------------------------
 Dim vrdtvs_tmp, vrdtvs_status, vrdtvs_exit_code, vrdrvs_Err_Code, vrdrvs_Err_Description, vrdtvs_cmd, vrdtvs_exe_obj ' a few working variables, for common use
 '
 Dim vrdtvs_run_datetime
-vrdtvs_run_datetime = vrdtvs_current_datetime() ' start of runtime, for common use
+vrdtvs_run_datetime = vrdtvs_current_datetime_string() ' start of runtime, for common use
 '
 Dim vrdtvs_ScriptName
 vrdtvs_ScriptName = Wscript.ScriptName
@@ -56,11 +56,12 @@ Set fso = CreateObject("Scripting.FileSystemObject")
 ' Setup Global exe file paths, resolving them to Absolute paths
 '
 Dim vs_root
+Dim vrdtvs_mp4boxexex64
 Dim vrdtvs_mediainfoexe64
 Dim vrdtvs_ffprobeexe64
 Dim vrdtvs_ffmpegexe64
 Dim vrdtvs_dgindexNVexe64
-Dim vrdtvs_mp4boxexex64
+Dim vrdtvs_Insomniaexe64
 vs_root = fso.GetAbsolutePathName("C:\SOFTWARE\Vapoursynth-x64\")
 vrdtvs_mp4boxexex64 = fso.GetAbsolutePathName(fso.BuildPath("C:\SOFTWARE\ffmpeg\0-homebuilt-x64\","MP4Box.exe"))
 vrdtvs_mediainfoexe64 = fso.GetAbsolutePathName(fso.BuildPath("C:\SOFTWARE\MediaInfo\","MediaInfo.exe"))
