@@ -748,7 +748,7 @@ Function vrdtvs_fix_filenames_in_a_folder_tree (the_folder_tree)
     Dim vrdtvs_f_object
     '
     ffiaft_folder_tree = fso.GetAbsolutePathName(the_folder_tree)
-    ffiaft_temp_powershell_filename = vrdtvs_gimme_a_temporary_absolute_filename("VRDTVS_fix_filenames_in_a_folder_tree-" & vrdtvs_run_datetime & "-") & ".ps1"
+    ffiaft_temp_powershell_filename = vrdtvs_gimme_a_temporary_absolute_filename("VRDTVS_fix_filenames_in_a_folder_tree-" & vrdtvs_run_datetime) & ".ps1"
     '    
     If NOT fso.FolderExists(ffiaft_folder_tree) Then
 	    WScript.StdOut.WriteLine("vrdtvs_fix_filenames_in_a_folder_tree: Folder does NOT EXIST """ & ffiaft_folder_tree & """ ... not processed")
