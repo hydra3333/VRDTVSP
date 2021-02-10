@@ -20,7 +20,7 @@ Option explicit
 '			/vrd_version_for_qsf:6 ^
 '			/vrd_version_for_adscan:6
 '
-' ... use /capture_Folder:"" to prevent the moving of files from the capture folder, for testing
+' ... use /capture_Folder:"" to prevent the moving of files from a capture folder, eg when testing
 ' ... note
 '		that carat (^) is the normal DOS commandline-continuation flag
 '		there are a range of dependencies for locations of .exe files and whatnot, 
