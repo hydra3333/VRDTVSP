@@ -128,6 +128,7 @@ vrdtvs_DEVELOPMENT_NO_ACTIONS = vrdtvs_get_commandline_parameter("DEV",vrdtvs_DE
 If vrdtvs_DEVELOPMENT_NO_ACTIONS Then vrdtvs_DEBUG = True ' if in Development then always force debug on
 '
 vrdtvs_CAPTURE_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("capture_Folder",vrdtvs_CAPTURE_TS_Folder))                     ' /capture_Folder:"g:\hdtv\" 
+If vrdtvs_DEVELOPMENT_NO_ACTIONS Then vrdtvs_CAPTURE_TS_Folder = ""  ' if under development, force do not copy any files ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 vrdtvs_source_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("source_Folder",vrdtvs_source_TS_Folder))                        ' /source_Folder:"g:\hdtv\SOURCE_TS\"
 vrdtvs_done_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("done_Folder",vrdtvs_done_TS_Folder))                              ' /done_Folder:"g:\hdtv\SOURCE_TS\DONE\"
 vrdtvs_destination_mp4_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("destination_Folder",vrdtvs_destination_mp4_Folder))       ' /destination_Folder:"g:\hdtv\SOURCE_TS\CONVERTED\"
@@ -248,7 +249,6 @@ End If
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Move .ts .mp4 .mpg .brpj files from the Source Folder to the source folder sincethat is where we process from
 '
-If vrdtvs_DEVELOPMENT_NO_ACTIONS Then vrdtvs_CAPTURE_TS_Folder = ""   ' if under development, do not copy any files ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 If vrdtvs_CAPTURE_TS_Folder <> "" Then
     vrdtvs_status = vrdtvs_move_files(vrdtvs_CAPTURE_TS_Folder & "\*.ts", vrdtvs_source_TS_Folder & "\")    ' irnore any status
     vrdtvs_status = vrdtvs_move_files(vrdtvs_CAPTURE_TS_Folder & "\*.mp4", vrdtvs_source_TS_Folder & "\")   ' irnore any status
