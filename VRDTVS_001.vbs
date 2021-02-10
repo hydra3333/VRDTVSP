@@ -206,7 +206,7 @@ End If
 ' Start a new copy of Insomnia so the PC does not go to sleep in the middle of conversions, do not wait for it to finish
 '
 Dim vrdtvs_Insomnia64_tmp_filename, vrdtvs_Insomnia64_ProcessID
-vrdtvs_Insomnia64_tmp_filename = vrdtvs_gimme_a_temporary_absolute_filename("VRDTVS_Insomnia64_copy-" & vrdtvs_run_datetime & "-")
+vrdtvs_Insomnia64_tmp_filename = vrdtvs_gimme_a_temporary_absolute_filename("VRDTVS_Insomnia64_copy-" & vrdtvs_run_datetime & "-") & ".exe"
 If vrdtvs_DEBUG Then WScript.StdOut.WriteLine "DEBUG: Creating and running Insomnia vrdtvs_Insomnia64_tmp_filename=" & vrdtvs_Insomnia64_tmp_filename
 vrdtvs_exit_code = vrdtvs_delete_a_file (vrdtvs_Insomnia64_tmp_filename, True) ' silently delete it even though it shouold never pre-exist
 On Error Resume Next
@@ -729,4 +729,103 @@ Function vrdtvs_remove_special_characters_from_string(rsp_string, rsp_is_an_Abso
     If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_remove_special_characters_from_string exiting with value: " & rsp_result)
     vrdtvs_remove_special_characters_from_string = rsp_result
 End Function
+'
+'----------------------------------------------------------------------------------------------------------------------------------------
+'****************************************************************************************************************************************
+' Function to traverse a folder tree for file Extensions: .ts .mp4 .mpg .bprj
+'   a) Remove special characters in filenames for file Extensions: .ts .mp4 .mpg .bprj
+'   b) modify the filenames based on the filename content including reformatting the date in the filename
+'   c) fix the file DateCreated and DateModified timestamps based on the date in the filename (a PowerShell command ... since DateCreated can't be modified in vbscript)
+'
+Function vrdtvs_fix_filenames_in_a_folder_tree (the_folder_tree)
+    Dim ffiaft_folder_tree
+    Dim ffiaft_temp_powershell_filename
+    Dim vrdtvs_folder_object
+    Dim vrdtvs_f_object, 
+    '
+    ffiaft_folder_tree = fso.GetAbsolutePathName(the_folder_tree)
+    ffiaft_temp_powershell_filename = vrdtvs_gimme_a_temporary_absolute_filename("VRDTVS_fix_filenames_in_a_folder_tree-" & vrdtvs_run_datetime & "-") & ".ps1"
+    '    
+    If NOT fso.FolderExists(ffiaft_folder_tree) Then
+	    WScript.StdOut.WriteLine "vrdtvs_fix_filenames_in_a_folder_tree: Folder does NOT EXIST """ & ffiaft_folder_tree & """ ... not processed"
+	    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Folder does NOT EXIST """ & ffiaft_folder_tree & """ ... not processed"
+        vrdtvs_fix_filenames_in_a_folder_tree = 53 ' 53 = File not found
+	    Exit Function
+    End If
+	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Started basic renames for folder tree """ & ffiaft_folder_tree & """"
+	Set vrdtvs_folder_object = fso.GetFolder(ffiaft_folder_tree)
+	Call vrdtvs_ffiaft_Process_Files_In_Subfolders (vrdtvs_folder_object)
+    Set vrdtvs_folder_object = Nothing
+	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Finished basic renames for folder tree """ & ffiaft_folder_tree & """"
+    '
 
+
+
+    ?????????????????????????????????
+    ' Here, create a temporary powershell script to fix the filename(s) then delete if after running it ... or do file by file (take too long ???)
+	if fix_timestamps = True then
+		Set objWscriptShell = CreateObject("Wscript.shell")
+		powershell_cmdline = "powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Normal -File """ & powershell_script_filename & """ -Folder """ & ffiaft_folder_tree & """ -logFile """ &  theLogfile & """"
+		WScript.StdOut.WriteLine "vbs_rename_files: ***** Fixing file dates using:<" & powershell_cmdline & ">"
+		objWscriptShell.run powershell_cmdline, True ?????????? use exec instead with stdout stderr etc
+		Set objWscriptShell = Nothing
+		WScript.StdOut.WriteLine "vbs_rename_files: --- FINISHED for folder <" & aPath & ">"
+	end if
+    ????????????????????????????
+
+    
+End Function
+Sub vrdtvs_ffiaft_Process_Files_In_Subfolders (objSpecifiedFolder) ' Process all files in specified folder tree
+	Dim objCurrentFolder, objColFiles, objSubFolder, objFile
+    Set objCurrentFolder = objFSO.GetFolder(objSpecifiedFolder.Path)
+    Set objColFiles = objCurrentFolder.Files
+    ' Process all files in current folder
+    For Each objFile in objColFiles
+        If UCase(objFSO.GetExtensionName(objFile.name)) = Ucase("PDF") Then
+            Call vrdtvs_ffiaft_pfis_Process_a_File(objFile)'  fso.GetAbsolutePathName(objFile.Path) should be the fully qualified absolute filename of this file
+        End If
+    Next
+    ' Then locate and recursively process subfolders
+    For Each objSubFolder in objCurrentFolder.SubFolders
+        Call vrdtvs_ffiaft_Process_Files_In_Subfolders(objSubFolder)
+    Next
+End Sub
+Sub vrdtvs_ffiaft_pfis_Process_a_File (objSpecifiedFile) ' fso.GetAbsolutePathName(objSpecifiedFile.Path) should be the fully qualified absolute filename of this file
+End Sub
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Function vrdtvs_ReplaceStartStringCaseIndependent(theString, theSearchString, theReplaceString)
+	' replace string only at the start of a line
+	dim L
+	If lcase(left(theString,len(theSearchString))) = lcase(theSearchString) then
+		L = len(theString) - len(theSearchString)
+		''vrdtvs_ReplaceStartStringCaseIndependent = Replace(theString, theSearchString, theReplaceString, 1, 1, vbTextCompare)
+		vrdtvs_ReplaceStartStringCaseIndependent = theReplaceString & right(theString,L)
+	else
+		vrdtvs_ReplaceStartStringCaseIndependent = theString
+	end if
+End Function
+Function vrdtvs_ReplaceEndStringCaseIndependent(theString, theSearchString, theReplaceString)
+	' replace string only at the end of a line
+	dim L
+	If lcase(right(theString,len(theSearchString))) = lcase(theSearchString) then
+		L = len(theString) - len(theSearchString)
+		''vrdtvs_ReplaceStartStringCaseIndependent = Replace(theString, theSearchString, theReplaceString, 1, 1, vbTextCompare)
+		vrdtvs_ReplaceEndStringCaseIndependent =  left(theString,L) & theReplaceString
+	else
+		vrdtvs_ReplaceEndStringCaseIndependent = theString
+	end if
+End Function
