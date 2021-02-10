@@ -387,14 +387,14 @@ End Function
 Function vrdtvs_gimme_a_temporary_absolute_filename (gataf_filename_prepend_string)
     ' rely on global variable "fso"
     ' rely on global variable "vrdtvs_temp_path" being set to a valid path for the temporary file
-    ' rely on function vrdtvs_current_datetime
+    ' rely on function vrdtvs_current_datetime_string
     ' Parameters: 
     '   gataf_filename_prepend_string       allows better identification of what the temporary file is associate with
     ' Call like this:
     '       x = vrdtvs_gimme_a_temporary_absolute_filename("a_base_filename_text_string")
     Dim gataf_temp
     If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: entered vrdtvs_gimme_a_temporary_absolute_filename")
-    gataf_temp = gataf_filename_prepend_string & "-" & vrdtvs_current_datetime() & "-" & fso.GetTempName & ".tmp"
+    gataf_temp = gataf_filename_prepend_string & "-" & vrdtvs_current_datetime_string() & "-" & fso.GetTempName & ".tmp"
     gataf_temp = fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_temp_path,gataf_temp)) ' rely on global variable "vrdtvs_temp_path" already being set to a valid path
     If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_gimme_a_temporary_absolute_filename generated a_temporary_filename=""" & gataf_temp & """")
     vrdtvs_gimme_a_temporary_absolute_filename = gataf_temp
