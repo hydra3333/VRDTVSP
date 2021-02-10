@@ -935,10 +935,10 @@ Function vrdtvs_remove_tvs_classifying_stuff_from_string (theOriginalString)
     ' remove stuff in the string which was previously added by TVSchedulerPro, eg "Movie-" etc etc etc
 	Dim xyear, std_year, ss, se, findme, theNewString
 	Dim searchformeArray(3)
-	searchformeArray(0)="-"
+    searchformeArray(0)="-"
 	searchformeArray(1)="_"
-	searchformeArray(2)=" "
-	searchformeArray(3)="."
+	searchformeArray(2)="."
+	searchformeArray(3)=" "
     '
 	theNewString = theOriginalString ' start with the original string
 	theNewString = Replace(theNewString, " ", "_", 1, -1, vbTextCompare) ' replace spaces with underscores ... so, Remember we've done this !
@@ -1528,8 +1528,7 @@ Function vrdtvs_Move_Date_to_End_of_String(theOriginalString)
     If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: entered with original value """ & theOriginalString & """")
     searchformeArray(0)="-"
 	searchformeArray(1)="_"
-	searchformeArray(2)=" "
-	searchformeArray(3)="."
+	searchformeArray(2)="."
 	searchformeArray(3)=" " ' a space should not exist by the time it gets to here, but check/fix anyway
     theNewString = theOriginalString
     ' Brute force through dates, nothing fancy here. Very slow but sure.
