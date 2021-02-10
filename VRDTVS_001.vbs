@@ -862,8 +862,6 @@ Function vrdtvs_fix_filenames_in_a_folder_tree (the_folder_tree, do_subfolders_a
 	local_timerEnd = Timer
 	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Finished basic file renames for folder tree """ & ffiaft_folder_tree & """ with Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(local_timerStart, local_timerEnd))
     '
-
-
 	local_timerStart = Timer
     '?????????????????????????????????
 	' DO THIS IN A SEPARATE FUNCTION:
@@ -888,6 +886,7 @@ Function vrdtvs_fix_filenames_in_a_folder_tree (the_folder_tree, do_subfolders_a
 	End If
 	vrdtvs_fix_filenames_in_a_folder_tree = 0 ' return with status 0
 End Function
+'
 Sub vrdtvs_ffiaft_Process_Files_In_Subfolders (objSpecifiedFolder, do_subfolders_as_well) ' Process all files in specified folder tree
 	' Function to Process all files in specified folder tree OBJECT with file Extensions: .ts .mp4 .mpg .bprj
 	'   a) Remove special characters in filenames for file Extensions: .ts .mp4 .mpg .bprj
@@ -905,11 +904,11 @@ Sub vrdtvs_ffiaft_Process_Files_In_Subfolders (objSpecifiedFolder, do_subfolders
     Set objColFiles = objCurrentFolder.Files ' get an object of a collection of files for the folder object
     For Each objFile in objColFiles
         ext = UCase(fso.GetExtensionName(objFile.name))
-        '*********
+        '********* FILTER BY FILE EXTENSION *********
 		If ext = Ucase("ts") OR ext = Ucase("mp4") OR ext = Ucase("mpg") OR ext = Ucase("bprj") Then ' ********** only process specific file extensions
             Call vrdtvs_ffiaft_pfis_Process_a_File(objFile)'  fso.GetAbsolutePathName(objFile.Path) should be the fully qualified absolute filename of this file
         End If
-        '*********
+        '********* FILTER BY FILE EXTENSION *********
 		Next
     Set objColFiles = Nothing
 	If do_subfolders_as_well Then
@@ -922,8 +921,9 @@ Sub vrdtvs_ffiaft_Process_Files_In_Subfolders (objSpecifiedFolder, do_subfolders
 End Sub
 '
 Sub vrdtvs_ffiaft_pfis_Process_a_File (objSpecifiedFile) 
-	' objSpecifiedFile is already pre-filtered beforehand to be one of ts mp4 mpg bprj
     ' Process a specific file ... fso.GetAbsolutePathName(objSpecifiedFile.Path) should be the fully qualified absolute filename of this file
+    ' Parameters:
+	'		objSpecifiedFile is already pre-filtered beforehand to be one of ts mp4 mpg bprj
     Dim theOriginalAbsoluteFilename, theOriginalParentFolderName, theOriginalBaseName, theOriginalExtName
     Dim NewBaseName, newAbsoluteFilename
 	Dim local_timerStart, local_timerEnd
@@ -945,10 +945,14 @@ Sub vrdtvs_ffiaft_pfis_Process_a_File (objSpecifiedFile)
     ' do not fix the file time stamps here, do that later in powershell for the whole tree at once, AFTER processing all the filenames in a folder tree here
 
 
+
+
     '???????????????????????????????????? rename the individual file here, right now, IF REQUIRED (test for NewBaseName <> theOriginalBaseName )
     '???????????????????????????????????? taking care of "file already exists"
     '???????????????????????????????????? taking care of editing and rewriting the content .bprj files (which are just XML files) ... test for Ucase(theExtName) = Ucase("bprj")
 
+
+	
 	newAbsoluteFilename = fso.GetAbsolutePathName(fso.BuildPath(theOriginalParentFolderName,NewBaseName))
 	if ucase(NewBaseName) = Ucase(theOriginalBaseName) Then
 		If vrdtvs_DEBUG Then 
@@ -973,16 +977,16 @@ End Sub
 '
 Function vrdtvs_remove_tvs_classifying_stuff_from_string (theOriginalString)
     ' remove stuff in the string which was previously added by TVSchedulerPro, eg "Movie-" etc etc etc
+    ' Parameters:
+	'		theOriginalString	the string to be "fixed" ... it is usually the fso.BaseName of the file
 	Dim xyear, std_year, ss, se, findme, theNewString
 	Dim searchformeArray(3)
     searchformeArray(0)="-"
 	searchformeArray(1)="_"
 	searchformeArray(2)="."
 	searchformeArray(3)=" "
-    '
 	theNewString = theOriginalString ' start with the original string
 	theNewString = Replace(theNewString, " ", "_", 1, -1, vbTextCompare) ' replace spaces with underscores ... so, Remember we've done this !
-	'
 	' search for a year with a combination of leading and trailing characters and replace with a standard formatted year
 	for xyear = 2017 to 2040 ' too lazy to figure out a regex to do this 
 		std_year = "." & xyear & "-"
@@ -1001,7 +1005,7 @@ Function vrdtvs_remove_tvs_classifying_stuff_from_string (theOriginalString)
 	theNewString = vrdtvs_ReplaceEndStringCaseIndependent(theNewString, ".h265", "")
 	theNewString = vrdtvs_ReplaceEndStringCaseIndependent(theNewString, ".aac", "")
 	'
-	' THESE ARE ALL IN A SPECIAL ORDER ! 
+	' THIS NEXT LEGACY CODE ALL IN A SPECIAL ORDER !  YUKKY.
 	' DO NOT CHANGE THE ORDER OF THE STATEMENTS
 	'
 	theNewString = Replace(theNewString, "[", "_", 1, -1, vbTextCompare)
