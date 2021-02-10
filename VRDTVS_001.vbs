@@ -931,15 +931,17 @@ Sub vrdtvs_ffiaft_pfis_Process_a_File (objSpecifiedFile)
 	newAbsoluteFilename = fso.GetAbsolutePathName(fso.BuildPath(theOriginalParentFolderName,NewBaseName))
 	if ucase(NewBaseName) = Ucase(theOriginalBaseName) Then
 		If vrdtvs_DEBUG Then 
-		'	WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: NO NEED for a Rename, no change: theOriginalBaseName=""" & theOriginalBaseName & """ NewBaseName=""" & NewBaseName & """" )
-			WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: NO NEED for a Rename, no change: theOriginalAbsoluteFilename=""" & theOriginalAbsoluteFilename & """ newAbsoluteFilename=""" & newAbsoluteFilename & """" )
+		'	WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: NO NEED for a Rename, no change: theOriginalBaseName=""" & theOriginalBaseName & """" )
+			WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: NO NEED for a Rename, no change: theOriginalAbsoluteFilename=""" & theOriginalAbsoluteFilename & """" )
 		End If
 	Else
 		'cater "file already exists" and loop try up to 100 times to add a 2 digit number ".00" to ".99" to the end of NewBaseName if needed
 		If vrdtvs_DEBUG Then 
-		'	WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: needs a Rename using theOriginalBaseName=""" & theOriginalBaseName & """ NewBaseName=""" & NewBaseName & """" )
-			WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: needs a Rename using theOriginalAbsoluteFilename=""" & theOriginalAbsoluteFilename & """ newAbsoluteFilename=""" & newAbsoluteFilename & """" )
-		End If
+		'	WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: needs a Rename using theOriginalBaseName=""" & theOriginalBaseName & """" )
+		'	WScript.StdOut.WriteLine("                                                                       NewBaseName=""" & NewBaseName & """" )
+			WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: needs a Rename using theOriginalAbsoluteFilename=""" & theOriginalAbsoluteFilename & """" )
+			WScript.StdOut.WriteLine("                                                                       newAbsoluteFilename=""" & newAbsoluteFilename & """" )
+	End If
 	End If
 	local_timerEnd = Timer
     'If vrdtvs_DEBUG Then 
