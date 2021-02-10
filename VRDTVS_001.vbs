@@ -529,10 +529,11 @@ Function BAD_vrdtvs_move_files_to_folder (mf_source_path_wildcard, mv_destinatio
         WScript.StdOut.WriteLine("DEBUG: vrdtvs_move_files_to_folder      mf_source_AbsolutePath=""" & mf_source_AbsolutePath & """")
         WScript.StdOut.WriteLine("DEBUG: vrdtvs_move_files_to_folder mf_destination_AbsolutePath=""" & mf_destination_AbsolutePath & """")
     End If
+
+
 	' The MoveFile   method stops on the first error it encounters. 
 	' The CopyFile method stops on the first error it encounters.
 	' So ... we must iterate individual files ourselves and move them one by one, overwriting, and ignoring errors
-
 	'???????????????
 	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 	'???????????????
