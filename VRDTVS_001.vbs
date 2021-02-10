@@ -120,14 +120,14 @@ vrdtvs_temp_path = fso.GetAbsolutePathName("D:\VRDTVS-SCRATCH\")
 ' Check if commandline parameters over-ride our standard values. Ignore any other commandline parameters.
 '
 vrdtvs_source_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("source_Folder",vrdtvs_source_TS_Folder))                        ' /source_Folder:"g:\hdtv\"
-vrdtvs_done_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("done_Folder",vrdtvs_done_TS_Folder))                              ' /source_Folder:"g:\hdtv\"
-vrdtvs_destination_mp4_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("destination_Folder",vrdtvs_destination_mp4_Folder))       ' /source_Folder:"g:\hdtv\"
-vrdtvs_failed_conversion_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("failed_Folder",vrdtvs_failed_conversion_TS_Folder))  ' /source_Folder:"g:\hdtv\"
-vrdtvs_temp_path = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("temp_path",vrdtvs_temp_path))                                          ' /source_Folder:"g:\hdtv\"
-vrdtvs_DEBUG = vrdtvs_get_commandline_parameter("DEBUG",vrdtvs_DEBUG)
+vrdtvs_done_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("done_Folder",vrdtvs_done_TS_Folder))                              ' /done_Folder:"g:\hdtv\"
+vrdtvs_destination_mp4_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("destination_Folder",vrdtvs_destination_mp4_Folder))       ' /destination_Folder:"g:\hdtv\"
+vrdtvs_failed_conversion_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("failed_Folder",vrdtvs_failed_conversion_TS_Folder))  ' /failed_Folder:"g:\hdtv\"
+vrdtvs_temp_path = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("temp_path",vrdtvs_temp_path))                                          ' /temp_path:"g:\hdtv\"
+vrdtvs_DEBUG = vrdtvs_get_commandline_parameter("DEBUG",vrdtvs_DEBUG)                                                                               ' /DEBUG:True
 '
-vrd_version_for_qsf = vrdtvs_get_commandline_parameter("vrd_version_for_qsf",vrd_version_for_qsf)
-vrd_version_for_adscan = vrdtvs_get_commandline_parameter("vrd_version_for_adscan",vrd_version_for_adscan)
+vrd_version_for_qsf = vrdtvs_get_commandline_parameter("vrd_version_for_qsf",vrd_version_for_qsf)                                                   ' /vrd_version_for_qsf:6
+vrd_version_for_adscan = vrdtvs_get_commandline_parameter("vrd_version_for_adscan",vrd_version_for_adscan)                                          ' /vrd_version_for_adscan:6
 If vrd_version_for_qsf = 5 Then '*** QSF
     vrd_path_for_qsf_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd5_path,"vp.vbs"))
     vrd_profile_name_for_qsf_mpeg2 = const_vrd5_profile_mpeg2
@@ -234,19 +234,31 @@ If vrdtvs_Insomnia64_ProcessID = 0 Then
     WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
 '
+'----------------------------------------------------------------------------------------------------------------------------------------
+' Move .ts .mp4 .mpg .brpj files from the Source Folder to the 
 
 
-
-
-
-
+Function vrdtvs_move_files (mf_source_path_wildcard, mv_destination_path)
+    ' rely on global variable "fso"
+    ' Parameters:
+    '   mf_source_path_wildcard     
+    '   mv_destination_path
+    ' Call like this:
+    '       result = vrdtvs_move_files("G:/SOME_SOURCE_PATH/*.MPG", "G:/SOME_DESTINATION_PATH/")
+    '            which does a DOS command something like MOVE /Y "G:/SOME_SOURCE_PATH/*.MPG" "G:/SOME_DESTINATION_PATH/" 
 
 
 
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
+' In Source and Destination folder trees, for file Extensions: .ts .mp4 .mpg .bprj .mp3 
+'   a) Remove special characters in filenames in a folder tree, for file Extensions: .ts .mp4 .mpg .bprj .mp3 
+'   b) modify the filenames based on the filename content including reformatting the date in the filename
+'   c) fix the DateCreated and DateModified timestamps based onthe date in the filename (a PowerShell command ... learn how to do that on the commandline)
 '
-'
+
+
+
 
 
 
