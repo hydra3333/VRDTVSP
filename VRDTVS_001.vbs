@@ -1539,26 +1539,37 @@ Function vrdtvs_Move_Date_to_End_of_String(theOriginalString)
         End If
     Next
     Do While is_a_date_there ' loop forever ... setting up for cheeky way to exit all FOR loops at once
-        for xyear = 2017 to 2040
-			If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: Start processing Year " & xyear & " ... with original value """ & theOriginalString & """")
+        for xyear = 2017 to 2020 '2040
+			If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: Start    processing Year " & xyear & " ... with original value """ & theOriginalString & """")
 	        for xmonth = 01 to 12
 	            for xday = 01 to 31
 	                xDate = vrdtvs_Digits4(xyear) & "-" & vrdtvs_Digits2(xmonth) & "-" & vrdtvs_Digits2(xday) ' assume dates in the filename are always in format dd-mm-yyyy with leading zeroes
+					If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: About to process date " & xDate & " ")
                     For Each theLeadingSearchCharacter In searchformeArray
                         txtToSearchFor = theLeadingSearchCharacter & xDate
-                        If instr(1, theOriginalString, txtToSearchFor, vbTextCompare) > 0 then                                                                ' we found date withing the string
+						If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: About to process " & xDate & " with theLeadingSearchCharacter: """ & theLeadingSearchCharacter & """")
+						If instr(1, theOriginalString, txtToSearchFor, vbTextCompare) > 0 then                                                                ' we found date withing the string
                             If right(theOriginalString, len(xDate)) <> xDate then                                                                         ' ensure it's not already at the end of the string
                                 theNewString = Replace(theOriginalString, txtToSearchFor, "", 1, -1, vbTextCompare) & theLeadingReplaceCharacter & xDate     ' move the date to theend of the string
-                                If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: found string with date not at end <" & txtToSearchFor & ">=<" & theOriginalString & "> ... changing to <" & theNewString & ">")
+								If vrdtvs_DEBUG Then 
+                                	WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: found string with date not at end <" & txtToSearchFor & ">=<" & theOriginalString & "> ... changing to <" & theNewString & ">")
+									Wscript.Sleep 1000 * 15
+								End If
                                 is_a_date_there = False
 								Exit Do ' cheeky way to exit all the For loops at once, just Exit the outer Do Loop
-								If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: ?????? vrdtvs_Move_Date_to_End_of_String should have exited Loop with Exit Do but has not ??????")
+								If vrdtvs_DEBUG Then 
+									WScript.StdOut.WriteLine("DEBUG: ?????? vrdtvs_Move_Date_to_End_of_String should have exited Loop with Exit Do but has not ??????")
+									vrdtvs_DEBUG Then Wscript.Sleep 1000 * 15
+								End If
                             End If
                         End If
                     Next
 	            Next
 	        Next
-			If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: Finished processing Year " & xyear & " ... with original value """ & theOriginalString & """")
+			If vrdtvs_DEBUG Then 
+				WScript.StdOut.WriteLine("DEBUG: Finished processing Year " & xyear & " ... with original value """ & theOriginalString & """")
+				Wscript.Sleep 1000 * 2
+			End If
 		Next
     Loop
     If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: exiting with return value """ & theNewString & """")
