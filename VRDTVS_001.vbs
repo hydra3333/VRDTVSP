@@ -1,13 +1,30 @@
 Option explicit
 '
-' VRDTVS - automatically parse, convert video/audio from TVSchedulerPro TV recordings, and perhaps adscan them too
-' copyright hydra3333@gmail.com 2021
+' VRDTVS - automatically parse, convert video/audio from TVSchedulerPro TV recordings, 
+' and perhaps adscan them too. This looks only at .TS .MP4 .MPG .BPRJ files.
+'
+' Copyright hydra3333@gmail.com 2021
+'
+' Invoke from a commandline or a .bat, Interactively or a Scheduled task with a single one-line commndline.
+' All options are, well, optional and are based on a default source_Folder
+'
+' 	cscript //nologo "E:\GIT-REPOSITORIES\VRDTVSP\VRDTVS_001.vbs" ^
+'			/DEBUG:True ^
+'			/DEV:True ^
+'			/capture_Folder:"G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\0save\" ^
+'			/source_Folder:"G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\" ^
+'			/done_Folder:"G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\DONE\" ^	
+'			/failed_Folder:"G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\FAILED\" ^
+'			/temp_path:"D:\VRDTVS-SCRATCH\" ^
+'			/vrd_version_for_qsf:6 ^
+'			/vrd_version_for_adscan:6
+'
+' ... use /capture_Folder:"" to prevent the moving of files from the capture folder, for testing
+' ... note that carat (^) is the normal DOS commandline-continuation flag
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
-' 1. Check and Exit if this .vbs isn;t run under CSCRIPT (not WSCRIPT which is the default)
+' 1. Check and Exit if this .vbs isn't run under CSCRIPT (not WSCRIPT which is the default)
 '    NOTE:  For ANY of this to work, the vb script MUST be run under Cscript host - or, things like stdout fail to work.
-'           Thus, call the vbscript like this:
-'               cscript //NOLOGO "vbscript_path_and_file" "parameter 1" "parameter 2"
 WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
 Dim  cscript_wshShell, cscript_strEngine
 Set cscript_wshShell = CreateObject( "WScript.Shell" )
@@ -132,7 +149,7 @@ If vrdtvs_DEVELOPMENT_NO_ACTIONS Then vrdtvs_DEBUG = True ' if in Development th
 '
 vrdtvs_CAPTURE_TS_Folder = vrdtvs_get_commandline_parameter("capture_Folder",vrdtvs_CAPTURE_TS_Folder) ' no GetAbsolutePathName to leave "" as ""   ' /capture_Folder:"g:\hdtv\" or /capture_Folder:""
 If vrdtvs_CAPTURE_TS_Folder <> "" Then
-	vrdtvs_CAPTURE_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("capture_Folder",vrdtvs_CAPTURE_TS_Folder))                 ' /capture_Folder:"g:\hdtv\" 
+	vrdtvs_CAPTURE_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("capture_Folder",vrdtvs_CAPTURE_TS_Folder))                 ' re-write capture folder as an Absolute Pathname ONLY if not ""
 End If
 If vrdtvs_DEVELOPMENT_NO_ACTIONS Then vrdtvs_CAPTURE_TS_Folder = ""  ' if under development, force do not copy any files ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 vrdtvs_source_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("source_Folder",vrdtvs_source_TS_Folder))                        ' /source_Folder:"g:\hdtv\SOURCE_TS\"
