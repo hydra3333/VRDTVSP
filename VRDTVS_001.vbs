@@ -832,6 +832,12 @@ Function vrdtvs_fix_filenames_in_a_folder_tree (the_folder_tree)
     Dim ffiaft_temp_powershell_filename
     Dim vrdtvs_folder_object
     Dim vrdtvs_f_object
+	Dim local_timerStart, local_timerEnd
+	Dim local_timerStart_2, local_timerEnd_2
+	local_timerStart = Timer
+	local_timerEnd = Timer
+	local_timerStart_2 = Timer
+	local_timerEnd_2 = Timer
     '
     ffiaft_folder_tree = fso.GetAbsolutePathName(the_folder_tree)
     ffiaft_temp_powershell_filename = vrdtvs_gimme_a_temporary_absolute_filename("vrdtvs_fix_filenames_in_a_folder_tree-" & vrdtvs_run_datetime) & ".ps1"
@@ -847,11 +853,12 @@ Function vrdtvs_fix_filenames_in_a_folder_tree (the_folder_tree)
 	Set vrdtvs_folder_object = fso.GetFolder(ffiaft_folder_tree)            ' get an object of the specified top level folder to process
 	Call vrdtvs_ffiaft_Process_Files_In_Subfolders (vrdtvs_folder_object)   ' recursively process the content (files, folders) of that specified top level folder
     Set vrdtvs_folder_object = Nothing                                      ' finished, disppose of the object
-	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Finished basic file renames for folder tree """ & ffiaft_folder_tree & """")
+	local_timerEnd = Timer
+	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Finished basic file renames for folder tree """ & ffiaft_folder_tree & """ with Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(local_timerStart, local_timerEnd))
     '
 
 
-
+	local_timerStart = Timer
     '?????????????????????????????????
     '' Here, create a temporary powershell script to fix the filename(s) then delete if after running it ... or do file by file (take too long ???)
 	'if fix_timestamps = True then
@@ -863,7 +870,15 @@ Function vrdtvs_fix_filenames_in_a_folder_tree (the_folder_tree)
 	'	WScript.StdOut.WriteLine "vbs_rename_files: --- FINISHED for folder <" & aPath & ">"
 	'end if
     '????????????????????????????
+	local_timerEnd = Timer
+	If vrdtvs_DEBUG Then 
+		WScript.StdOut.WriteLine("DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Finished Powershell file timestamp fixing for folder tree """ & ffiaft_folder_tree & """ with Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(local_timerStart, local_timerEnd))
+	End If
 
+	local_timerEnd_2 = Timer
+	If vrdtvs_DEBUG Then 
+		WScript.StdOut.WriteLine("DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Finished all fixing for folder tree """ & ffiaft_folder_tree & """ with Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(local_timerStart_2, local_timerEnd_2))
+	End If
 	vrdtvs_fix_filenames_in_a_folder_tree = 0 ' return with status 0
 End Function
 Sub vrdtvs_ffiaft_Process_Files_In_Subfolders (objSpecifiedFolder) ' Process all files in specified folder tree
@@ -898,20 +913,18 @@ Sub vrdtvs_ffiaft_pfis_Process_a_File (objSpecifiedFile)
     theOriginalBaseName = fso.GetBaseName(theOriginalAbsoluteFilename)
     theOriginalExtName = fso.GetExtensionName(theOriginalAbsoluteFilename) ' does not include  the "."
     '
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: entered Sub with original BaseName """ & theOriginalBaseName & """ from """ & theOriginalAbsoluteFilename & """")
+    'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: entered Sub with original BaseName """ & theOriginalBaseName & """ from """ & theOriginalAbsoluteFilename & """")
     NewBaseName = theOriginalBaseName ' initialize so we can keep the original stuff if we need i in the future
     NewBaseName = vrdtvs_remove_special_characters_from_string(NewBaseName, False) ' flag is not an Absolute filename by passing False to the function
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: after vrdtvs_remove_special_characters_from_string original BaseName """ & theOriginalBaseName & """ NewBaseName """ & NewBaseName & """")
+    'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: after vrdtvs_remove_special_characters_from_string original BaseName """ & theOriginalBaseName & """ NewBaseName """ & NewBaseName & """")
     NewBaseName = vrdtvs_remove_tvs_classifying_stuff_from_string(NewBaseName)
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: after vrdtvs_remove_tvs_classifying_stuff_from_string original BaseName """ & theOriginalBaseName & """ NewBaseName """ & NewBaseName & """")
+    'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: after vrdtvs_remove_tvs_classifying_stuff_from_string original BaseName """ & theOriginalBaseName & """ NewBaseName """ & NewBaseName & """")
     NewBaseName = vrdtvs_Move_Date_to_End_of_String(NewBaseName)
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: after vrdtvs_Move_Date_to_End_of_String original BaseName """ & theOriginalBaseName & """ NewBaseName """ & NewBaseName & """")
+    'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: after vrdtvs_Move_Date_to_End_of_String original BaseName """ & theOriginalBaseName & """ NewBaseName """ & NewBaseName & """")
     ' do not fix the file time stamps here, do that later in powershell for the whole tree at once, AFTER processing all the filenames in a folder tree here
 
 
-
-
-    '???????????????????????????????????? rename the file here, right now, if required (test for NewBaseName <> theOriginalBaseName )
+    '???????????????????????????????????? rename the individual file here, right now, if required (test for NewBaseName <> theOriginalBaseName )
     '???????????????????????????????????? taking care of "file already exists"
     '???????????????????????????????????? taking care of editing and rewriting the content .bprj files (which are just XML files) ... test for Ucase(theExtName) = Ucase("bprj")
 
@@ -919,19 +932,19 @@ Sub vrdtvs_ffiaft_pfis_Process_a_File (objSpecifiedFile)
 	newAbsoluteFilename = fso.GetAbsolutePathName(fso.BuildPath(theOriginalParentFolderName,NewBaseName))
 	if ucase(NewBaseName) = Ucase(theOriginalBaseName) Then
 		'cater "file already exists" and loop try up to 100 times to add a 2 digit number ".00" to ".99" to the end of NewBaseName if needed
-		If vrdtvs_DEBUG Then 
-			'WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: NO NEED for a Rename, no change: theOriginalBaseName=""" & theOriginalBaseName & """ NewBaseName=""" & NewBaseName & """" )
-			WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: NO NEED for a Rename, no change: theOriginalAbsoluteFilename=""" & theOriginalAbsoluteFilename & """ newAbsoluteFilename=""" & newAbsoluteFilename & """" )
-		End If
+		'If vrdtvs_DEBUG Then 
+		'	WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: NO NEED for a Rename, no change: theOriginalBaseName=""" & theOriginalBaseName & """ NewBaseName=""" & NewBaseName & """" )
+		'	WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: NO NEED for a Rename, no change: theOriginalAbsoluteFilename=""" & theOriginalAbsoluteFilename & """ newAbsoluteFilename=""" & newAbsoluteFilename & """" )
+		'End If
 	Else
-		If vrdtvs_DEBUG Then 
-			'WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: needs a Rename using theOriginalBaseName=""" & theOriginalBaseName & """ NewBaseName=""" & NewBaseName & """" )
-			WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: needs a Rename using theOriginalAbsoluteFilename=""" & theOriginalAbsoluteFilename & """ newAbsoluteFilename=""" & newAbsoluteFilename & """" )
-		End If
+		'If vrdtvs_DEBUG Then 
+		'	WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: needs a Rename using theOriginalBaseName=""" & theOriginalBaseName & """ NewBaseName=""" & NewBaseName & """" )
+		'	WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: needs a Rename using theOriginalAbsoluteFilename=""" & theOriginalAbsoluteFilename & """ newAbsoluteFilename=""" & newAbsoluteFilename & """" )
+		'End If
 	End If
 	local_timerEnd = Timer
     If vrdtvs_DEBUG Then 
-		WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: Sub Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(local_timerStart, local_timerEnd))
+		WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: Exit Sub with Rename, having Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(local_timerStart, local_timerEnd))
 	End If
 	' vrdtvs_ffiaft_pfis_Process_a_File is a Sub, hence no return values
 End Sub
