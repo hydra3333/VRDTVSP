@@ -928,7 +928,7 @@ Sub vrdtvs_ffiaft_pfis_Process_a_File (objSpecifiedFile)
 
 
     If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: Exiting Sub with fixed basename """ & NewBaseName & """ from """ & theOriginalBaseName & """")
-	vrdtvs_ffiaft_pfis_Process_a_File = 0 ' for the time being exit with no error
+	' vrdtvs_ffiaft_pfis_Process_a_File is a Sub, hence no return values
 End Sub
 '
 Function vrdtvs_remove_tvs_classifying_stuff_from_string (theOriginalString)
