@@ -330,8 +330,10 @@ End If
 
 
 ' In Top Level Folders and Subfolders: Source and Destination (the function filters for file Extensions: .ts .mp4 .mpg .bprj)
-'   d) Fix the DateCreated and DateModified timestamps based onthe date in the filename (a PowerShell command ... learn how to do that on the commandline)
-
+'   d) Fix the DateCreated and DateModified timestamps based on the date in the filename (a PowerShell command ... learn how to do that on the commandline)
+'
+   vrdtvs_temp_powershell_filename = vrdtvs_gimme_a_temporary_absolute_filename("vrdtvs_fix_filenames_in_a_folder_tree-" & vrdtvs_run_datetime) & ".ps1"
+  
 
 
 '
@@ -832,15 +834,13 @@ Function vrdtvs_fix_filenames_in_a_folder_tree (the_folder_tree, do_subfolders_a
 	' Function to traverse a folder tree ( a called function filters for file Extensions: .ts .mp4 .mpg .bprj)
 	'   a) Remove special characters in filenames for file Extensions: .ts .mp4 .mpg .bprj
 	'   b) modify the filenames based on the filename content including reformatting the date in the filename
-	'   c) *** NOT THIS, do it outside ... fix the file DateCreated and DateModified timestamps based on the date in the filename (a PowerShell command ... since DateCreated can't be modified in vbscript)
-    ' rely on global variable "fso"
+	' rely on global variable "fso"
     ' Parameters:
 	'	the_folder_tree			the top level folder to process
     '   do_subfolders_as_well	False flags to process only the top level folder with NO SUBFOLDERS
     ' Call like this:
     '       status = vrdtvs_fix_filenames_in_a_folder_tree ("G:\HDTV\", False) 
 	Dim ffiaft_folder_tree
-    Dim ffiaft_temp_powershell_filename
     Dim vrdtvs_folder_object
     Dim vrdtvs_f_object
 	Dim local_timerStart, local_timerEnd
@@ -849,10 +849,7 @@ Function vrdtvs_fix_filenames_in_a_folder_tree (the_folder_tree, do_subfolders_a
 	local_timerEnd = Timer
 	local_timerStart_2 = Timer
 	local_timerEnd_2 = Timer
-    '
-    ffiaft_folder_tree = fso.GetAbsolutePathName(the_folder_tree)
-    ffiaft_temp_powershell_filename = vrdtvs_gimme_a_temporary_absolute_filename("vrdtvs_fix_filenames_in_a_folder_tree-" & vrdtvs_run_datetime) & ".ps1"
-    '    
+	'
     If NOT fso.FolderExists(ffiaft_folder_tree) Then
 	    WScript.StdOut.WriteLine("vrdtvs_fix_filenames_in_a_folder_tree: Folder does NOT EXIST """ & ffiaft_folder_tree & """ ... not processed")
 	    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Folder does NOT EXIST """ & ffiaft_folder_tree & """ ... not processed")
