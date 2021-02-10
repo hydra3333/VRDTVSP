@@ -306,21 +306,21 @@ vrdtvs_cmd = "TaskKill /t /f /pid " & vrdtvs_Insomnia64_ProcessID ' we saved the
 '   /t	Ends the specified process and any child processes started by it.
 '   /pid <processID>    Specifies the process ID of the process to be terminated.
 '   /im <imagename>     Specifies the image name of the process to be terminated.
-WScript.StdOut.WriteLine("VTDRVS TaskKill: Insomnia Exec command: " & vrdtvs_cmd)
+WScript.StdOut.WriteLine("VTDRVS TaskKill: TaskKill Insomnia Exec command: " & vrdtvs_cmd)
 set vrdtvs_exe_obj = wso.Exec(vrdtvs_cmd)
 Do While vrdtvs_exe_obj.Status = 0 '0 is running and 1 is ending
     Wscript.Sleep 100
 Loop
 Do Until vrdtvs_exe_obj.StdOut.AtEndOfStream
     vrdtvs_tmp = vrdtvs_exe_obj.StdOut.ReadLine()
-    WScript.StdOut.WriteLine("VTDRVS TaskKill: Insomnia Exec StdOut: " & vrdtvs_tmp)
+    WScript.StdOut.WriteLine("VTDRVS TaskKill: TaskKill Insomnia Exec StdOut: " & vrdtvs_tmp)
 Loop
 Do Until vrdtvs_exe_obj.StdErr.AtEndOfStream
     vrdtvs_tmp = vrdtvs_exe_obj.StdErr.ReadLine()
-    WScript.StdOut.WriteLine("VTDRVS TaskKill: Insomnia Exec StdErr: " & vrdtvs_tmp)
+    WScript.StdOut.WriteLine("VTDRVS TaskKill: TaskKill Insomnia Exec StdErr: " & vrdtvs_tmp)
 Loop
 vrdtvs_status = vrdtvs_exe_obj.ExitCode ' Ignore any error codes returned by taskkill
-WScript.StdOut.WriteLine("VTDRVS TaskKill: Insomnia Exec Exit Status: " & vrdtvs_status)
+WScript.StdOut.WriteLine("VTDRVS TaskKill: Insomnia TaskKill Exec Exit Status: " & vrdtvs_status)
 Set vrdtvs_exe_obj = Nothing
 If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: VTDRVS TaskKill Insomnia exiting with status=""" & vrdtvs_status & """")
 '
