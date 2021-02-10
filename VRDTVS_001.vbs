@@ -42,6 +42,8 @@ WScript.StdOut.WriteLine(vrdtvs_ScriptName & " " & vrdtvs_current_datetime_strin
 '
 Dim vrdtvs_DEBUG
 vrdtvs_DEBUG = True
+Dim vrdtvs_DEVELOPMENT_NO_ACTIONS
+vrdtvs_DEVELOPMENT_NO_ACTIONS = True
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Setup Global Objects (remember to Set the_object=Nothing later)
@@ -121,13 +123,15 @@ vrdtvs_temp_path = fso.GetAbsolutePathName("D:\VRDTVS-SCRATCH\")
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Check if commandline parameters over-ride our standard values. Ignore any other commandline parameters.
 '
+vrdtvs_DEBUG = vrdtvs_get_commandline_parameter("DEBUG",vrdtvs_DEBUG)                                                                               ' /DEBUG:True
+vrdtvs_DEVELOPMENT_NO_ACTIONS = vrdtvs_get_commandline_parameter("DEV",vrdtvs_DEVELOPMENT_NO_ACTIONS)                                               ' /DEV:True
+'
 vrdtvs_CAPTURE_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("capture_Folder",vrdtvs_CAPTURE_TS_Folder))                     ' /capture_Folder:"g:\hdtv\" 
 vrdtvs_source_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("source_Folder",vrdtvs_source_TS_Folder))                        ' /source_Folder:"g:\hdtv\SOURCE_TS\"
 vrdtvs_done_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("done_Folder",vrdtvs_done_TS_Folder))                              ' /done_Folder:"g:\hdtv\SOURCE_TS\DONE\"
 vrdtvs_destination_mp4_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("destination_Folder",vrdtvs_destination_mp4_Folder))       ' /destination_Folder:"g:\hdtv\SOURCE_TS\CONVERTED\"
 vrdtvs_failed_conversion_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("failed_Folder",vrdtvs_failed_conversion_TS_Folder))  ' /failed_Folder:"g:\hdtv\SOURCE_TS\FAILED\"
 vrdtvs_temp_path = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("temp_path",vrdtvs_temp_path))                                          ' /temp_path:"D:\VRDTVS-SCRATCH\"
-vrdtvs_DEBUG = vrdtvs_get_commandline_parameter("DEBUG",vrdtvs_DEBUG)                                                                               ' /DEBUG:True
 '
 vrd_version_for_qsf = vrdtvs_get_commandline_parameter("vrd_version_for_qsf",vrd_version_for_qsf)                                                   ' /vrd_version_for_qsf:6
 vrd_version_for_adscan = vrdtvs_get_commandline_parameter("vrd_version_for_adscan",vrd_version_for_adscan)                                          ' /vrd_version_for_adscan:6
@@ -241,6 +245,7 @@ End If
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Move .ts .mp4 .mpg .brpj files from the Source Folder to the source folder sincethat is where we process from
 '
+If vrdtvs_DEVELOPMENT_NO_ACTIONS Then vrdtvs_CAPTURE_TS_Folder = ""   ' if under vevelopment, do not copy any files
 If vrdtvs_CAPTURE_TS_Folder <> "" Then
     vrdtvs_status = vrdtvs_move_files(vrdtvs_CAPTURE_TS_Folder & "\*.ts", vrdtvs_source_TS_Folder & "\")    ' irnore any status
     vrdtvs_status = vrdtvs_move_files(vrdtvs_CAPTURE_TS_Folder & "\*.mp4", vrdtvs_source_TS_Folder & "\")   ' irnore any status
@@ -1437,21 +1442,22 @@ Function vrdtvs_Move_Date_to_End_of_String(theOriginalString)
     If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: exiting with return value """ & theNewString & """"
 	vrdtvs_Move_Date_to_End_of_String = theNewString
 End Function
+'
 Function vrdtvs_Digits2 (val)
     ' pad a number with leading zeroes, up to 2 characters in size total
     vrdtvs_Digits2 = vrdtvs_PadDigits(val, 2)
 End Function
+'
 Function vrdtvs_Digits4(val)
     ' pad a number with leading zeroes, up to 4 characters in size total
     vrdtvs_Digits4 = vrdtvs_PadDigits(val, 4)
 End Function
+'
 Function vrdtvs_PadDigits(val, digits) 
     ' pad a number with leading zeroes, up to a speified number of characters in size total
     vrdtvs_PadDigits = Right(String(digits,"0") & val, digits)
 End Function
-
-
-
+'
 Function vrdtvs_ReplaceStartStringCaseIndependent(theString, theSearchString, theReplaceString)
 	' replace string only at the start of a line
 	dim L
@@ -1463,6 +1469,7 @@ Function vrdtvs_ReplaceStartStringCaseIndependent(theString, theSearchString, th
 		vrdtvs_ReplaceStartStringCaseIndependent = theString
 	end if
 End Function
+'
 Function vrdtvs_ReplaceEndStringCaseIndependent(theString, theSearchString, theReplaceString)
 	' replace string only at the end of a line
 	dim L
