@@ -752,10 +752,11 @@ Function vrdtvs_fix_filenames_in_a_folder_tree (the_folder_tree)
         vrdtvs_fix_filenames_in_a_folder_tree = 53 ' 53 = File not found
 	    Exit Function
     End If
+    '
 	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Started basic renames for folder tree """ & ffiaft_folder_tree & """"
-	Set vrdtvs_folder_object = fso.GetFolder(ffiaft_folder_tree)
-	Call vrdtvs_ffiaft_Process_Files_In_Subfolders (vrdtvs_folder_object)
-    Set vrdtvs_folder_object = Nothing
+	Set vrdtvs_folder_object = fso.GetFolder(ffiaft_folder_tree)            ' get an object of the specified top level folder to process
+	Call vrdtvs_ffiaft_Process_Files_In_Subfolders (vrdtvs_folder_object)   ' recursively process the content (files, folders) of that specified top level folder
+    Set vrdtvs_folder_object = Nothing                                      ' finished, disppose of the object
 	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Finished basic renames for folder tree """ & ffiaft_folder_tree & """"
     '
 
@@ -773,24 +774,29 @@ Function vrdtvs_fix_filenames_in_a_folder_tree (the_folder_tree)
 	end if
     ????????????????????????????
 
-    
+
 End Function
 Sub vrdtvs_ffiaft_Process_Files_In_Subfolders (objSpecifiedFolder) ' Process all files in specified folder tree
-	Dim objCurrentFolder, objColFiles, objSubFolder, objFile
-    Set objCurrentFolder = objFSO.GetFolder(objSpecifiedFolder.Path)
-    Set objColFiles = objCurrentFolder.Files
-    ' Process all files in current folder
+	Dim objCurrentFolder, objColFiles, objSubFolder, objFile, ext
+    Set objCurrentFolder = objFSO.GetFolder(objSpecifiedFolder.Path) ' get a NEW instance of a folder object (keep for recursion)
+    ' Process all files in the current folder
+    Set objColFiles = objCurrentFolder.Files ' get an object of a collection of files for the folder object
     For Each objFile in objColFiles
-        If UCase(objFSO.GetExtensionName(objFile.name)) = Ucase("PDF") Then
+        ext = UCase(objFSO.GetExtensionName(objFile.name))
+        If ext = Ucase("ts") OR ext = Ucase("mp4") OR ext = Ucase("mpg") OR ext = Ucase("bprj") Then ' only process specific file extensions
             Call vrdtvs_ffiaft_pfis_Process_a_File(objFile)'  fso.GetAbsolutePathName(objFile.Path) should be the fully qualified absolute filename of this file
         End If
     Next
-    ' Then locate and recursively process subfolders
+    Set objColFiles = Nothing
+    ' Then locate and recursively process subfolders of the current folder
     For Each objSubFolder in objCurrentFolder.SubFolders
         Call vrdtvs_ffiaft_Process_Files_In_Subfolders(objSubFolder)
     Next
+    Set objCurrentFolder = Nothing
 End Sub
-Sub vrdtvs_ffiaft_pfis_Process_a_File (objSpecifiedFile) ' fso.GetAbsolutePathName(objSpecifiedFile.Path) should be the fully qualified absolute filename of this file
+Sub vrdtvs_ffiaft_pfis_Process_a_File (objSpecifiedFile)
+    ' Process a specific file ... fso.GetAbsolutePathName(objSpecifiedFile.Path) should be the fully qualified absolute filename of this file
+    
 End Sub
 
 
