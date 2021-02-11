@@ -1,10 +1,12 @@
 # VRDTVSP
 
-### built primarily with vbscript   
+### built primarily with vbscript in 1980's coding style   
 
 ### ONLY works on a Win10x64 PC with specific licensed software an free software   
 ### and preset folder/file locations   
 ### and TV Scheduler Pro recordings   
+
+## Is suited to tailored personal needs rather than being a general tool
 
 Tries to convert time-shifted (thus free in AU) OTA interlaced and progressive recordings
 to non-interlaced formats which are playable by Chromecasts and thus are suitable for casting.   
