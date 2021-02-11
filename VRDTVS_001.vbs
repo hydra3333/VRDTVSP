@@ -67,10 +67,13 @@ Dim vrdtvs_DEBUG, vrdtvs_DEVELOPMENT_NO_ACTIONS
 vrdtvs_DEBUG = True
 vrdtvs_DEVELOPMENT_NO_ACTIONS = True
 '
+' Create a bunch of scratch variables
+'
 Dim vrdtvs_tmp, vrdtvs_status, vrdtvs_exit_code, vrdrvs_Err_Code, vrdrvs_Err_Description, vrdtvs_cmd, vrdtvs_exe_obj ' a few working variables, for common use
-Dim vrdtvs_temp_powershell_filename, vrdtvs_temp_powershell_object
+Dim vrdtvs_temp_powershell_filename, vrdtvs_temp_powershell_cmd, vrdtvs_temp_powershell_exe
 Dim vrdtvs_saved_ffmpeg_commands_filename, vrdtvs_saved_ffmpeg_commands_object
-Set vrdtvs_temp_powershell_object = Nothing
+Dim scratch_local_timerStart, scratch_local_timerEnd
+Set vrdtvs_temp_powershell_exe = Nothing
 Set vrdtvs_saved_ffmpeg_commands_object = Nothing
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
@@ -372,9 +375,22 @@ If vrdtvs_status <> 0 Then ' Something went wrong with creating the .ps1 file
 	WScript.StdOut.WriteLine("VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_create_ps1_to_fix_timestamps with """ & vrdtvs_temp_powershell_filename & """... Aborting ...")
 	Wscript.Quit vrdtvs_status
 End If
-
-' ?????????????????????????????????????????????  run the .ps1 file in vrdtvs_temp_powershell_filename over ONLY the folder tree vrdtvs_destination_mp4_Folder ????????????????????????????????????????????? 
-
+scratch_local_timerStart = Timer
+'?????????????????????????????????
+' DO THIS IN A SEPARATE FUNCTION:
+'if fix_timestamps = True then
+'	Set objWscriptShell = CreateObject("Wscript.shell")
+'	vrdtvs_temp_powershell_cmd = "powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Normal -File """ & vrdtvs_temp_powershell_filename & """ -Folder """ & ???thefoldertree??? & """"
+'	WScript.StdOut.WriteLine "vbs_rename_files: ***** Fixing file dates using:<" & vrdtvs_temp_powershell_cmd & ">"
+'	???? objWscriptShell.??? exec run vrdtvs_temp_powershell_cmd, True ?????????? use exec instead with stdout stderr etc
+'	Set objWscriptShell = Nothing
+'	WScript.StdOut.WriteLine "vbs_rename_files: --- FINISHED for folder <" & aPath & ">"
+'end if
+'????????????????????????????
+scratch_local_timerEnd = Timer
+If vrdtvs_DEBUG Then 
+	WScript.StdOut.WriteLine("DEBUG: Finished Powershell file timestamp fixing for folder tree """ & ffiaft_folder_tree & """ with Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(scratch_local_timerStart, scratch_local_timerEnd))
+End If
 vrdtvs_status = vrdtvs_delete_a_file (vrdtvs_temp_powershell_filename, False)
 If vrdtvs_status <> 0 Then ' Something went wrong with deleting the .ps1 file
 	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_delete_a_file with """ & vrdtvs_temp_powershell_filename & """... Aborting ...")
@@ -923,24 +939,6 @@ Function vrdtvs_fix_filenames_in_a_folder_tree (the_folder_tree, do_subfolders_a
 	local_timerEnd = Timer
 	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Finished basic file renames for folder tree """ & ffiaft_folder_tree & """ with Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(local_timerStart, local_timerEnd))
     '
-	local_timerStart = Timer
-    '?????????????????????????????????
-	' DO THIS IN A SEPARATE FUNCTION:
-    '' Here, create a temporary powershell script to fix the filename(s) TIMESTAMPS then delete the powershell script after running it ... or do file by file (take too long ???)
-	'if fix_timestamps = True then
-	'	Set objWscriptShell = CreateObject("Wscript.shell")
-	'	powershell_cmdline = "powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Normal -File """ & powershell_script_filename & """ -Folder """ & ffiaft_folder_tree & """ -logFile """ &  theLogfile & """"
-	'	WScript.StdOut.WriteLine "vbs_rename_files: ***** Fixing file dates using:<" & powershell_cmdline & ">"
-	'	objWscriptShell.run powershell_cmdline, True ?????????? use exec instead with stdout stderr etc
-	'	Set objWscriptShell = Nothing
-	'	WScript.StdOut.WriteLine "vbs_rename_files: --- FINISHED for folder <" & aPath & ">"
-	'end if
-    '????????????????????????????
-	local_timerEnd = Timer
-	If vrdtvs_DEBUG Then 
-		WScript.StdOut.WriteLine("DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Finished Powershell file timestamp fixing for folder tree """ & ffiaft_folder_tree & """ with Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(local_timerStart, local_timerEnd))
-	End If
-
 	local_timerEnd_2 = Timer
 	If vrdtvs_DEBUG Then 
 		WScript.StdOut.WriteLine("DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Finished all fixing for folder tree """ & ffiaft_folder_tree & """ with Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(local_timerStart_2, local_timerEnd_2))
