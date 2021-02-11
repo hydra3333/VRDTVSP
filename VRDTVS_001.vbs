@@ -312,14 +312,14 @@ End If
 '   b) Modify the filenames based on the filename content including reformatting the date in the filename
 '	c) Also Modily content of associated .bprj files (they are .xml content) to link to the new media filename since we are modifying the pair
 '
-If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: about to call vrdtvs_fix_filenames_in_a_folder_tree(""" & vrdtvs_source_TS_Folder & """, False)")
+'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: about to call vrdtvs_fix_filenames_in_a_folder_tree(""" & vrdtvs_source_TS_Folder & """, False)")
 vrdtvs_status = vrdtvs_fix_filenames_in_a_folder_tree(vrdtvs_source_TS_Folder, False) ' this does (a) and (b) and (c).  False indicates to process only the top level folder with NO SUBFOLDERS
 If vrdtvs_status <> 0 Then ' Something went wrong with processing files in the Source folder ... check for 53 not found ?
 	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_fix_filenames_in_a_folder_tree in """ & vrdtvs_source_TS_Folder & """... Aborting ...")
 	WScript.StdOut.WriteLine("VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_fix_filenames_in_a_folder_tree in """ & vrdtvs_source_TS_Folder & """ ... Aborting ...")
 	Wscript.Quit vrdtvs_status
 End If
-If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: about to call vrdtvs_fix_filenames_in_a_folder_tree(""" & vrdtvs_destination_mp4_Folder & """, True)")
+'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: about to call vrdtvs_fix_filenames_in_a_folder_tree(""" & vrdtvs_destination_mp4_Folder & """, True)")
 vrdtvs_status = vrdtvs_fix_filenames_in_a_folder_tree(vrdtvs_destination_mp4_Folder, True) ' this does (a) and (b) and (c).  True indicates to process the top level folder including SUBFOLDERS
 If vrdtvs_status <> 0 Then ' Something went wrong with processing files in the Destination folder ... check for 53 not found ?
 	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_fix_filenames_in_a_folder_tree in """ & vrdtvs_destination_mp4_Folder & """... Aborting ...")
@@ -905,9 +905,9 @@ Function vrdtvs_fix_filenames_in_a_folder_tree (the_folder_tree, do_subfolders_a
 	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Finished basic file renames for folder tree """ & ffiaft_folder_tree & """ with Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(local_timerStart, local_timerEnd))
     '
 	local_timerEnd_2 = Timer
-	If vrdtvs_DEBUG Then 
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Finished all fixing for folder tree """ & ffiaft_folder_tree & """ with Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(local_timerStart_2, local_timerEnd_2))
-	End If
+	'If vrdtvs_DEBUG Then 
+	'	WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Finished all fixing for folder tree """ & ffiaft_folder_tree & """ with Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(local_timerStart_2, local_timerEnd_2))
+	'End If
 	vrdtvs_fix_filenames_in_a_folder_tree = 0 ' return with status 0
 End Function
 '
@@ -923,13 +923,13 @@ Sub vrdtvs_ffiaft_Process_Files_In_Subfolders (objSpecifiedFolder, do_subfolders
     ' Call like this:
     '       status = vrdtvs_ffiaft_Process_Files_In_Subfolders (folder_object, False) 
 	Dim objCurrentFolder, objColFiles, objSubFolder, objFile, ext
-	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_Process_Files_In_Subfolders: Started with incoming folder path """ & fso.GetFolder(objSpecifiedFolder.Path) & """")
+	'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_Process_Files_In_Subfolders: Started with incoming folder path """ & fso.GetFolder(objSpecifiedFolder.Path) & """")
     Set objCurrentFolder = fso.GetFolder(objSpecifiedFolder.Path) ' get a NEW instance of a folder object (keep for recursion)
-	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_Process_Files_In_Subfolders: Started with " & objCurrentFolder.Files.Count & " files in folder """ & fso.GetFolder(objSpecifiedFolder.Path) & """")
+	'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_Process_Files_In_Subfolders: Started with " & objCurrentFolder.Files.Count & " files in folder """ & fso.GetFolder(objSpecifiedFolder.Path) & """")
     ' Process all files in the current folder
     Set objColFiles = objCurrentFolder.Files ' get an object of a collection of files for the folder object
     For Each objFile in objColFiles
-		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_Process_Files_In_Subfolders: found File in collection=""" & objFile.Path & """")
+		'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_Process_Files_In_Subfolders: found File in collection=""" & objFile.Path & """")
         ext = UCase(fso.GetExtensionName(objFile.name))
         '********* FILTER BY FILE EXTENSION *********
 		If ext = Ucase("ts") OR ext = Ucase("mp4") OR ext = Ucase("mpg") Then ' ********** only process specific file extensions
