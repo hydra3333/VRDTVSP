@@ -977,13 +977,13 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 	'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	newAbsoluteFilename = fso.GetAbsolutePathName(fso.BuildPath(theOriginalParentFolderName,NewBaseName & "." & theOriginalExtName))
-	if ucase(NewBaseName) = Ucase(theOriginalBaseName) Then
+	if ucase(NewBaseName) = Ucase(theOriginalBaseName) Then ' no change to filename
 		WScript.StdOut.WriteLine("VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File: ---- <" & theOriginalAbsoluteFilename & "> ---- NO NEED for a Rename" )
 		If vrdtvs_DEBUG Then 
 		'	WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: NO NEED for a Rename, no change: theOriginalBaseName=""" & theOriginalBaseName & """" )
 		'	WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: NO NEED for a Rename, no change: theOriginalAbsoluteFilename=""" & theOriginalAbsoluteFilename & """" )
 		End If
-	Else
+	Else ' is a change to the filename
 		If vrdtvs_DEBUG Then 
 			'WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: needs a Rename using theOriginalBaseName=""" & theOriginalBaseName & """" )
 			'WScript.StdOut.WriteLine("                                                                       NewBaseName=""" & NewBaseName & """" )
@@ -1007,13 +1007,14 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 		Original_BPRJ_AbsoluteFilename = fso.GetAbsolutePathName( fso.BuildPath(theOriginalParentFolderName,theOriginalBaseName & ".bprj")
 		Final_Renamed_BPRJ_AbsoluteFilename = fso.GetAbsolutePathName( fso.BuildPath(Final_Renamed_ParentFolderName,Final_Renamed_BaseName & ".bprj")
 		
-		If fso.FileExists(Original_BPRJ_AbsoluteFilename) Then ' yeppity, we need to rename it and process it 
+		If fso.FileExists(Original_BPRJ_AbsoluteFilename) Then 
+			' yeppity, a matching .bprj file found for the original media filename, 
+			' so we need to rename it to match the renamed media and process its content
 		
 ???????????????????????????????????????????????????
 
 
 
-		If UCase(Final_Renamed_ExtName) = UCase("bprj") then ' process .bprj file
 			' open the file and replace the theOriginalBaseName with Final_Renamed_BaseName in it
 			Set vrdtvs_xmlDoc = CreateObject("Microsoft.XMLDOM")
 			vrdtvs_xmlDoc.async = False
@@ -1052,7 +1053,6 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 			WScript.StdOut.WriteLine "vbs_rename_files:                       after:<" & nNode.text & ">"
 			vrdtvs_xmlDoc.save(new_name) '???????????????????????????????????????????????????????????????????????????????????????????????
 			Set vrdtvs_xmlDoc=nothing
-		end if
     	'???????????????????????????????????? ALSO taking care of editing and rewriting the content .bprj files (which are just XML files) ... test for Ucase(theExtName) = Ucase("bprj")
 
 
