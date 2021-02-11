@@ -889,6 +889,7 @@ Function vrdtvs_fix_filenames_in_a_folder_tree (the_folder_tree, do_subfolders_a
 	local_timerStart_2 = Timer
 	local_timerEnd_2 = Timer
 	'
+	ffiaft_folder_tree = the_folder_tree
     If NOT fso.FolderExists(ffiaft_folder_tree) Then
 	    WScript.StdOut.WriteLine("VRDTVS vrdtvs_fix_filenames_in_a_folder_tree: Folder named """ & ffiaft_folder_tree & """ does NOT EXIST ... not processed by vrdtvs_fix_filenames_in_a_folder_tree")
 	    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Folder named """ & ffiaft_folder_tree & """ does NOT EXIST ... not processed by vrdtvs_fix_filenames_in_a_folder_tree")
