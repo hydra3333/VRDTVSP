@@ -923,7 +923,7 @@ Sub vrdtvs_ffiaft_Process_Files_In_Subfolders (objSpecifiedFolder, do_subfolders
         ext = UCase(fso.GetExtensionName(objFile.name))
         '********* FILTER BY FILE EXTENSION *********
 		If ext = Ucase("ts") OR ext = Ucase("mp4") OR ext = Ucase("mpg") OR ext = Ucase("bprj") Then ' ********** only process specific file extensions
-            Call vrdtvs_ffiaft_pfis_Process_a_File(objFile)'  fso.GetAbsolutePathName(objFile.Path) should be the fully qualified absolute filename of this file
+            Call vrdtvs_ffiaft_pfis_Rename_a_File(objFile)'  fso.GetAbsolutePathName(objFile.Path) should be the fully qualified absolute filename of this file
         End If
         '********* FILTER BY FILE EXTENSION *********
 		Next
@@ -937,7 +937,7 @@ Sub vrdtvs_ffiaft_Process_Files_In_Subfolders (objSpecifiedFolder, do_subfolders
 	End If
 End Sub
 '
-Sub vrdtvs_ffiaft_pfis_Process_a_File (objSpecifiedFile) 
+Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile) 
     ' Process a specific file ... fso.GetAbsolutePathName(objSpecifiedFile.Path) should be the fully qualified absolute filename of this file
     ' Parameters:
 	'		objSpecifiedFile is already pre-filtered beforehand to be one of ts mp4 mpg bprj
@@ -951,43 +951,43 @@ Sub vrdtvs_ffiaft_pfis_Process_a_File (objSpecifiedFile)
     theOriginalBaseName = fso.GetBaseName(theOriginalAbsoluteFilename)
     theOriginalExtName = fso.GetExtensionName(theOriginalAbsoluteFilename) ' does not include  the "."
     '
-    'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: entered Sub with original BaseName """ & theOriginalBaseName & """ from """ & theOriginalAbsoluteFilename & """")
+    'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: entered Sub with original BaseName """ & theOriginalBaseName & """ from """ & theOriginalAbsoluteFilename & """")
     NewBaseName = theOriginalBaseName ' initialize so we can keep the original stuff if we need i in the future
     NewBaseName = vrdtvs_remove_special_characters_from_string(NewBaseName, False) ' flag is not an Absolute filename by passing False to the function
-    'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: after vrdtvs_remove_special_characters_from_string original BaseName """ & theOriginalBaseName & """ NewBaseName """ & NewBaseName & """")
+    'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: after vrdtvs_remove_special_characters_from_string original BaseName """ & theOriginalBaseName & """ NewBaseName """ & NewBaseName & """")
     NewBaseName = vrdtvs_remove_tvs_classifying_stuff_from_string(NewBaseName)
-    'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: after vrdtvs_remove_tvs_classifying_stuff_from_string original BaseName """ & theOriginalBaseName & """ NewBaseName """ & NewBaseName & """")
+    'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: after vrdtvs_remove_tvs_classifying_stuff_from_string original BaseName """ & theOriginalBaseName & """ NewBaseName """ & NewBaseName & """")
     NewBaseName = vrdtvs_Move_Date_to_End_of_String(NewBaseName)
-    'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: after vrdtvs_Move_Date_to_End_of_String original BaseName """ & theOriginalBaseName & """ NewBaseName """ & NewBaseName & """")
+    'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: after vrdtvs_Move_Date_to_End_of_String original BaseName """ & theOriginalBaseName & """ NewBaseName """ & NewBaseName & """")
 	'
 	'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    '???????????????????????????????????? rename the individual file here, right now, IF REQUIRED (test for NewBaseName <> theOriginalBaseName )
-    '???????????????????????????????????? taking care of "file already exists"
-    '???????????????????????????????????? taking care of editing and rewriting the content .bprj files (which are just XML files) ... test for Ucase(theExtName) = Ucase("bprj")
 	newAbsoluteFilename = fso.GetAbsolutePathName(fso.BuildPath(theOriginalParentFolderName,NewBaseName))
 	if ucase(NewBaseName) = Ucase(theOriginalBaseName) Then
 		If vrdtvs_DEBUG Then 
-		'	WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: NO NEED for a Rename, no change: theOriginalBaseName=""" & theOriginalBaseName & """" )
-			WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: NO NEED for a Rename, no change: theOriginalAbsoluteFilename=""" & theOriginalAbsoluteFilename & """" )
+		'	WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: NO NEED for a Rename, no change: theOriginalBaseName=""" & theOriginalBaseName & """" )
+			WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: NO NEED for a Rename, no change: theOriginalAbsoluteFilename=""" & theOriginalAbsoluteFilename & """" )
 		End If
 	Else
-		'cater "file already exists" and loop try up to 100 times to add a 2 digit number ".00" to ".99" to the end of NewBaseName if needed
 		If vrdtvs_DEBUG Then 
-		'	WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: needs a Rename using theOriginalBaseName=""" & theOriginalBaseName & """" )
+		'	WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: needs a Rename using theOriginalBaseName=""" & theOriginalBaseName & """" )
 		'	WScript.StdOut.WriteLine("                                                                       NewBaseName=""" & NewBaseName & """" )
-			WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: needs a Rename using theOriginalAbsoluteFilename=""" & theOriginalAbsoluteFilename & """" )
+			WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: needs a Rename using theOriginalAbsoluteFilename=""" & theOriginalAbsoluteFilename & """" )
 			WScript.StdOut.WriteLine("                                                                       newAbsoluteFilename=""" & newAbsoluteFilename & """" )
 		End If
+		'????????? CODE GOES HERE +++++++++++ cater "file already exists" and loop try up to 100 times to add a 2 digit number ".00" to ".99" to the end of NewBaseName if needed
+    	'???????????????????????????????????? rename the individual file here, right now, IF REQUIRED (test for NewBaseName <> theOriginalBaseName )
+    	'???????????????????????????????????? taking care of "file already exists"
+    	'???????????????????????????????????? taking care of editing and rewriting the content .bprj files (which are just XML files) ... test for Ucase(theExtName) = Ucase("bprj")
 	End If
 	'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	'
 	local_timerEnd = Timer
     'If vrdtvs_DEBUG Then 
-	'	WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Process_a_File: Exit having Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(local_timerStart, local_timerEnd))
+	'	WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: Exit having Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(local_timerStart, local_timerEnd))
 	'End If
-	' vrdtvs_ffiaft_pfis_Process_a_File is a Sub, hence no return values
+	' vrdtvs_ffiaft_pfis_Rename_a_File is a Sub, hence no return values
 End Sub
 '
 Function vrdtvs_remove_tvs_classifying_stuff_from_string (theOriginalString)
