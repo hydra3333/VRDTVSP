@@ -1039,6 +1039,7 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 				WScript.StdOut.WriteLine "vbs_rename_files: Aborted. Could not find XML node //VideoReDoProject/Filename in file " & new_name
 				WScript.quit 1 ' exit with an error ... soft or hard ?
 			End If
+			??? this looks like it is using foldername ".\" so ... do we stay that way ?
 			txtbefore = nNode.text
 			' find the rightmost \ then replace everything at and it to the start with .\
 			' if a \ doesn't exist, add .\ to the start
