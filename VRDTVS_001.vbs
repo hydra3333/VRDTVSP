@@ -897,12 +897,12 @@ Function vrdtvs_fix_filenames_in_a_folder_tree (the_folder_tree, do_subfolders_a
 	    Exit Function
     End If
     '
-	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Started basic file renames for folder tree """ & ffiaft_folder_tree & """")
+	'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Started basic file renames for folder tree """ & ffiaft_folder_tree & """")
 	Set vrdtvs_folder_object = fso.GetFolder(ffiaft_folder_tree)            ' get an object of the specified top level folder to process
 	Call vrdtvs_ffiaft_Process_Files_In_Subfolders (vrdtvs_folder_object, do_subfolders_as_well)   ' process the content (files, folders) of that specified top level folder and if specified the SUBFOLDERS too
     Set vrdtvs_folder_object = Nothing                                      ' finished, disppose of the object
 	local_timerEnd = Timer
-	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Finished basic file renames for folder tree """ & ffiaft_folder_tree & """ with Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(local_timerStart, local_timerEnd))
+	'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_fix_filenames_in_a_folder_tree: Finished basic file renames for folder tree """ & ffiaft_folder_tree & """ with Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(local_timerStart, local_timerEnd))
     '
 	local_timerEnd_2 = Timer
 	'If vrdtvs_DEBUG Then 
@@ -933,7 +933,7 @@ Sub vrdtvs_ffiaft_Process_Files_In_Subfolders (objSpecifiedFolder, do_subfolders
         ext = UCase(fso.GetExtensionName(objFile.name))
         '********* FILTER BY FILE EXTENSION *********
 		If ext = Ucase("ts") OR ext = Ucase("mp4") OR ext = Ucase("mpg") Then ' ********** only process specific file extensions
-			If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_Process_Files_In_Subfolders: recognised Extension of file in collection=""" & objFile.Path & """ and about to call vrdtvs_ffiaft_pfis_Rename_a_File")
+			'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_Process_Files_In_Subfolders: recognised Extension of file in collection=""" & objFile.Path & """ and about to call vrdtvs_ffiaft_pfis_Rename_a_File")
             Call vrdtvs_ffiaft_pfis_Rename_a_File(objFile)'  fso.GetAbsolutePathName(objFile.Path) should be the fully qualified absolute filename of this file
         End If
         '********* FILTER BY FILE EXTENSION *********
