@@ -1077,7 +1077,7 @@ Function vrdtvs_do_a_Try99Times_Rename(OriginalAbsoluteFilename, TargetAbsoluteF
 			vrdtvs_t99tr_ErrCount = vrdtvs_t99tr_ErrCount + 1
 			theTargetBaseName = saved_theTargetBaseName & theLeadingCharacterForRetries & vrdtvs_Digits2(vrdtvs_t99tr_ErrCount)
 			theTargetAbsoluteFilename =  fso.GetAbsolutePathName(fso.BuildPath(saved_theTargetParentFolderName, theTargetBaseName & "." & saved_theTargetExtName))
-			WScript.StdOut.WriteLine("VRDTVS vrdtvs_do_a_Try99Times_Rename:   retry <" & theTargetAbsoluteFilename & "> Attempt " & vrdtvs_t99tr_ErrCount)
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_do_a_Try99Times_Rename:   Retry <" & theTargetAbsoluteFilename & "> Attempt " & vrdtvs_Digits2(vrdtvs_t99tr_ErrCount))
 			on error resume next
 			If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 				'WScript.StdOut.WriteLine("VRDTVS vrdtvs_DEVELOPMENT_NO_ACTIONS: DEV: vrdtvs_do_a_Try99Times_Rename retry NOT DOING 'fso.MoveFile theOriginalAbsoluteFilename, theTargetAbsoluteFilename'")
