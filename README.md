@@ -1,19 +1,22 @@
 # VRDTVSP
 
-## built primarily with vbscript   
+### built primarily with vbscript   
 
 ### ONLY works on a Win10x64 PC with specific licensed software an free software   
 ### and preset folder/file locations   
 ### and TV Scheduler Pro recordings   
 
-Tries to convert time-shifted (thus free in AU) OTA files to non-interlaced formats
-playable by Chromecasts and thus are suitable for casting.
+Tries to convert time-shifted (thus free in AU) OTA interlaced and progressive recordings
+to non-interlaced formats which are playable by Chromecasts and thus are suitable for casting.   
 
-Tries to deal with random-ish bitrates and aspect-ratios and audio-delays and recording glitches.
+Input: .ts container files with mpeg2/h.264 interlaced or progressive video and mpeg2/ac3/aac audio.   
+Output: .mp4 container files with deinterlaced h.264 video codec and aac audio codec.   
 
-Tries to deinterlace as required.
+Tries to deal with seemingly random-ish bitrates and aspect-ratios and audio-delays and recording glitches.
 
-Tries to slightly denoise and sharpen with settings that depend on resolution and specific content.
+Tries to deinterlace if required.
+
+Tries to slightly denoise and sharpen with settings that depend on source codec and specific content.
 
 Dependencies:   
 1. *.ts OTA capture files created by TV Scheduler Pro   
@@ -29,5 +32,3 @@ Dependencies:
 8. mediainfo x64   
 9. a reasonable Nvidia card and latest Drivers, eg a 1050Ti upward eg an RTX2060Super   
 
-Input: .TS container with mpeg2/h.264 interlaced or progressive video and mpeg2/ac3/aac audio.   
-Output: .mp4 container with deinterlaced h.264 video and aac audio.   
