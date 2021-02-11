@@ -605,47 +605,6 @@ Function vrdtvs_move_files_to_folder (mf_source_path_wildcard, mv_destination_fo
     vrdtvs_move_files_to_folder = mf_status
 End Function
 '
-Function BAD_vrdtvs_move_files_to_folder (mf_source_path_wildcard, mv_destination_folder)
-    ' rely on global variable "fso"
-    ' Parameters:
-    '   mf_source_path_wildcard     
-    '   mv_destination_folder
-    ' Call like this:
-    '       result = vrdtvs_move_files_to_folder("G:\SOME_SOURCE_PATH\*.MPG", "G:\SOME_DESTINATION_PATH\")
-    '            which does a DOS command something like MOVE /Y "G:\SOME_SOURCE_PATH\*.MPG" "G:\SOME_DESTINATION_PATH\" 
-    ' Examples of some useful functions:
-        ' an_AbsolutePath = fso.GetAbsolutePathName(fso.BuildPath("C:\SOFTWARE\ffmpeg\0-homebuilt-x64\","MP4Box.exe"))
-        ' theParentFolderName = fso.GetParentFolderName(an_AbsolutePath) ' the drive and folder name of the file without any trailing "\"
-        ' theBaseName = fso.GetBaseName(an_AbsolutePath)
-        ' theExtName = fso.GetExtensionName(an_AbsolutePath) ' does not include  the "."
-        ' theFileName = fso.GetFileName(an_AbsolutePath) ' includes filename and "." and extension
-        ' theDriveName = fso.GetDriveName(an_AbsolutePath) ' includes driver letter and ":"
-        ' theParentFolderName = fso.GetParentFolderName(an_AbsolutePath) 
-    Dim mf_exe, mf_cmd, mf_status, mf_tmp
-    Dim mf_source_AbsolutePath, mf_destination_AbsolutePath
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_move_files_to_folder: """ & mf_source_path_wildcard & """" & " to """ &  mv_destination_folder & """")
-    mf_source_AbsolutePath = fso.GetAbsolutePathName(mf_source_path_wildcard)
-    mf_destination_AbsolutePath = fso.GetAbsolutePathName(mv_destination_folder)
-    If Right(mf_destination_AbsolutePath,1) <> "\" Then
-        mf_destination_AbsolutePath = mf_destination_AbsolutePath & "\"     ' add a trailing backslash recognise the destination pathname as a folder
-    End If
-    If vrdtvs_DEBUG Then
-        WScript.StdOut.WriteLine("DEBUG: vrdtvs_move_files_to_folder      mf_source_AbsolutePath=""" & mf_source_AbsolutePath & """")
-        WScript.StdOut.WriteLine("DEBUG: vrdtvs_move_files_to_folder mf_destination_AbsolutePath=""" & mf_destination_AbsolutePath & """")
-    End If
-
-
-	' The MoveFile   method stops on the first error it encounters. 
-	' The CopyFile method stops on the first error it encounters.
-	' So ... we must iterate individual files ourselves and move them one by one, overwriting, and ignoring errors
-	'???????????????
-	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
-	'???????????????
-
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: vrdtvs_move_files_to_folder exiting with status=""" & mf_status & """")
-    vrdtvs_move_files_to_folder = mf_status
-End Function
-'
 Function vrdtvs_Calculate_ElapsedTime_ms (timer_StartTime, timer_EndTime)
     ' Parameters:
     '   timer_StartTime
