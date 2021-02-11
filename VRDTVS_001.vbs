@@ -1075,7 +1075,7 @@ Function vrdtvs_do_a_Try99Times_Rename(OriginalAbsoluteFilename, TargetAbsoluteF
 		vrdtvs_t99tr_ErrNo = 58 ' should already be 58 but set it anyway
 		While (vrdtvs_t99tr_ErrNo = 58 AND vrdtvs_t99tr_ErrCount < vrdtvs_t99tr_MaxReTries) ' only vrdtvs_t99tr_MaxReTries number of retries
 			vrdtvs_t99tr_ErrCount = vrdtvs_t99tr_ErrCount + 1
-			theTargetBaseName = saved_theTargetBaseName & theLeadingCharacterForRetries & vrdtvs_Digits2(vrdtvs_t99tr_ErrCount)
+			theTargetBaseName = vrdtvs_Move_Date_to_End_of_String(saved_theTargetBaseName & theLeadingCharacterForRetries & vrdtvs_Digits2(vrdtvs_t99tr_ErrCount)) ' REMEMBER TO RE-PUT THE DATE BACK ON THE END OF THE FILENAME STRING
 			theTargetAbsoluteFilename =  fso.GetAbsolutePathName(fso.BuildPath(saved_theTargetParentFolderName, theTargetBaseName & "." & saved_theTargetExtName))
 			WScript.StdOut.WriteLine("VRDTVS vrdtvs_do_a_Try99Times_Rename:   Retry <" & theTargetAbsoluteFilename & "> Attempt " & vrdtvs_Digits2(vrdtvs_t99tr_ErrCount))
 			on error resume next
