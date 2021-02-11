@@ -1022,7 +1022,7 @@ Function vrdtvs_do_a_Try99Times_Rename(OriginalAbsoluteFilename, TargetAbsoluteF
 	'		theOriginalAbsoluteFilename		source filename
 	'		theTargetAbsoluteFilename		target filename
 	Const vrdtvs_t99tr_MaxReTries = 99
-	Const theLeadingCharacterForRetries = "."
+	Const theLeadingCharacterForRetries = "_"
 	Dim theOriginalAbsoluteFilename, theOriginalParentFolderName, theOriginalBaseName, theOriginalExtName
 	Dim theTargetAbsoluteFilename, theTargetParentFolderName, theTargetBaseName, theTargetExtName
 	Dim saved_theTargetAbsoluteFilename, saved_theTargetParentFolderName, saved_theTargetBaseName, saved_theTargetExtName
