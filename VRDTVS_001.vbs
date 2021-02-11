@@ -986,11 +986,16 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 		'	WScript.StdOut.WriteLine("                                                                       NewBaseName=""" & NewBaseName & """" )
 		End If
 		If vrdtvs_DEBUG Then 
-			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: needs a Rename using theOriginalAbsoluteFilename=""" & theOriginalAbsoluteFilename & """" )
-			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File:                              newAbsoluteFilename=""" & newAbsoluteFilename & """" )
+			'WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: needs a Rename using theOriginalAbsoluteFilename=""" & theOriginalAbsoluteFilename & """" )
+			'WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File:                              newAbsoluteFilename=""" & newAbsoluteFilename & """" )
 		End If
+
+
 		'???????????????????????????????????? ALSO taking care of editing and rewriting the content .bprj files (which are just XML files) ... test for Ucase(theExtName) = Ucase("bprj")
-		Final_Renamed_AbsoluteFilename_AfterRetries = vrdtvs_do_a_Try99Times_Rename(theOriginalAbsoluteFilename, newAbsoluteFilename) ' AUTOFIXING a .BPRJ OCCURS IN HERE
+		Final_Renamed_AbsoluteFilename_AfterRetries = vrdtvs_do_a_Try99Times_Rename(theOriginalAbsoluteFilename, newAbsoluteFilename) ' AUTOFIXING a .BPRJ OCCURS AFTER THIS FUNCTION
+		'???????????????????????????????????? ALSO taking care of editing and rewriting the content .bprj files (which are just XML files) ... test for Ucase(theExtName) = Ucase("bprj")
+		
+		
 		If Final_Renamed_AbsoluteFilename_AfterRetries = "" Then
 			' Silly Error detected here, it should never occur unless we have some sort of logic issue ;)
 			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: Final_Renamed_AbsoluteFilename_AfterRetries is not properly set after vrdtvs_do_a_Try99Times_Rename <" & Final_Renamed_AbsoluteFilename_AfterRetries & ">")
@@ -1045,7 +1050,7 @@ Function vrdtvs_do_a_Try99Times_Rename(OriginalAbsoluteFilename, TargetAbsoluteF
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_do_a_Try99Times_Rename:      to <" & theTargetAbsoluteFilename & ">")
 	on error resume next
 	If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
-		WScript.StdOut.WriteLine("VRDTVS vrdtvs_DEVELOPMENT_NO_ACTIONS: vrdtvs_do_a_Try99Times_Rename NOT DOING 'fso.MoveFile theOriginalAbsoluteFilename, theTargetAbsoluteFilename'")
+		'WScript.StdOut.WriteLine("VRDTVS vrdtvs_DEVELOPMENT_NO_ACTIONS: DEV: vrdtvs_do_a_Try99Times_Rename NOT DOING 'fso.MoveFile theOriginalAbsoluteFilename, theTargetAbsoluteFilename'")
 	Else
 		fso.MoveFile theOriginalAbsoluteFilename, theTargetAbsoluteFilename ' this is the actual File Rename
 	End If
@@ -1070,7 +1075,7 @@ Function vrdtvs_do_a_Try99Times_Rename(OriginalAbsoluteFilename, TargetAbsoluteF
 			WScript.StdOut.WriteLine("VRDTVS vrdtvs_do_a_Try99Times_Rename:   retry <" & theTargetAbsoluteFilename & "> Attempt " & vrdtvs_t99tr_ErrCount)
 			on error resume next
 			If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
-				WScript.StdOut.WriteLine("VRDTVS vrdtvs_DEVELOPMENT_NO_ACTIONS: vrdtvs_do_a_Try99Times_Rename retry NOT DOING 'fso.MoveFile theOriginalAbsoluteFilename, theTargetAbsoluteFilename'")
+				'WScript.StdOut.WriteLine("VRDTVS vrdtvs_DEVELOPMENT_NO_ACTIONS: DEV: vrdtvs_do_a_Try99Times_Rename retry NOT DOING 'fso.MoveFile theOriginalAbsoluteFilename, theTargetAbsoluteFilename'")
 			Else
 				fso.MoveFile theOriginalAbsoluteFilename, theTargetAbsoluteFilename ' this is the actual File Rename and theTargetAbsoluteFilename contains an updated Absolte filename to use
 			End If
