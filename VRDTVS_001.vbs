@@ -979,7 +979,7 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 		WScript.StdOut.WriteLine("VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File: NO NEED for a Rename, no change to <" & theOriginalAbsoluteFilename & ">" )
 		If vrdtvs_DEBUG Then 
 		'	WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: NO NEED for a Rename, no change: theOriginalBaseName=""" & theOriginalBaseName & """" )
-			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: NO NEED for a Rename, no change: theOriginalAbsoluteFilename=""" & theOriginalAbsoluteFilename & """" )
+		'	WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: NO NEED for a Rename, no change: theOriginalAbsoluteFilename=""" & theOriginalAbsoluteFilename & """" )
 		End If
 	Else
 		If vrdtvs_DEBUG Then 
@@ -1076,7 +1076,7 @@ Function vrdtvs_do_a_Try99Times_Rename(OriginalAbsoluteFilename, TargetAbsoluteF
 		While (vrdtvs_t99tr_ErrNo = 58 AND vrdtvs_t99tr_ErrCount < vrdtvs_t99tr_MaxReTries) ' only vrdtvs_t99tr_MaxReTries number of retries
 			vrdtvs_t99tr_ErrCount = vrdtvs_t99tr_ErrCount + 1
 			theTargetBaseName = saved_theTargetBaseName & theLeadingCharacterForRetries & vrdtvs_Digits2(vrdtvs_t99tr_ErrCount)
-			theTargetAbsoluteFilename =  fso.GetAbsolutePathName(fso.BuildPath(saved_theTargetParentFolderName, theTargetBaseName & saved_theTargetExtName))
+			theTargetAbsoluteFilename =  fso.GetAbsolutePathName(fso.BuildPath(saved_theTargetParentFolderName, theTargetBaseName & "." & saved_theTargetExtName))
 			WScript.StdOut.WriteLine("VRDTVS vrdtvs_do_a_Try99Times_Rename:   retry <" & theTargetAbsoluteFilename & "> Attempt " & vrdtvs_t99tr_ErrCount)
 			on error resume next
 			If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
