@@ -972,10 +972,10 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 		If vrdtvs_DEBUG Then 
 		'	WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: needs a Rename using theOriginalBaseName=""" & theOriginalBaseName & """" )
 		'	WScript.StdOut.WriteLine("                                                                       NewBaseName=""" & NewBaseName & """" )
-			WScript.StdOut.WriteLine("DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: needs a Rename using theOriginalAbsoluteFilename=""" & theOriginalAbsoluteFilename & """" )
-			WScript.StdOut.WriteLine("                                                                       newAbsoluteFilename=""" & newAbsoluteFilename & """" )
 		End If
-		'????????? CODE GOES HERE +++++++++++ cater "file already exists" and loop try up to 100 times to add a 2 digit number ".00" to ".99" to the end of NewBaseName if needed
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_ffiaft_pfis_Rename_a_File: needs a Rename using theOriginalAbsoluteFilename=""" & theOriginalAbsoluteFilename & """" )
+		WScript.StdOut.WriteLine("                                                                       newAbsoluteFilename=""" & newAbsoluteFilename & """" )
+		'????????? CODE GOES HERE +++++++++++ cater "file already exists" and loop try up to 100 times to add a 2 digit number ".00" to ".99" to the end of NewBaseName if needed fail to failure folder ?
     	'???????????????????????????????????? rename the individual file here, right now, IF REQUIRED (test for NewBaseName <> theOriginalBaseName )
     	'???????????????????????????????????? taking care of "file already exists"
     	'???????????????????????????????????? taking care of editing and rewriting the content .bprj files (which are just XML files) ... test for Ucase(theExtName) = Ucase("bprj")
@@ -989,6 +989,56 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 	'End If
 	' vrdtvs_ffiaft_pfis_Rename_a_File is a Sub, hence no return values
 End Sub
+
+
+
+
+
+
+
+
+
+Function vrdtvs_do_a_Try99Times_Rename(OriginalAbsoluteFilename, TargetAbsoluteFilename)
+	'  Try to rename a file and re-Rename it if required, trying up to 99 times
+	' cater "file already exists" and loop try up to 100 times to add a 2 digit number ".00" to ".99" to the end of NewBaseName if needed fail to failure folder ?
+    ' Parameters:
+	'		theOriginalAbsoluteFilename		source filename
+	'		theTargetAbsoluteFilename		target filename
+	Dim theOriginalAbsoluteFilename, theOriginalParentFolderName, theOriginalBaseName, theOriginalExtName
+	Dim theTargetAbsoluteFilename, theTargetParentFolderName, theTargetBaseName, theTargetExtName
+	Dim local_timerStart, local_timerEnd
+	local_timerStart = Timer
+	local_timerEnd = Timer
+    theOriginalAbsoluteFilename = fso.GetAbsolutePathName(OriginalAbsoluteFilename) ' should already be fully qualified but do it anyway just to be safe
+    theOriginalParentFolderName = fso.GetParentFolderName(theOriginalAbsoluteFilename)
+    theOriginalBaseName = fso.GetBaseName(theOriginalAbsoluteFilename)
+    theOriginalExtName = fso.GetExtensionName(theOriginalAbsoluteFilename) ' does not include  the "."
+	theTargetAbsoluteFilename = fso.GetAbsolutePathName(TargetAbsoluteFilename) ' should already be fully qualified but do it anyway just to be safe
+    theTargetParentFolderName = fso.GetParentFolderName(theTargetAbsoluteFilename)
+    theTargetBaseName = fso.GetBaseName(theTargetAbsoluteFilename)
+    theTargetExtName = fso.GetExtensionName(theTargetAbsoluteFilename) ' does not include  the "."
+
+
+
+
+	vrdtvs_do_a_Try99Times_Rename = 0 ' return success
+End Function
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 '
 Function vrdtvs_remove_tvs_classifying_stuff_from_string (theOriginalString)
     ' remove stuff in the string which was previously added by TVSchedulerPro, eg "Movie-" etc etc etc
