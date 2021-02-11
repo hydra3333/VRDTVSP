@@ -1,7 +1,7 @@
 Option explicit
 '
 ' VRDTVS - automatically parse, convert video/audio from TVSchedulerPro TV recordings, 
-' and perhaps adscan them too. This looks only at .TS .MP4 .MPG files and autofixes .BPRJ files.
+' and perhaps adscan them too. This looks only at .TS .MP4 .MPG files and autofixes associated .BPRJ files.
 '
 ' Copyright hydra3333@gmail.com 2021
 '
@@ -299,16 +299,16 @@ If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: Insomnia: Exec Exit
 ' Move .ts .mp4 .mpg .brpj files from the Source Folder to the source folder sincethat is where we process from
 '
 If vrdtvs_CAPTURE_TS_Folder <> "" Then
-    vrdtvs_status = vrdtvs_move_files(vrdtvs_CAPTURE_TS_Folder & "\*.ts", vrdtvs_source_TS_Folder & "\")    ' irnore any status
-    vrdtvs_status = vrdtvs_move_files(vrdtvs_CAPTURE_TS_Folder & "\*.mp4", vrdtvs_source_TS_Folder & "\")   ' irnore any status
-    vrdtvs_status = vrdtvs_move_files(vrdtvs_CAPTURE_TS_Folder & "\*.mpg", vrdtvs_source_TS_Folder & "\")   ' irnore any status
-    vrdtvs_status = vrdtvs_move_files(vrdtvs_CAPTURE_TS_Folder & "\*.bprj", vrdtvs_source_TS_Folder & "\")  ' irnore any status
+    vrdtvs_status = vrdtvs_move_files(vrdtvs_CAPTURE_TS_Folder & "\*.ts", vrdtvs_source_TS_Folder & "\")    ' ignore any status
+    vrdtvs_status = vrdtvs_move_files(vrdtvs_CAPTURE_TS_Folder & "\*.mp4", vrdtvs_source_TS_Folder & "\")   ' ignore any status
+    vrdtvs_status = vrdtvs_move_files(vrdtvs_CAPTURE_TS_Folder & "\*.mpg", vrdtvs_source_TS_Folder & "\")   ' ignore any status
+    vrdtvs_status = vrdtvs_move_files(vrdtvs_CAPTURE_TS_Folder & "\*.bprj", vrdtvs_source_TS_Folder & "\")  ' ignore any status '.bprj are associated with .mp4 of the same BaseName
 End If
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' In Top Level Folders: Source and Destination 
 ' (the function filters for file Extensions: .ts .mp4 .mpg, and autofixes .bprj which are associated with .mpg and .mp4 and should have the same BaseName)
-'   a) Remove special characters in filenames for file Extensions: .ts .mp4 .mpg .bprj
+'   a) Remove special characters in filenames for file Extensions: .ts .mp4 .mpg and autofix .bprj
 '   b) Modify the filenames based on the filename content including reformatting the date in the filename
 '	c) Also Modily content of associated .bprj files (they are .xml content) to link to the new media filename since we are modifying the pair
 '
@@ -370,7 +370,7 @@ End If
 
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Fix the DateCreated and DateModified timestamps based on the date in the filename (a PowerShell command ... learn how to do that on the commandline)
-' in Top Level Folders and Subfolders: Source and Destination (the function filters for file Extensions: .ts .mp4 .mpg .bprj)
+' in Top Level Folders and Subfolders: Source and Destination (the function filters for file Extensions: .ts .mp4 .mpg but NOT .bprj)
 '
 vrdtvs_temp_powershell_filename = vrdtvs_gimme_a_temporary_absolute_filename("vrdtvs_ps1_to_fix_timestamps-" & vrdtvs_run_datetime) & ".ps1"
 vrdtvs_status = vrdtvs_create_ps1_to_fix_timestamps(vrdtvs_temp_powershell_filename)
@@ -868,8 +868,8 @@ End Function
 '****************************************************************************************************************************************
 '
 Function vrdtvs_fix_filenames_in_a_folder_tree (the_folder_tree, do_subfolders_as_well) 
-	' Function to traverse a folder tree ( a called function filters for file Extensions: .ts .mp4 .mpg .bprj)
-	'   a) Remove special characters in filenames for file Extensions: .ts .mp4 .mpg .bprj
+	' Function to traverse a folder tree ( a called function filters for file Extensions: .ts .mp4 .mpg)
+	'   a) Remove special characters in filenames for file Extensions: .ts .mp4 .mpg and autofixes associated .bprj
 	'   b) modify the filenames based on the filename content including reformatting the date in the filename
 	' rely on global variable "fso"
     ' Parameters:
@@ -909,8 +909,8 @@ Function vrdtvs_fix_filenames_in_a_folder_tree (the_folder_tree, do_subfolders_a
 End Function
 '
 Sub vrdtvs_ffiaft_Process_Files_In_Subfolders (objSpecifiedFolder, do_subfolders_as_well) ' Process all files in specified folder tree
-	' Function to Process all files in specified folder tree OBJECT with file Extensions: .ts .mp4 .mpg .bprj
-	'   a) Remove special characters in filenames for file Extensions: .ts .mp4 .mpg .bprj
+	' Function to Process all files in specified folder tree OBJECT with file Extensions: .ts .mp4 .mpg
+	'   a) Remove special characters in filenames for file Extensions: .ts .mp4 .mpg and autofixes associated .bprj
 	'   b) modify the filenames based on the filename content including reformatting the date in the filename
 	'   c) *** NOT THIS, do it outside ... fix the file DateCreated and DateModified timestamps based on the date in the filename (a PowerShell command ... since DateCreated can't be modified in vbscript)
     ' rely on global variable "fso"
@@ -926,7 +926,7 @@ Sub vrdtvs_ffiaft_Process_Files_In_Subfolders (objSpecifiedFolder, do_subfolders
     For Each objFile in objColFiles
         ext = UCase(fso.GetExtensionName(objFile.name))
         '********* FILTER BY FILE EXTENSION *********
-		If ext = Ucase("ts") OR ext = Ucase("mp4") OR ext = Ucase("mpg") OR ext = Ucase("bprj") Then ' ********** only process specific file extensions
+		If ext = Ucase("ts") OR ext = Ucase("mp4") OR ext = Ucase("mpg") Then ' ********** only process specific file extensions
             Call vrdtvs_ffiaft_pfis_Rename_a_File(objFile)'  fso.GetAbsolutePathName(objFile.Path) should be the fully qualified absolute filename of this file
         End If
         '********* FILTER BY FILE EXTENSION *********
@@ -944,7 +944,7 @@ End Sub
 Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile) 
     ' Process a specific file ... fso.GetAbsolutePathName(objSpecifiedFile.Path) should be the fully qualified absolute filename of this file
     ' Parameters:
-	'		objSpecifiedFile is already pre-filtered beforehand to be one of ts mp4 mpg bprj
+	'		objSpecifiedFile is already pre-filtered beforehand to be one of ts mp4 mpg
     Dim theOriginalAbsoluteFilename, theOriginalParentFolderName, theOriginalBaseName, theOriginalExtName
     Dim NewBaseName, newAbsoluteFilename
 	Dim Final_Renamed_AbsoluteFilename_AfterRetries
@@ -981,7 +981,7 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 		If vrdtvs_DEBUG ThenWScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: needs a Rename using theOriginalAbsoluteFilename=""" & theOriginalAbsoluteFilename & """" )
 		If vrdtvs_DEBUG ThenWScript.StdOut.WriteLine("VRDTVS DEBUG:                                                                newAbsoluteFilename=""" & newAbsoluteFilename & """" )
 		'???????????????????????????????????? ALSO taking care of editing and rewriting the content .bprj files (which are just XML files) ... test for Ucase(theExtName) = Ucase("bprj")
-		Final_Renamed_AbsoluteFilename_AfterRetries = vrdtvs_do_a_Try99Times_Rename(theOriginalAbsoluteFilename, newAbsoluteFilename)
+		Final_Renamed_AbsoluteFilename_AfterRetries = vrdtvs_do_a_Try99Times_Rename(theOriginalAbsoluteFilename, newAbsoluteFilename) ' AUTOFIXING a .BPRJ OCCURS IN HERE
 		If Final_Renamed_AbsoluteFilename_AfterRetries = "" Then
 			' Silly Error detected here, it should never occur unless we have some sort of logic issue ;)
 			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: Final_Renamed_AbsoluteFilename_AfterRetries is not properly set after vrdtvs_do_a_Try99Times_Rename <" & Final_Renamed_AbsoluteFilename_AfterRetries & ">")
