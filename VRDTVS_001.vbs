@@ -13,7 +13,7 @@ Option explicit
 '/DEBUG:True ^
 '/DEV:True ^
 '/capture_Folder:"G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\0save\" ^
-'/source_Folder:"G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS_Source" ^
+'/source_Folder:"G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS_Source\" ^
 '/done_Folder:"G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS_done\" ^
 '/destination_Folder:"G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS_Converted\" ^
 '/failed_Folder:"G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Failed-Conversion\" ^
