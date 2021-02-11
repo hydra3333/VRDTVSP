@@ -162,7 +162,7 @@ vrdtvs_temp_path = fso.GetAbsolutePathName("D:\VRDTVS-SCRATCH\")
 '
 vrdtvs_DEBUG = vrdtvs_get_commandline_parameter("DEBUG",vrdtvs_DEBUG)                                                                               ' /DEBUG:True
 vrdtvs_DEVELOPMENT_NO_ACTIONS = vrdtvs_get_commandline_parameter("DEV",vrdtvs_DEVELOPMENT_NO_ACTIONS)                                               ' /DEV:True
-If vrdtvs_DEVELOPMENT_NO_ACTIONS Then vrdtvs_DEBUG = True ' if in Development then always force debug on
+If vrdtvs_DEVELOPMENT_NO_ACTIONS Then vrdtvs_DEBUG = True ' if in Development then always force debug on ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 '
 vrdtvs_CAPTURE_TS_Folder = vrdtvs_get_commandline_parameter("capture_Folder",vrdtvs_CAPTURE_TS_Folder) ' no GetAbsolutePathName to leave "" as ""   ' /capture_Folder:""
 If vrdtvs_CAPTURE_TS_Folder <> "" Then
@@ -586,8 +586,8 @@ Function vrdtvs_move_files_to_folder (mf_source_path_wildcard, mv_destination_fo
     End If
     ' Ugh, a DOS MOVE requires CMD /C  to work !! 
     mf_cmd = "CMD /C MOVE /Y """ & mf_source_AbsolutePath & """ """ & mf_destination_AbsolutePath & """ 2>&1"
-	If vrdtvs_DEVELOPMENT_NO_ACTIONS Then 
-		mf_cmd = "REM " & mf_cmd ' do not move anything DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
+	If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
+		mf_cmd = "REM " & mf_cmd ' do not move anything 
 	End If
 	WScript.StdOut.WriteLine("vrdtvs_move_files_to_folder Exec command: " & mf_cmd)
     set mf_exe = wso.Exec(mf_cmd)
@@ -980,14 +980,14 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 		End If
 		If vrdtvs_DEBUG ThenWScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: needs a Rename using theOriginalAbsoluteFilename=""" & theOriginalAbsoluteFilename & """" )
 		If vrdtvs_DEBUG ThenWScript.StdOut.WriteLine("VRDTVS DEBUG:                                                                newAbsoluteFilename=""" & newAbsoluteFilename & """" )
-    	'???????????????????????????????????? taking care of editing and rewriting the content .bprj files (which are just XML files) ... test for Ucase(theExtName) = Ucase("bprj")
+		'???????????????????????????????????? ALSO taking care of editing and rewriting the content .bprj files (which are just XML files) ... test for Ucase(theExtName) = Ucase("bprj")
 		Final_Renamed_AbsoluteFilename_AfterRetries = vrdtvs_do_a_Try99Times_Rename(theOriginalAbsoluteFilename, newAbsoluteFilename)
 		If Final_Renamed_AbsoluteFilename_AfterRetries = "" Then
 			' Silly Error detected here, it should never occur unless we have some sort of logic issue ;)
 			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: Final_Renamed_AbsoluteFilename_AfterRetries is not properly set after vrdtvs_do_a_Try99Times_Rename <" & Final_Renamed_AbsoluteFilename_AfterRetries & ">")
 			Wscript.Quit 17
 		End If
-    	'???????????????????????????????????? taking care of editing and rewriting the content .bprj files (which are just XML files) ... test for Ucase(theExtName) = Ucase("bprj")
+    	'???????????????????????????????????? ALSO taking care of editing and rewriting the content .bprj files (which are just XML files) ... test for Ucase(theExtName) = Ucase("bprj")
 	End If
 	'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1035,7 +1035,8 @@ Function vrdtvs_do_a_Try99Times_Rename(OriginalAbsoluteFilename, TargetAbsoluteF
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_do_a_Try99Times_Rename:  rename <" & theOriginalAbsoluteFilename & ">")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_do_a_Try99Times_Rename:      to <" & theTargetAbsoluteFilename & ">")
 	on error resume next
-	If vrdtvs_DEVELOPMENT_NO_ACTIONS Then 
+	If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
+		WScript.StdOut.WriteLine("VRDTVS vrdtvs_DEVELOPMENT_NO_ACTIONS: vrdtvs_do_a_Try99Times_Rename NOT DOING 'fso.MoveFile theOriginalAbsoluteFilename, theTargetAbsoluteFilename'")
 	Else
 		fso.MoveFile theOriginalAbsoluteFilename, theTargetAbsoluteFilename ' this is the actual File Rename
 	End If
@@ -1059,7 +1060,8 @@ Function vrdtvs_do_a_Try99Times_Rename(OriginalAbsoluteFilename, TargetAbsoluteF
 			theTargetAbsoluteFilename =  fso.GetAbsolutePathName(fso.BuildPath(saved_theTargetParentFolderName, theTargetBaseName & saved_theTargetExtName))
 			WScript.StdOut.WriteLine("VRDTVS vrdtvs_do_a_Try99Times_Rename:   retry <" & theTargetAbsoluteFilename & "> Attempt " & vrdtvs_t99tr_ErrCount)
 			on error resume next
-			If vrdtvs_DEVELOPMENT_NO_ACTIONS Then 
+			If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
+				WScript.StdOut.WriteLine("VRDTVS vrdtvs_DEVELOPMENT_NO_ACTIONS: vrdtvs_do_a_Try99Times_Rename retry NOT DOING 'fso.MoveFile theOriginalAbsoluteFilename, theTargetAbsoluteFilename'")
 			Else
 				fso.MoveFile theOriginalAbsoluteFilename, theTargetAbsoluteFilename ' this is the actual File Rename and theTargetAbsoluteFilename contains an updated Absolte filename to use
 			End If
