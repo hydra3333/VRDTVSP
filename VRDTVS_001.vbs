@@ -299,10 +299,10 @@ If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: Insomnia: Exec Exit
 ' Move .ts .mp4 .mpg .brpj files from the Source Folder to the source folder sincethat is where we process from
 '
 If vrdtvs_CAPTURE_TS_Folder <> "" Then
-    vrdtvs_status = vrdtvs_move_files(vrdtvs_CAPTURE_TS_Folder & "\*.ts", vrdtvs_source_TS_Folder & "\")    ' ignore any status
-    vrdtvs_status = vrdtvs_move_files(vrdtvs_CAPTURE_TS_Folder & "\*.mp4", vrdtvs_source_TS_Folder & "\")   ' ignore any status
-    vrdtvs_status = vrdtvs_move_files(vrdtvs_CAPTURE_TS_Folder & "\*.mpg", vrdtvs_source_TS_Folder & "\")   ' ignore any status
-    vrdtvs_status = vrdtvs_move_files(vrdtvs_CAPTURE_TS_Folder & "\*.bprj", vrdtvs_source_TS_Folder & "\")  ' ignore any status '.bprj are associated with .mp4 of the same BaseName
+    vrdtvs_status = vrdtvs_move_files_to_folder(vrdtvs_CAPTURE_TS_Folder & "\*.ts", vrdtvs_source_TS_Folder & "\")    ' ignore any status
+    vrdtvs_status = vrdtvs_move_files_to_folder(vrdtvs_CAPTURE_TS_Folder & "\*.mp4", vrdtvs_source_TS_Folder & "\")   ' ignore any status
+    vrdtvs_status = vrdtvs_move_files_to_folder(vrdtvs_CAPTURE_TS_Folder & "\*.mpg", vrdtvs_source_TS_Folder & "\")   ' ignore any status
+    vrdtvs_status = vrdtvs_move_files_to_folder(vrdtvs_CAPTURE_TS_Folder & "\*.bprj", vrdtvs_source_TS_Folder & "\")  ' ignore any status '.bprj are associated with .mp4 of the same BaseName
 End If
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
@@ -1030,8 +1030,8 @@ Function vrdtvs_do_a_Try99Times_Rename(OriginalAbsoluteFilename, TargetAbsoluteF
 	local_timerStart = Timer
 	local_timerEnd = Timer
 	If vrdtvs_DEBUG Then
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_do_a_Try99Times_Rename:  incoming Original filename <" & OriginalAbsoluteFilename & ">")
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_do_a_Try99Times_Rename:    incoming Target filename <" & TargetAbsoluteFilename & ">")
+		'WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_do_a_Try99Times_Rename:  incoming Original filename <" & OriginalAbsoluteFilename & ">")
+		'WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_do_a_Try99Times_Rename:    incoming Target filename <" & TargetAbsoluteFilename & ">")
 	End If
     theOriginalAbsoluteFilename = fso.GetAbsolutePathName(OriginalAbsoluteFilename) ' should already be fully qualified but do it anyway just to be safe
     theOriginalParentFolderName = fso.GetParentFolderName(theOriginalAbsoluteFilename)
