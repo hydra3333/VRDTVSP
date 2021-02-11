@@ -554,7 +554,7 @@ Function vrdtvs_delete_a_file (filename_to_delete, do_it_silently)
     vrdtvs_delete_a_file = daf_Err_number
 End Function
 '
-Function vrdtvs_move_files_to_folder (mf_source_path_wildcard, mv_destination_folder)
+Function vrdtvs_move_files_to_folder (mf_source_path_wildcard, mv_destination_folder) ' this uses DOS "CMD /C MOVE /Y ..."
     ' rely on global variable "fso"
     ' Parameters:
     '   mf_source_path_wildcard     
@@ -582,8 +582,7 @@ Function vrdtvs_move_files_to_folder (mf_source_path_wildcard, mv_destination_fo
         WScript.StdOut.WriteLine("DEBUG: vrdtvs_move_files_to_folder      mf_source_AbsolutePath=""" & mf_source_AbsolutePath & """")
         WScript.StdOut.WriteLine("DEBUG: vrdtvs_move_files_to_folder mf_destination_AbsolutePath=""" & mf_destination_AbsolutePath & """")
     End If
-    ' Ugh, a DOS MOVE requires CMD /C  to work !! Let's look into fso movefiles ...
-	'mf_cmd = "MOVE /Y """ & mf_source_AbsolutePath & """ """ & mf_destination_AbsolutePath & """ 2>&1"
+    ' Ugh, a DOS MOVE requires CMD /C  to work !! 
     mf_cmd = "CMD /C MOVE /Y """ & mf_source_AbsolutePath & """ """ & mf_destination_AbsolutePath & """ 2>&1"
 	If vrdtvs_DEVELOPMENT_NO_ACTIONS Then mf_cmd = "REM " & mf_cmd ' do not move anything DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 	    WScript.StdOut.WriteLine("vrdtvs_move_files_to_folder Exec command: " & mf_cmd)
