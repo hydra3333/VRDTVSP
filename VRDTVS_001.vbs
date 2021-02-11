@@ -954,7 +954,7 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 	'		objSpecifiedFile is already pre-filtered beforehand to be one of ts mp4 mpg
     Dim theOriginalAbsoluteFilename, theOriginalParentFolderName, theOriginalBaseName, theOriginalExtName
     Dim NewBaseName, newAbsoluteFilename
-	Dim Final_Renamed_AbsoluteFilename_AfterRetries
+	Dim Final_Renamed_AbsoluteFilename_AfterRetries, Final_Renamed_ParentFolderName, Final_Renamed_BaseName, Final_Renamed_ExtName
 	Dim local_timerStart, local_timerEnd
 	local_timerStart = Timer
 	local_timerEnd = Timer
@@ -983,26 +983,73 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 		End If
 	Else
 		If vrdtvs_DEBUG Then 
-		'	WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: needs a Rename using theOriginalBaseName=""" & theOriginalBaseName & """" )
-		'	WScript.StdOut.WriteLine("                                                                       NewBaseName=""" & NewBaseName & """" )
-		End If
-		If vrdtvs_DEBUG Then 
+			'WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: needs a Rename using theOriginalBaseName=""" & theOriginalBaseName & """" )
+			'WScript.StdOut.WriteLine("                                                                       NewBaseName=""" & NewBaseName & """" )
 			'WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: needs a Rename using theOriginalAbsoluteFilename=""" & theOriginalAbsoluteFilename & """" )
 			'WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File:                              newAbsoluteFilename=""" & newAbsoluteFilename & """" )
 		End If
-
-
-		'???????????????????????????????????? ALSO taking care of editing and rewriting the content .bprj files (which are just XML files) ... test for Ucase(theExtName) = Ucase("bprj")
 		Final_Renamed_AbsoluteFilename_AfterRetries = vrdtvs_do_a_Try99Times_Rename(theOriginalAbsoluteFilename, newAbsoluteFilename) ' AUTOFIXING a .BPRJ OCCURS AFTER THIS FUNCTION
-		'???????????????????????????????????? ALSO taking care of editing and rewriting the content .bprj files (which are just XML files) ... test for Ucase(theExtName) = Ucase("bprj")
-		
-		
 		If Final_Renamed_AbsoluteFilename_AfterRetries = "" Then
 			' Silly Error detected here, it should never occur unless we have some sort of logic issue ;)
 			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: Final_Renamed_AbsoluteFilename_AfterRetries is not properly set after vrdtvs_do_a_Try99Times_Rename <" & Final_Renamed_AbsoluteFilename_AfterRetries & ">")
 			Wscript.Quit 17
 		End If
+		Final_Renamed_ParentFolderName = fso.GetParentFolderName(Final_Renamed_AbsoluteFilename_AfterRetries)
+		Final_Renamed_BaseName = fso.GetBaseName(Final_Renamed_AbsoluteFilename_AfterRetries)
+		Final_Renamed_ExtName = fso.GetExtensionName(Final_Renamed_AbsoluteFilename_AfterRetries) ' does not include  the "."
+
+
+
+		... ??? copied legacy code conversion  in progress ...
+			'???????????????????????????????????? ALSO taking care of editing and rewriting the content .bprj files (which are just XML files) ... test for Ucase(theExtName) = Ucase("bprj")
+			If (new_basename <> xbasename) AND (LCase(ext) = LCase("bprj")) then ' always process .bprj files whether renamed or not
+			bcount = bcount +1
+			' open the file and replace the xbasename with new_basename in it
+			Set xmlDoc = CreateObject("Microsoft.XMLDOM")
+			xmlDoc.async = False
+			on error resume next 
+			'WScript.StdOut.WriteLine "vbs_rename_files: debug: about to xmlDoc.load file " & new_name
+			sts = xmlDoc.load(new_name) '???????????????????????????????????????????????????????????????????????????????????????????????
+			'sts = xmlDoc.load(f.path) '???????????????????????????????????????????????????????????????????????????????????????????????
+			on error goto 0 
+			If not sts Then
+				Dim myErr
+				Set myErr = xmlDoc.parseError
+				WScript.StdOut.WriteLine "vbs_rename_files: Aborted. Failed to load XML doc .BPRJ file " & new_name
+				WScript.StdOut.WriteLine "vbs_rename_files: XML error: " & myErr.errorCode & " : " & myErr.reason
+				WScript.Quit 1
+			End If
+			'WScript.StdOut.WriteLine "vbs_rename_files: debug: loaded xml doc " & new_name
+			'Locate the desired node. Note the use of XPATH instead of looping over all the child nodes.
+			Set nNode = xmlDoc.selectsinglenode ("//VideoReDoProject/Filename")
+			If nNode is Nothing then
+				WScript.StdOut.WriteLine "vbs_rename_files: Aborted. Could not find XML node //VideoReDoProject/Filename in file " & new_name
+				WScript.quit 1
+			End If
+			txtbefore = nNode.text
+			' find the rightmost \ then replace everything at and it to the start with .\
+			' if a \ doesn't exist, add .\ to the start
+			i = InStrRev(txtbefore,"\",-1,vbTextCompare)
+			if i > 0 then
+				txtafter = ".\" & mid(txtbefore,i+1)
+			else
+				txtafter = ".\" & txtbefore
+			end if
+			' replace the xbasename portion of the string with the new_basename portion
+			txtafter = Replace(txtafter, xbasename, new_basename, 1, -1, vbTextCompare)
+			nNode.text = txtafter
+			WScript.StdOut.WriteLine "vbs_rename_files: Update bprj xml node before:<" & txtbefore & ">"
+			WScript.StdOut.WriteLine "vbs_rename_files:                       after:<" & nNode.text & ">"
+			xmlDoc.save(new_name) '???????????????????????????????????????????????????????????????????????????????????????????????
+			Set xmlDoc=nothing
+		end if
     	'???????????????????????????????????? ALSO taking care of editing and rewriting the content .bprj files (which are just XML files) ... test for Ucase(theExtName) = Ucase("bprj")
+
+
+
+
+
+
 	End If
 	'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
