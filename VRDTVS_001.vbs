@@ -1029,8 +1029,10 @@ Function vrdtvs_do_a_Try99Times_Rename(OriginalAbsoluteFilename, TargetAbsoluteF
 	Dim local_timerStart, local_timerEnd
 	local_timerStart = Timer
 	local_timerEnd = Timer
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_do_a_Try99Times_Rename:  incoming Original filename <" & OriginalAbsoluteFilename & ">")
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_do_a_Try99Times_Rename:    incoming Target filename <" & TargetAbsoluteFilename & ">")
+	If vrdtvs_DEBUG Then
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_do_a_Try99Times_Rename:  incoming Original filename <" & OriginalAbsoluteFilename & ">")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_do_a_Try99Times_Rename:    incoming Target filename <" & TargetAbsoluteFilename & ">")
+	End If
     theOriginalAbsoluteFilename = fso.GetAbsolutePathName(OriginalAbsoluteFilename) ' should already be fully qualified but do it anyway just to be safe
     theOriginalParentFolderName = fso.GetParentFolderName(theOriginalAbsoluteFilename)
     theOriginalBaseName = fso.GetBaseName(theOriginalAbsoluteFilename)
