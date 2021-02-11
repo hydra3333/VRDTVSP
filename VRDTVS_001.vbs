@@ -576,15 +576,15 @@ Function vrdtvs_move_files_to_folder (mf_source_path_wildcard, mv_destination_fo
         ' theParentFolderName = fso.GetParentFolderName(an_AbsolutePath) 
     Dim mf_exe, mf_cmd, mf_status, mf_tmp
     Dim mf_source_AbsolutePath, mf_destination_AbsolutePath
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_move_files_to_folder: """ & mf_source_path_wildcard & """" & " to """ &  mv_destination_folder & """")
+    'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_move_files_to_folder: """ & mf_source_path_wildcard & """" & " to """ &  mv_destination_folder & """")
     mf_source_AbsolutePath = fso.GetAbsolutePathName(mf_source_path_wildcard)
     mf_destination_AbsolutePath = fso.GetAbsolutePathName(mv_destination_folder)
     If Right(mf_destination_AbsolutePath,1) <> "\" Then
         mf_destination_AbsolutePath = mf_destination_AbsolutePath & "\"     ' add a trailing backslash for DOS MOVE to recognise the destination pathname
     End If
     If vrdtvs_DEBUG Then
-        WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_move_files_to_folder      mf_source_AbsolutePath=""" & mf_source_AbsolutePath & """")
-        WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_move_files_to_folder mf_destination_AbsolutePath=""" & mf_destination_AbsolutePath & """")
+       ' WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_move_files_to_folder      mf_source_AbsolutePath=""" & mf_source_AbsolutePath & """")
+        'WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_move_files_to_folder mf_destination_AbsolutePath=""" & mf_destination_AbsolutePath & """")
     End If
     ' Ugh, a DOS MOVE requires CMD /C  to work !! 
     mf_cmd = "CMD /C MOVE /Y """ & mf_source_AbsolutePath & """ """ & mf_destination_AbsolutePath & """ 2>&1"
@@ -607,7 +607,7 @@ Function vrdtvs_move_files_to_folder (mf_source_path_wildcard, mv_destination_fo
     mf_status = mf_exe.ExitCode
     WScript.StdOut.WriteLine("vrdtvs_move_files_to_folder Exit Status: " & mf_status)
     Set mf_exe = Nothing
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_move_files_to_folder exiting with status=""" & mf_status & """")
+    'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_move_files_to_folder exiting with status=""" & mf_status & """")
     vrdtvs_move_files_to_folder = mf_status
 End Function
 '
