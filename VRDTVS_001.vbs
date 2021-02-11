@@ -32,6 +32,7 @@ Option explicit
 '    NOTE:  For ANY of this to work, the vb script MUST be run under Cscript host - or, things like stdout fail to work.
 WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
 Dim  cscript_wshShell, cscript_strEngine
+'
 Set cscript_wshShell = CreateObject( "WScript.Shell" )
 cscript_strEngine = UCase( Right( WScript.FullName, 12 ) )
 Set cscript_wshShell = Nothing
@@ -51,20 +52,21 @@ WScript.StdOut.WriteLine "VRDTVS    Script path: " & Wscript.ScriptFullName
 WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
-' Setup Global (default) variables
+' Setup Global variables
 '
 Dim vrdtvs_tmp, vrdtvs_status, vrdtvs_exit_code, vrdrvs_Err_Code, vrdrvs_Err_Description, vrdtvs_cmd, vrdtvs_exe_obj ' a few working variables, for common use
 Dim vrdtvs_timer_StartTime_overall, vrdtvs_timer_EndTime_overall
+'
+Dim vrdtvs_temp_powershell_filename, vrdtvs_saved_ffmpeg_commands_file
 vrdtvs_timer_StartTime_overall = Timer
 vrdtvs_timer_EndTime_overall = Timer
 '
-Dim vrdtvs_run_datetime
+Dim vrdtvs_run_datetime, vrdtvs_ScriptName
 vrdtvs_run_datetime = vrdtvs_current_datetime_string() ' start of runtime, for common use
-'
-Dim vrdtvs_ScriptName
 vrdtvs_ScriptName = Wscript.ScriptName
 WScript.StdOut.WriteLine(vrdtvs_ScriptName & " Started: " & vrdtvs_current_datetime_string() & " ")
 '
+' (these two are Global but are also Global Defaults declared early here)
 Dim vrdtvs_DEBUG, vrdtvs_DEVELOPMENT_NO_ACTIONS
 vrdtvs_DEBUG = True
 vrdtvs_DEVELOPMENT_NO_ACTIONS = True
@@ -73,9 +75,10 @@ vrdtvs_DEVELOPMENT_NO_ACTIONS = True
 ' Setup Global Objects (remember to Set the_object=Nothing later)
 ' For Microsft Objects, see https://docs.microsoft.com/en-us/office/vba/language/reference/user-interface-help/filesystemobject-object
 '
-dim fso, wso, objFolder
-set wso = CreateObject("Wscript.Shell")
+Dim fso, wso, objFolder
+Set wso = CreateObject("Wscript.Shell")
 Set fso = CreateObject("Scripting.FileSystemObject")
+Set objFolder = Nothing
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Setup Global exe file paths, resolving them to Absolute paths
@@ -96,7 +99,7 @@ vrdtvs_dgindexNVexe64 = fso.GetAbsolutePathName(fso.BuildPath(vs_root,"DGIndex\D
 vrdtvs_Insomniaexe64 = fso.GetAbsolutePathName("C:\SOFTWARE\Insomnia\64-bit\Insomnia.exe")
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
-' Setup Global QSF file paths and stuff
+' Setup Global VideoReDo QSF and Adscan file paths and stuff
 '
 Dim vrd_version_for_qsf
 Dim vrd_version_for_adscan
@@ -123,7 +126,7 @@ vrd_version_for_qsf = 6
 vrd_version_for_adscan = 6
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
-' Setup Global Paths, resolving them to Absolute paths
+' Setup Global Default Paths, resolving them to Absolute paths
 '
 Dim vrdtvs_CAPTURE_TS_Folder
 Dim vrdtvs_source_TS_Folder
@@ -318,24 +321,27 @@ End If
 
 
 
-' on a per-file basis:
-'Dim vrdtvs_saved_ffmpeg_commands
-'vrdtvs_saved_ffmpeg_commands = fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_source_TS_Folder,"some_filename.bat"))
-
-
 
 ' .... code goes in here
+' ALSO SAVE FFMPEG COMMANDS
+' on a per-file basis:
+'Dim vrdtvs_saved_ffmpeg_commands_file
+'vrdtvs_saved_ffmpeg_commands_file = fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_source_TS_Folder,"some_filename.bat"))
 
 
 
 
-' In Top Level Folders and Subfolders: Source and Destination (the function filters for file Extensions: .ts .mp4 .mpg .bprj)
-'   d) Fix the DateCreated and DateModified timestamps based on the date in the filename (a PowerShell command ... learn how to do that on the commandline)
+'----------------------------------------------------------------------------------------------------------------------------------------
+' Fix the DateCreated and DateModified timestamps based on the date in the filename (a PowerShell command ... learn how to do that on the commandline)
+' in Top Level Folders and Subfolders: Source and Destination (the function filters for file Extensions: .ts .mp4 .mpg .bprj)
 '
-   vrdtvs_temp_powershell_filename = vrdtvs_gimme_a_temporary_absolute_filename("vrdtvs_fix_filenames_in_a_folder_tree-" & vrdtvs_run_datetime) & ".ps1"
-  
-
-
+create the .ps1 file
+vrdtvs_temp_powershell_filename = vrdtvs_gimme_a_temporary_absolute_filename("vrdtvs_fix_filenames_in_a_folder_tree-" & vrdtvs_run_datetime) & ".ps1"
+vrdtvs_status = vrdtvs_create_ps1_to_fix_timestamps(vrdtvs_temp_powershell_filename)
+' run the .ps1 file in vrdtvs_temp_powershell_filename
+'... powershell run it
+vrdtvs_status = vrdtvs_delete_a_file (vrdtvs_temp_powershell_filename, False)
+????????????????????????????????????????????????????????????????????????????
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Kill the Insomnia64 process that we started earlier
@@ -373,6 +379,16 @@ WScript.StdOut.WriteLine(vrdtvs_ScriptName & " Finished: " & vrdtvs_current_date
 If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: VTDRVS: " & vrdtvs_ScriptName & " Finished: " & vrdtvs_current_datetime_string() & "  Elapsed Time: " & vrdtvs_Calculate_ElapsedTime_string(vrdtvs_timer_StartTime_overall, vrdtvs_timer_EndTime_overall))
 WScript.Quit
 '
+'----------------------------------------------------------------------------------------------------------------------------------------
+'----------------------------------------------------------------------------------------------------------------------------------------
+'----------------------------------------------------------------------------------------------------------------------------------------
+'----------------------------------------------------------------------------------------------------------------------------------------
+'----------------------------------------------------------------------------------------------------------------------------------------
+'----------------------------------------------------------------------------------------------------------------------------------------
+'----------------------------------------------------------------------------------------------------------------------------------------
+'----------------------------------------------------------------------------------------------------------------------------------------
+'----------------------------------------------------------------------------------------------------------------------------------------
+'----------------------------------------------------------------------------------------------------------------------------------------
 '----------------------------------------------------------------------------------------------------------------------------------------
 '----------------------------------------------------------------------------------------------------------------------------------------
 '----------------------------------------------------------------------------------------------------------------------------------------
@@ -828,6 +844,10 @@ Function vrdtvs_remove_special_characters_from_string(rsp_string, rsp_is_an_Abso
 End Function
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
+'----------------------------------------------------------------------------------------------------------------------------------------
+'----------------------------------------------------------------------------------------------------------------------------------------
+'****************************************************************************************************************************************
+'****************************************************************************************************************************************
 '****************************************************************************************************************************************
 '
 Function vrdtvs_fix_filenames_in_a_folder_tree (the_folder_tree, do_subfolders_as_well) 
@@ -952,9 +972,6 @@ Sub vrdtvs_ffiaft_pfis_Process_a_File (objSpecifiedFile)
     '???????????????????????????????????? rename the individual file here, right now, IF REQUIRED (test for NewBaseName <> theOriginalBaseName )
     '???????????????????????????????????? taking care of "file already exists"
     '???????????????????????????????????? taking care of editing and rewriting the content .bprj files (which are just XML files) ... test for Ucase(theExtName) = Ucase("bprj")
-
-
-	
 	newAbsoluteFilename = fso.GetAbsolutePathName(fso.BuildPath(theOriginalParentFolderName,NewBaseName))
 	if ucase(NewBaseName) = Ucase(theOriginalBaseName) Then
 		If vrdtvs_DEBUG Then 
@@ -1690,3 +1707,9 @@ Function vrdtvs_ReplaceEndStringCaseIndependent(theString, theSearchString, theR
 		vrdtvs_ReplaceEndStringCaseIndependent = theString
 	end if
 End Function
+'----------------------------------------------------------------------------------------------------------------------------------------
+'----------------------------------------------------------------------------------------------------------------------------------------
+'----------------------------------------------------------------------------------------------------------------------------------------
+'****************************************************************************************************************************************
+'****************************************************************************************************************************************
+'****************************************************************************************************************************************
