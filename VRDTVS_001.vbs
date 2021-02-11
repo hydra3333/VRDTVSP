@@ -1009,10 +1009,10 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 		
 		If fso.FileExists(Original_BPRJ_AbsoluteFilename) Then 
 			' yeppity, a matching .bprj file found for the original media filename, 
-			' so we need to rename it to match the renamed media and process its content
 		
 ???????????????????????????????????????????????????
-
+			' a) rename the .bprj file to match the new BaseName of the media file
+			' b) process/fix the content of .bprj file (it's xml) so the media filename in it is updated to match the renamed media filename
 
 
 			' open the file and replace the theOriginalBaseName with Final_Renamed_BaseName in it
