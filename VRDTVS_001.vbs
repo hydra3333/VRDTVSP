@@ -544,15 +544,15 @@ Function vrdtvs_delete_a_file (filename_to_delete, do_it_silently)
         daf_Err_HelpContext = Err.HelpContext
         If daf_Err_number <> 0 Then
             If NOT do_it_silently Then WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_delete_a_file error " &  daf_Err_number &  " " &  daf_Err_Description & " : raised when Deleting file """ & filename_to_delete & """")
-            If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_delete_a_file Error " &  daf_Err_number &  " " &  daf_Err_Description & " : raised when Deleting file """ & filename_to_delete & """")
+            'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_delete_a_file Error " &  daf_Err_number &  " " &  daf_Err_Description & " : raised when Deleting file """ & filename_to_delete & """")
 	        Err.Clear
         Else
             If NOT do_it_silently Then WScript.StdOut.WriteLine("vrdtvs_delete_a_file Deleted file """ & filename_to_delete & """")
-            If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_delete_a_file Deleted file """ & filename_to_delete & """")
+            'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_delete_a_file Deleted file """ & filename_to_delete & """")
         End if
 	    On Error Goto 0 ' now continue
     'End If
-    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_delete_a_file exiting with status=""" & daf_Err_number & """")
+    'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_delete_a_file exiting with status=""" & daf_Err_number & """")
     vrdtvs_delete_a_file = daf_Err_number
 End Function
 '
