@@ -317,27 +317,42 @@ End If
 
 
 
-' .... code goes in here
-
-' ALSO SAVE FFMPEG COMMANDS
+'----------------------------------------------------------------------------------------------------------------------------------------
+' Convert Video files and create the related adscan .bprj files
+' It uses in globally defined folders 
+' The function filters for file Extensions: .ts .mp4 .mpg and creates .bprj
+'
+' generate a unique filename to save FFMPEG and related commands
 vrdtvs_saved_ffmpeg_commands_filename = fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_source_TS_Folder," vrdtvs_saved_ffmpeg_commands-" & vrdtvs_run_datetime & ".bat"))
 ' delete the FFMPEG COMMANDS file silently
-' create the FFMPEG COMMANDS file
-' open the FFMPEG COMMANDS file and get a global object used to write to it
-Set vrdtvs_saved_ffmpeg_commands_object = 
-' initialize the FFMPEG COMMANDS file with @echo etc
-' 
-.................. processing code goes here for the FULL SOURCE TS folder (not tree)
-vrdtvs_status = vrdtvs_convert_video_files ' it looks in vrdtvs_source_TS_Folder (the function filters for file Extensions: .ts .mp4 .mpg and creates .bprj)
-If vrdtvs_status <> 0 Then ' Something went wrong with processing files in the vrdtvs_source_TS_Folder folder ...
-	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_create_ps1_to_fix_timestamps with """ & vrdtvs_temp_powershell_filename & """... Aborting ...")
-	WScript.StdOut.WriteLine("VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_create_ps1_to_fix_timestamps with """ & vrdtvs_temp_powershell_filename & """... Aborting ...")
+vrdtvs_status = vrdtvs_delete_a_file (vrdtvs_saved_ffmpeg_commands_filename, False)
+If vrdtvs_status <> 0 Then ' Something went wrong with deleting the file
+	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_delete_a_file with """ & vrdtvs_saved_ffmpeg_commands_filename & """... Aborting ...")
+	WScript.StdOut.WriteLine("VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_delete_a_file with """ & vrdtvs_saved_ffmpeg_commands_filename & """... Aborting ...")
 	Wscript.Quit vrdtvs_status
 End If
-
-' finalize the FFMPEG COMMANDS file with @echo etc
+' Create a new empty FFMPEG COMMANDS file with overwrite
+?????????????????????????????????????????????.CreateFile
+' open the FFMPEG COMMANDS file and get a Global object used to write to it
+?????????????????????????????????????????????.Open for write
+Set vrdtvs_saved_ffmpeg_commands_object = ???
+' initialize the FFMPEG COMMANDS file with @echo, expansion etc
+?????????????????????????????????????????????.Writeline
+' 
+'.................. START video processing for the FULL SOURCE TS folder (not tree) - the function has a big loop - converts Source files then moves them to Done or Failed
+vrdtvs_status = vrdtvs_convert_video_files_and_move_to_done() ' it uses globally defined folders (the function filters for file Extensions: .ts .mp4 .mpg and creates .bprj)
+If vrdtvs_status <> 0 Then ' Something bad went wrong (invididual conversion failures just result in moving the source file to the Failed folder)
+	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_convert_video_files_and_move_to_done ... Aborting ...")
+	WScript.StdOut.WriteLine("VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_convert_video_files_and_move_to_done ... Aborting ...")
+	Wscript.Quit vrdtvs_status
+End If
+'.................. END video processing for the FULL SOURCE TS folder (not tree) - the function has a big loop - converts Source files then moves them to Done or Failed
+'
+' finalize the FFMPEG COMMANDS file with PAUSE etc
+?????????????????????????????????????????????.Writeline
 ' close the FFMPEG COMMANDS file 
-' set the object to nothing
+?????????????????????????????????????????????.Close
+' set the FFMPEG COMMANDS file object to nothing
 Set vrdtvs_saved_ffmpeg_commands_object = Nothing
 
 
@@ -352,7 +367,6 @@ Set vrdtvs_saved_ffmpeg_commands_object = Nothing
 '
 vrdtvs_temp_powershell_filename = vrdtvs_gimme_a_temporary_absolute_filename("vrdtvs_fix_filenames_in_a_folder_tree-" & vrdtvs_run_datetime) & ".ps1"
 vrdtvs_status = vrdtvs_create_ps1_to_fix_timestamps(vrdtvs_temp_powershell_filename)
-
 If vrdtvs_status <> 0 Then ' Something went wrong with creating the .ps1 file
 	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("DEBUG: VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_create_ps1_to_fix_timestamps with """ & vrdtvs_temp_powershell_filename & """... Aborting ...")
 	WScript.StdOut.WriteLine("VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_create_ps1_to_fix_timestamps with """ & vrdtvs_temp_powershell_filename & """... Aborting ...")
