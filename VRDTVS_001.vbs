@@ -52,6 +52,10 @@ WScript.StdOut.WriteLine "VRDTVS    Script path: " & Wscript.ScriptFullName
 WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
+' Setup Global constants which we don't group below
+'
+Const theLeadingReplaceCharacter_ForMovingDates = "."
+
 ' Setup Global variables
 '
 Dim vrdtvs_run_datetime, vrdtvs_ScriptName
@@ -999,13 +1003,16 @@ End Sub
 
 
 Function vrdtvs_do_a_Try99Times_Rename(OriginalAbsoluteFilename, TargetAbsoluteFilename)
-	'  Try to rename a file and re-Rename it if required, trying up to 99 times
-	' cater "file already exists" and loop try up to 100 times to add a 2 digit number ".00" to ".99" to the end of NewBaseName if needed fail to failure folder ?
+	' Try to rename a file and re-Rename it if required, trying up to 99 times
+	' Cater "file already exists" and loop try up to 100 times to add a 2 digit number ".00" to ".99" to the end of NewBaseName if needed fail to failure folder ?
     ' Parameters:
 	'		theOriginalAbsoluteFilename		source filename
 	'		theTargetAbsoluteFilename		target filename
+	Const vrdtvs_ReTries = 99
 	Dim theOriginalAbsoluteFilename, theOriginalParentFolderName, theOriginalBaseName, theOriginalExtName
 	Dim theTargetAbsoluteFilename, theTargetParentFolderName, theTargetBaseName, theTargetExtName
+	Dim saved_theTargetAbsoluteFilename, saved_theTargetParentFolderName, saved_theTargetBaseName, saved_theTargetExtName
+	Dim vrdtvs_t99tr_ErrNo, vrdtvs_t99tr_ErrDescription, vrdtvs_t99tr_ErrCount
 	Dim local_timerStart, local_timerEnd
 	local_timerStart = Timer
 	local_timerEnd = Timer
@@ -1017,6 +1024,49 @@ Function vrdtvs_do_a_Try99Times_Rename(OriginalAbsoluteFilename, TargetAbsoluteF
     theTargetParentFolderName = fso.GetParentFolderName(theTargetAbsoluteFilename)
     theTargetBaseName = fso.GetBaseName(theTargetAbsoluteFilename)
     theTargetExtName = fso.GetExtensionName(theTargetAbsoluteFilename) ' does not include  the "."
+	saved_theTargetAbsoluteFilename = theTargetAbsoluteFilename
+    saved_theTargetParentFolderName = theTargetParentFolderName
+    saved_theTargetBaseName = theTargetBaseName
+    saved_theTargetExtName = theTargetExtName ' does not include  the "."
+	' the last part of the basename should be: theLeadingReplaceCharacter_ForMovingDates & "yyyy.mm.dd" ... eg like ".2021.02.05"
+	' if it is not like that, then the filename does not contain a date at the end of the basename
+	'
+	vrdtvs_t99tr_ErrNo = 0
+	vrdtvs_t99tr_ErrDescription=""
+	vrdtvs_t99tr_ErrCount = 0
+	on error resume next
+	fso.MoveFile theOriginalAbsoluteFilename, theTargetAbsoluteFilename ' this is the actual File Rename
+	vrdtvs_t99tr_ErrNo = Err.Number
+	vrdtvs_t99tr_ErrDescription = Err.Description
+	on error goto 0
+	Err.Clear
+	If vrdtvs_t99tr_ErrNo <> 0 then
+		if vrdtvs_t99tr_ErrNo = 58 then ' Error 58 = File already exists ... meaning we must re-try up to vrdtvs_ReTries times
+			vrdtvs_t99tr_ErrCount = 0
+			while (vrdtvs_t99tr_ErrNo = 58 and vrdtvs_t99tr_ErrCount <= vrdtvs_ReTries) ' only vrdtvs_ReTries retries
+				vrdtvs_t99tr_ErrCount = vrdtvs_t99tr_ErrCount + 1
+				theTargetBaseName = saved_theTargetBaseName & theLeadingReplaceCharacter_ForMovingDates & vrdtvs_Digits2(vrdtvs_t99tr_ErrCount)
+				theTargetAbsoluteFilename =  fso.GetAbsolutePathName(fso.BuildPath(saved_theTargetParentFolderName, theTargetBaseName & saved_theTargetExtName))
+				WScript.StdOut.WriteLine "vbs_rename_files:  retry <" & theTargetAbsoluteFilename & ">" 
+				on error resume next
+				fso.MoveFile theOriginalAbsoluteFilename, theTargetAbsoluteFilename ' this is the actual File Rename and theTargetAbsoluteFilename contains an updated Absolte filename to use
+				vrdtvs_t99tr_ErrNo = Err.Number
+				vrdtvs_t99tr_ErrDescription = Err.Description
+				on error goto 0
+			wend
+			if (vrdtvs_t99tr_ErrNo = 58 and vrdtvs_t99tr_ErrCount > vrdtvs_ReTries) then
+				WScript.StdOut.WriteLine "vbs_rename_files: vbscript error " & vrdtvs_t99tr_ErrNo & " - quit since done " & vrdtvs_ReTries & " retries and sill a 58 File already exists" 
+				Wscript.Quit vrdtvs_t99tr_ErrNo
+			end if
+			??? new_basename = new_basename_2
+			??? new_name = new_name_2
+		else
+			WScript.StdOut.WriteLine "vbs_rename_files: vbscript error " & vrdtvs_t99tr_ErrNo & " - quit since a vbscript non-58 error was detected" 
+			Wscript.Quit vrdtvs_t99tr_ErrNo
+		end if
+	end if
+	on error goto 0
+
 
 
 
@@ -1641,7 +1691,6 @@ End Function
 '
 Function vrdtvs_Move_Date_to_End_of_String(theOriginalString)
     ' if a Date exists in a string, move it to the end of the string (used in renaming files with the date on the end)
-    Const theLeadingReplaceCharacter = "."
     Dim theLeadingSearchCharacter, txtToSearchFor
 	Dim searchformeArray(3) ' an array of valid leading characters to include in the search/replace
     Dim xyear, xmonth, xday, xDate, is_a_date_there
@@ -1686,7 +1735,7 @@ Function vrdtvs_Move_Date_to_End_of_String(theOriginalString)
 							'	WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: FOUND txtToSearchFor: """ & txtToSearchFor & """ in """ & theOriginalString & """")
 							'End If
                             If right(theOriginalString, len(xDate)) <> xDate then ' ensure it's not already at the end of the string
-                                theNewString = Replace(theOriginalString, txtToSearchFor, "", 1, -1, vbTextCompare) & theLeadingReplaceCharacter & xDate     ' move the date to the end of the string since it's not already there
+                                theNewString = Replace(theOriginalString, txtToSearchFor, "", 1, -1, vbTextCompare) & theLeadingReplaceCharacter_ForMovingDates & xDate     ' move the date to the end of the string since it's not already there
 								'If vrdtvs_DEBUG Then 
                                 '	WScript.StdOut.WriteLine("DEBUG: vrdtvs_Move_Date_to_End_of_String: FOUND string with DATE NOT AT END <" & txtToSearchFor & ">=<" & theOriginalString & "> ... changing to <" & theNewString & ">")
 								'	'Wscript.Sleep 1000 * 2
