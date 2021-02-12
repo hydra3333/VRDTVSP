@@ -958,6 +958,23 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 	Dim Original_BPRJ_AbsoluteFilename, Final_Renamed_BPRJ_AbsoluteFilename, bprj_status, bprj_objErr, bprj_errorCode, bprj_reason
 	Dim bprj_nNode, bprj_i, bprj_txtbefore, bprj_txtafter, bprj_ErrNo, bprj_ErrDescription
 	Dim vrdtvs_xmlDoc, bprj_xmlbefore, bprj_xmlafter
+	Dim vrdtvs_xslDoc
+	Const vrdtvs_xslStylesheet_string = "<xsl:stylesheet version=""3.0"" xmlns:xsl=""http://www.w3.org/1999/XSL/Transform"" xmlns=""http://www.w3.org/1999/xhtml""><xsl:output method=""xml"" indent=""yes""/><xsl:template match=""/""><xsl:copy-of select="".""/></xsl:template></xsl:stylesheet>"
+	'Const vrdtvs_xslStylesheet_string = _
+	'		"<xsl:stylesheet version=""3.0"" xmlns:xsl=""http://www.w3.org/1999/XSL/Transform"" xmlns=""http://www.w3.org/1999/xhtml"">" & _
+	'		"<xsl:output method=""xml"" indent=""yes""/>" & _
+	'		"<xsl:template match=""/"">" & _
+	'		"<xsl:copy-of select="".""/>" & _
+	'		"</xsl:template>" & _
+	'		"</xsl:stylesheet>"
+			'old:
+			'	"<xsl:stylesheet version=""1.0"" xmlns:xsl=""http://www.w3.org/1999/XSL/Transform"">" & _
+			'	"<xsl:output method=""xml"" indent=""yes""/>" & _
+			'	"<xsl:template match=""/"">" & _
+			'	"<xsl:copy-of select="".""/>" & _
+			'	"</xsl:template>" & _
+			'	"</xsl:stylesheet>"
+
 	Dim local_timerStart, local_timerEnd
 	local_timerStart = Timer
 	local_timerEnd = Timer
@@ -1049,9 +1066,9 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 			Set bprj_objErr = Nothing
 			Err.clear
 			on error goto 0 
-			If not bprj_status Then
+			If bprj_status <> 0 Then
 				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: Failed to load XML doc .BPRJ file """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
-				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: XML error: " & bprj_errorCode & " : " &bprj_reason)
+				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: XML error: " & bprj_errorCode & " : " & bprj_reason)
 				Wscript.Quit 17
 			End If
 			'WScript.StdOut.WriteLine("vbs_rename_files: debug: loaded xml doc " & new_name)
@@ -1073,17 +1090,50 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 			' replace the old basename portion of the associated media filename with the renamed basename portion
 			bprj_txtafter = Replace(bprj_txtafter, fso.GetBaseName(Original_BPRJ_AbsoluteFilename), fso.GetBaseName(Final_Renamed_BPRJ_AbsoluteFilename), 1, -1, vbTextCompare)
 			bprj_xmlbefore = vrdtvs_xmlDoc.xml
-			bprj_nNode.text = bprj_txtafter
-			bprj_xmlafter = vrdtvs_xmlDoc.transformNode(vrdtvs_xmlDoc) ' use it's own stylesheet to transform itself
-			WScript.StdOut.WriteLine("VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File: bprj filename xml-node before:<" & bprj_txtbefore & ">")
-			WScript.StdOut.WriteLine("VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File:                         after:<" & bprj_nNode.text & ">")
+			bprj_nNode.text = bprj_txtafter ' load the edited text back intothe XML document
+
+			'''' ??????????? try to in-place transform the XML string using an XSL stylesheet  per https://blogs.iis.net/robert_mcmurray/creating-quot-pretty-quot-xml-using-xsl-and-vbscript
+			Set vrdtvs_xslDoc = CreateObject("Microsoft.XMLDOM") ' or perhaps this instead: Set vrdtvs_xslDoc = WScript.CreateObject("Msxml2.DOMDocument") ' assume no error
+			vrdtvs_xslDoc.async = False
+			on error resume next 
+			bprj_status = vrdtvs_xslDoc.loadXML vrdtvs_xslStylesheet_string ' load the xsl style string
+			Set bprj_objErr = vrdtvs_xslDoc.parseError
+			bprj_errorCode = bprj_objErr.errorCode
+			bprj_reason = bprj_objErr.reason
+			Set bprj_objErr = Nothing
+			Err.clear
+			on error goto 0
+			If (bprj_status <> 0) Then ' Error 0 is OK
+				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: XSL vrdtvs_xslStylesheet_string load error: " & bprj_errorCode & " : " & bprj_reason)
+				Wscript.Quit 17
+			End If
+			on error resume next 
+			bprj_status = vrdtvs_xmlDoc.transformNode(vrdtvs_xslDoc) transform using the xsl stylesheet
+			Set bprj_objErr = vrdtvs_xslDoc.parseError
+			bprj_errorCode = bprj_objErr.errorCode
+			bprj_reason = bprj_objErr.reason
+			Set bprj_objErr = Nothing
+			Err.clear
+			on error goto 0
+			If (bprj_status <> 0) Then ' Error 0 is OK
+				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: XML/XSL transformNode error: " & bprj_errorCode & " : " & bprj_reason)
+				Wscript.Quit 17
+			End If
+			bprj_xmlafter = bprj_nNode.text
+			'''' ??????????? try to transform the XML string using an XSL stylesheet  per https://blogs.iis.net/robert_mcmurray/creating-quot-pretty-quot-xml-using-xsl-and-vbscript
+
+
+
+
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File: bprj filename xml-node before: " & bprj_txtbefore & "")
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File:                         after: " & bprj_nNode.text & "")
 			If vrdtvs_DEBUG Then
-				WScript.StdOut.WriteLine("VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File: xml before:<" & bprj_xmlbefore & ">")
-				WScript.StdOut.WriteLine("VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File:      after:<" & bprj_xmlafter & ">")
+				WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: xml-node before: " & bprj_xmlbefore & "")
+				WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File:           after: " & bprj_nNode.text & "")
 			End If
 			on error resume next 
 			If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
-				WScript.StdOut.WriteLine("VRDTVS vrdtvs_DEVELOPMENT_NO_ACTIONS: DEV: vrdtvs_ffiaft_pfis_Rename_a_File NOT RE-WRITING bprj """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
+				WScript.StdOut.WriteLine("VRDTVS DEV: vrdtvs_DEVELOPMENT_NO_ACTIONS: DEV: vrdtvs_ffiaft_pfis_Rename_a_File NOT RE-WRITING bprj """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
 			Else
 				vrdtvs_xmlDoc.save(Final_Renamed_BPRJ_AbsoluteFilename) ' tell the XMLDOM processor to save the updated XML file
 			End If
