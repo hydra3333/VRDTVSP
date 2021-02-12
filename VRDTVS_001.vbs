@@ -955,7 +955,9 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
     Dim theOriginalAbsoluteFilename, theOriginalParentFolderName, theOriginalBaseName, theOriginalExtName
     Dim NewBaseName, newAbsoluteFilename
 	Dim Final_Renamed_AbsoluteFilename_AfterRetries, Final_Renamed_ParentFolderName, Final_Renamed_BaseName, Final_Renamed_ExtName
-	Dim Original_BPRJ_AbsoluteFilename, Final_Renamed_BPRJ_AbsoluteFilename, bprj_status, bprj_objErr, bprj_errorCode, bprj_reason
+	Dim Original_BPRJ_AbsoluteFilename, Final_Renamed_BPRJ_AbsoluteFilename
+	Dim xml_file_to_load
+	Dim bprj_status, bprj_objErr, bprj_errorCode, bprj_reason
 	Dim bprj_nNode, bprj_i, bprj_txtbefore, bprj_txtafter, bprj_ErrNo, bprj_ErrDescription
 	Dim vrdtvs_xmlDoc, bprj_xmlbefore, bprj_xmlafter
 	Dim vrdtvs_xslDoc
@@ -1053,11 +1055,14 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 			Set vrdtvs_xmlDoc = CreateObject("Microsoft.XMLDOM")
 			vrdtvs_xmlDoc.async = False
 			on error resume next 
+			xml_file_to_load = Final_Renamed_BPRJ_AbsoluteFilename
 			If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
-				If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEV: vrdtvs_ffiaft_pfis_Rename_a_File: about to vrdtvs_xmlDoc.load ORIGINAL file """ & Original_BPRJ_AbsoluteFilename & """")
+				xml_file_to_load = Original_BPRJ_AbsoluteFilename
+				If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEV: vrdtvs_ffiaft_pfis_Rename_a_File: about to LOAD vrdtvs_xmlDoc.load ORIGINAL file """ & Original_BPRJ_AbsoluteFilename & """")
 				bprj_status = vrdtvs_xmlDoc.load(Original_BPRJ_AbsoluteFilename) 
 			Else
-				If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: about to vrdtvs_xmlDoc.load file """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
+				xml_file_to_load = Final_Renamed_BPRJ_AbsoluteFilename
+				If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: about to LOAD vrdtvs_xmlDoc.load file """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
 				bprj_status = vrdtvs_xmlDoc.load(Final_Renamed_BPRJ_AbsoluteFilename) 
 			End If
 			Set bprj_objErr = vrdtvs_xmlDoc.parseError
@@ -1067,7 +1072,7 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 			Err.clear
 			on error goto 0 
 			If bprj_status <> 0 Then
-				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: Failed to load XML doc .BPRJ file """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
+				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: Failed to load XML doc .BPRJ file """ & xml_file_to_load & """")
 				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: XML error: " & bprj_errorCode & " : " & bprj_reason)
 				Wscript.Quit 17
 			End If
@@ -1075,7 +1080,7 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 			'Locate the desired node. Note the use of XPATH instead of looping over all the child nodes.
 			Set bprj_nNode = vrdtvs_xmlDoc.selectsinglenode ("//VideoReDoProject/Filename")
 			If bprj_nNode is Nothing Then
-				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: Could not find XML node //VideoReDoProject/Filename in file " & new_name)
+				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: Could not find XML node //VideoReDoProject/Filename in file " & xml_file_to_load)
 				WScript.quit 17 ' exit with an error ... soft or hard ?
 			End If
 			bprj_txtbefore = bprj_nNode.text ' this is the pathname to the associated media file 
