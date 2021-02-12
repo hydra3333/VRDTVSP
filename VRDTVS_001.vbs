@@ -1026,7 +1026,7 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 	End If
 	' ***** If a matching .bprj file exists in the same folder, (a) rename it to match the new filename (b) fix the content of .bprj file (it's xml) to match the media filename 
 	' ***** note: .bprj files should only exist for files aready converted to .mp4 ... ie in the destination folder
-	' *****       however, in this code we choose to re-process/fix the .bprj files REGARDLESS of whether they are renamed or not !!!!!
+	' *****       however, in this code we choose to re-process/fix the associated .bprj files REGARDLESS of whether they are renamed or not !!!!!
 	Original_BPRJ_AbsoluteFilename = fso.GetAbsolutePathName( fso.BuildPath(theOriginalParentFolderName,theOriginalBaseName & ".bprj"))
 	Final_Renamed_BPRJ_AbsoluteFilename = fso.GetAbsolutePathName( fso.BuildPath(Final_Renamed_ParentFolderName,Final_Renamed_BaseName & ".bprj"))
 	If fso.FileExists(Original_BPRJ_AbsoluteFilename) Then 
