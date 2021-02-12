@@ -1061,7 +1061,7 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: Could not find XML node //VideoReDoProject/Filename in file " & new_name)
 				WScript.quit 17 ' exit with an error ... soft or hard ?
 			End If
-			bprj_txtbefore = nNode.text ' this is the pathname to the associated media file 
+			bprj_txtbefore = bprj_nNode.text ' this is the pathname to the associated media file 
 			' find the rightmost \ then replace everything at it to the start with .\ ... i.e. replace the full path of the associated media file with "\."
 			' if a \ doesn't exist, add .\ to the start
 			bprj_i = InStrRev(bprj_txtbefore,"\",-1,vbTextCompare)
@@ -1073,7 +1073,7 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 			' replace the old basename portion of the associated media filename with the renamed basename portion
 			bprj_txtafter = Replace(bprj_txtafter, fso.GetBaseName(Original_BPRJ_AbsoluteFilename), fso.GetBaseName(Final_Renamed_BPRJ_AbsoluteFilename), 1, -1, vbTextCompare)
 			bprj_xmlbefore = vrdtvs_xmlDoc.xml
-			nNode.text = bprj_txtafter
+			bprj_nNode.text = bprj_txtafter
 			bprj_xmlafter = vrdtvs_xmlDoc.transformNode(vrdtvs_xmlDoc) ' use it's own stylesheet to transform itself
 			WScript.StdOut.WriteLine("VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File: bprj filename xml-node before:<" & bprj_txtbefore & ">")
 			WScript.StdOut.WriteLine("VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File:                         after:<" & nNode.text & ">")
