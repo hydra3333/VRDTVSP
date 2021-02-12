@@ -319,6 +319,10 @@ If vrdtvs_status <> 0 Then ' Something went wrong with processing files in the S
 	WScript.StdOut.WriteLine("VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_fix_filenames_in_a_folder_tree in """ & vrdtvs_source_TS_Folder & """ ... Aborting ...")
 	Wscript.Quit vrdtvs_status
 End If
+
+
+??????????????????????? fix destination folder AFTER processing, not before
+
 'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: about to call vrdtvs_fix_filenames_in_a_folder_tree(""" & vrdtvs_destination_mp4_Folder & """, True)")
 vrdtvs_status = vrdtvs_fix_filenames_in_a_folder_tree(vrdtvs_destination_mp4_Folder, True) ' this does (a) and (b) and (c).  True indicates to process the top level folder including SUBFOLDERS
 If vrdtvs_status <> 0 Then ' Something went wrong with processing files in the Destination folder ... check for 53 not found ?
