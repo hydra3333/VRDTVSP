@@ -998,7 +998,6 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 	'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	newAbsoluteFilename = fso.GetAbsolutePathName(fso.BuildPath(theOriginalParentFolderName,NewBaseName & "." & theOriginalExtName))
 	If ucase(NewBaseName) = Ucase(theOriginalBaseName) Then ' no change to filename
-		WScript.StdOut.WriteLine("VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File: ---- <" & theOriginalAbsoluteFilename & "> ---- NO NEED for a Rename" )
 		If vrdtvs_DEBUG Then 
 		'	WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: NO NEED for a Rename, no change: theOriginalBaseName=""" & theOriginalBaseName & """" )
 		'	WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: NO NEED for a Rename, no change: theOriginalAbsoluteFilename=""" & theOriginalAbsoluteFilename & """" )
