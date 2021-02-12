@@ -956,6 +956,7 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
     Dim NewBaseName, newAbsoluteFilename
 	Dim Final_Renamed_AbsoluteFilename_AfterRetries, Final_Renamed_ParentFolderName, Final_Renamed_BaseName, Final_Renamed_ExtName
 	Dim Original_BPRJ_AbsoluteFilename, Final_Renamed_BPRJ_AbsoluteFilename, bprj_status, bprj_objErr, bprj_errorCode, bprj_reason
+	Dim bprj_nNode, bprj_i, bprj_txtbefore, bprj_txtafter
 	Dim vrdtvs_xmlDoc
 	Dim local_timerStart, local_timerEnd
 	local_timerStart = Timer
@@ -1038,28 +1039,30 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 			End If
 			'WScript.StdOut.WriteLine "vbs_rename_files: debug: loaded xml doc " & new_name
 			'Locate the desired node. Note the use of XPATH instead of looping over all the child nodes.
-			Set nNode = vrdtvs_xmlDoc.selectsinglenode ("//VideoReDoProject/Filename")
-			If nNode is Nothing then
+			Set bprj_nNode = vrdtvs_xmlDoc.selectsinglenode ("//VideoReDoProject/Filename")
+			If bprj_nNode is Nothing Then
 				WScript.StdOut.WriteLine "vbs_rename_files: Aborted. Could not find XML node //VideoReDoProject/Filename in file " & new_name
-				WScript.quit 1 ' exit with an error ... soft or hard ?
+				WScript.quit 17 ' exit with an error ... soft or hard ?
 			End If
-			??? this looks like it is using foldername ".\" so ... do we stay that way ?
-			txtbefore = nNode.text
-			' find the rightmost \ then replace everything at and it to the start with .\
+			bprj_txtbefore = nNode.text ' this is the pathname to the associated media file 
+			' find the rightmost \ then replace everything at it to the start with .\ ... i.e. replace the full path of the associated media file with "\."
 			' if a \ doesn't exist, add .\ to the start
-			i = InStrRev(txtbefore,"\",-1,vbTextCompare)
-			if i > 0 then
-				txtafter = ".\" & mid(txtbefore,i+1)
-			else
-				txtafter = ".\" & txtbefore
-			end if
-			' replace the xbasename portion of the string with the new_basename portion
-			txtafter = Replace(txtafter, xbasename, new_basename, 1, -1, vbTextCompare)
-			nNode.text = txtafter
+			bprj_i = InStrRev(bprj_txtbefore,"\",-1,vbTextCompare)
+			If bprj_i > 0 then
+				bprj_txtafter = ".\" & mid(bprj_txtbefore,bprj_i+1)
+			Else
+				bprj_txtafter = ".\" & bprj_txtbefore
+			End If
+			' replace the old basename portion of the associated media filename with the renamed basename portion
+			bprj_txtafter = Replace(bprj_txtafter, fso.GetBaseName(Original_BPRJ_AbsoluteFilename), fso.GetBaseName(Final_Renamed_BPRJ_AbsoluteFilename), 1, -1, vbTextCompare)
+			nNode.text = bprj_txtafter
 			WScript.StdOut.WriteLine "vbs_rename_files: Update bprj xml node before:<" & txtbefore & ">"
 			WScript.StdOut.WriteLine "vbs_rename_files:                       after:<" & nNode.text & ">"
 			on error resume next 
-			vrdtvs_xmlDoc.save(Final_Renamed_BPRJ_AbsoluteFilename) 
+			If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
+			Else
+				vrdtvs_xmlDoc.save(Final_Renamed_BPRJ_AbsoluteFilename) ' tell the XMLDOM processor to save the updated XML file
+			End If
 			Set bprj_objErr = vrdtvs_xmlDoc.parseError
 			bprj_errorCode = bprj_objErr.errorCode
 			bprj_reason = bprj_objErr.reason
@@ -1074,7 +1077,36 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 			Set vrdtvs_xmlDoc = Nothing
 ???????????????????????????????????????????????????
 
+Option Explicit 
+' Append the content of a specified .vpy file to a second DOS .BAT file, adding "echo" to pipe to a third filename 
+'   - assume content has special characters which need attention  
+Dim fso 
+Dim theScriptName 
+theScriptName = Wscript.ScriptFullName 
+ 
+Set fso = CreateObject("Scripting.FileSystemObject") 
+'on error resume next		
+			 
+'WScript.StdOut.WriteLine "Started " & theScriptName 
 
+ 
+' ****************************************
+' Transform the XML.
+' ****************************************
+  Dim objXML, str, orig
+  Set objXML = WScript.CreateObject("Microsoft.XMLDOM") '("Msxml2.DOMDocument") ??? 
+  objXML.load "G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\27_Dresses.2020-09-18.Bprj"
+  str = objXML.transformNode(objXML) ' use it's own stylesheet to transform itself
+  orig = objXML.xml
+
+WScript.Echo str
+WScript.Echo orig
+
+Set objXML = Nothing
+'WScript.StdOut.WriteLine "Finished " & theScriptName 
+Set fso = Nothing 
+Wscript.Quit 
+???????????????????????????????????????????????????
 
 
 
