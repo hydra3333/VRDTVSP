@@ -325,22 +325,9 @@ End If
 ' The function filters for file Extensions: .ts .mp4 .mpg and creates .bprj
 '
 '.................. START video processing for the FULL SOURCE TS folder (not tree) - the function has a big loop - converts Source files then moves them to Done or Failed
-'vrdtvs_status = vrdtvs_convert_video_files_and_move_to_done() ' it uses globally defined folders (the function filters for file Extensions: .ts .mp4 .mpg and creates .bprj)
-
-'.................. END video processing for the FULL SOURCE TS folder (not tree) - the function has a big loop - converts Source files then moves them to Done or Failed
-'
-' finalize the FFMPEG COMMANDS file with PAUSE etc
-'?????????????????????????????????????????????.Writeline
-' close the FFMPEG COMMANDS file 
-'?????????????????????????????????????????????.Close
-' set the FFMPEG COMMANDS file object to nothing
-'Set vrdtvs_saved_ffmpeg_commands_object = Nothing
-
-
 ' ***** Rely on these already being set Globally BEFORE invoking the conversion function
 ' ***** 	vrdtvs_DEBUG
 ' ***** 	vrdtvs_DEVELOPMENT_NO_ACTIONS
-'
 vrdtvs_status = vrdtvs_Convert_files_in_a_folder(	vrdtvs_source_TS_Folder, _
 													vrdtvs_done_TS_Folder, _
 													vrdtvs_destination_mp4_Folder, _
@@ -360,73 +347,7 @@ If vrdtvs_status <> 0 Then ' Something bad went wrong (invididual conversion fai
 	WScript.StdOut.WriteLine("VRDTVS ERROR  VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_Convert_files_in_a_folder ... Aborting ...")
 	Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
-
-
-
-Function vrdtvs_Convert_files_in_a_folder(	C_source_TS_Folder, _
-											C_done_TS_Folder, _
-											C_destination_mp4_Folder, _
-											C_failed_conversion_TS_Folder, _
-											C_temp_path, _
-											C_profile_name_for_qsf_mpeg2, _
-											C_extension_mpeg2, _
-											C_profile_name_for_qsf_avc, _
-											C_extension_avc, _
-											C_path_for_qsf_vbs, _
-											C_path_for_adscan_vbs, _
-											C_saved_ffmpeg_commands_filename _
-											C_do_an_Adcsan, _	' True or False
-										)
-    ' Parameters: 
-	'		C_source_TS_Folder, _
-	'		C_done_TS_Folder, _
-	'		C_destination_mp4_Folder, _
-	'		C_failed_conversion_TS_Folder, _
-	'		C_temp_path, _
-	'		C_profile_name_for_qsf_mpeg2, _
-	'		C_extension_mpeg2, _
-	'		C_profile_name_for_qsf_avc, _
-	'		C_extension_avc, _
-	'		C_path_for_qsf_vbs, _
-	'		C_path_for_adscan_vbs, _
-	'		C_saved_ffmpeg_commands_filename _
-	' NOTES: 
-	'	Depend on these already being set Globally to True or False BEFORE invoking the conversion function: vrdtvs_DEBUG, vrdtvs_DEVELOPMENT_NO_ACTIONS
-	'	Check for C_source_TS_Folder = C_destination_mp4_Folder since we don't permit that
-	'	Convert .TS and .MP4 files in the C_source_TS_Folder and create adscan .BPRJ files
-	'	Resulting .mp4 and .bprj goes into C_destination_mp4_Folder
-	'	Successfilly completed .TS and .MP4 files (and associated .BPRJ, if any) goes into C_done_TS_Folder 
-	'	Failed-to-convert .TS and .MP4 files (and associated .BPRJ, if any) goes into C_failed_conversion_TS_Folder 
-	'	Use a scratch folder (on an SSD) in C_temp_path
-	'	
-	'	C_saved_ffmpeg_commands_filename
-	'
-' generate a unique filename to save FFMPEG and related commands
-vrdtvs_saved_ffmpeg_commands_filename = fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_source_TS_Folder, "vrdtvs_saved_ffmpeg_commands-" & vrdtvs_run_datetime & ".bat"))
-' delete the FFMPEG COMMANDS file silently
-vrdtvs_status = vrdtvs_delete_a_file (vrdtvs_saved_ffmpeg_commands_filename, True) ' delete it silently
-If vrdtvs_status <> 0 AND vrdtvs_status <> 53 Then ' Something went wrong with deleting the file, but allow 53 "File not found"
-	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_delete_a_file with """ & vrdtvs_saved_ffmpeg_commands_filename & """... Aborting ...")
-	WScript.StdOut.WriteLine("VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_delete_a_file with """ & vrdtvs_saved_ffmpeg_commands_filename & """... Aborting ...")
-	Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
-End If' Create a new empty FFMPEG COMMANDS file with overwrite
-'?????????????????????????????????????????????.CreateFile
-' open the FFMPEG COMMANDS file and get a Global object used to write to it
-'?????????????????????????????????????????????.Open for write
-'Set vrdtvs_saved_ffmpeg_commands_object = ???
-' initialize the FFMPEG COMMANDS file with @echo, expansion etc
-'?????????????????????????????????????????????.Writeline
-
-
-	'
-End Function
-													
-													
-													
-													
-													
-
-
+'.................. END video processing for the FULL SOURCE TS folder (not tree) - the function has a big loop - converts Source files then moves them to Done or Failed
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' In Top Level Folders: Destination 
@@ -2047,3 +1968,76 @@ End Function
 '****************************************************************************************************************************************
 '****************************************************************************************************************************************
 '****************************************************************************************************************************************
+'****************************************************************************************************************************************
+'****************************************************************************************************************************************
+'****************************************************************************************************************************************
+'****************************************************************************************************************************************
+'****************************************************************************************************************************************
+'****************************************************************************************************************************************
+'****************************************************************************************************************************************
+'****************************************************************************************************************************************
+'****************************************************************************************************************************************
+'
+Function vrdtvs_Convert_files_in_a_folder(	C_source_TS_Folder, _
+											C_done_TS_Folder, _
+											C_destination_mp4_Folder, _
+											C_failed_conversion_TS_Folder, _
+											C_temp_path, _
+											C_profile_name_for_qsf_mpeg2, _
+											C_extension_mpeg2, _
+											C_profile_name_for_qsf_avc, _
+											C_extension_avc, _
+											C_path_for_qsf_vbs, _
+											C_path_for_adscan_vbs, _
+											C_saved_ffmpeg_commands_filename _
+											C_do_an_Adcsan _	' True or False
+										)
+    ' Parameters: 
+	'		C_source_TS_Folder
+	'		C_done_TS_Folder
+	'		C_destination_mp4_Folder
+	'		C_failed_conversion_TS_Folder
+	'		C_temp_path
+	'		C_profile_name_for_qsf_mpeg2, 
+	'		C_extension_mpeg2
+	'		C_profile_name_for_qsf_avc
+	'		C_extension_avc
+	'		C_path_for_qsf_vbs
+	'		C_path_for_adscan_vbs
+	'		C_saved_ffmpeg_commands_filename
+	'		C_do_an_Adcsan
+	' NOTES: 
+	'	Depend on these already being set Globally to True or False BEFORE invoking the conversion function: vrdtvs_DEBUG, vrdtvs_DEVELOPMENT_NO_ACTIONS
+	'	Check for C_source_TS_Folder = C_destination_mp4_Folder since we don't permit that
+	'	Convert .TS and .MP4 files in the C_source_TS_Folder and create adscan .BPRJ files
+	'	Resulting .mp4 and .bprj goes into C_destination_mp4_Folder
+	'	Successfilly completed .TS and .MP4 files (and associated .BPRJ, if any) goes into C_done_TS_Folder 
+	'	Failed-to-convert .TS and .MP4 files (and associated .BPRJ, if any) goes into C_failed_conversion_TS_Folder 
+	'	Use a scratch folder (on an SSD) in C_temp_path
+	'	Create file C_saved_ffmpeg_commands_filename to store commands/data used for: qsf, dgindex, .vpy, ffmpeg, adscan
+	'	The version(s) of VRD to use are preset in (but we won't need to use them) :
+	'			vrd_version_for_qsf and vrd_version_for_adscan
+	'
+	Dim C_object_File, C_object_Files_Collection
+	Dim C_object_Folder, C_object_Folders_Collection
+	'
+	' generate a unique filename to save FFMPEG and related commands
+	vrdtvs_saved_ffmpeg_commands_filename = C_fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_source_TS_Folder, "vrdtvs_saved_ffmpeg_commands-" & vrdtvs_run_datetime & ".bat"))
+	' delete the FFMPEG COMMANDS file silently
+	vrdtvs_status = vrdtvs_delete_a_file (vrdtvs_saved_ffmpeg_commands_filename, True) ' delete it silently
+	If vrdtvs_status <> 0 AND vrdtvs_status <> 53 Then ' Something went wrong with deleting the file, but allow 53 "File not found"
+		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_files_in_a_folder - Error " & vrdtvs_status & " from vrdtvs_delete_a_file with """ & vrdtvs_saved_ffmpeg_commands_filename & """... Aborting ...")
+		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_files_in_a_folder - Error " & vrdtvs_status & " from vrdtvs_delete_a_file with """ & vrdtvs_saved_ffmpeg_commands_filename & """... Aborting ...")
+		Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+	End If' Create a new empty FFMPEG COMMANDS file with overwrite
+	'?????????????????????????????????????????????.CreateFile
+	' open the FFMPEG COMMANDS file and get a Global object used to write to it
+	'?????????????????????????????????????????????.Open for write
+	'Set vrdtvs_saved_ffmpeg_commands_object = ???
+	' initialize the FFMPEG COMMANDS file with @echo, expansion etc
+	'?????????????????????????????????????????????.Writeline
+
+
+	'
+End Function
+													
