@@ -1100,6 +1100,10 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 			'''' ??????????? try to in-place transform the XML string using an XSL stylesheet  per https://blogs.iis.net/robert_mcmurray/creating-quot-pretty-quot-xml-using-xsl-and-vbscript
 			Set vrdtvs_xslDoc = CreateObject("Microsoft.XMLDOM") ' or perhaps this instead: Set vrdtvs_xslDoc = WScript.CreateObject("Msxml2.DOMDocument") ' assume no error
 			vrdtvs_xslDoc.async = False
+			If vrdtvs_DEBUG Then
+				WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: about to load XSL vrdtvs_xslStylesheet_string: ")
+				WScript.StdOut.WriteLine("" & vrdtvs_xslStylesheet_string & "")
+			End If
 			on error resume next 
 			bprj_status = vrdtvs_xslDoc.loadXML(vrdtvs_xslStylesheet_string) ' load the xsl stylesheet string
 			Set bprj_objErr = vrdtvs_xslDoc.parseError
@@ -1130,11 +1134,15 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 
 
 
-			WScript.StdOut.WriteLine("VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File: bprj filename xml-node before: " & bprj_txtbefore & "")
-			WScript.StdOut.WriteLine("VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File:                         after: " & bprj_nNode.text & "")
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File: bprj xml-node before: ")
+			WScript.StdOut.WriteLine("" & bprj_txtbefore & "")
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File: bprj xml-node after: ")
+			WScript.StdOut.WriteLine("" & bprj_nNode.text & "")
 			If vrdtvs_DEBUG Then
-				WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: xml-node before: " & bprj_xmlbefore & "")
-				WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File:           after: " & bprj_nNode.text & "")
+				WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: xml-node before: ")
+				WScript.StdOut.WriteLine("" & bprj_xmlbefore & "")
+				WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File:           after: ")
+				WScript.StdOut.WriteLine("" & bprj_nNode.text & "")
 			End If
 			on error resume next 
 			If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
