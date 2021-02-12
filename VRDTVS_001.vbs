@@ -30,7 +30,7 @@ Option explicit
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' 1. Check and Exit if this .vbs isn't run under CSCRIPT (not WSCRIPT which is the default)
 '    NOTE:  For ANY of this to work, the vb script MUST be run under Cscript host - or, things like stdout fail to work.
-WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
+WScript.StdOut.WriteLine("------------------------------------------------------------------------------------------------------")
 Dim  cscript_wshShell, cscript_strEngine
 '
 Set cscript_wshShell = CreateObject( "WScript.Shell" )
@@ -46,10 +46,10 @@ If UCase(cscript_strEngine) <> UCase("\CSCRIPT.EXE") Then
     WScript.Echo "CSCRIPT Engine MUST be CSCRIPT not WSCRIPT ... Aborting ..."
 	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
-WScript.StdOut.WriteLine "VRDTVS cscript Engine: """ & cscript_strEngine & """"
-WScript.StdOut.WriteLine "VRDTVS    Script name: " & Wscript.ScriptName
-WScript.StdOut.WriteLine "VRDTVS    Script path: " & Wscript.ScriptFullName
-WScript.StdOut.WriteLine "------------------------------------------------------------------------------------------------------"
+WScript.StdOut.WriteLine("VRDTVS cscript Engine: """ & cscript_strEngine & """")
+WScript.StdOut.WriteLine("VRDTVS    Script name: " & Wscript.ScriptName)
+WScript.StdOut.WriteLine("VRDTVS    Script path: " & Wscript.ScriptFullName)
+WScript.StdOut.WriteLine("------------------------------------------------------------------------------------------------------")
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Setup Global constants which we don't group below
@@ -387,10 +387,10 @@ vrdtvs_temp_powershell_filename = vrdtvs_gimme_a_temporary_absolute_filename("vr
 'if fix_timestamps = True then
 '	Set objWscriptShell = CreateObject("Wscript.shell")
 '	vrdtvs_temp_powershell_cmd = "powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Normal -File """ & vrdtvs_temp_powershell_filename & """ -Folder """ & ???thefoldertree??? & """"
-'	WScript.StdOut.WriteLine "vbs_rename_files: ***** Fixing file dates using:<" & vrdtvs_temp_powershell_cmd & ">"
+'	WScript.StdOut.WriteLine("vbs_rename_files: ***** Fixing file dates using:<" & vrdtvs_temp_powershell_cmd & ">")
 '	???? objWscriptShell.??? exec run vrdtvs_temp_powershell_cmd, True ?????????? use exec instead with stdout stderr etc
 '	Set objWscriptShell = Nothing
-'	WScript.StdOut.WriteLine "vbs_rename_files: --- FINISHED for folder <" & aPath & ">"
+'	WScript.StdOut.WriteLine("vbs_rename_files: --- FINISHED for folder <" & aPath & ">")
 'end if
 '????????????????????????????
 'scratch_local_timerEnd = Timer
@@ -1004,8 +1004,8 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 		' ***** If a matching .bprj file exists in the same folder, (a) rename it to match the new filename (b) fix the content of .bprj file (it's xml) to match the media filename 
 		' ***** note: .bprj files should only exist for files aready converted to .mp4 ... ie in the destination folder ?
 		'
-		Original_BPRJ_AbsoluteFilename = fso.GetAbsolutePathName( fso.BuildPath(theOriginalParentFolderName,theOriginalBaseName & ".bprj")
-		Final_Renamed_BPRJ_AbsoluteFilename = fso.GetAbsolutePathName( fso.BuildPath(Final_Renamed_ParentFolderName,Final_Renamed_BaseName & ".bprj")
+		Original_BPRJ_AbsoluteFilename = fso.GetAbsolutePathName( fso.BuildPath(theOriginalParentFolderName,theOriginalBaseName & ".bprj"))
+		Final_Renamed_BPRJ_AbsoluteFilename = fso.GetAbsolutePathName( fso.BuildPath(Final_Renamed_ParentFolderName,Final_Renamed_BaseName & ".bprj"))
 		'If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 		'	Final_Renamed_BPRJ_AbsoluteFilename = Original_BPRJ_AbsoluteFilename ' if DEV we didn't rename the original media file
 		'End If
@@ -1026,7 +1026,7 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 			Err.Clear
 			on error goto 0
 			If (bprj_ErrNo <> 0) Then ' Error 0 is OK meaning it renamed just fine
-				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: error renaming .bprj ErrorNo: " & bprj_ErrNo & " Description: " & bprj_ErrDescription 
+				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: error renaming .bprj ErrorNo: " & bprj_ErrNo & " Description: " & bprj_ErrDescription)
 				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: error renaming .bprj      Original_BPRJ_AbsoluteFilename=""" & Original_BPRJ_AbsoluteFilename & """")
 				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: error renaming .bprj Final_Renamed_BPRJ_AbsoluteFilename=""" & Final_Renamed_BPRJ_AbsoluteFilename & """")
 				Wscript.Quit 17 ' bprj_ErrNo
@@ -1046,14 +1046,14 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 			on error goto 0 
 			If not bprj_status Then
 				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: Failed to load XML doc .BPRJ file """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
-				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: XML error: " & bprj_errorCode & " : " &bprj_reason
+				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: XML error: " & bprj_errorCode & " : " &bprj_reason)
 				Wscript.Quit 17
 			End If
-			'WScript.StdOut.WriteLine "vbs_rename_files: debug: loaded xml doc " & new_name
+			'WScript.StdOut.WriteLine("vbs_rename_files: debug: loaded xml doc " & new_name)
 			'Locate the desired node. Note the use of XPATH instead of looping over all the child nodes.
 			Set bprj_nNode = vrdtvs_xmlDoc.selectsinglenode ("//VideoReDoProject/Filename")
 			If bprj_nNode is Nothing Then
-				WScript.StdOut.WriteLine "VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: Could not find XML node //VideoReDoProject/Filename in file " & new_name
+				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: Could not find XML node //VideoReDoProject/Filename in file " & new_name)
 				WScript.quit 17 ' exit with an error ... soft or hard ?
 			End If
 			bprj_txtbefore = nNode.text ' this is the pathname to the associated media file 
@@ -1070,11 +1070,11 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 			bprj_xmlbefore = vrdtvs_xmlDoc.xml
 			nNode.text = bprj_txtafter
 			bprj_xmlafter = vrdtvs_xmlDoc.transformNode(vrdtvs_xmlDoc) ' use it's own stylesheet to transform itself
-			WScript.StdOut.WriteLine "VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File: bprj filename xml-node before:<" & bprj_txtbefore & ">"
-			WScript.StdOut.WriteLine "VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File:                         after:<" & nNode.text & ">"
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File: bprj filename xml-node before:<" & bprj_txtbefore & ">")
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File:                         after:<" & nNode.text & ">")
 			If vrdtvs_DEBUG Then
-				WScript.StdOut.WriteLine "VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File: xml before:<" & bprj_xmlbefore & ">"
-				WScript.StdOut.WriteLine "VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File:      after:<" & bprj_xmlafter & ">"
+				WScript.StdOut.WriteLine("VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File: xml before:<" & bprj_xmlbefore & ">")
+				WScript.StdOut.WriteLine("VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File:      after:<" & bprj_xmlafter & ">")
 			End If
 			on error resume next 
 			If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
