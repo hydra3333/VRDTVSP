@@ -1055,9 +1055,15 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 			End If
 			' replace the old basename portion of the associated media filename with the renamed basename portion
 			bprj_txtafter = Replace(bprj_txtafter, fso.GetBaseName(Original_BPRJ_AbsoluteFilename), fso.GetBaseName(Final_Renamed_BPRJ_AbsoluteFilename), 1, -1, vbTextCompare)
+			bprj_xmlbefore = vrdtvs_xmlDoc.xml
 			nNode.text = bprj_txtafter
-			WScript.StdOut.WriteLine "vbs_rename_files: Update bprj xml node before:<" & txtbefore & ">"
-			WScript.StdOut.WriteLine "vbs_rename_files:                       after:<" & nNode.text & ">"
+			bprj_xmlafter = vrdtvs_xmlDoc.transformNode(vrdtvs_xmlDoc)
+			WScript.StdOut.WriteLine "VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File: bprj filename xml-node before:<" & bprj_txtbefore & ">"
+			WScript.StdOut.WriteLine "VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File:                         after:<" & nNode.text & ">"
+			If vrdtvs_DEBUG Then
+				WScript.StdOut.WriteLine "VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File: xml before:<" & bprj_xmlbefore & ">"
+				WScript.StdOut.WriteLine "VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File:      after:<" & bprj_xmlafter & ">"
+			End If
 			on error resume next 
 			If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 			Else
@@ -1077,26 +1083,8 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 			Set vrdtvs_xmlDoc = Nothing
 ???????????????????????????????????????????????????
 
-Option Explicit 
-' Append the content of a specified .vpy file to a second DOS .BAT file, adding "echo" to pipe to a third filename 
-'   - assume content has special characters which need attention  
-Dim fso 
-Dim theScriptName 
-theScriptName = Wscript.ScriptFullName 
- 
-Set fso = CreateObject("Scripting.FileSystemObject") 
-'on error resume next		
-			 
-'WScript.StdOut.WriteLine "Started " & theScriptName 
-
- 
-' ****************************************
-' Transform the XML.
-' ****************************************
-  Dim objXML, str, orig
-  Set objXML = WScript.CreateObject("Microsoft.XMLDOM") '("Msxml2.DOMDocument") ??? 
-  objXML.load "G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\27_Dresses.2020-09-18.Bprj"
-  str = objXML.transformNode(objXML) ' use it's own stylesheet to transform itself
+			'print the new xml in a formatted way
+			'  str = objXML.transformNode(objXML) ' use it's own stylesheet to transform itself
   orig = objXML.xml
 
 WScript.Echo str
