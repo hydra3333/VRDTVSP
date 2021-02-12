@@ -1000,26 +1000,20 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 		Final_Renamed_ParentFolderName = fso.GetParentFolderName(Final_Renamed_AbsoluteFilename_AfterRetries)
 		Final_Renamed_BaseName = fso.GetBaseName(Final_Renamed_AbsoluteFilename_AfterRetries)
 		Final_Renamed_ExtName = fso.GetExtensionName(Final_Renamed_AbsoluteFilename_AfterRetries) ' does not include  the "."
-
-
-
-		... ??? copied legacy code conversion  in progress ...
-		'???????????????????????????????????? ALSO taking care of editing and rewriting the content .bprj files (which are just XML files) ... test for Ucase(theExtName) = Ucase("bprj")
+		'
+		' If a matching .bprj file exists in the same folder, (a) rename it to match the new filename (b) fix the content of .bprj file (it's xml) to match the media filename 
+		'
 		Original_BPRJ_AbsoluteFilename = fso.GetAbsolutePathName( fso.BuildPath(theOriginalParentFolderName,theOriginalBaseName & ".bprj")
 		Final_Renamed_BPRJ_AbsoluteFilename = fso.GetAbsolutePathName( fso.BuildPath(Final_Renamed_ParentFolderName,Final_Renamed_BaseName & ".bprj")
 		
 		If fso.FileExists(Original_BPRJ_AbsoluteFilename) Then 
-			' yeppity, a matching .bprj file found for the original media filename, 
-			If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: found a matching .bprj file to autofix: """ & Original_BPRJ_AbsoluteFilename & """")
-		
-???????????????????????????????????????????????????
+			' yeppity, a matching .bprj file is FOUND for the original media filename
+			If vrdtvs_DEBUG Then 
+				WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: found a matching .bprj file to autofix: """ & Original_BPRJ_AbsoluteFilename & """")
+			End If
 			' a) rename the .bprj file to match the new BaseName of the media file ... abort on a failure to simply rename the .bprj file
-
-			 do the rename in here
-
+			 ????????????? do the rename in here
 			' b) process/fix the content of .bprj file (it's xml) so the media filename in it is updated to match the renamed media filename
-
-
 			' load the file Final_Renamed_BPRJ_AbsoluteFilename and replace the file part with Final_Renamed_BaseName in it
 			Set vrdtvs_xmlDoc = CreateObject("Microsoft.XMLDOM")
 			vrdtvs_xmlDoc.async = False
