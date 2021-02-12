@@ -329,6 +329,9 @@ End If
 ' ***** 	vrdtvs_DEBUG
 ' ***** 	vrdtvs_DEVELOPMENT_NO_ACTIONS
 ' ***** 	wso, fso, vrdtvs_status
+' generate a unique filename to save FFMPEG and related commands
+vrdtvs_saved_ffmpeg_commands_filename = C_fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_source_TS_Folder, "vrdtvs_saved_ffmpeg_commands-" & vrdtvs_run_datetime & ".bat"))
+' process the files
 vrdtvs_status = vrdtvs_Convert_files_in_a_folder(	vrdtvs_source_TS_Folder, _
 													vrdtvs_done_TS_Folder, _
 													vrdtvs_destination_mp4_Folder, _
@@ -1994,20 +1997,7 @@ Function vrdtvs_Convert_files_in_a_folder(	C_source_TS_Folder, _
 											C_do_an_Adcsan _	' True or False
 										)
 	' Loop and convert .TS .mp4 .mpg Source files in a folder into acceptable avc/aac .mp4 Destination files 
-    ' Parameters: 
-	'		C_source_TS_Folder
-	'		C_done_TS_Folder
-	'		C_destination_mp4_Folder
-	'		C_failed_conversion_TS_Folder
-	'		C_temp_path
-	'		C_profile_name_for_qsf_mpeg2, 
-	'		C_extension_mpeg2
-	'		C_profile_name_for_qsf_avc
-	'		C_extension_avc
-	'		C_path_for_qsf_vbs
-	'		C_path_for_adscan_vbs
-	'		C_saved_ffmpeg_commands_filename
-	'		C_do_an_Adcsan
+    ' Parameters: see below
 	' NOTES: 
 	'	Rely on these already being set Globally to True or False BEFORE invoking the conversion function: vrdtvs_DEBUG, vrdtvs_DEVELOPMENT_NO_ACTIONS, wso, fso, vrdtvs_status
 	'	Check for C_source_TS_Folder = C_destination_mp4_Folder since we don't permit that
@@ -2023,8 +2013,6 @@ Function vrdtvs_Convert_files_in_a_folder(	C_source_TS_Folder, _
 	Dim C_object_File, C_object_Files_Collection
 	Dim C_object_Folder, C_object_Folders_Collection
 	'
-	' generate a unique filename to save FFMPEG and related commands
-	vrdtvs_saved_ffmpeg_commands_filename = C_fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_source_TS_Folder, "vrdtvs_saved_ffmpeg_commands-" & vrdtvs_run_datetime & ".bat"))
 	' delete the FFMPEG COMMANDS file silently
 	vrdtvs_status = vrdtvs_delete_a_file (vrdtvs_saved_ffmpeg_commands_filename, True) ' delete it silently
 	If vrdtvs_status <> 0 AND vrdtvs_status <> 53 Then ' Something went wrong with deleting the file, but allow 53 "File not found"
