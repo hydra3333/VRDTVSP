@@ -1090,7 +1090,7 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 			on error goto 0 
 			If not bprj_status Then
 				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: Failed to save XML doc into .BPRJ file """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
-				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: XML error: " & bprj_errorCode & " : " &bprj_reason
+				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: XML error: " & bprj_errorCode & " : Reason:" & bprj_reason
 				Wscript.Quit 17
 			End If
 			Set vrdtvs_xmlDoc = Nothing
