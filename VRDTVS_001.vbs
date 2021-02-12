@@ -1096,7 +1096,7 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 			Set vrdtvs_xslDoc = CreateObject("Microsoft.XMLDOM") ' or perhaps this instead: Set vrdtvs_xslDoc = WScript.CreateObject("Msxml2.DOMDocument") ' assume no error
 			vrdtvs_xslDoc.async = False
 			on error resume next 
-			bprj_status = vrdtvs_xslDoc.loadXML vrdtvs_xslStylesheet_string ' load the xsl style string
+			bprj_status = vrdtvs_xslDoc.loadXML(vrdtvs_xslStylesheet_string) ' load the xsl stylesheet string
 			Set bprj_objErr = vrdtvs_xslDoc.parseError
 			bprj_errorCode = bprj_objErr.errorCode
 			bprj_reason = bprj_objErr.reason
@@ -1108,7 +1108,7 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 				Wscript.Quit 17
 			End If
 			on error resume next 
-			bprj_status = vrdtvs_xmlDoc.transformNode(vrdtvs_xslDoc) transform using the xsl stylesheet
+			bprj_status = vrdtvs_xmlDoc.transformNode(vrdtvs_xslDoc) ' transform using the xsl stylesheet
 			Set bprj_objErr = vrdtvs_xslDoc.parseError
 			bprj_errorCode = bprj_objErr.errorCode
 			bprj_reason = bprj_objErr.reason
