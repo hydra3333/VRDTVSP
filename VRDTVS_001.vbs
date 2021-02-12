@@ -1094,9 +1094,8 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 			End If
 			' replace the old basename portion of the associated media filename with the renamed basename portion
 			bprj_txtafter = Replace(bprj_txtafter, fso.GetBaseName(Original_BPRJ_AbsoluteFilename), fso.GetBaseName(Final_Renamed_BPRJ_AbsoluteFilename), 1, -1, vbTextCompare)
-			bprj_xmlbefore = vrdtvs_xmlDoc.xml
+			bprj_xmlbefore = vrdtvs_xmlDoc.xml ' save the overall XML before we fix and transform
 			bprj_nNode.text = bprj_txtafter ' load the edited text back intothe XML document
-
 			'''' ??????????? try to in-place transform the XML string using an XSL stylesheet  per https://blogs.iis.net/robert_mcmurray/creating-quot-pretty-quot-xml-using-xsl-and-vbscript
 			Set vrdtvs_xslDoc = CreateObject("Microsoft.XMLDOM") ' or perhaps this instead: Set vrdtvs_xslDoc = WScript.CreateObject("Msxml2.DOMDocument") ' assume no error
 			vrdtvs_xslDoc.async = False
@@ -1128,21 +1127,12 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: XML/XSL transformNode error bprj_status: " & bprj_status & " ErrorCode: " & bprj_errorCode & " : " & bprj_reason)
 				Wscript.Quit 17
 			End If
-			bprj_xmlafter = bprj_nNode.text
-			'''' ??????????? try to transform the XML string using an XSL stylesheet  per https://blogs.iis.net/robert_mcmurray/creating-quot-pretty-quot-xml-using-xsl-and-vbscript
-
-
-
-
-			WScript.StdOut.WriteLine("VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File: bprj xml-node before: ")
-			WScript.StdOut.WriteLine("" & bprj_txtbefore & "")
-			WScript.StdOut.WriteLine("VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File: bprj xml-node after: ")
-			WScript.StdOut.WriteLine("" & bprj_nNode.text & "")
+			bprj_xmlafter = vrdtvs_xmlDoc.xml ' save the overall XML after we fix and transform
 			If vrdtvs_DEBUG Then
-				WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: xml-node before: ")
-				WScript.StdOut.WriteLine("" & bprj_xmlbefore & "")
-				WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File:           after: ")
-				WScript.StdOut.WriteLine("" & bprj_nNode.text & "")
+				WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: bprj xml-node before: """ & bprj_txtbefore & """")
+				WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: bprj xml-node  after: """ & bprj_nNode.text & """")
+				WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: xml ALL before: " & bprj_xmlbefore & "")
+				WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: xml ALL  after: " & bprj_xmlafter & "")
 			End If
 			on error resume next 
 			If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
