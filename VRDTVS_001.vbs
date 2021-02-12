@@ -956,7 +956,7 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
     Dim NewBaseName, newAbsoluteFilename
 	Dim Final_Renamed_AbsoluteFilename_AfterRetries, Final_Renamed_ParentFolderName, Final_Renamed_BaseName, Final_Renamed_ExtName
 	Dim Original_BPRJ_AbsoluteFilename, Final_Renamed_BPRJ_AbsoluteFilename, bprj_status, bprj_objErr, bprj_errorCode, bprj_reason
-	Dim bprj_nNode, bprj_i, bprj_txtbefore, bprj_txtafter
+	Dim bprj_nNode, bprj_i, bprj_txtbefore, bprj_txtafter, bprj_ErrNo, bprj_ErrDescription
 	Dim vrdtvs_xmlDoc
 	Dim local_timerStart, local_timerEnd
 	local_timerStart = Timer
@@ -1001,18 +1001,35 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 		Final_Renamed_BaseName = fso.GetBaseName(Final_Renamed_AbsoluteFilename_AfterRetries)
 		Final_Renamed_ExtName = fso.GetExtensionName(Final_Renamed_AbsoluteFilename_AfterRetries) ' does not include  the "."
 		'
-		' If a matching .bprj file exists in the same folder, (a) rename it to match the new filename (b) fix the content of .bprj file (it's xml) to match the media filename 
+		' ***** If a matching .bprj file exists in the same folder, (a) rename it to match the new filename (b) fix the content of .bprj file (it's xml) to match the media filename 
 		'
 		Original_BPRJ_AbsoluteFilename = fso.GetAbsolutePathName( fso.BuildPath(theOriginalParentFolderName,theOriginalBaseName & ".bprj")
 		Final_Renamed_BPRJ_AbsoluteFilename = fso.GetAbsolutePathName( fso.BuildPath(Final_Renamed_ParentFolderName,Final_Renamed_BaseName & ".bprj")
-		
+		'If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
+		'	Final_Renamed_BPRJ_AbsoluteFilename = Original_BPRJ_AbsoluteFilename ' if DEV we didn't rename the original media file
+		'End If
 		If fso.FileExists(Original_BPRJ_AbsoluteFilename) Then 
 			' yeppity, a matching .bprj file is FOUND for the original media filename
 			If vrdtvs_DEBUG Then 
 				WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: found a matching .bprj file to autofix: """ & Original_BPRJ_AbsoluteFilename & """")
 			End If
 			' a) rename the .bprj file to match the new BaseName of the media file ... abort on a failure to simply rename the .bprj file
-			 ????????????? do the rename in here
+			on error resume next
+			If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
+				'WScript.StdOut.WriteLine("VRDTVS vrdtvs_DEVELOPMENT_NO_ACTIONS: DEV: vrdtvs_do_a_Try99Times_Rename NOT DOING 'fso.MoveFile theOriginalAbsoluteFilename, theTargetAbsoluteFilename'")
+			Else
+				fso.MoveFile Original_BPRJ_AbsoluteFilename, Final_Renamed_BPRJ_AbsoluteFilename ' this is the actual File Rename
+			End If
+			bprj_ErrNo = Err.Number
+			bprj_ErrDescription = Err.Description
+			Err.Clear
+			on error goto 0
+			If (bprj_ErrNo <> 0) Then ' Error 0 is OK meaning it renamed just fine
+				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: error renaming .bprj file " & bprj_ErrNo & " " & bprj_ErrDescription 
+				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: error renaming .bprj      Original_BPRJ_AbsoluteFilename=""" & Original_BPRJ_AbsoluteFilename & """")
+				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: error renaming .bprj Final_Renamed_BPRJ_AbsoluteFilename=""" & Final_Renamed_BPRJ_AbsoluteFilename & """")
+				Wscript.Quit 17 ' bprj_ErrNo
+			End If
 			' b) process/fix the content of .bprj file (it's xml) so the media filename in it is updated to match the renamed media filename
 			' load the file Final_Renamed_BPRJ_AbsoluteFilename and replace the file part with Final_Renamed_BaseName in it
 			Set vrdtvs_xmlDoc = CreateObject("Microsoft.XMLDOM")
@@ -1035,7 +1052,7 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 			'Locate the desired node. Note the use of XPATH instead of looping over all the child nodes.
 			Set bprj_nNode = vrdtvs_xmlDoc.selectsinglenode ("//VideoReDoProject/Filename")
 			If bprj_nNode is Nothing Then
-				WScript.StdOut.WriteLine "vbs_rename_files: Aborted. Could not find XML node //VideoReDoProject/Filename in file " & new_name
+				WScript.StdOut.WriteLine "VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: Could not find XML node //VideoReDoProject/Filename in file " & new_name
 				WScript.quit 17 ' exit with an error ... soft or hard ?
 			End If
 			bprj_txtbefore = nNode.text ' this is the pathname to the associated media file 
@@ -1081,9 +1098,9 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 	'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	'
 	local_timerEnd = Timer
-    'If vrdtvs_DEBUG Then 
-	'	WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: Exit having Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(local_timerStart, local_timerEnd))
-	'End If
+    If vrdtvs_DEBUG Then 
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: Exit having Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(local_timerStart, local_timerEnd))
+	End If
 	' vrdtvs_ffiaft_pfis_Rename_a_File is a Sub, hence no return values
 End Sub
 '
