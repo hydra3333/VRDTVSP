@@ -1076,7 +1076,7 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 			bprj_nNode.text = bprj_txtafter
 			bprj_xmlafter = vrdtvs_xmlDoc.transformNode(vrdtvs_xmlDoc) ' use it's own stylesheet to transform itself
 			WScript.StdOut.WriteLine("VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File: bprj filename xml-node before:<" & bprj_txtbefore & ">")
-			WScript.StdOut.WriteLine("VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File:                         after:<" & nNode.text & ">")
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File:                         after:<" & bprj_nNode.text & ">")
 			If vrdtvs_DEBUG Then
 				WScript.StdOut.WriteLine("VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File: xml before:<" & bprj_xmlbefore & ">")
 				WScript.StdOut.WriteLine("VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File:      after:<" & bprj_xmlafter & ">")
