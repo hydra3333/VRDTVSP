@@ -1078,7 +1078,7 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 			End If
 			on error resume next 
 			If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
-				' if DEV do not save the updated XML .bprj
+				WScript.StdOut.WriteLine("VRDTVS vrdtvs_DEVELOPMENT_NO_ACTIONS: DEV: vrdtvs_ffiaft_pfis_Rename_a_File NOT RE-WRITING bprj """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
 			Else
 				vrdtvs_xmlDoc.save(Final_Renamed_BPRJ_AbsoluteFilename) ' tell the XMLDOM processor to save the updated XML file
 			End If
