@@ -324,10 +324,11 @@ End If
 ' Convert Video files and create the associated .bprj files by running adscan on the media file
 ' The function filters for file Extensions: .ts .mp4 .mpg and creates .bprj
 '
-'.................. START video processing for the FULL SOURCE TS folder (not tree) - the function has a big loop - converts Source files then moves them to Done or Failed
-' ***** Rely on these already being set Globally BEFORE invoking the conversion function
+'.................. START video processing for the FULL SOURCE TS folder (not tree) - the function has a big loop - converts .TS .mp4 .mpg Source files then moves them to Done or Failed
+' ***** Rely on these already being defined/set Globally BEFORE invoking the conversion function
 ' ***** 	vrdtvs_DEBUG
 ' ***** 	vrdtvs_DEVELOPMENT_NO_ACTIONS
+' ***** 	wso, fso, vrdtvs_status
 vrdtvs_status = vrdtvs_Convert_files_in_a_folder(	vrdtvs_source_TS_Folder, _
 													vrdtvs_done_TS_Folder, _
 													vrdtvs_destination_mp4_Folder, _
@@ -1992,6 +1993,7 @@ Function vrdtvs_Convert_files_in_a_folder(	C_source_TS_Folder, _
 											C_saved_ffmpeg_commands_filename _
 											C_do_an_Adcsan _	' True or False
 										)
+	' Loop and convert .TS .mp4 .mpg Source files in a folder into acceptable avc/aac .mp4 Destination files 
     ' Parameters: 
 	'		C_source_TS_Folder
 	'		C_done_TS_Folder
@@ -2007,11 +2009,11 @@ Function vrdtvs_Convert_files_in_a_folder(	C_source_TS_Folder, _
 	'		C_saved_ffmpeg_commands_filename
 	'		C_do_an_Adcsan
 	' NOTES: 
-	'	Depend on these already being set Globally to True or False BEFORE invoking the conversion function: vrdtvs_DEBUG, vrdtvs_DEVELOPMENT_NO_ACTIONS
+	'	Rely on these already being set Globally to True or False BEFORE invoking the conversion function: vrdtvs_DEBUG, vrdtvs_DEVELOPMENT_NO_ACTIONS, wso, fso, vrdtvs_status
 	'	Check for C_source_TS_Folder = C_destination_mp4_Folder since we don't permit that
-	'	Convert .TS and .MP4 files in the C_source_TS_Folder and create adscan .BPRJ files
+	'	Convert .TS and .MP4 and .MPG files in the C_source_TS_Folder and create adscan .BPRJ files
 	'	Resulting .mp4 and .bprj goes into C_destination_mp4_Folder
-	'	Successfilly completed .TS and .MP4 files (and associated .BPRJ, if any) goes into C_done_TS_Folder 
+	'	Successfilly completed .TS and .MP4 and .MPG files (and associated .BPRJ, if any) goes into C_done_TS_Folder 
 	'	Failed-to-convert .TS and .MP4 files (and associated .BPRJ, if any) goes into C_failed_conversion_TS_Folder 
 	'	Use a scratch folder (on an SSD) in C_temp_path
 	'	Create file C_saved_ffmpeg_commands_filename to store commands/data used for: qsf, dgindex, .vpy, ffmpeg, adscan
@@ -2037,6 +2039,100 @@ Function vrdtvs_Convert_files_in_a_folder(	C_source_TS_Folder, _
 	' initialize the FFMPEG COMMANDS file with @echo, expansion etc
 	'?????????????????????????????????????????????.Writeline
 
+	Loop processing INPUT files *.TS,*.MP4,*.MPG in SOURCE folder
+	determine INPUT file characteristics including interlacing and video codec and AspectRatio and AudioDelay etc
+	if stream not in AVC, MPEG2
+		print diagnostics and exit ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
+	Calculate INPUT file ffmpeg audio delay "-af" setting
+	
+	QSF with profile according to VRD version and profile
+	if error  
+		print diagnostics and exit ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
+	if NOT QSF file exists 
+		print diagnostics and exit ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
+	
+	determine QSF file characteristics including interlacing and video codec and AspectRatio and AudioDelay etc
+	check SCANTYPE and SCANORDER of INPUT and QSF files are the same
+		print diagnostics and exit if not the same ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
+	Calculate INPUT file ffmpeg audio delay "-af" setting
+	calculate target BITRATES etc
+	check for FOOTY and set flag and calculate effect of FOOTY on target BITRATES
+	
+	IF /I "%COMPUTERNAME%" == "3900X" 
+		set extra RTX2060 ffmpeg encoding options
+	else
+		set non RTX2060 options, eg for a 1050Ti
+	endif
+	
+	set the DGIndex file path/name and DGautolog path/name
+	if Progressive
+		set dg_deinterlace=0 to flag as no deinterlacing
+		if AVC
+			set dg_cmd = "" # flag no dgindex and no VPY to be done
+			set vpy_denoise = "" # flag no denoising
+			set vpy_dsharpen = "" # flag no sharpening
+			set ff_cmd = copy video stream, convert audio stream, setDAR
+		else if MPEG2
+			set dg_cmd = the DG Index command
+			set vpy_denoise = strength=0.06, cstrength=0.06" # flag denoising
+			set vpy_dsharpen = "strength=0.3" # flag sharpening
+			set ff_cmd = convert video stream, convert audio stream, setDAR
+		else
+			print diagnostics and exit since not AVC nor MPEG2 ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
+	else if Interlaced
+		set dg_deinterlace=1 # set for normal single framerate deinterlace
+		set dg_cmd = the DG Index command
+		if AVC
+			set vpy_denoise = "" # flag no denoising
+			set vpy_dsharpen = "strength=0.2" # flag sharpening
+			set ff_cmd = convert video stream, convert audio stream, setDAR
+			if "!Footy_found!" then
+				set dg_deinterlace=2 # set for double framerate deinterlace
+				set ff_cmd = special options to convert video stream, convert audio stream, setDAR, double framerate
+		else if MPEG2
+			set vpy_denoise = "strength=0.06, cstrength=0.06" # flag no denoising
+			set vpy_dsharpen = "strength=0.3" # flag sharpening
+			set ff_cmd convert video stream, convert audio stream, setDAR
+		else
+			print diagnostics and exit since not AVC nor MPEG2 ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
+	else
+		print diagnostics and exit since not progressive nor Interlaced ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
+	endif
+	
+	run dg_cmd DGindex to create the index file and autolog
+	if error  
+		print diagnostics and exit ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
+	if not DG Index file exists
+		print diagnostics and exit ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
+	if NOT dg_cmd = ""
+		RUN dg_cmd, creating DGIndex file path/name
+		create the VPY file
+			use DGIndex file path/name
+			use dg_deinterlace in the DGSource line
+			if NOT vpy_denoise = ""
+				add a core.avs.DGDenoise line
+			if NOT vpy_dsharpen = ""
+				add a core.avs.DGSharpen line
+	RUN ff_cmd to convert to the TARGET mp4
+	if error  
+		print diagnostics and exit ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
+	if NOT TARGET file exists 
+		print diagnostics and exit ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
+	determine TARGET file characteristics including interlacing and video codec and AspectRatio and AudioDelay etc
+	
+	setup for ADSCAN
+	do ADSCAN
+	if error  
+		print diagnostics and exit ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
+	if NOT ADSCAN file exists 
+		print diagnostics and exit ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
+	
+	delete DGI file
+	delete VPY file
+	delete QSF file
+	delete temporary files
+	move INPUT file to DONE folder
+Loop ends
 
 	'
 End Function
