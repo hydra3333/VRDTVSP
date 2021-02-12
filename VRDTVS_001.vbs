@@ -1071,9 +1071,9 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 			Set bprj_objErr = Nothing
 			Err.clear
 			on error goto 0 
-			If bprj_status <> 0 Then
+			If NOT bprj_status Then
 				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: Failed to load XML doc .BPRJ file """ & xml_file_to_load & """")
-				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: XML error: " & bprj_errorCode & " : " & bprj_reason)
+				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: bprj_status: " & bprj_status & " XML error: " & bprj_errorCode & " : " & bprj_reason)
 				Wscript.Quit 17
 			End If
 			'WScript.StdOut.WriteLine("vbs_rename_files: debug: loaded xml doc " & new_name)
@@ -1108,8 +1108,8 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 			Set bprj_objErr = Nothing
 			Err.clear
 			on error goto 0
-			If (bprj_status <> 0) Then ' Error 0 is OK
-				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: XSL vrdtvs_xslStylesheet_string load error: " & bprj_errorCode & " : " & bprj_reason)
+			If NOT bprj_status Then ' Error 0 is OK
+				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: XSL vrdtvs_xslStylesheet_string load error bprj_status: " & bprj_status & " ErrorCode: " & bprj_errorCode & " : " & bprj_reason)
 				Wscript.Quit 17
 			End If
 			on error resume next 
@@ -1120,8 +1120,8 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 			Set bprj_objErr = Nothing
 			Err.clear
 			on error goto 0
-			If (bprj_status <> 0) Then ' Error 0 is OK
-				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: XML/XSL transformNode error: " & bprj_errorCode & " : " & bprj_reason)
+			If NOT bprj_status Then ' Error 0 is OK
+				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: XML/XSL transformNode error bprj_status: " & bprj_status & " ErrorCode: " & bprj_errorCode & " : " & bprj_reason)
 				Wscript.Quit 17
 			End If
 			bprj_xmlafter = bprj_nNode.text
