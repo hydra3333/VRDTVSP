@@ -306,7 +306,7 @@ If vrdtvs_CAPTURE_TS_Folder <> "" Then
 End If
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
-' In Top Level Folders: Source and Destination 
+' In Top Level Folders: Source
 ' (the function filters for file Extensions: .ts .mp4 .mpg, and autofixes .bprj which are associated with .mpg and .mp4 and should have the same BaseName)
 '   a) Remove special characters in filenames for file Extensions: .ts .mp4 .mpg and autofix .bprj
 '   b) Modify the filenames based on the filename content including reformatting the date in the filename
@@ -317,48 +317,16 @@ vrdtvs_status = vrdtvs_fix_filenames_in_a_folder_tree(vrdtvs_source_TS_Folder, F
 If vrdtvs_status <> 0 Then ' Something went wrong with processing files in the Source folder ... check for 53 not found ?
 	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_fix_filenames_in_a_folder_tree in """ & vrdtvs_source_TS_Folder & """... Aborting ...")
 	WScript.StdOut.WriteLine("VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_fix_filenames_in_a_folder_tree in """ & vrdtvs_source_TS_Folder & """ ... Aborting ...")
-	Wscript.Quit vrdtvs_status
-End If
-
-
-??????????????????????? fix destination folder AFTER processing, not before
-
-'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: about to call vrdtvs_fix_filenames_in_a_folder_tree(""" & vrdtvs_destination_mp4_Folder & """, True)")
-vrdtvs_status = vrdtvs_fix_filenames_in_a_folder_tree(vrdtvs_destination_mp4_Folder, True) ' this does (a) and (b) and (c).  True indicates to process the top level folder including SUBFOLDERS
-If vrdtvs_status <> 0 Then ' Something went wrong with processing files in the Destination folder ... check for 53 not found ?
-	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_fix_filenames_in_a_folder_tree in """ & vrdtvs_destination_mp4_Folder & """... Aborting ...")
-	WScript.StdOut.WriteLine("VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_fix_filenames_in_a_folder_tree in """ & vrdtvs_destination_mp4_Folder & """ ... Aborting ...")
-	Wscript.Quit vrdtvs_status
+	Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Convert Video files and create the associated .bprj files by running adscan on the media file
 ' The function filters for file Extensions: .ts .mp4 .mpg and creates .bprj
 '
-' generate a unique filename to save FFMPEG and related commands
-vrdtvs_saved_ffmpeg_commands_filename = fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_source_TS_Folder, "vrdtvs_saved_ffmpeg_commands-" & vrdtvs_run_datetime & ".bat"))
-' delete the FFMPEG COMMANDS file silently
-vrdtvs_status = vrdtvs_delete_a_file (vrdtvs_saved_ffmpeg_commands_filename, True) ' delete it silently
-If vrdtvs_status <> 0 AND vrdtvs_status <> 53 Then ' Something went wrong with deleting the file, but allow 53 "File not found"
-	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_delete_a_file with """ & vrdtvs_saved_ffmpeg_commands_filename & """... Aborting ...")
-	WScript.StdOut.WriteLine("VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_delete_a_file with """ & vrdtvs_saved_ffmpeg_commands_filename & """... Aborting ...")
-	Wscript.Quit vrdtvs_status
-End If
-' Create a new empty FFMPEG COMMANDS file with overwrite
-'?????????????????????????????????????????????.CreateFile
-' open the FFMPEG COMMANDS file and get a Global object used to write to it
-'?????????????????????????????????????????????.Open for write
-'Set vrdtvs_saved_ffmpeg_commands_object = ???
-' initialize the FFMPEG COMMANDS file with @echo, expansion etc
-'?????????????????????????????????????????????.Writeline
-' 
 '.................. START video processing for the FULL SOURCE TS folder (not tree) - the function has a big loop - converts Source files then moves them to Done or Failed
 'vrdtvs_status = vrdtvs_convert_video_files_and_move_to_done() ' it uses globally defined folders (the function filters for file Extensions: .ts .mp4 .mpg and creates .bprj)
-'If vrdtvs_status <> 0 Then ' Something bad went wrong (invididual conversion failures just result in moving the source file to the Failed folder)
-'	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_convert_video_files_and_move_to_done ... Aborting ...")
-'	WScript.StdOut.WriteLine("VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_convert_video_files_and_move_to_done ... Aborting ...")
-'	Wscript.Quit vrdtvs_status
-'End If
+
 '.................. END video processing for the FULL SOURCE TS folder (not tree) - the function has a big loop - converts Source files then moves them to Done or Failed
 '
 ' finalize the FFMPEG COMMANDS file with PAUSE etc
@@ -369,11 +337,112 @@ End If
 'Set vrdtvs_saved_ffmpeg_commands_object = Nothing
 
 
+' ***** Rely on these already being set Globally BEFORE invoking the conversion function
+' ***** 	vrdtvs_DEBUG
+' ***** 	vrdtvs_DEVELOPMENT_NO_ACTIONS
+'
+vrdtvs_status = vrdtvs_Convert_files_in_a_folder(	vrdtvs_source_TS_Folder, _
+													vrdtvs_done_TS_Folder, _
+													vrdtvs_destination_mp4_Folder, _
+													vrdtvs_failed_conversion_TS_Folder, _
+													vrdtvs_temp_path, _
+													vrd_profile_name_for_qsf_mpeg2, _
+													vrd_extension_mpeg2, _
+													vrd_profile_name_for_qsf_avc, _
+													vrd_extension_avc, _
+													vrd_path_for_qsf_vbs, _
+													vrd_path_for_adscan_vbs, _
+													vrdtvs_saved_ffmpeg_commands_filename _
+													True, _	' True = do an Adscan, False = do not
+												)
+If vrdtvs_status <> 0 Then ' Something bad went wrong (invididual conversion failures just result in moving the source file to the Failed folder)
+	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_Convert_files_in_a_folder ... Aborting ...")
+	WScript.StdOut.WriteLine("VRDTVS ERROR  VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_Convert_files_in_a_folder ... Aborting ...")
+	Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+End If
 
 
 
+Function vrdtvs_Convert_files_in_a_folder(	C_source_TS_Folder, _
+											C_done_TS_Folder, _
+											C_destination_mp4_Folder, _
+											C_failed_conversion_TS_Folder, _
+											C_temp_path, _
+											C_profile_name_for_qsf_mpeg2, _
+											C_extension_mpeg2, _
+											C_profile_name_for_qsf_avc, _
+											C_extension_avc, _
+											C_path_for_qsf_vbs, _
+											C_path_for_adscan_vbs, _
+											C_saved_ffmpeg_commands_filename _
+											C_do_an_Adcsan, _	' True or False
+										)
+    ' Parameters: 
+	'		C_source_TS_Folder, _
+	'		C_done_TS_Folder, _
+	'		C_destination_mp4_Folder, _
+	'		C_failed_conversion_TS_Folder, _
+	'		C_temp_path, _
+	'		C_profile_name_for_qsf_mpeg2, _
+	'		C_extension_mpeg2, _
+	'		C_profile_name_for_qsf_avc, _
+	'		C_extension_avc, _
+	'		C_path_for_qsf_vbs, _
+	'		C_path_for_adscan_vbs, _
+	'		C_saved_ffmpeg_commands_filename _
+	' NOTES: 
+	'	Depend on these already being set Globally to True or False BEFORE invoking the conversion function: vrdtvs_DEBUG, vrdtvs_DEVELOPMENT_NO_ACTIONS
+	'	Check for C_source_TS_Folder = C_destination_mp4_Folder since we don't permit that
+	'	Convert .TS and .MP4 files in the C_source_TS_Folder and create adscan .BPRJ files
+	'	Resulting .mp4 and .bprj goes into C_destination_mp4_Folder
+	'	Successfilly completed .TS and .MP4 files (and associated .BPRJ, if any) goes into C_done_TS_Folder 
+	'	Failed-to-convert .TS and .MP4 files (and associated .BPRJ, if any) goes into C_failed_conversion_TS_Folder 
+	'	Use a scratch folder (on an SSD) in C_temp_path
+	'	
+	'	C_saved_ffmpeg_commands_filename
+	'
+' generate a unique filename to save FFMPEG and related commands
+vrdtvs_saved_ffmpeg_commands_filename = fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_source_TS_Folder, "vrdtvs_saved_ffmpeg_commands-" & vrdtvs_run_datetime & ".bat"))
+' delete the FFMPEG COMMANDS file silently
+vrdtvs_status = vrdtvs_delete_a_file (vrdtvs_saved_ffmpeg_commands_filename, True) ' delete it silently
+If vrdtvs_status <> 0 AND vrdtvs_status <> 53 Then ' Something went wrong with deleting the file, but allow 53 "File not found"
+	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_delete_a_file with """ & vrdtvs_saved_ffmpeg_commands_filename & """... Aborting ...")
+	WScript.StdOut.WriteLine("VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_delete_a_file with """ & vrdtvs_saved_ffmpeg_commands_filename & """... Aborting ...")
+	Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+End If' Create a new empty FFMPEG COMMANDS file with overwrite
+'?????????????????????????????????????????????.CreateFile
+' open the FFMPEG COMMANDS file and get a Global object used to write to it
+'?????????????????????????????????????????????.Open for write
+'Set vrdtvs_saved_ffmpeg_commands_object = ???
+' initialize the FFMPEG COMMANDS file with @echo, expansion etc
+'?????????????????????????????????????????????.Writeline
 
 
+	'
+End Function
+													
+													
+													
+													
+													
+
+
+'
+'----------------------------------------------------------------------------------------------------------------------------------------
+' In Top Level Folders: Destination 
+' (the function filters for file Extensions: .ts .mp4 .mpg, and autofixes .bprj which are associated with .mpg and .mp4 and should have the same BaseName)
+'   a) Remove special characters in filenames for file Extensions: .ts .mp4 .mpg and autofix .bprj
+'   b) Modify the filenames based on the filename content including reformatting the date in the filename
+'	c) Also Modily content of associated .bprj files (they are .xml content) to link to the new media filename since we are modifying the pair
+'
+'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: about to call vrdtvs_fix_filenames_in_a_folder_tree(""" & vrdtvs_destination_mp4_Folder & """, True)")
+vrdtvs_status = vrdtvs_fix_filenames_in_a_folder_tree(vrdtvs_destination_mp4_Folder, True) ' this does (a) and (b) and (c).  True indicates to process the top level folder including SUBFOLDERS
+If vrdtvs_status <> 0 Then ' Something went wrong with processing files in the Destination folder ... check for 53 not found ?
+	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_fix_filenames_in_a_folder_tree in """ & vrdtvs_destination_mp4_Folder & """... Aborting ...")
+	WScript.StdOut.WriteLine("VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_fix_filenames_in_a_folder_tree in """ & vrdtvs_destination_mp4_Folder & """ ... Aborting ...")
+	Wscript.Quit vrdtvs_status
+End If
+'
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Fix the DateCreated and DateModified timestamps based on the date in the filename (a PowerShell command ... learn how to do that on the commandline)
 ' in Top Level Folders and Subfolders: Source and Destination (the function filters for file Extensions: .ts .mp4 .mpg but NOT .bprj)
@@ -1021,7 +1090,7 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 		If Final_Renamed_AbsoluteFilename_AfterRetries = "" Then
 			' Silly Error detected here, it should never occur unless we have some sort of logic issue ;)
 			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: Final_Renamed_AbsoluteFilename_AfterRetries is not properly set after vrdtvs_do_a_Rename_Try99Times <" & Final_Renamed_AbsoluteFilename_AfterRetries & ">")
-			Wscript.Quit 17
+			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 		Final_Renamed_ParentFolderName = fso.GetParentFolderName(Final_Renamed_AbsoluteFilename_AfterRetries)
 		Final_Renamed_BaseName = fso.GetBaseName(Final_Renamed_AbsoluteFilename_AfterRetries)
@@ -1052,7 +1121,7 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: error renaming .bprj ErrorNo: " & bprj_ErrNo & " Description: " & bprj_ErrDescription)
 			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: error renaming .bprj      Original_BPRJ_AbsoluteFilename=""" & Original_BPRJ_AbsoluteFilename & """")
 			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: error renaming .bprj Final_Renamed_BPRJ_AbsoluteFilename=""" & Final_Renamed_BPRJ_AbsoluteFilename & """")
-			Wscript.Quit 17 ' bprj_ErrNo
+			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation ' bprj_ErrNo
 		End If
 		' b) process/fix the content of .bprj file (it's xml) so the media filename in it is updated to match the renamed media filename
 		' load the file Final_Renamed_BPRJ_AbsoluteFilename and replace the file part with Final_Renamed_BaseName in it
@@ -1085,7 +1154,7 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 		Set bprj_nNode = vrdtvs_xmlDoc.selectsinglenode ("//VideoReDoProject/Filename")
 		If bprj_nNode is Nothing Then
 			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: Could not find XML node //VideoReDoProject/Filename in file " & xml_file_to_load)
-			WScript.quit 17 ' exit with an error ... soft or hard ?
+			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation ' exit with an error ... soft or hard ?
 		End If
 		bprj_txtbefore = bprj_nNode.text ' this is the pathname to the associated media file 
 		' find the rightmost \ then replace everything at it to the start with .\ ... i.e. replace the full path of the associated media file with "\."
@@ -1117,7 +1186,7 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 		on error goto 0
 		If NOT bprj_status Then ' Error 0 is OK
 			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: XSL vrdtvs_xslStylesheet_string load error bprj_status: " & bprj_status & " ErrorCode: " & bprj_errorCode & " : " & bprj_reason)
-			Wscript.Quit 17
+			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 		on error resume next 
 		bprj_txtafter = vrdtvs_xmlDoc.transformNode(vrdtvs_xslDoc) ' transform using the xsl stylesheet
@@ -1129,7 +1198,7 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 		on error goto 0
 		If (bprj_errorCode <> 0) Then ' Error 0 is OK
 			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: XML/XSL transformNode error bprj_status: " & bprj_status & " ErrorCode: " & bprj_errorCode & " : " & bprj_reason)
-			Wscript.Quit 17
+			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 		bprj_xmlafter = vrdtvs_xmlDoc.xml ' save the overall XML after we fix and transform
 		If vrdtvs_DEBUG Then
@@ -1153,7 +1222,7 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 		If not bprj_status Then
 			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: Failed to save XML doc into .BPRJ file """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
 			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: XML error: " & bprj_errorCode & " : Reason: " & bprj_reason)
-			Wscript.Quit 17
+			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 		Set vrdtvs_xmlDoc = Nothing
 		WScript.StdOut.WriteLine("VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File .bprj autofixed: """ & Original_BPRJ_AbsoluteFilename & """ into """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
@@ -1221,7 +1290,7 @@ Function vrdtvs_do_a_Rename_Try99Times(OriginalAbsoluteFilename, TargetAbsoluteF
 		' successful rename ... debug statement here please
 	ElseIf vrdtvs_t99tr_ErrNo <> 58 Then ' catch any non-0 non-58 error and abort
 		WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_do_a_Rename_Try99Times ABORTING: error " & vrdtvs_t99tr_ErrNo & " " & vrdtvs_t99tr_ErrDescription & " ... ABORTING since vbscript non-error-58 was detected at first attempt")
-		Wscript.Quit 17 ' vrdtvs_t99tr_ErrNo
+		Wscript.Quit 17 ' Error 17 = cannot perform the requested operation ' vrdtvs_t99tr_ErrNo
 		vrdtvs_do_a_Rename_Try99Times = ""
 		Exit Function
 	Else ' if it gets to here then it MUST be error 58 = File already exists ... meaning we must re-try up to vrdtvs_t99tr_MaxReTries times
@@ -1244,14 +1313,14 @@ Function vrdtvs_do_a_Rename_Try99Times(OriginalAbsoluteFilename, TargetAbsoluteF
 			on error goto 0
 			If (vrdtvs_t99tr_ErrNo <> 0 AND vrdtvs_t99tr_ErrNo <> 58) Then ' catch any non-0 non-58 error and abort ... it catches everything like that before a Wend
 				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_do_a_Rename_Try99Times ABORTING: error " & vrdtvs_t99tr_ErrNo & " " & vrdtvs_t99tr_ErrDescription & " ... ABORTING since vbscript non-error-58 was detected during retries")
-				Wscript.Quit 17 ' vrdtvs_t99tr_ErrNo
+				Wscript.Quit 17 ' Error 17 = cannot perform the requested operation ' vrdtvs_t99tr_ErrNo
 				vrdtvs_do_a_Rename_Try99Times = ""
 				Exit Function
 			End If
 		Wend ' should Wend on non-58 error number (including 0) or reached max retries
 		If (vrdtvs_t99tr_ErrNo = 58 and vrdtvs_t99tr_ErrCount >= vrdtvs_t99tr_MaxReTries) Then ' Error 0 is OK and doesn't get caught by this test
 			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_do_a_Rename_Try99Times ABORTING: error " & vrdtvs_t99tr_ErrNo & " - ABORTING since done " & vrdtvs_t99tr_ErrCount & " retries and still detected error-58 File already exists")
-			Wscript.Quit 17 ' vrdtvs_t99tr_ErrNo
+			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation ' vrdtvs_t99tr_ErrNo
 			vrdtvs_do_a_Rename_Try99Times = ""
 			Exit Function
 		End If
