@@ -1034,7 +1034,7 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 			' a) rename the .bprj file to match the new BaseName of the media file ... abort on a failure to simply rename the .bprj file
 			on error resume next
 			If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
-				WScript.StdOut.WriteLine("VRDTVS vrdtvs_DEVELOPMENT_NO_ACTIONS: DEV: vrdtvs_ffiaft_pfis_Rename_a_File NOT RENAMING """ & Original_BPRJ_AbsoluteFilename & """ to """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
+				WScript.StdOut.WriteLine("VRDTVS DEV: vrdtvs_DEVELOPMENT_NO_ACTIONS: DEV: vrdtvs_ffiaft_pfis_Rename_a_File NOT RENAMING """ & Original_BPRJ_AbsoluteFilename & """ to """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
 			Else
 				fso.MoveFile Original_BPRJ_AbsoluteFilename, Final_Renamed_BPRJ_AbsoluteFilename ' this is the actual File Rename
 			End If
@@ -1202,7 +1202,7 @@ Function vrdtvs_do_a_Try99Times_Rename(OriginalAbsoluteFilename, TargetAbsoluteF
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_do_a_Try99Times_Rename:      to <" & theTargetAbsoluteFilename & ">")
 	on error resume next
 	If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
-		'WScript.StdOut.WriteLine("VRDTVS vrdtvs_DEVELOPMENT_NO_ACTIONS: DEV: vrdtvs_do_a_Try99Times_Rename NOT DOING 'fso.MoveFile theOriginalAbsoluteFilename, theTargetAbsoluteFilename'")
+		'WScript.StdOut.WriteLine("VRDTVS DEV: vrdtvs_DEVELOPMENT_NO_ACTIONS: DEV: vrdtvs_do_a_Try99Times_Rename NOT DOING 'fso.MoveFile theOriginalAbsoluteFilename, theTargetAbsoluteFilename'")
 	Else
 		fso.MoveFile theOriginalAbsoluteFilename, theTargetAbsoluteFilename ' this is the actual File Rename
 	End If
@@ -1227,7 +1227,7 @@ Function vrdtvs_do_a_Try99Times_Rename(OriginalAbsoluteFilename, TargetAbsoluteF
 			WScript.StdOut.WriteLine("VRDTVS vrdtvs_do_a_Try99Times_Rename:   Retry <" & theTargetAbsoluteFilename & "> Attempt " & vrdtvs_Digits2(vrdtvs_t99tr_ErrCount))
 			on error resume next
 			If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
-				'WScript.StdOut.WriteLine("VRDTVS vrdtvs_DEVELOPMENT_NO_ACTIONS: DEV: vrdtvs_do_a_Try99Times_Rename retry NOT DOING 'fso.MoveFile theOriginalAbsoluteFilename, theTargetAbsoluteFilename'")
+				'WScript.StdOut.WriteLine("VRDTVS DEV: vrdtvs_DEVELOPMENT_NO_ACTIONS: DEV: vrdtvs_do_a_Try99Times_Rename retry NOT DOING 'fso.MoveFile theOriginalAbsoluteFilename, theTargetAbsoluteFilename'")
 			Else
 				fso.MoveFile theOriginalAbsoluteFilename, theTargetAbsoluteFilename ' this is the actual File Rename and theTargetAbsoluteFilename contains an updated Absolte filename to use
 			End If
