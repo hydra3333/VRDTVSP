@@ -1113,14 +1113,14 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 				Wscript.Quit 17
 			End If
 			on error resume next 
-			bprj_status = vrdtvs_xmlDoc.transformNode(vrdtvs_xslDoc) ' transform using the xsl stylesheet
+			bprj_txtafter = vrdtvs_xmlDoc.transformNode(vrdtvs_xslDoc) ' transform using the xsl stylesheet
 			Set bprj_objErr = vrdtvs_xslDoc.parseError
 			bprj_errorCode = bprj_objErr.errorCode
 			bprj_reason = bprj_objErr.reason
 			Set bprj_objErr = Nothing
 			Err.clear
 			on error goto 0
-			If NOT bprj_status Then ' Error 0 is OK
+			If (bprj_errorCode <> 0) Then ' Error 0 is OK
 				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: XML/XSL transformNode error bprj_status: " & bprj_status & " ErrorCode: " & bprj_errorCode & " : " & bprj_reason)
 				Wscript.Quit 17
 			End If
