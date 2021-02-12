@@ -1057,7 +1057,7 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 			bprj_txtafter = Replace(bprj_txtafter, fso.GetBaseName(Original_BPRJ_AbsoluteFilename), fso.GetBaseName(Final_Renamed_BPRJ_AbsoluteFilename), 1, -1, vbTextCompare)
 			bprj_xmlbefore = vrdtvs_xmlDoc.xml
 			nNode.text = bprj_txtafter
-			bprj_xmlafter = vrdtvs_xmlDoc.transformNode(vrdtvs_xmlDoc)
+			bprj_xmlafter = vrdtvs_xmlDoc.transformNode(vrdtvs_xmlDoc) ' use it's own stylesheet to transform itself
 			WScript.StdOut.WriteLine "VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File: bprj filename xml-node before:<" & bprj_txtbefore & ">"
 			WScript.StdOut.WriteLine "VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File:                         after:<" & nNode.text & ">"
 			If vrdtvs_DEBUG Then
@@ -1066,6 +1066,7 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 			End If
 			on error resume next 
 			If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
+				' if DEV do not save the updated XML .bprj
 			Else
 				vrdtvs_xmlDoc.save(Final_Renamed_BPRJ_AbsoluteFilename) ' tell the XMLDOM processor to save the updated XML file
 			End If
@@ -1081,24 +1082,6 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 				Wscript.Quit 17
 			End If
 			Set vrdtvs_xmlDoc = Nothing
-???????????????????????????????????????????????????
-
-			'print the new xml in a formatted way
-			'  str = objXML.transformNode(objXML) ' use it's own stylesheet to transform itself
-  orig = objXML.xml
-
-WScript.Echo str
-WScript.Echo orig
-
-Set objXML = Nothing
-'WScript.StdOut.WriteLine "Finished " & theScriptName 
-Set fso = Nothing 
-Wscript.Quit 
-???????????????????????????????????????????????????
-
-
-
-
 	End If
 	'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
