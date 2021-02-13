@@ -341,7 +341,9 @@ vrdtvs_status = vrdtvs_Convert_files_in_a_folder(	vrdtvs_source_TS_Folder, _
 													vrd_extension_mpeg2, _
 													vrd_profile_name_for_qsf_avc, _
 													vrd_extension_avc, _
+													vrd_version_for_qsf, _
 													vrd_path_for_qsf_vbs, _
+													vrd_version_for_adscan, _
 													vrd_path_for_adscan_vbs, _
 													vrdtvs_saved_ffmpeg_commands_filename _
 													True, _	' True = do an Adscan, False = do not
@@ -1991,7 +1993,9 @@ Function vrdtvs_Convert_files_in_a_folder(	C_source_TS_Folder, _
 											C_extension_mpeg2, _
 											C_profile_name_for_qsf_avc, _
 											C_extension_avc, _
+											C_vrd_version_for_qsf, _
 											C_path_for_qsf_vbs, _
+											C_vrd_version_for_adscan, _
 											C_path_for_adscan_vbs, _
 											C_saved_ffmpeg_commands_filename _
 											C_do_an_Adcsan _	' True or False
@@ -2007,19 +2011,79 @@ Function vrdtvs_Convert_files_in_a_folder(	C_source_TS_Folder, _
 	'	Failed-to-convert .TS and .MP4 files (and associated .BPRJ, if any) goes into C_failed_conversion_TS_Folder 
 	'	Use a scratch folder (on an SSD) in C_temp_path
 	'	Create file C_saved_ffmpeg_commands_filename to store commands/data used for: qsf, dgindex, .vpy, ffmpeg, adscan
-	'	The version(s) of VRD to use are preset in (but we won't need to use them) :
-	'			vrd_version_for_qsf and vrd_version_for_adscan
+	'
+	' log message just go directly to the console (no vrdlog)
 	'
 	Dim C_object_File, C_object_Files_Collection
 	Dim C_object_Folder, C_object_Folders_Collection
+	Dim C_object_saved_ffmpeg_commands
 	'
-	' delete the FFMPEG COMMANDS file silently
-	vrdtvs_status = vrdtvs_delete_a_file (vrdtvs_saved_ffmpeg_commands_filename, True) ' delete it silently
+	' force absolute PathNnames
+	C_source_TS_Folder = fso.GetAbsolutePathName(C_source_TS_Folder & "\")
+	C_done_TS_Folder = fso.GetAbsolutePathName(C_done_TS_Folder & "\")
+	C_destination_mp4_Folder = fso.GetAbsolutePathName(C_destination_mp4_Folder & "\")
+	C_failed_conversion_TS_Folder = fso.GetAbsolutePathName(C_failed_conversion_TS_Folder & "\")
+	C_temp_path = fso.GetAbsolutePathName(C_temp_path & "\")
+	C_path_for_qsf_vbs = fso.GetAbsolutePathName(C_path_for_qsf_vbs & "\")
+	C_path_for_adscan_vbs = fso.GetAbsolutePathName(C_path_for_adscan_vbs & "\")
+	C_saved_ffmpeg_commands_filename = fso.GetAbsolutePathName(C_saved_ffmpeg_commands_filename & "\")
+	'
+	' delete the saved FFMPEG COMMANDS file silently 
+	vrdtvs_status = vrdtvs_delete_a_file (C_saved_ffmpeg_commands_filename, True) ' delete it silently
 	If vrdtvs_status <> 0 AND vrdtvs_status <> 53 Then ' Something went wrong with deleting the file, but allow 53 "File not found"
-		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_files_in_a_folder - Error " & vrdtvs_status & " from vrdtvs_delete_a_file with """ & vrdtvs_saved_ffmpeg_commands_filename & """... Aborting ...")
-		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_files_in_a_folder - Error " & vrdtvs_status & " from vrdtvs_delete_a_file with """ & vrdtvs_saved_ffmpeg_commands_filename & """... Aborting ...")
+		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_files_in_a_folder - Error " & vrdtvs_status & " from vrdtvs_delete_a_file with saved FFMPEG COMMANDS """ & C_saved_ffmpeg_commands_filename & """... Aborting ...")
+		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_files_in_a_folder - Error " & vrdtvs_status & " from vrdtvs_delete_a_file with saved FFMPEG COMMANDS """ & C_saved_ffmpeg_commands_filename & """... Aborting ...")
 		Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
-	End If' Create a new empty FFMPEG COMMANDS file with overwrite
+	End If
+	' create a new empty FFMPEG COMMANDS file with overwrite
+	set C_object_saved_ffmpeg_commands = fso.CreateTextFile C_saved_ffmpeg_commands_filename, True, True ' [ filename, Overwrite[, Unicode]])
+	If C_object_saved_ffmpeg_commands is Nothing  Then ' Something went wrong with creating the file
+		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_files_in_a_folder - Error - Nothing object returned from fso.CreateTextFile with saved FFMPEG COMMANDS """ & C_saved_ffmpeg_commands_filename & """... Aborting ...")
+		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_files_in_a_folder - Error - Nothing object returned from fso.CreateTextFile with saved FFMPEG COMMANDS """ & C_saved_ffmpeg_commands_filename & """... Aborting ...")
+		Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+	End If
+	'
+	' Initialize the saved-ffmpeg-commands
+	C_object_saved_ffmpeg_commands.Write("@ECHO ON")
+	C_object_saved_ffmpeg_commands.Write("@setlocal ENABLEDELAYEDEXPANSION")
+	C_object_saved_ffmpeg_commands.Write("@setlocal enableextensions")
+	C_object_saved_ffmpeg_commands.Write("REM Created " &  vrdtvs_current_datetime_string())
+	C_object_saved_ffmpeg_commands.Write("Set ""vrdtvs_mp4boxexex64=" & vrdtvs_mp4boxexex64 & """")
+	C_object_saved_ffmpeg_commands.Write("Set ""vrdtvs_mediainfoexe64=" & vrdtvs_mediainfoexe64 & """")
+	C_object_saved_ffmpeg_commands.Write("Set ""vrdtvs_ffprobeexe64=" & vrdtvs_ffprobeexe64 & """")
+	C_object_saved_ffmpeg_commands.Write("Set ""vrdtvs_ffmpegexe64=" & vrdtvs_ffmpegexe64 & """")
+	C_object_saved_ffmpeg_commands.Write("Set ""vrdtvs_dgindexNVexe64=" & vrdtvs_dgindexNVexe64 & """")
+	C_object_saved_ffmpeg_commands.Write("Set ""vrdtvs_Insomniaexe64=" & vrdtvs_Insomniaexe64 & """")
+	C_object_saved_ffmpeg_commands.Write("REM")
+	C_object_saved_ffmpeg_commands.Write("Set ""C_source_TS_Folder=" & C_source_TS_Folder & """")
+	C_object_saved_ffmpeg_commands.Write("Set ""C_done_TS_Folder=" & C_done_TS_Folder & """")
+	C_object_saved_ffmpeg_commands.Write("Set ""C_destination_mp4_Folder=" & C_destination_mp4_Folder & """")
+	C_object_saved_ffmpeg_commands.Write("Set ""C_failed_conversion_TS_Folder=" & C_failed_conversion_TS_Folder & """")
+	C_object_saved_ffmpeg_commands.Write("Set ""C_temp_path=" & C_temp_path & """")
+	C_object_saved_ffmpeg_commands.Write("Set ""C_profile_name_for_qsf_mpeg2=" & C_profile_name_for_qsf_mpeg2 & """")
+	C_object_saved_ffmpeg_commands.Write("Set ""C_extension_mpeg2=" & C_extension_mpeg2 & """")
+	C_object_saved_ffmpeg_commands.Write("Set ""C_profile_name_for_qsf_avc=" & C_profile_name_for_qsf_avc & """")
+	C_object_saved_ffmpeg_commands.Write("Set ""C_extension_avc=" & C_extension_avc & """")
+	C_object_saved_ffmpeg_commands.Write("Set ""C_done_TS_Folder=" & C_done_TS_Folder & """")
+	C_object_saved_ffmpeg_commands.Write("Set ""C_done_TS_Folder=" & C_done_TS_Folder & """")
+	C_object_saved_ffmpeg_commands.Write("Set ""C_done_TS_Folder=" & C_done_TS_Folder & """")
+
+
+
+			
+											C_profile_name_for_qsf_avc, _
+											C_extension_avc, _
+											C_vrd_version_for_qsf, _
+											C_path_for_qsf_vbs, _
+											C_vrd_version_for_adscan, _
+											C_path_for_adscan_vbs, _
+											C_saved_ffmpeg_commands_filename _
+											C_do_an_Adcsan _	' True or False
+
+
+
+
+
 	'?????????????????????????????????????????????.CreateFile
 	' open the FFMPEG COMMANDS file and get a Global object used to write to it
 	'?????????????????????????????????????????????.Open for write
@@ -2122,6 +2186,10 @@ Function vrdtvs_Convert_files_in_a_folder(	C_source_TS_Folder, _
 	move INPUT file to DONE folder
 Loop ends
 
-	'
+
+
+C_object_saved_ffmpeg_commands.Close
+Set C_object_saved_ffmpeg_commands = Nothing
+vrdtvs_Convert_files_in_a_folder = 0 ' return success
 End Function
 													
