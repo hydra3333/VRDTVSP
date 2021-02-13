@@ -2232,35 +2232,10 @@ Function vrdtvs_Convert_files_in_a_folder(	C_source_TS_Folder, _
 '	move INPUT file to DONE folder
 'Loop ends
 
-
-Dim C_exe_cmd_string
-Dim C_exe_object
-Dim C_exe_status
-Dim C_tmp
-
-	'************* example exec:
-	C_exe_cmd_string = "CMD /C MOVE /Y """ & mf_source_AbsolutePath & """ """ & mf_destination_AbsolutePath & """ 2>&1"
-	If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
-		C_exe_object = "REM " & C_exe_cmd_string ' comment out any action
-	End If
-	WScript.StdOut.WriteLine("vrdtvs_Convert_files_in_a_folder Exec command: " & C_exe_cmd_string)
-	set C_exe_object = wso.Exec(C_exe_cmd_string)
-	Do While C_exe_object.Status = 0 '0 is running and 1 is ending
-	 	Wscript.Sleep 100
-	Loop
-	Do Until C_exe_object.StdOut.AtEndOfStream
-		mf_tmp = C_exe_object.StdOut.ReadLine()
-		WScript.StdOut.WriteLine("vrdtvs_Convert_files_in_a_folder StdOut: " & mf_tmp)
-	Loop
-	Do Until mf_exe.StdErr.AtEndOfStream
-		mf_tmp = C_exe_object.StdErr.ReadLine()
-		WScript.StdOut.WriteLin("vrdtvs_Convert_files_in_a_folder StdErr: " & mf_tmp)
-	Loop
-	C_exe_status = C_exe_object.ExitCode
-	WScript.StdOut.WriteLine("vrdtvs_Convert_files_in_a_folder Exit Status: " & C_exe_status)
-	Set C_exe_object = Nothing
-	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder exiting with status=""" & C_exe_status & """")
-	
+' vrdtvs_status = vrdtvs_exec_a_command_and_show_stdout_stderr("REM CMD /C ""something""")
+' If vrdtvs_status <> 0 Then
+'	something
+' End If
 
 
 	vrdtvs_status = C_object_saved_ffmpeg_commands.Close
@@ -2268,19 +2243,17 @@ Dim C_tmp
 	vrdtvs_Convert_files_in_a_folder = 0 ' return success
 End Function
 '
-Function vrdtvs_exec_a_command (byVal eac_command_string)
-	Dim  eac_exe_cmd_string
-	Dim  eac_exe_object
-	Dim  eac_exe_status
-	Dim  eac_tmp
+Function vrdtvs_exec_a_command_and_show_stdout_stderr (byVal eac_command_string)
+	Dim  eac_exe_cmd_string, eac_exe_object, eac_exe_status, eac_tmp
 	If eac_command_string = "" then
 		vrdtvs_exec_a_command = 0
 		Exit Function
 	End If
-	'eac_exe_cmd_string = "CMD /C ""something"""
-	'eac_exe_cmd_string = "CMD /C ""something"" 2>&1"
-	'eac_exe_cmd_string = "Taskkill ""something"""
-	'eac_exe_cmd_string = "Taskkill ""something"" 2>&1"
+	' Examples with and without CMD and 2>&1
+	'		eac_exe_cmd_string = "CMD /C ""something"""
+	'		eac_exe_cmd_string = "CMD /C ""something"" 2>&1"
+	'		eac_exe_cmd_string = "Taskkill ""something"""
+	'		eac_exe_cmd_string = "Taskkill ""something"" 2>&1"
 	If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 		eac_exe_object = "REM " & eac_command_string ' comment out any action
 	End If
