@@ -2171,8 +2171,9 @@ get computername
 		C_BaseName = fso.GetBaseName(C_AbsolutePathName)
 		C_Ext = fso.GetExtensionName(C_AbsolutePathName)
         '********* FILTER BY FILE EXTENSION *********
-		If ext = Ucase("ts") OR ext = Ucase("mp4") OR ext = Ucase("mpg") Then ' ********** only process specific file extensions
-		Wscript.Echo fso.GetAbsolutePathName(C_object_File.Path) ' the Absolute name of the file
+		If Ucase(C_Ext) = Ucase("ts") OR Ucase(C_Ext) = Ucase("mp4") OR Ucase(C_Ext) = Ucase("mpg") OR Ucase(C_Ext) = Ucase("bprj") Then ' ********** only process specific file extensions
+			Wscript.EchoC_AbsolutePathName ' the Absolute name of the file
+	End If
 	Next
 
 
