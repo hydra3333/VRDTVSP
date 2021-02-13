@@ -956,27 +956,6 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
     Dim NewBaseName, newAbsoluteFilename
 	Dim Final_Renamed_AbsoluteFilename_AfterRetries, Final_Renamed_ParentFolderName, Final_Renamed_BaseName, Final_Renamed_ExtName
 	Dim Original_BPRJ_AbsoluteFilename, Final_Renamed_BPRJ_AbsoluteFilename
-	Dim xml_file_to_load
-	Dim bprj_status, bprj_objErr, bprj_errorCode, bprj_reason
-	Dim bprj_nNode, bprj_i, bprj_txtbefore, bprj_txtafter, bprj_ErrNo, bprj_ErrDescription
-	Dim vrdtvs_xmlDoc, bprj_xmlbefore, bprj_xmlafter
-	Dim vrdtvs_xslDoc
-	Const vrdtvs_xslStylesheet_string = "<xsl:stylesheet version=""3.0"" xmlns:xsl=""http://www.w3.org/1999/XSL/Transform"" xmlns=""http://www.w3.org/1999/xhtml""><xsl:output method=""xml"" indent=""yes""/><xsl:template match=""/""><xsl:copy-of select="".""/></xsl:template></xsl:stylesheet>"
-	'Const vrdtvs_xslStylesheet_string = _
-	'		"<xsl:stylesheet version=""3.0"" xmlns:xsl=""http://www.w3.org/1999/XSL/Transform"" xmlns=""http://www.w3.org/1999/xhtml"">" & _
-	'		"<xsl:output method=""xml"" indent=""yes""/>" & _
-	'		"<xsl:template match=""/"">" & _
-	'		"<xsl:copy-of select="".""/>" & _
-	'		"</xsl:template>" & _
-	'		"</xsl:stylesheet>"
-			'old:
-			'	"<xsl:stylesheet version=""1.0"" xmlns:xsl=""http://www.w3.org/1999/XSL/Transform"">" & _
-			'	"<xsl:output method=""xml"" indent=""yes""/>" & _
-			'	"<xsl:template match=""/"">" & _
-			'	"<xsl:copy-of select="".""/>" & _
-			'	"</xsl:template>" & _
-			'	"</xsl:stylesheet>"
-
 	Dim local_timerStart, local_timerEnd
 	local_timerStart = Timer
 	local_timerEnd = Timer
@@ -1023,32 +1002,86 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 		Final_Renamed_BaseName = fso.GetBaseName(Final_Renamed_AbsoluteFilename_AfterRetries)
 		Final_Renamed_ExtName = fso.GetExtensionName(Final_Renamed_AbsoluteFilename_AfterRetries) ' does not include  the "."
 	End If
+
+
+	??? invoke the .BPRJ function
+
+
+	'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	'
+	local_timerEnd = Timer
+    If vrdtvs_DEBUG Then 
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: Exit having Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(local_timerStart, local_timerEnd))
+	End If
+	' vrdtvs_ffiaft_pfis_Rename_a_File is a Sub, hence no return values
+End Sub
+'
+Function vrdtvs_ffiaft_pfis_Process_a_BPRJ (byVal theOriginalParentFolderName, byVal theOriginalBaseName, byVal Final_Renamed_ParentFolderName, byVal Final_Renamed_BaseName)
+    ' Parameters:
+	'		theOriginalParentFolderName		byVal	Folder of the filename to be renamed and/or fixed
+	'		theOriginalBaseName				byVal	BaseName of the filename to be renamed and/or fixed
+	'		Final_Renamed_ParentFolderName	byVal	Optional Folder of the filename to be renamed into (the target)   ... if "" then becomes theOriginalParentFolderName
+	'		Final_Renamed_BaseName			byVal	Optional BaseName of the filename to be renamed into (the target) ... if "" then becomes theOriginalBaseName
+	'
+	Dim Original_BPRJ_AbsoluteFilename
+	Dim Final_Renamed_BPRJ_AbsoluteFilename
+	Dim xml_file_to_load
+	Dim bprj_status, bprj_objErr, bprj_errorCode, bprj_reason
+	Dim bprj_nNode, bprj_i, bprj_txtbefore, bprj_txtafter, bprj_ErrNo, bprj_ErrDescription
+	Dim vrdtvs_xmlDoc, bprj_xmlbefore, bprj_xmlafter
+	Dim vrdtvs_xslDoc
+	Const vrdtvs_xslStylesheet_string = "<xsl:stylesheet version=""3.0"" xmlns:xsl=""http://www.w3.org/1999/XSL/Transform"" xmlns=""http://www.w3.org/1999/xhtml""><xsl:output method=""xml"" indent=""yes""/><xsl:template match=""/""><xsl:copy-of select="".""/></xsl:template></xsl:stylesheet>"
+	'Const vrdtvs_xslStylesheet_string = _
+	'		"<xsl:stylesheet version=""3.0"" xmlns:xsl=""http://www.w3.org/1999/XSL/Transform"" xmlns=""http://www.w3.org/1999/xhtml"">" & _
+	'		"<xsl:output method=""xml"" indent=""yes""/>" & _
+	'		"<xsl:template match=""/"">" & _
+	'		"<xsl:copy-of select="".""/>" & _
+	'		"</xsl:template>" & _
+	'		"</xsl:stylesheet>"
+			'old:
+			'	"<xsl:stylesheet version=""1.0"" xmlns:xsl=""http://www.w3.org/1999/XSL/Transform"">" & _
+			'	"<xsl:output method=""xml"" indent=""yes""/>" & _
+			'	"<xsl:template match=""/"">" & _
+			'	"<xsl:copy-of select="".""/>" & _
+			'	"</xsl:template>" & _
+			'	"</xsl:stylesheet>"
+	'
 	' ***** If a matching .bprj file exists in the same folder, (a) rename it to match the new filename (b) fix the content of .bprj file (it's xml) to match the media filename 
 	' ***** note: .bprj files should only exist for files aready converted to .mp4 ... ie in the destination folder
 	' *****       however, in this code we choose to re-process/fix the associated .bprj files REGARDLESS of whether they are renamed or not !!!!!
+	If Final_Renamed_ParentFolderName = "" OR Final_Renamed_BaseName = "" Then ' if the target is "" then make it the same name as the source so that no file renme occurs
+		Final_Renamed_ParentFolderName = theOriginalParentFolderName
+		Final_Renamed_BaseName = theOriginalBaseName
+	End If
 	Original_BPRJ_AbsoluteFilename = fso.GetAbsolutePathName( fso.BuildPath(theOriginalParentFolderName,theOriginalBaseName & ".bprj"))
 	Final_Renamed_BPRJ_AbsoluteFilename = fso.GetAbsolutePathName( fso.BuildPath(Final_Renamed_ParentFolderName,Final_Renamed_BaseName & ".bprj"))
 	If fso.FileExists(Original_BPRJ_AbsoluteFilename) Then 
 		' yeppity, a matching .bprj file is FOUND for the original media filename
 		If vrdtvs_DEBUG Then 
-			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: ********** found a matching .bprj file to autofix: """ & Original_BPRJ_AbsoluteFilename & """")
+			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Process_a_BPRJ: ********** found a matching .bprj file to autofix: """ & Original_BPRJ_AbsoluteFilename & """")
 		End If
-		' a) rename the .bprj file to match the new BaseName of the media file ... abort on a failure to simply rename the .bprj file
-		on error resume next
-		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
-			WScript.StdOut.WriteLine("VRDTVS DEV: vrdtvs_DEVELOPMENT_NO_ACTIONS: DEV: vrdtvs_ffiaft_pfis_Rename_a_File NOT RENAMING """ & Original_BPRJ_AbsoluteFilename & """ to """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
+		If Original_BPRJ_AbsoluteFilename = Final_Renamed_BPRJ_AbsoluteFilename Then
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_ffiaft_pfis_Process_a_BPRJ same filenames, NOT RENAMING """ & Original_BPRJ_AbsoluteFilename & """ to """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
+			If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Process_a_BPRJ: same filenames, NOT RENAMING """ & Original_BPRJ_AbsoluteFilename & """ to """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
 		Else
-			fso.MoveFile Original_BPRJ_AbsoluteFilename, Final_Renamed_BPRJ_AbsoluteFilename ' this is the actual File Rename
-		End If
-		bprj_ErrNo = Err.Number
-		bprj_ErrDescription = Err.Description
-		Err.Clear
-		on error goto 0
-		If (bprj_ErrNo <> 0) Then ' Error 0 is OK meaning it renamed just fine
-			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: error renaming .bprj ErrorNo: " & bprj_ErrNo & " Description: " & bprj_ErrDescription)
-			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: error renaming .bprj      Original_BPRJ_AbsoluteFilename=""" & Original_BPRJ_AbsoluteFilename & """")
-			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: error renaming .bprj Final_Renamed_BPRJ_AbsoluteFilename=""" & Final_Renamed_BPRJ_AbsoluteFilename & """")
-			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation ' bprj_ErrNo
+			' a) rename the .bprj file to match the new BaseName of the media file ... abort on a failure to simply rename the .bprj file
+			on error resume next
+			If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
+				WScript.StdOut.WriteLine("VRDTVS DEV: vrdtvs_DEVELOPMENT_NO_ACTIONS: DEV: vrdtvs_ffiavrdtvs_ffiaft_pfis_Process_a_BPRJft_pfis_Rename_a_File NOT RENAMING """ & Original_BPRJ_AbsoluteFilename & """ to """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
+			Else
+				fso.MoveFile Original_BPRJ_AbsoluteFilename, Final_Renamed_BPRJ_AbsoluteFilename ' this is the actual File Rename
+			End If
+			bprj_ErrNo = Err.Number
+			bprj_ErrDescription = Err.Description
+			Err.Clear
+			on error goto 0
+			If (bprj_ErrNo <> 0) Then ' Error 0 is OK meaning it renamed just fine
+				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Process_a_BPRJ ABORTING: error renaming .bprj ErrorNo: " & bprj_ErrNo & " Description: " & bprj_ErrDescription)
+				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Process_a_BPRJ ABORTING: error renaming .bprj      Original_BPRJ_AbsoluteFilename=""" & Original_BPRJ_AbsoluteFilename & """")
+				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Process_a_BPRJ ABORTING: error renaming .bprj Final_Renamed_BPRJ_AbsoluteFilename=""" & Final_Renamed_BPRJ_AbsoluteFilename & """")
+				Wscript.Quit 17 ' Error 17 = cannot perform the requested operation ' bprj_ErrNo
+			End If
 		End If
 		' b) process/fix the content of .bprj file (it's xml) so the media filename in it is updated to match the renamed media filename
 		' load the file Final_Renamed_BPRJ_AbsoluteFilename and replace the file part with Final_Renamed_BaseName in it
@@ -1058,11 +1091,11 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 		xml_file_to_load = Final_Renamed_BPRJ_AbsoluteFilename
 		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 			xml_file_to_load = Original_BPRJ_AbsoluteFilename
-			If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEV: vrdtvs_ffiaft_pfis_Rename_a_File: about to LOAD vrdtvs_xmlDoc.load ORIGINAL file """ & Original_BPRJ_AbsoluteFilename & """")
+			If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEV: vrdtvs_ffiaft_pfis_Process_a_BPRJ: about to LOAD vrdtvs_xmlDoc.load ORIGINAL file """ & Original_BPRJ_AbsoluteFilename & """")
 			bprj_status = vrdtvs_xmlDoc.load(Original_BPRJ_AbsoluteFilename) 
 		Else
 			xml_file_to_load = Final_Renamed_BPRJ_AbsoluteFilename
-			If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: about to LOAD vrdtvs_xmlDoc.load file """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
+			If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Process_a_BPRJ: about to LOAD vrdtvs_xmlDoc.load file """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
 			bprj_status = vrdtvs_xmlDoc.load(Final_Renamed_BPRJ_AbsoluteFilename) 
 		End If
 		Set bprj_objErr = vrdtvs_xmlDoc.parseError
@@ -1072,15 +1105,15 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 		Err.clear
 		on error goto 0 
 		If NOT bprj_status Then
-			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: Failed to load XML doc .BPRJ file """ & xml_file_to_load & """")
-			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: bprj_status: " & bprj_status & " XML error: " & bprj_errorCode & " : " & bprj_reason)
+			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Process_a_BPRJ ABORTING: Failed to load XML doc .BPRJ file """ & xml_file_to_load & """")
+			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Process_a_BPRJ ABORTING: bprj_status: " & bprj_status & " XML error: " & bprj_errorCode & " : " & bprj_reason)
 			Wscript.Quit 17
 		End If
 		'WScript.StdOut.WriteLine("vbs_rename_files: debug: loaded xml doc " & new_name)
 		'Locate the desired node. Note the use of XPATH instead of looping over all the child nodes.
 		Set bprj_nNode = vrdtvs_xmlDoc.selectsinglenode ("//VideoReDoProject/Filename")
 		If bprj_nNode is Nothing Then
-			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: Could not find XML node //VideoReDoProject/Filename in file " & xml_file_to_load)
+			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Process_a_BPRJ ABORTING: Could not find XML node //VideoReDoProject/Filename in file " & xml_file_to_load)
 			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation ' exit with an error ... soft or hard ?
 		End If
 		bprj_txtbefore = bprj_nNode.text ' this is the pathname to the associated media file 
@@ -1100,7 +1133,7 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 		Set vrdtvs_xslDoc = CreateObject("Microsoft.XMLDOM") ' or perhaps this instead: Set vrdtvs_xslDoc = WScript.CreateObject("Msxml2.DOMDocument") ' assume no error
 		vrdtvs_xslDoc.async = False
 		If vrdtvs_DEBUG Then
-			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: about to load XSL vrdtvs_xslStylesheet_string: ")
+			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Process_a_BPRJ: about to load XSL vrdtvs_xslStylesheet_string: ")
 			WScript.StdOut.WriteLine("" & vrdtvs_xslStylesheet_string & "")
 		End If
 		on error resume next 
@@ -1112,7 +1145,7 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 		Err.clear
 		on error goto 0
 		If NOT bprj_status Then ' Error 0 is OK
-			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: XSL vrdtvs_xslStylesheet_string load error bprj_status: " & bprj_status & " ErrorCode: " & bprj_errorCode & " : " & bprj_reason)
+			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Process_a_BPRJ ABORTING: XSL vrdtvs_xslStylesheet_string load error bprj_status: " & bprj_status & " ErrorCode: " & bprj_errorCode & " : " & bprj_reason)
 			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 		on error resume next 
@@ -1124,19 +1157,19 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 		Err.clear
 		on error goto 0
 		If (bprj_errorCode <> 0) Then ' Error 0 is OK
-			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: XML/XSL transformNode error bprj_status: " & bprj_status & " ErrorCode: " & bprj_errorCode & " : " & bprj_reason)
+			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Process_a_BPRJ ABORTING: XML/XSL transformNode error bprj_status: " & bprj_status & " ErrorCode: " & bprj_errorCode & " : " & bprj_reason)
 			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 		bprj_xmlafter = vrdtvs_xmlDoc.xml ' save the overall XML after we fix and transform
 		If vrdtvs_DEBUG Then
-			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: bprj xml-node before: """ & bprj_txtbefore & """")
-			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: bprj xml-node  after: """ & bprj_nNode.text & """")
-			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: xml ALL before: " & bprj_xmlbefore & "")
-			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: xml ALL  after: " & bprj_xmlafter & "")
+			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Process_a_BPRJ: bprj xml-node before: """ & bprj_txtbefore & """")
+			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Process_a_BPRJ: bprj xml-node  after: """ & bprj_nNode.text & """")
+			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Process_a_BPRJ: xml ALL before: " & bprj_xmlbefore & "")
+			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Process_a_BPRJ: xml ALL  after: " & bprj_xmlafter & "")
 		End If
 		on error resume next 
 		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
-			WScript.StdOut.WriteLine("VRDTVS DEV: vrdtvs_DEVELOPMENT_NO_ACTIONS: DEV: vrdtvs_ffiaft_pfis_Rename_a_File NOT RE-WRITING bprj """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
+			WScript.StdOut.WriteLine("VRDTVS DEV: vrdtvs_DEVELOPMENT_NO_ACTIONS: DEV: vrdtvs_ffiaft_pfis_Process_a_BPRJ NOT RE-WRITING bprj """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
 		Else
 			vrdtvs_xmlDoc.save(Final_Renamed_BPRJ_AbsoluteFilename) ' tell the XMLDOM processor to save the updated XML file
 		End If
@@ -1147,22 +1180,21 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 		Err.clear
 		on error goto 0 
 		If not bprj_status Then
-			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: Failed to save XML doc into .BPRJ file """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
+			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Process_a_BPRJ ABORTING: Failed to save XML doc into .BPRJ file """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
 			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: XML error: " & bprj_errorCode & " : Reason: " & bprj_reason)
 			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 		Set vrdtvs_xmlDoc = Nothing
-		WScript.StdOut.WriteLine("VRDTVS vrdtvs_ffiaft_pfis_Rename_a_File .bprj autofixed: """ & Original_BPRJ_AbsoluteFilename & """ into """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
+		WScript.StdOut.WriteLine("VRDTVS vrdtvs_ffiaft_pfis_Process_a_BPRJ .bprj autofixed: """ & Original_BPRJ_AbsoluteFilename & """ into """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
 	End If
-	'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	'
-	local_timerEnd = Timer
-    If vrdtvs_DEBUG Then 
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: Exit having Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(local_timerStart, local_timerEnd))
-	End If
-	' vrdtvs_ffiaft_pfis_Rename_a_File is a Sub, hence no return values
-End Sub
+	vrdtvs_ffiaft_pfis_Process_a_BPRJ = ???????????
+End Function
+
+
+
+
+
+
 '
 Function vrdtvs_do_a_Rename_Try99Times(OriginalAbsoluteFilename, TargetAbsoluteFilename)
 	' Try to rename a file and re-Rename it if required, trying up to 99 times
@@ -2014,6 +2046,9 @@ Function vrdtvs_Convert_files_in_a_folder(	C_source_TS_Folder, _
 	'
 	' log message just go directly to the console (no vrdlog)
 	'
+
+?????? in here create the .bprg, GETFILE it and then process it
+
 	Dim C_object_File, C_object_Files_Collection
 	Dim C_object_Folder, C_object_Folders_Collection
 	Dim C_object_saved_ffmpeg_commands
@@ -2063,17 +2098,20 @@ Function vrdtvs_Convert_files_in_a_folder(	C_source_TS_Folder, _
 	C_object_saved_ffmpeg_commands.Write("Set ""C_destination_mp4_Folder=" & C_destination_mp4_Folder & """")
 	C_object_saved_ffmpeg_commands.Write("Set ""C_failed_conversion_TS_Folder=" & C_failed_conversion_TS_Folder & """")
 	C_object_saved_ffmpeg_commands.Write("Set ""C_temp_path=" & C_temp_path & """")
+	C_object_saved_ffmpeg_commands.Write("REM")
 	C_object_saved_ffmpeg_commands.Write("Set ""C_profile_name_for_qsf_mpeg2=" & C_profile_name_for_qsf_mpeg2 & """")
 	C_object_saved_ffmpeg_commands.Write("Set ""C_extension_mpeg2=" & C_extension_mpeg2 & """")
 	C_object_saved_ffmpeg_commands.Write("Set ""C_profile_name_for_qsf_avc=" & C_profile_name_for_qsf_avc & """")
 	C_object_saved_ffmpeg_commands.Write("Set ""C_extension_avc=" & C_extension_avc & """")
-
+	C_object_saved_ffmpeg_commands.Write("REM")
 	C_object_saved_ffmpeg_commands.Write("Set ""C_vrd_version_for_qsf=" & C_vrd_version_for_qsf & """")
 	C_object_saved_ffmpeg_commands.Write("Set ""C_path_for_qsf_vbs=" & C_path_for_qsf_vbs & """")
 	C_object_saved_ffmpeg_commands.Write("Set ""C_vrd_version_for_adscan=" & C_vrd_version_for_adscan & """")
 	C_object_saved_ffmpeg_commands.Write("Set ""C_path_for_adscan_vbs=" & C_path_for_adscan_vbs & """")
 	C_object_saved_ffmpeg_commands.Write("Set ""C_saved_ffmpeg_commands_filename=" & C_saved_ffmpeg_commands_filename & """")
 	C_object_saved_ffmpeg_commands.Write("Set ""C_do_an_Adcsan=" & C_do_an_Adcsan & """")
+	C_object_saved_ffmpeg_commands.Write("REM")
+
 
 
 
