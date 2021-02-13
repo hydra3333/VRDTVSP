@@ -2047,7 +2047,10 @@ Function vrdtvs_Convert_files_in_a_folder(	C_source_TS_Folder, _
 	C_object_saved_ffmpeg_commands.Write("@ECHO ON")
 	C_object_saved_ffmpeg_commands.Write("@setlocal ENABLEDELAYEDEXPANSION")
 	C_object_saved_ffmpeg_commands.Write("@setlocal enableextensions")
-	C_object_saved_ffmpeg_commands.Write("REM Created " &  vrdtvs_current_datetime_string())
+	C_object_saved_ffmpeg_commands.Write("REM")
+	C_object_saved_ffmpeg_commands.Write("REM Saved ffmpeg commands: """ & C_saved_ffmpeg_commands_filename & """")
+	C_object_saved_ffmpeg_commands.Write("REM Created " & vrdtvs_current_datetime_string()
+	C_object_saved_ffmpeg_commands.Write("REM")
 	C_object_saved_ffmpeg_commands.Write("Set ""vrdtvs_mp4boxexex64=" & vrdtvs_mp4boxexex64 & """")
 	C_object_saved_ffmpeg_commands.Write("Set ""vrdtvs_mediainfoexe64=" & vrdtvs_mediainfoexe64 & """")
 	C_object_saved_ffmpeg_commands.Write("Set ""vrdtvs_ffprobeexe64=" & vrdtvs_ffprobeexe64 & """")
@@ -2064,21 +2067,16 @@ Function vrdtvs_Convert_files_in_a_folder(	C_source_TS_Folder, _
 	C_object_saved_ffmpeg_commands.Write("Set ""C_extension_mpeg2=" & C_extension_mpeg2 & """")
 	C_object_saved_ffmpeg_commands.Write("Set ""C_profile_name_for_qsf_avc=" & C_profile_name_for_qsf_avc & """")
 	C_object_saved_ffmpeg_commands.Write("Set ""C_extension_avc=" & C_extension_avc & """")
-	C_object_saved_ffmpeg_commands.Write("Set ""C_done_TS_Folder=" & C_done_TS_Folder & """")
-	C_object_saved_ffmpeg_commands.Write("Set ""C_done_TS_Folder=" & C_done_TS_Folder & """")
-	C_object_saved_ffmpeg_commands.Write("Set ""C_done_TS_Folder=" & C_done_TS_Folder & """")
+
+	C_object_saved_ffmpeg_commands.Write("Set ""C_vrd_version_for_qsf=" & C_vrd_version_for_qsf & """")
+	C_object_saved_ffmpeg_commands.Write("Set ""C_path_for_qsf_vbs=" & C_path_for_qsf_vbs & """")
+	C_object_saved_ffmpeg_commands.Write("Set ""C_vrd_version_for_adscan=" & C_vrd_version_for_adscan & """")
+	C_object_saved_ffmpeg_commands.Write("Set ""C_path_for_adscan_vbs=" & C_path_for_adscan_vbs & """")
+	C_object_saved_ffmpeg_commands.Write("Set ""C_saved_ffmpeg_commands_filename=" & C_saved_ffmpeg_commands_filename & """")
+	C_object_saved_ffmpeg_commands.Write("Set ""C_do_an_Adcsan=" & C_do_an_Adcsan & """")
 
 
 
-			
-											C_profile_name_for_qsf_avc, _
-											C_extension_avc, _
-											C_vrd_version_for_qsf, _
-											C_path_for_qsf_vbs, _
-											C_vrd_version_for_adscan, _
-											C_path_for_adscan_vbs, _
-											C_saved_ffmpeg_commands_filename _
-											C_do_an_Adcsan _	' True or False
 
 
 
