@@ -1002,11 +1002,15 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 		Final_Renamed_BaseName = fso.GetBaseName(Final_Renamed_AbsoluteFilename_AfterRetries)
 		Final_Renamed_ExtName = fso.GetExtensionName(Final_Renamed_AbsoluteFilename_AfterRetries) ' does not include  the "."
 	End If
-
-
-	??? invoke the .BPRJ function
-
-
+	'
+	' Process an associated .bprj, if one exists
+	vrdtvs_status = vrdtvs_ffiaft_pfis_Process_a_BPRJ (byVal theOriginalParentFolderName, byVal theOriginalBaseName, byVal Final_Renamed_ParentFolderName, byVal Final_Renamed_BaseName)
+	If vrdtvs_status <> 0 Then ' Something went wrong with processing .BPRJ
+		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR - vrdtvs_ffiaft_pfis_Rename_a_File Error " & vrdtvs_status & " returned from vrdtvs_ffiaft_pfis_Process_a_BPRJ ... Aborting ...")
+		WScript.StdOut.WriteLine("VRDTVS ERROR - vrdtvs_ffiaft_pfis_Rename_a_File Error " & vrdtvs_status & " returned from vrdtvs_ffiaft_pfis_Process_a_BPRJ ... Aborting ...")
+		Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+	End If
+	'
 	'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	'
@@ -1187,14 +1191,8 @@ Function vrdtvs_ffiaft_pfis_Process_a_BPRJ (byVal theOriginalParentFolderName, b
 		Set vrdtvs_xmlDoc = Nothing
 		WScript.StdOut.WriteLine("VRDTVS vrdtvs_ffiaft_pfis_Process_a_BPRJ .bprj autofixed: """ & Original_BPRJ_AbsoluteFilename & """ into """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
 	End If
-	vrdtvs_ffiaft_pfis_Process_a_BPRJ = ???????????
+	vrdtvs_ffiaft_pfis_Process_a_BPRJ = 0
 End Function
-
-
-
-
-
-
 '
 Function vrdtvs_do_a_Rename_Try99Times(OriginalAbsoluteFilename, TargetAbsoluteFilename)
 	' Try to rename a file and re-Rename it if required, trying up to 99 times
