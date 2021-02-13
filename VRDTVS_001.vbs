@@ -2089,6 +2089,7 @@ Function vrdtvs_Convert_files_in_a_folder(	C_source_TS_Folder, _
 	C_object_saved_ffmpeg_commands.WriteLine("REM Saved ffmpeg commands: """ & C_saved_ffmpeg_commands_filename & """")
 	C_object_saved_ffmpeg_commands.WriteLine("REM Created " & vrdtvs_current_datetime_string()
 	C_object_saved_ffmpeg_commands.WriteLine("REM")
+	C_object_saved_ffmpeg_commands.WriteLine("Set ""vs_root=" & vs_root & """")
 	C_object_saved_ffmpeg_commands.WriteLine("Set ""vrdtvs_mp4boxexex64=" & vrdtvs_mp4boxexex64 & """")
 	C_object_saved_ffmpeg_commands.WriteLine("Set ""vrdtvs_mediainfoexe64=" & vrdtvs_mediainfoexe64 & """")
 	C_object_saved_ffmpeg_commands.WriteLine("Set ""vrdtvs_ffprobeexe64=" & vrdtvs_ffprobeexe64 & """")
