@@ -2055,6 +2055,7 @@ Function vrdtvs_Convert_files_in_a_folder(	C_source_TS_Folder, _
 
 	Dim C_object_Folder, C_object_Folders_Collection
 	Dim C_object_File, C_object_Files_Collection
+	Dim C_AbsolutePathName, C_ParentFolderName, C_FileName, C_Basename, C_Ext
 	Dim C_object_saved_ffmpeg_commands
 	Dim C_exe_cmd_string
 	Dim C_exe_object
@@ -2165,6 +2166,12 @@ get computername
 	Set C_object_Folder = fso.GetFolder(C_source_TS_Folder)
 	Set C_object_Files_Collection = C_object_Folder.Files
 	For Each C_object_File in C_object_Files_Collection
+		C_AbsolutePathName = fso.GetAbsolutePathName(C_object_File.Path)
+		C_ParentFolderName = fso.GetParentFolderName(C_AbsolutePathName)
+		C_BaseName = fso.GetBaseName(C_AbsolutePathName)
+		C_Ext = fso.GetExtensionName(C_AbsolutePathName)
+        '********* FILTER BY FILE EXTENSION *********
+		If ext = Ucase("ts") OR ext = Ucase("mp4") OR ext = Ucase("mpg") Then ' ********** only process specific file extensions
 		Wscript.Echo fso.GetAbsolutePathName(C_object_File.Path) ' the Absolute name of the file
 	Next
 
