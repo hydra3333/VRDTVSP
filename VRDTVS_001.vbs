@@ -2056,6 +2056,7 @@ Function vrdtvs_Convert_files_in_a_folder(	C_source_TS_Folder, _
 	Dim C_object_Folder, C_object_Folders_Collection
 	Dim C_object_File, C_object_Files_Collection
 	Dim C_AbsolutePathName, C_ParentFolderName, C_FileName, C_Basename, C_Ext
+	Dim C_FILE_AbsolutePathName, C_FILE_ParentFolderName, C_FILE_BaseName, C_FILE_Ext
 	Dim C_object_saved_ffmpeg_commands
 	Dim C_exe_cmd_string
 	Dim C_exe_object
@@ -2158,22 +2159,37 @@ End If
 	C_object_saved_ffmpeg_commands.WriteLine("REM")
 	'	
 	' 
+	dim strComputerName
+	dim wshShell
+	Set wshShell = CreateObject( "WScript.Shell" )
+	strComputerName = wshShell.ExpandEnvironmentStrings( "%COMPUTERNAME%" )
+	WScript.StdOut.WriteLine("wshShell.ExpandEnvironmentStrings Computer Name: " & strComputerName)
+	set wshShell = Nothing
 
-get computername
+	Dim wshNetwork
+	Set wshNetwork = CreateObject( "WScript.Network" )
+	strComputerName = wshNetwork.ComputerName
+	WScript.StdOut.WriteLine("wshNetwork.ComputerName Computer Name: " & strComputerName)
+	set wshNetwork = Nothing
 
+	Dim objSysInfo
+	Set objSysInfo = CreateObject( "WinNTSystemInfo" )
+	strComputerName = objSysInfo.ComputerName
+	WScript.StdOut.WriteLine("objSysInfo.ComputerName Computer Name: " & strComputerName)
+	set objSysInfo = Nothing
 
 
 	Set C_object_Folder = fso.GetFolder(C_source_TS_Folder)
 	Set C_object_Files_Collection = C_object_Folder.Files
 	For Each C_object_File in C_object_Files_Collection
-		C_AbsolutePathName = fso.GetAbsolutePathName(C_object_File.Path)
-		C_ParentFolderName = fso.GetParentFolderName(C_AbsolutePathName)
-		C_BaseName = fso.GetBaseName(C_AbsolutePathName)
-		C_Ext = fso.GetExtensionName(C_AbsolutePathName)
+		C_FILE_AbsolutePathName = fso.GetAbsolutePathName(C_object_File.Path)
+		C_FILE_ParentFolderName = fso.GetParentFolderName(C_FILE_AbsolutePathName)
+		C_FILE_BaseName = fso.GetBaseName(C_FILE_AbsolutePathName)
+		C_FILE_Ext = fso.GetExtensionName(C_FILE_AbsolutePathName)
         '********* FILTER BY FILE EXTENSION *********
 		If Ucase(C_Ext) = Ucase("ts") OR Ucase(C_Ext) = Ucase("mp4") OR Ucase(C_Ext) = Ucase("mpg") OR Ucase(C_Ext) = Ucase("bprj") Then ' ********** only process specific file extensions
-			Wscript.EchoC_AbsolutePathName ' the Absolute name of the file
-	End If
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder C_FILE_AbsolutePathName=""" & C_FILE_AbsolutePathName & """")
+		End If
 	Next
 
 
