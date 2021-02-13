@@ -1021,12 +1021,105 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 	' vrdtvs_ffiaft_pfis_Rename_a_File is a Sub, hence no return values
 End Sub
 '
+Function vrdtvs_do_a_Rename_Try99Times(OriginalAbsoluteFilename, TargetAbsoluteFilename)
+	' Try to rename a file and re-Rename it if required, trying up to 99 times
+	' Cater "file already exists" and loop try up to 100 times to add a 2 digit number ".00" to ".99" to the end of NewBaseName if needed fail to failure folder ?
+	' Taking care of editing and rewriting the content .bprj files (which are just XML files) ... test for Ucase(theExtName) = Ucase("bprj")
+    ' Parameters:
+	'		theOriginalAbsoluteFilename		source filename
+	'		theTargetAbsoluteFilename		target filename
+	Const vrdtvs_t99tr_MaxReTries = 99
+	Const theLeadingCharacterForRetries = "_"
+	Dim theOriginalAbsoluteFilename, theOriginalParentFolderName, theOriginalBaseName, theOriginalExtName
+	Dim theTargetAbsoluteFilename, theTargetParentFolderName, theTargetBaseName, theTargetExtName
+	Dim saved_theTargetAbsoluteFilename, saved_theTargetParentFolderName, saved_theTargetBaseName, saved_theTargetExtName
+	Dim vrdtvs_t99tr_ErrNo, vrdtvs_t99tr_ErrDescription, vrdtvs_t99tr_ErrCount
+	Dim local_timerStart, local_timerEnd
+	local_timerStart = Timer
+	local_timerEnd = Timer
+	If vrdtvs_DEBUG Then
+		'WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_do_a_Rename_Try99Times:  incoming Original filename <" & OriginalAbsoluteFilename & ">")
+		'WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_do_a_Rename_Try99Times:    incoming Target filename <" & TargetAbsoluteFilename & ">")
+	End If
+    theOriginalAbsoluteFilename = fso.GetAbsolutePathName(OriginalAbsoluteFilename) ' should already be fully qualified but do it anyway just to be safe
+    theOriginalParentFolderName = fso.GetParentFolderName(theOriginalAbsoluteFilename)
+    theOriginalBaseName = fso.GetBaseName(theOriginalAbsoluteFilename)
+    theOriginalExtName = fso.GetExtensionName(theOriginalAbsoluteFilename) ' does not include  the "."
+	theTargetAbsoluteFilename = fso.GetAbsolutePathName(TargetAbsoluteFilename) ' should already be fully qualified but do it anyway just to be safe
+    theTargetParentFolderName = fso.GetParentFolderName(theTargetAbsoluteFilename)
+    theTargetBaseName = fso.GetBaseName(theTargetAbsoluteFilename)
+    theTargetExtName = fso.GetExtensionName(theTargetAbsoluteFilename) ' does not include  the "."
+	saved_theTargetAbsoluteFilename = theTargetAbsoluteFilename
+    saved_theTargetParentFolderName = theTargetParentFolderName
+    saved_theTargetBaseName = theTargetBaseName
+    saved_theTargetExtName = theTargetExtName ' does not include  the "."
+	' the last part of the basename should be: theLeadingReplaceCharacter_ForMovingDates & "yyyy.mm.dd" ... eg like ".2021.02.05"
+	' if it is not like that, then the filename does not contain a date at the end of the basename
+	vrdtvs_t99tr_ErrNo = 0
+	vrdtvs_t99tr_ErrDescription=""
+	vrdtvs_t99tr_ErrCount = 0
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_do_a_Rename_Try99Times:  rename <" & theOriginalAbsoluteFilename & ">")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_do_a_Rename_Try99Times:      to <" & theTargetAbsoluteFilename & ">")
+	on error resume next
+	If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
+		'WScript.StdOut.WriteLine("VRDTVS DEV: vrdtvs_DEVELOPMENT_NO_ACTIONS: DEV: vrdtvs_do_a_Rename_Try99Times NOT DOING 'fso.MoveFile theOriginalAbsoluteFilename, theTargetAbsoluteFilename'")
+	Else
+		fso.MoveFile theOriginalAbsoluteFilename, theTargetAbsoluteFilename ' this is the actual File Rename
+	End If
+	vrdtvs_t99tr_ErrNo = Err.Number
+	vrdtvs_t99tr_ErrDescription = Err.Description
+	Err.Clear
+	on error goto 0
+	If vrdtvs_t99tr_ErrNo = 0 Then
+		' successful rename ... debug statement here please
+	ElseIf vrdtvs_t99tr_ErrNo <> 58 Then ' catch any non-0 non-58 error and abort
+		WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_do_a_Rename_Try99Times ABORTING: error " & vrdtvs_t99tr_ErrNo & " " & vrdtvs_t99tr_ErrDescription & " ... ABORTING since vbscript non-error-58 was detected at first attempt")
+		Wscript.Quit 17 ' Error 17 = cannot perform the requested operation ' vrdtvs_t99tr_ErrNo
+		vrdtvs_do_a_Rename_Try99Times = ""
+		Exit Function
+	Else ' if it gets to here then it MUST be error 58 = File already exists ... meaning we must re-try up to vrdtvs_t99tr_MaxReTries times
+		vrdtvs_t99tr_ErrCount = 0
+		vrdtvs_t99tr_ErrNo = 58 ' should already be 58 but set it anyway
+		While (vrdtvs_t99tr_ErrNo = 58 AND vrdtvs_t99tr_ErrCount < vrdtvs_t99tr_MaxReTries) ' only vrdtvs_t99tr_MaxReTries number of retries
+			vrdtvs_t99tr_ErrCount = vrdtvs_t99tr_ErrCount + 1
+			theTargetBaseName = vrdtvs_Move_Date_to_End_of_String(saved_theTargetBaseName & theLeadingCharacterForRetries & vrdtvs_Digits2(vrdtvs_t99tr_ErrCount)) ' REMEMBER TO RE-PUT THE DATE BACK ON THE END OF THE FILENAME STRING
+			theTargetAbsoluteFilename =  fso.GetAbsolutePathName(fso.BuildPath(saved_theTargetParentFolderName, theTargetBaseName & "." & saved_theTargetExtName))
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_do_a_Rename_Try99Times:   Retry <" & theTargetAbsoluteFilename & "> Attempt " & vrdtvs_Digits2(vrdtvs_t99tr_ErrCount))
+			on error resume next
+			If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
+				'WScript.StdOut.WriteLine("VRDTVS DEV: vrdtvs_DEVELOPMENT_NO_ACTIONS: DEV: vrdtvs_do_a_Rename_Try99Times retry NOT DOING 'fso.MoveFile theOriginalAbsoluteFilename, theTargetAbsoluteFilename'")
+			Else
+				fso.MoveFile theOriginalAbsoluteFilename, theTargetAbsoluteFilename ' this is the actual File Rename and theTargetAbsoluteFilename contains an updated Absolte filename to use
+			End If
+			vrdtvs_t99tr_ErrNo = Err.Number
+			vrdtvs_t99tr_ErrDescription = Err.Description
+			Err.Clear
+			on error goto 0
+			If (vrdtvs_t99tr_ErrNo <> 0 AND vrdtvs_t99tr_ErrNo <> 58) Then ' catch any non-0 non-58 error and abort ... it catches everything like that before a Wend
+				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_do_a_Rename_Try99Times ABORTING: error " & vrdtvs_t99tr_ErrNo & " " & vrdtvs_t99tr_ErrDescription & " ... ABORTING since vbscript non-error-58 was detected during retries")
+				Wscript.Quit 17 ' Error 17 = cannot perform the requested operation ' vrdtvs_t99tr_ErrNo
+				vrdtvs_do_a_Rename_Try99Times = ""
+				Exit Function
+			End If
+		Wend ' should Wend on non-58 error number (including 0) or reached max retries
+		If (vrdtvs_t99tr_ErrNo = 58 and vrdtvs_t99tr_ErrCount >= vrdtvs_t99tr_MaxReTries) Then ' Error 0 is OK and doesn't get caught by this test
+			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_do_a_Rename_Try99Times ABORTING: error " & vrdtvs_t99tr_ErrNo & " - ABORTING since done " & vrdtvs_t99tr_ErrCount & " retries and still detected error-58 File already exists")
+			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation ' vrdtvs_t99tr_ErrNo
+			vrdtvs_do_a_Rename_Try99Times = ""
+			Exit Function
+		End If
+	End If
+	on error goto 0
+	vrdtvs_do_a_Rename_Try99Times = theTargetAbsoluteFilename ' Final Renamed AbsoluteFilename After Retries
+End Function
+'
 Function vrdtvs_ffiaft_pfis_Process_a_BPRJ (byVal theOriginalParentFolderName, byVal theOriginalBaseName, byVal Final_Renamed_ParentFolderName, byVal Final_Renamed_BaseName)
     ' Parameters:
 	'		theOriginalParentFolderName		byVal	Folder of the filename to be renamed and/or fixed
 	'		theOriginalBaseName				byVal	BaseName of the filename to be renamed and/or fixed
 	'		Final_Renamed_ParentFolderName	byVal	Optional Folder of the filename to be renamed into (the target)   ... if "" then becomes theOriginalParentFolderName
 	'		Final_Renamed_BaseName			byVal	Optional BaseName of the filename to be renamed into (the target) ... if "" then becomes theOriginalBaseName
+	' byVal means any changes to the parmater won't be transferred back to the caller
 	'
 	Dim Original_BPRJ_AbsoluteFilename
 	Dim Final_Renamed_BPRJ_AbsoluteFilename
@@ -1190,100 +1283,12 @@ Function vrdtvs_ffiaft_pfis_Process_a_BPRJ (byVal theOriginalParentFolderName, b
 		End If
 		Set vrdtvs_xmlDoc = Nothing
 		WScript.StdOut.WriteLine("VRDTVS vrdtvs_ffiaft_pfis_Process_a_BPRJ .bprj autofixed: """ & Original_BPRJ_AbsoluteFilename & """ into """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
-	End If
-	vrdtvs_ffiaft_pfis_Process_a_BPRJ = 0
-End Function
-'
-Function vrdtvs_do_a_Rename_Try99Times(OriginalAbsoluteFilename, TargetAbsoluteFilename)
-	' Try to rename a file and re-Rename it if required, trying up to 99 times
-	' Cater "file already exists" and loop try up to 100 times to add a 2 digit number ".00" to ".99" to the end of NewBaseName if needed fail to failure folder ?
-	' Taking care of editing and rewriting the content .bprj files (which are just XML files) ... test for Ucase(theExtName) = Ucase("bprj")
-    ' Parameters:
-	'		theOriginalAbsoluteFilename		source filename
-	'		theTargetAbsoluteFilename		target filename
-	Const vrdtvs_t99tr_MaxReTries = 99
-	Const theLeadingCharacterForRetries = "_"
-	Dim theOriginalAbsoluteFilename, theOriginalParentFolderName, theOriginalBaseName, theOriginalExtName
-	Dim theTargetAbsoluteFilename, theTargetParentFolderName, theTargetBaseName, theTargetExtName
-	Dim saved_theTargetAbsoluteFilename, saved_theTargetParentFolderName, saved_theTargetBaseName, saved_theTargetExtName
-	Dim vrdtvs_t99tr_ErrNo, vrdtvs_t99tr_ErrDescription, vrdtvs_t99tr_ErrCount
-	Dim local_timerStart, local_timerEnd
-	local_timerStart = Timer
-	local_timerEnd = Timer
-	If vrdtvs_DEBUG Then
-		'WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_do_a_Rename_Try99Times:  incoming Original filename <" & OriginalAbsoluteFilename & ">")
-		'WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_do_a_Rename_Try99Times:    incoming Target filename <" & TargetAbsoluteFilename & ">")
-	End If
-    theOriginalAbsoluteFilename = fso.GetAbsolutePathName(OriginalAbsoluteFilename) ' should already be fully qualified but do it anyway just to be safe
-    theOriginalParentFolderName = fso.GetParentFolderName(theOriginalAbsoluteFilename)
-    theOriginalBaseName = fso.GetBaseName(theOriginalAbsoluteFilename)
-    theOriginalExtName = fso.GetExtensionName(theOriginalAbsoluteFilename) ' does not include  the "."
-	theTargetAbsoluteFilename = fso.GetAbsolutePathName(TargetAbsoluteFilename) ' should already be fully qualified but do it anyway just to be safe
-    theTargetParentFolderName = fso.GetParentFolderName(theTargetAbsoluteFilename)
-    theTargetBaseName = fso.GetBaseName(theTargetAbsoluteFilename)
-    theTargetExtName = fso.GetExtensionName(theTargetAbsoluteFilename) ' does not include  the "."
-	saved_theTargetAbsoluteFilename = theTargetAbsoluteFilename
-    saved_theTargetParentFolderName = theTargetParentFolderName
-    saved_theTargetBaseName = theTargetBaseName
-    saved_theTargetExtName = theTargetExtName ' does not include  the "."
-	' the last part of the basename should be: theLeadingReplaceCharacter_ForMovingDates & "yyyy.mm.dd" ... eg like ".2021.02.05"
-	' if it is not like that, then the filename does not contain a date at the end of the basename
-	vrdtvs_t99tr_ErrNo = 0
-	vrdtvs_t99tr_ErrDescription=""
-	vrdtvs_t99tr_ErrCount = 0
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_do_a_Rename_Try99Times:  rename <" & theOriginalAbsoluteFilename & ">")
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_do_a_Rename_Try99Times:      to <" & theTargetAbsoluteFilename & ">")
-	on error resume next
-	If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
-		'WScript.StdOut.WriteLine("VRDTVS DEV: vrdtvs_DEVELOPMENT_NO_ACTIONS: DEV: vrdtvs_do_a_Rename_Try99Times NOT DOING 'fso.MoveFile theOriginalAbsoluteFilename, theTargetAbsoluteFilename'")
 	Else
-		fso.MoveFile theOriginalAbsoluteFilename, theTargetAbsoluteFilename ' this is the actual File Rename
-	End If
-	vrdtvs_t99tr_ErrNo = Err.Number
-	vrdtvs_t99tr_ErrDescription = Err.Description
-	Err.Clear
-	on error goto 0
-	If vrdtvs_t99tr_ErrNo = 0 Then
-		' successful rename ... debug statement here please
-	ElseIf vrdtvs_t99tr_ErrNo <> 58 Then ' catch any non-0 non-58 error and abort
-		WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_do_a_Rename_Try99Times ABORTING: error " & vrdtvs_t99tr_ErrNo & " " & vrdtvs_t99tr_ErrDescription & " ... ABORTING since vbscript non-error-58 was detected at first attempt")
-		Wscript.Quit 17 ' Error 17 = cannot perform the requested operation ' vrdtvs_t99tr_ErrNo
-		vrdtvs_do_a_Rename_Try99Times = ""
-		Exit Function
-	Else ' if it gets to here then it MUST be error 58 = File already exists ... meaning we must re-try up to vrdtvs_t99tr_MaxReTries times
-		vrdtvs_t99tr_ErrCount = 0
-		vrdtvs_t99tr_ErrNo = 58 ' should already be 58 but set it anyway
-		While (vrdtvs_t99tr_ErrNo = 58 AND vrdtvs_t99tr_ErrCount < vrdtvs_t99tr_MaxReTries) ' only vrdtvs_t99tr_MaxReTries number of retries
-			vrdtvs_t99tr_ErrCount = vrdtvs_t99tr_ErrCount + 1
-			theTargetBaseName = vrdtvs_Move_Date_to_End_of_String(saved_theTargetBaseName & theLeadingCharacterForRetries & vrdtvs_Digits2(vrdtvs_t99tr_ErrCount)) ' REMEMBER TO RE-PUT THE DATE BACK ON THE END OF THE FILENAME STRING
-			theTargetAbsoluteFilename =  fso.GetAbsolutePathName(fso.BuildPath(saved_theTargetParentFolderName, theTargetBaseName & "." & saved_theTargetExtName))
-			WScript.StdOut.WriteLine("VRDTVS vrdtvs_do_a_Rename_Try99Times:   Retry <" & theTargetAbsoluteFilename & "> Attempt " & vrdtvs_Digits2(vrdtvs_t99tr_ErrCount))
-			on error resume next
-			If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
-				'WScript.StdOut.WriteLine("VRDTVS DEV: vrdtvs_DEVELOPMENT_NO_ACTIONS: DEV: vrdtvs_do_a_Rename_Try99Times retry NOT DOING 'fso.MoveFile theOriginalAbsoluteFilename, theTargetAbsoluteFilename'")
-			Else
-				fso.MoveFile theOriginalAbsoluteFilename, theTargetAbsoluteFilename ' this is the actual File Rename and theTargetAbsoluteFilename contains an updated Absolte filename to use
-			End If
-			vrdtvs_t99tr_ErrNo = Err.Number
-			vrdtvs_t99tr_ErrDescription = Err.Description
-			Err.Clear
-			on error goto 0
-			If (vrdtvs_t99tr_ErrNo <> 0 AND vrdtvs_t99tr_ErrNo <> 58) Then ' catch any non-0 non-58 error and abort ... it catches everything like that before a Wend
-				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_do_a_Rename_Try99Times ABORTING: error " & vrdtvs_t99tr_ErrNo & " " & vrdtvs_t99tr_ErrDescription & " ... ABORTING since vbscript non-error-58 was detected during retries")
-				Wscript.Quit 17 ' Error 17 = cannot perform the requested operation ' vrdtvs_t99tr_ErrNo
-				vrdtvs_do_a_Rename_Try99Times = ""
-				Exit Function
-			End If
-		Wend ' should Wend on non-58 error number (including 0) or reached max retries
-		If (vrdtvs_t99tr_ErrNo = 58 and vrdtvs_t99tr_ErrCount >= vrdtvs_t99tr_MaxReTries) Then ' Error 0 is OK and doesn't get caught by this test
-			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_do_a_Rename_Try99Times ABORTING: error " & vrdtvs_t99tr_ErrNo & " - ABORTING since done " & vrdtvs_t99tr_ErrCount & " retries and still detected error-58 File already exists")
-			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation ' vrdtvs_t99tr_ErrNo
-			vrdtvs_do_a_Rename_Try99Times = ""
-			Exit Function
+		If vrdtvs_DEBUG Then 
+			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Process_a_BPRJ: ********** NO matching .bprj file found to autofix: """ & Original_BPRJ_AbsoluteFilename & """")
 		End If
 	End If
-	on error goto 0
-	vrdtvs_do_a_Rename_Try99Times = theTargetAbsoluteFilename ' Final Renamed AbsoluteFilename After Retries
+	vrdtvs_ffiaft_pfis_Process_a_BPRJ = 0
 End Function
 '
 Function vrdtvs_remove_tvs_classifying_stuff_from_string (theOriginalString)
