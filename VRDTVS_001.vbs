@@ -2115,8 +2115,8 @@ Function vrdtvs_Convert_files_in_a_folder(	C_source_TS_Folder, _
 	C_object_saved_ffmpeg_commands.WriteLine("Set ""C_do_an_Adcsan=" & C_do_an_Adcsan & """")
 	C_object_saved_ffmpeg_commands.WriteLine("REM")
 	C_object_saved_ffmpeg_commands.WriteLine("REM NO FILES WILL BE MOVED between folders ")
-	C_object_saved_ffmpeg_commands.WriteLine("REM the SOURCE      .TS and .mp4 and .mpg media files must exist in folder: """ & C_source_TS_Folder & """")
-	C_object_saved_ffmpeg_commands.WriteLine("REM the DESTINATION .mp4 and .bprj files will be created in folder        : """ & C_destination_mp4_Folder & """")
+	C_object_saved_ffmpeg_commands.WriteLine("REM the SOURCE      .TS and .mp4 and .mpg media files must already exist in folder: """ & C_source_TS_Folder & """")
+	C_object_saved_ffmpeg_commands.WriteLine("REM the DESTINATION .mp4 and .bprj files will be created (overwritten) in folder  : """ & C_destination_mp4_Folder & """")
 	C_object_saved_ffmpeg_commands.WriteLine("REM NO FILES WILL BE MOVED between folders ")
 	C_object_saved_ffmpeg_commands.WriteLine("REM")
 	'	
