@@ -219,7 +219,9 @@ End If
 WScript.StdOut.WriteLine("NOTE: final                       vrdtvs_DEBUG=" & vrdtvs_DEBUG)
 WScript.StdOut.WriteLine("NOTE: final      vrdtvs_DEVELOPMENT_NO_ACTIONS=" & vrdtvs_DEVELOPMENT_NO_ACTIONS)
 If vrdtvs_DEBUG Then 
-    WScript.StdOut.WriteLine("VRDTVS DEBUG: final                       vrdtvs_DEBUG=" & vrdtvs_DEBUG)
+vrdtvs_ComputerName
+	WScript.StdOut.WriteLine("VRDTVS DEBUG: final                vrdtvs_ComputerName=""" & vrdtvs_ComputerName & """")
+	WScript.StdOut.WriteLine("VRDTVS DEBUG: final                       vrdtvs_DEBUG=" & vrdtvs_DEBUG)
     WScript.StdOut.WriteLine("VRDTVS DEBUG: final      vrdtvs_DEVELOPMENT_NO_ACTIONS=" & vrdtvs_DEVELOPMENT_NO_ACTIONS & """")
     WScript.StdOut.WriteLine("VRDTVS DEBUG: final           vrdtvs_CAPTURE_TS_Folder=""" & vrdtvs_CAPTURE_TS_Folder & """")
     WScript.StdOut.WriteLine("VRDTVS DEBUG: final            vrdtvs_source_TS_Folder=""" & vrdtvs_source_TS_Folder & """")
