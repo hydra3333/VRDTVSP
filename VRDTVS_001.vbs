@@ -131,8 +131,10 @@ Dim vrd_path_for_qsf_vbs
 Dim vrd_path_for_adscan_vbs
 Dim vrd_profile_name_for_qsf_mpeg2
 Dim vrd_profile_name_for_qsf_avc
+Dim vrd_profile_name_for_qsf
 Dim vrd_extension_mpeg2
 Dim vrd_extension_avc
+Dim vrd_extension
 '
 Const const_vrd5_path = "C:\Program Files (x86)\VideoReDoTVSuite5"
 Const const_vrd5_profile_mpeg2 = "zzz-MPEG2ps"
@@ -353,16 +355,8 @@ vrdtvs_status = vrdtvs_Convert_files_in_a_folder(	vrdtvs_source_TS_Folder, _
 													vrdtvs_destination_mp4_Folder, _
 													vrdtvs_failed_conversion_TS_Folder, _
 													vrdtvs_temp_path, _
-													vrd_profile_name_for_qsf_mpeg2, _
-													vrd_extension_mpeg2, _
-													vrd_profile_name_for_qsf_avc, _
-													vrd_extension_avc, _
-													vrd_version_for_qsf, _
-													vrd_path_for_qsf_vbs, _
-													vrd_version_for_adscan, _
-													vrd_path_for_adscan_vbs, _
 													vrdtvs_saved_ffmpeg_commands_filename, _
-													True )
+													True ) ' True means do an Adscan
 If vrdtvs_status <> 0 Then ' Something bad went wrong (invididual conversion failures just result in moving the source file to the Failed folder)
 	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_Convert_files_in_a_folder ... Aborting ...")
 	WScript.StdOut.WriteLine("VRDTVS ERROR  VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_Convert_files_in_a_folder ... Aborting ...")
@@ -2039,14 +2033,6 @@ Function vrdtvs_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 											byVal	C_destination_mp4_Folder, _
 											byVal	C_failed_conversion_TS_Folder, _
 											byVal	C_temp_path, _
-											byVal	C_profile_name_for_qsf_mpeg2, _
-											byVal	C_extension_mpeg2, _
-											byVal	C_profile_name_for_qsf_avc, _
-											byVal	C_extension_avc, _
-											byVal	C_vrd_version_for_qsf, _
-											byVal	C_path_for_qsf_vbs, _
-											byVal	C_vrd_version_for_adscan, _
-											byVal	C_path_for_adscan_vbs, _
 											byVal	C_saved_ffmpeg_commands_filename, _
 											byVal	C_do_an_Adcsan )
 	' Loop and convert .TS .mp4 .mpg Source files in a folder into acceptable avc/aac .mp4 Destination files 
@@ -2189,7 +2175,7 @@ Function vrdtvs_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 			Select Case Ucase(C_FILE_Ext)
 			Case Ucase("bprj") 										' it's in the source folder, ignore it
 			Case Ucase("ts"), Ucase("mp4"), Case Ucase("mpg")		' if it's one of these then convert it
-				vrdtvs_status = 
+				vrdtvs_status = ??????????????
 			Case Else												' not recognised, do nothing
 			End Select 
 		End If
@@ -2344,14 +2330,6 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 								byVal 	CF_destination_mp4_Folder, _
 								byVal 	CF_failed_conversion_TS_Folder, _
 								byVal 	CF_temp_path, _
-								byVal 	CF_profile_name_for_qsf_mpeg2, _
-								byVal 	CF_extension_mpeg2, _
-								byVal 	CF_profile_name_for_qsf_avc, _
-								byVal 	CF_extension_avc, _
-								byVal 	CF_vrd_version_for_qsf, _
-								byVal 	CF_path_for_qsf_vbs, _
-								byVal 	CF_vrd_version_for_adscan, _
-								byVal 	CF_path_for_adscan_vbs, _
 								byVal 	CF_saved_ffmpeg_commands_filename, _
 								byVal 	CF_do_an_Adcsan )
 	'Dim CF_FILE_AbsolutePathName
@@ -2382,17 +2360,42 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'
 	' GET a bunch of useful info from the SOURCE media file
 	'	CF_tmp = vrdtvs_get_mediainfo_parameter (mi_Section, mi_Parameter, mi_MediaFilename, mi_Legacy) 
-	??? = vrdtvs_get_mediainfo_parameter (mi_Section, mi_Parameter, CF_FILE_AbsolutePathName, False) 
-	??? = vrdtvs_get_mediainfo_parameter (mi_Section, mi_Parameter, CF_FILE_AbsolutePathName, False) 
-	??? = vrdtvs_get_mediainfo_parameter (mi_Section, mi_Parameter, CF_FILE_AbsolutePathName, False) 
-	??? = vrdtvs_get_mediainfo_parameter (mi_Section, mi_Parameter, CF_FILE_AbsolutePathName, False) 
-	??? = vrdtvs_get_mediainfo_parameter (mi_Section, mi_Parameter, CF_FILE_AbsolutePathName, False) 
-	??? = vrdtvs_get_mediainfo_parameter (mi_Section, mi_Parameter, CF_FILE_AbsolutePathName, False) 
-	??? = vrdtvs_get_mediainfo_parameter (mi_Section, mi_Parameter, CF_FILE_AbsolutePathName, False) 
-	??? = vrdtvs_get_mediainfo_parameter (mi_Section, mi_Parameter, CF_FILE_AbsolutePathName, False) 
-	??? = vrdtvs_get_mediainfo_parameter (mi_Section, mi_Parameter, CF_FILE_AbsolutePathName, False) 
-	??? = vrdtvs_get_mediainfo_parameter (mi_Section, mi_Parameter, CF_FILE_AbsolutePathName, False) 
-	??? = vrdtvs_get_mediainfo_parameter (mi_Section, mi_Parameter, CF_FILE_AbsolutePathName, False) 
+	V_Codec_legacy          = vrdtvs_get_mediainfo_parameter("Video", "Codec", CF_FILE_AbsolutePathName, "--Legacy") 
+	V_Format_legacy         = vrdtvs_get_mediainfo_parameter("Video", "Format", CF_FILE_AbsolutePathName, "--Legacy") 
+	A_CodecID_legacy        = vrdtvs_get_mediainfo_parameter("Audio", "CodecID", CF_FILE_AbsolutePathName, "--Legacy") 
+	A_Format_legacy         = vrdtvs_get_mediainfo_parameter("Audio", "Format", CF_FILE_AbsolutePathName,  "--Legacy") 
+	A_Video_Delay_ms_legacy = vrdtvs_get_mediainfo_parameter("Audio", "Video_Delay", CF_FILE_AbsolutePathName,  "--Legacy") 
+	If (case(V_Codec_legacy) = Ucase("MPEG-2V") Then
+		vrd_extension = vrd_extension_mpeg2
+		vrd_profile_name_for_qsf = vrd_profile_name_for_qsf_mpeg2
+	Else If (case(V_Codec_legacy) = Ucase("AVC") Then
+		vrd_extension = vrd_extension_avc
+		vrd_profile_name_for_qsf = vrd_profile_name_for_qsf_avc
+	Else
+		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - Unrecognised video codec """ & CF_FILE_AbsolutePathName & """ """ & V_Codec_legacy & """ ... Ignoring file ...")
+		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Unrecognised video codec """ & CF_FILE_AbsolutePathName & """ """ & V_Codec_legacy & """ ... Ignoring file ...")
+		'Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+		?????????? move input file to FAILED folder
+		?????????? set exit status to -1, 
+		Exit Function
+	End If
+	If A_Video_Delay_ms_legacy = "" Then
+		A_Video_Delay_ms_legacy = 0
+		A_Audio_Delay_ms_legacy = 0
+	Else
+		A_Audio_Delay_ms_legacy = 0 - A_Video_Delay_ms_legacy
+	End If
+
+		ECHO !DATE! !TIME! Unrecognised video codec !V_Codec_legacy! in "%~f1"
+		ECHO !DATE! !TIME! Unrecognised video codec !V_Codec_legacy! in "%~f1" >> "!vrdlog!" 2>&1
+		ECHO !DATE! !TIME! Renaming "%~f1" to "!unknown_codec_file!"
+		ECHO !DATE! !TIME! Renaming "%~f1" to "!unknown_codec_file!" >> "!vrdlog!" 2>&1
+		ECHO !DATE! !TIME!
+		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+		MOVE /Y "%~f1" "!unknown_codec_file!" >> "%vrdlog%" 2>&1
+		goto :eof
+	)
+	REM
 
 
 	'
