@@ -99,6 +99,8 @@ Dim vrdtvs_ffprobeexe64
 Dim vrdtvs_ffmpegexe64
 Dim vrdtvs_dgindexNVexe64
 Dim vrdtvs_Insomniaexe64
+Dim vrdtvs_Insomnia64_tmp_filename, vrdtvs_Insomnia64_ProcessID
+'
 vs_root = fso.GetAbsolutePathName("C:\SOFTWARE\Vapoursynth-x64\")
 vrdtvs_mp4boxexex64 = fso.GetAbsolutePathName(fso.BuildPath("C:\SOFTWARE\ffmpeg\0-homebuilt-x64\","MP4Box.exe"))
 vrdtvs_mediainfoexe64 = fso.GetAbsolutePathName(fso.BuildPath("C:\SOFTWARE\MediaInfo\","MediaInfo.exe"))
@@ -254,7 +256,6 @@ End If
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Start a new copy of Insomnia so the PC does not go to sleep in the middle of conversions, do not wait for it to finish
 '
-Dim vrdtvs_Insomnia64_tmp_filename, vrdtvs_Insomnia64_ProcessID
 vrdtvs_Insomnia64_tmp_filename = vrdtvs_gimme_a_temporary_absolute_filename("VRDTVS_Insomnia64_copy-" & vrdtvs_run_datetime) & ".exe"
 If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: Insomnia: Creating and running Insomnia vrdtvs_Insomnia64_tmp_filename=" & vrdtvs_Insomnia64_tmp_filename)
 vrdtvs_exit_code = vrdtvs_delete_a_file (vrdtvs_Insomnia64_tmp_filename, True) ' True=silently delete it even though it should never pre-exist
@@ -330,7 +331,7 @@ End If
 ' ***** 	vrdtvs_DEVELOPMENT_NO_ACTIONS
 ' ***** 	wso, fso, vrdtvs_status
 ' generate a unique filename to save FFMPEG and related commands
-vrdtvs_saved_ffmpeg_commands_filename = C_fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_source_TS_Folder, "vrdtvs_saved_ffmpeg_commands-" & vrdtvs_run_datetime & ".bat"))
+vrdtvs_saved_ffmpeg_commands_filename = fso.GetAbsolutePathName(fso.BuildPath(vrdtvs_source_TS_Folder, "vrdtvs_saved_ffmpeg_commands-" & vrdtvs_run_datetime & ".bat"))
 ' process the files
 vrdtvs_status = vrdtvs_Convert_files_in_a_folder(	vrdtvs_source_TS_Folder, _
 													vrdtvs_done_TS_Folder, _
@@ -345,9 +346,8 @@ vrdtvs_status = vrdtvs_Convert_files_in_a_folder(	vrdtvs_source_TS_Folder, _
 													vrd_path_for_qsf_vbs, _
 													vrd_version_for_adscan, _
 													vrd_path_for_adscan_vbs, _
-													vrdtvs_saved_ffmpeg_commands_filename _
-													True, _	' True = do an Adscan, False = do not
-												)
+													vrdtvs_saved_ffmpeg_commands_filename, _
+													True )
 If vrdtvs_status <> 0 Then ' Something bad went wrong (invididual conversion failures just result in moving the source file to the Failed folder)
 	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_Convert_files_in_a_folder ... Aborting ...")
 	WScript.StdOut.WriteLine("VRDTVS ERROR  VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_Convert_files_in_a_folder ... Aborting ...")
@@ -964,14 +964,14 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
     theOriginalBaseName = fso.GetBaseName(theOriginalAbsoluteFilename)
     theOriginalExtName = fso.GetExtensionName(theOriginalAbsoluteFilename) ' does not include  the "."
     '
-    'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: entered Sub with original BaseName """ & theOriginalBaseName & """ from """ & theOriginalAbsoluteFilename & """")
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: entered Sub with original BaseName """ & theOriginalBaseName & """ from """ & theOriginalAbsoluteFilename & """")
     NewBaseName = theOriginalBaseName ' initialize so we can keep the original stuff if we need i in the future
     NewBaseName = vrdtvs_remove_special_characters_from_string(NewBaseName, False) ' flag is not an Absolute filename by passing False to the function
     'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: after vrdtvs_remove_special_characters_from_string original BaseName """ & theOriginalBaseName & """ NewBaseName """ & NewBaseName & """")
     NewBaseName = vrdtvs_remove_tvs_classifying_stuff_from_string(NewBaseName)
     'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: after vrdtvs_remove_tvs_classifying_stuff_from_string original BaseName """ & theOriginalBaseName & """ NewBaseName """ & NewBaseName & """")
     NewBaseName = vrdtvs_Move_Date_to_End_of_String(NewBaseName)
-    'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: after vrdtvs_Move_Date_to_End_of_String original BaseName """ & theOriginalBaseName & """ NewBaseName """ & NewBaseName & """")
+    If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_ffiaft_pfis_Rename_a_File: after vrdtvs_Move_Date_to_End_of_String original BaseName """ & theOriginalBaseName & """ NewBaseName """ & NewBaseName & """")
 	'
 	'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1004,7 +1004,7 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 	End If
 	'
 	' Process an associated .bprj, if one exists
-	vrdtvs_status = vrdtvs_ffiaft_pfis_Process_a_BPRJ (byVal theOriginalParentFolderName, byVal theOriginalBaseName, byVal Final_Renamed_ParentFolderName, byVal Final_Renamed_BaseName)
+	vrdtvs_status = vrdtvs_ffiaft_pfis_Process_a_BPRJ(theOriginalParentFolderName, theOriginalBaseName, Final_Renamed_ParentFolderName, Final_Renamed_BaseName)
 	If vrdtvs_status <> 0 Then ' Something went wrong with processing .BPRJ
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR - vrdtvs_ffiaft_pfis_Rename_a_File Error " & vrdtvs_status & " returned from vrdtvs_ffiaft_pfis_Process_a_BPRJ ... Aborting ...")
 		WScript.StdOut.WriteLine("VRDTVS ERROR - vrdtvs_ffiaft_pfis_Rename_a_File Error " & vrdtvs_status & " returned from vrdtvs_ffiaft_pfis_Process_a_BPRJ ... Aborting ...")
@@ -2032,9 +2032,8 @@ Function vrdtvs_Convert_files_in_a_folder(	C_source_TS_Folder, _
 											C_path_for_qsf_vbs, _
 											C_vrd_version_for_adscan, _
 											C_path_for_adscan_vbs, _
-											C_saved_ffmpeg_commands_filename _
-											C_do_an_Adcsan _	' True or False
-										)
+											C_saved_ffmpeg_commands_filename, _
+											C_do_an_Adcsan )
 	' Loop and convert .TS .mp4 .mpg Source files in a folder into acceptable avc/aac .mp4 Destination files 
     ' Parameters: see below
 	' NOTES: 
@@ -2054,8 +2053,8 @@ Function vrdtvs_Convert_files_in_a_folder(	C_source_TS_Folder, _
 '?????? vrdtvs_ffiaft_pfis_Process_a_BPRJ (byVal theOriginalParentFolderName, byVal theOriginalBaseName, byVal Final_Renamed_ParentFolderName, byVal Final_Renamed_BaseName)
 '?????? with both Final_Renamed_ParentFolderName = "" and Final_Renamed_BaseName = "", which will force not renaming the .bprj file
 
-	Dim C_object_File, C_object_Files_Collection
 	Dim C_object_Folder, C_object_Folders_Collection
+	Dim C_object_File, C_object_Files_Collection
 	Dim C_object_saved_ffmpeg_commands
 	Dim C_exe_cmd_string
 	Dim C_exe_object
@@ -2072,6 +2071,36 @@ Function vrdtvs_Convert_files_in_a_folder(	C_source_TS_Folder, _
 	C_path_for_adscan_vbs = fso.GetAbsolutePathName(C_path_for_adscan_vbs & "\")
 	C_saved_ffmpeg_commands_filename = fso.GetAbsolutePathName(C_saved_ffmpeg_commands_filename & "\")
 	'
+	If vrdtvs_DEBUG Then 
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder - Entered with parameters: ")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder Saved ffmpeg commands: """ & C_saved_ffmpeg_commands_filename & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder Created " & vrdtvs_current_datetime_string)
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder  ""vs_root=" & vs_root & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder  ""vrdtvs_mp4boxexex64=" & vrdtvs_mp4boxexex64 & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder  ""vrdtvs_mediainfoexe64=" & vrdtvs_mediainfoexe64 & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder  ""vrdtvs_ffprobeexe64=" & vrdtvs_ffprobeexe64 & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder  ""vrdtvs_ffmpegexe64=" & vrdtvs_ffmpegexe64 & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder  ""vrdtvs_dgindexNVexe64=" & vrdtvs_dgindexNVexe64 & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder  ""vrdtvs_Insomniaexe64=" & vrdtvs_Insomniaexe64 & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder ... ")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder  ""C_source_TS_Folder=" & C_source_TS_Folder & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder  ""C_done_TS_Folder=" & C_done_TS_Folder & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder  ""C_destination_mp4_Folder=" & C_destination_mp4_Folder & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder  ""C_failed_conversion_TS_Folder=" & C_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder  ""C_temp_path=" & C_temp_path & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder  ""C_profile_name_for_qsf_mpeg2=" & C_profile_name_for_qsf_mpeg2 & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder  ""C_extension_mpeg2=" & C_extension_mpeg2 & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder  ""C_profile_name_for_qsf_avc=" & C_profile_name_for_qsf_avc & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder  ""C_extension_avc=" & C_extension_avc & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder  ""C_vrd_version_for_qsf=" & C_vrd_version_for_qsf & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder  ""C_path_for_qsf_vbs=" & C_path_for_qsf_vbs & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder  ""C_vrd_version_for_adscan=" & C_vrd_version_for_adscan & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder  ""C_path_for_adscan_vbs=" & C_path_for_adscan_vbs & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder  ""C_saved_ffmpeg_commands_filename=" & C_saved_ffmpeg_commands_filename & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder  ""C_do_an_Adcsan=" & C_do_an_Adcsan & """")
+End If
+
+
 	' delete the saved FFMPEG COMMANDS file silently 
 	vrdtvs_status = vrdtvs_delete_a_file (C_saved_ffmpeg_commands_filename, True) ' delete it silently
 	If vrdtvs_status <> 0 AND vrdtvs_status <> 53 Then ' Something went wrong with deleting the file, but allow 53 "File not found"
@@ -2080,7 +2109,7 @@ Function vrdtvs_Convert_files_in_a_folder(	C_source_TS_Folder, _
 		Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 	End If
 	' create a new empty FFMPEG COMMANDS file with overwrite
-	set C_object_saved_ffmpeg_commands = fso.CreateTextFile C_saved_ffmpeg_commands_filename, True, True ' [ filename, Overwrite[, Unicode]])
+	set C_object_saved_ffmpeg_commands = fso.CreateTextFile(C_saved_ffmpeg_commands_filename, True, True) ' [ filename, Overwrite[, Unicode]])
 	If C_object_saved_ffmpeg_commands is Nothing  Then ' Something went wrong with creating the file
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_files_in_a_folder - Error - Nothing object returned from fso.CreateTextFile with saved FFMPEG COMMANDS """ & C_saved_ffmpeg_commands_filename & """... Aborting ...")
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_files_in_a_folder - Error - Nothing object returned from fso.CreateTextFile with saved FFMPEG COMMANDS """ & C_saved_ffmpeg_commands_filename & """... Aborting ...")
@@ -2093,7 +2122,7 @@ Function vrdtvs_Convert_files_in_a_folder(	C_source_TS_Folder, _
 	C_object_saved_ffmpeg_commands.WriteLine("@setlocal enableextensions")
 	C_object_saved_ffmpeg_commands.WriteLine("REM")
 	C_object_saved_ffmpeg_commands.WriteLine("REM Saved ffmpeg commands: """ & C_saved_ffmpeg_commands_filename & """")
-	C_object_saved_ffmpeg_commands.WriteLine("REM Created " & vrdtvs_current_datetime_string()
+	C_object_saved_ffmpeg_commands.WriteLine("REM Created " & vrdtvs_current_datetime_string)
 	C_object_saved_ffmpeg_commands.WriteLine("REM")
 	C_object_saved_ffmpeg_commands.WriteLine("Set ""vs_root=" & vs_root & """")
 	C_object_saved_ffmpeg_commands.WriteLine("Set ""vrdtvs_mp4boxexex64=" & vrdtvs_mp4boxexex64 & """")
@@ -2129,11 +2158,15 @@ Function vrdtvs_Convert_files_in_a_folder(	C_source_TS_Folder, _
 	'	
 	' 
 
+get computername
 
 
 
-
-
+	Set C_object_Folder = fso.GetFolder(C_source_TS_Folder)
+	Set C_object_Files_Collection = C_object_Folder.Files
+	For Each C_object_File in C_object_Files_Collection
+		Wscript.Echo fso.GetAbsolutePathName(C_object_File.Path) ' the Absolute name of the file
+	Next
 
 
 
