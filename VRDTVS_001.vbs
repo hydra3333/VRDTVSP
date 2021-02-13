@@ -2034,21 +2034,21 @@ End Function
 '****************************************************************************************************************************************
 '****************************************************************************************************************************************
 '
-Function vrdtvs_Convert_files_in_a_folder(	C_source_TS_Folder, _
-											C_done_TS_Folder, _
-											C_destination_mp4_Folder, _
-											C_failed_conversion_TS_Folder, _
-											C_temp_path, _
-											C_profile_name_for_qsf_mpeg2, _
-											C_extension_mpeg2, _
-											C_profile_name_for_qsf_avc, _
-											C_extension_avc, _
-											C_vrd_version_for_qsf, _
-											C_path_for_qsf_vbs, _
-											C_vrd_version_for_adscan, _
-											C_path_for_adscan_vbs, _
-											C_saved_ffmpeg_commands_filename, _
-											C_do_an_Adcsan )
+Function vrdtvs_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
+											byVal	C_done_TS_Folder, _
+											byVal	C_destination_mp4_Folder, _
+											byVal	C_failed_conversion_TS_Folder, _
+											byVal	C_temp_path, _
+											byVal	C_profile_name_for_qsf_mpeg2, _
+											byVal	C_extension_mpeg2, _
+											byVal	C_profile_name_for_qsf_avc, _
+											byVal	C_extension_avc, _
+											byVal	C_vrd_version_for_qsf, _
+											byVal	C_path_for_qsf_vbs, _
+											byVal	C_vrd_version_for_adscan, _
+											byVal	C_path_for_adscan_vbs, _
+											byVal	C_saved_ffmpeg_commands_filename, _
+											byVal	C_do_an_Adcsan )
 	' Loop and convert .TS .mp4 .mpg Source files in a folder into acceptable avc/aac .mp4 Destination files 
     ' Parameters: see below
 	' NOTES: 
@@ -2076,7 +2076,7 @@ Function vrdtvs_Convert_files_in_a_folder(	C_source_TS_Folder, _
 	Dim C_exe_cmd_string
 	Dim C_exe_object
 	Dim C_exe_status
-	Dim C_tmp
+	Dim C_tmp, c_status
 	'
 	' force absolute PathNnames
 	C_source_TS_Folder = fso.GetAbsolutePathName(C_source_TS_Folder & "\")
@@ -2115,9 +2115,8 @@ Function vrdtvs_Convert_files_in_a_folder(	C_source_TS_Folder, _
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder  ""C_path_for_adscan_vbs=" & C_path_for_adscan_vbs & """")
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder  ""C_saved_ffmpeg_commands_filename=" & C_saved_ffmpeg_commands_filename & """")
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder  ""C_do_an_Adcsan=" & C_do_an_Adcsan & """")
-End If
-
-
+	End If
+	'
 	' delete the saved FFMPEG COMMANDS file silently 
 	vrdtvs_status = vrdtvs_delete_a_file (C_saved_ffmpeg_commands_filename, True) ' delete it silently
 	If vrdtvs_status <> 0 AND vrdtvs_status <> 53 Then ' Something went wrong with deleting the file, but allow 53 "File not found"
@@ -2138,6 +2137,7 @@ End If
 	C_object_saved_ffmpeg_commands.WriteLine("@setlocal ENABLEDELAYEDEXPANSION")
 	C_object_saved_ffmpeg_commands.WriteLine("@setlocal enableextensions")
 	C_object_saved_ffmpeg_commands.WriteLine("REM")
+	C_object_saved_ffmpeg_commands.WriteLine("REM Computername=""" & vrdtvs_ComputerName & """" )
 	C_object_saved_ffmpeg_commands.WriteLine("REM Saved ffmpeg commands: """ & C_saved_ffmpeg_commands_filename & """")
 	C_object_saved_ffmpeg_commands.WriteLine("REM Created " & vrdtvs_current_datetime_string)
 	C_object_saved_ffmpeg_commands.WriteLine("REM")
@@ -2178,14 +2178,20 @@ End If
 
 	Set C_object_Folder = fso.GetFolder(C_source_TS_Folder)
 	Set C_object_Files_Collection = C_object_Folder.Files
-	For Each C_object_File in C_object_Files_Collection
+	For Each C_object_File in C_object_Files_Collection ' loop through all files in the source folder, treating each one according to its Extension
 		C_FILE_AbsolutePathName = fso.GetAbsolutePathName(C_object_File.Path)
 		C_FILE_ParentFolderName = fso.GetParentFolderName(C_FILE_AbsolutePathName)
 		C_FILE_BaseName = fso.GetBaseName(C_FILE_AbsolutePathName)
 		C_FILE_Ext = fso.GetExtensionName(C_FILE_AbsolutePathName)
         '********* FILTER BY FILE EXTENSION *********
 		If Ucase(C_Ext) = Ucase("ts") OR Ucase(C_Ext) = Ucase("mp4") OR Ucase(C_Ext) = Ucase("mpg") OR Ucase(C_Ext) = Ucase("bprj") Then ' ********** only process specific file extensions
-			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder C_FILE_AbsolutePathName=""" & C_FILE_AbsolutePathName & """")
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder Processing file C_FILE_AbsolutePathName=""" & C_FILE_AbsolutePathName & """")
+			Select Case Ucase(C_FILE_Ext)
+			Case Ucase("bprj") 										' it's in the source folder, ignore it
+			Case Ucase("ts"), Ucase("mp4"), Case Ucase("mpg")		' if it's one of these then convert it
+				vrdtvs_status = 
+			Case Else												' not recognised, do nothing
+			End Select 
 		End If
 	Next
 
@@ -2329,4 +2335,89 @@ Function vrdtvs_exec_a_command_and_show_stdout_stderr (byVal eac_command_string)
 	Set eac_exe_object = Nothing
 	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_exec_a_command exiting with status=""" & eac_exe_status & """")
 	vrdtvs_exec_a_command = eac_exe_status
+End Function
+'
+Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
+								byRef	CF_object_saved_ffmpeg_commands, _
+								byVal 	CF_source_TS_Folder, _
+								byVal 	CF_done_TS_Folder, _
+								byVal 	CF_destination_mp4_Folder, _
+								byVal 	CF_failed_conversion_TS_Folder, _
+								byVal 	CF_temp_path, _
+								byVal 	CF_profile_name_for_qsf_mpeg2, _
+								byVal 	CF_extension_mpeg2, _
+								byVal 	CF_profile_name_for_qsf_avc, _
+								byVal 	CF_extension_avc, _
+								byVal 	CF_vrd_version_for_qsf, _
+								byVal 	CF_path_for_qsf_vbs, _
+								byVal 	CF_vrd_version_for_adscan, _
+								byVal 	CF_path_for_adscan_vbs, _
+								byVal 	CF_saved_ffmpeg_commands_filename, _
+								byVal 	CF_do_an_Adcsan )
+	'Dim CF_FILE_AbsolutePathName
+	Dim                             CF_FILE_ParentFolderName,   CF_FILE_BaseName,   CF_FILE_Ext
+	Dim CF_QSF_AbsolutePathName,    CF_QSF_ParentFolderName,    CF_QSF_BaseName,    CF_QSF_Ext
+	Dim CF_TARGET_AbsolutePathName, CF_TARGET_ParentFolderName, CF_TARGET_BaseName, CF_TARGET_Ext
+	Dim CF_BPRJ_AbsolutePathName,   CF_BPRJ_ParentFolderName,   CF_BRRJ_BaseName,   CF_BPRJ_Ext
+	Dim CF_VPY_AbsolutePathName,    CF_VPY_ParentFolderName,    CF_VPY_BaseName,    CF_VPY_Ext
+	Dim CF_DGI_AbsolutePathName,    CF_DGI_ParentFolderName,    CF_DGI_BaseName,    CF_DGI_Ext
+	Dim CF_DGIlog_AbsolutePathName, CF_DGIlog_ParentFolderName, CF_DGIlog_BaseName, CF_DGIlog_Ext
+	'
+	Dim CF_exe_cmd_string
+	Dim CF_exe_object
+	Dim CF_exe_status
+	Dim CF_tmp, CF_status
+	'
+	If NOT fso.FileExists(CF_FILE_AbsolutePathName) Then
+		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - SUPPOSEDLY VALID FILE NOT FOUND """ & CF_FILE_AbsolutePathName & """... Aborting ...")
+		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - SUPPOSEDLY VALID FILE NOT FOUND """ & CF_FILE_AbsolutePathName & """... Aborting ...")
+		Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+	End If
+	'
+	CF_temp_path = fso.GetAbsolutePathName(CF_temp_path & "\")
+	'
+	'
+	'
+	'
+	CF_FILE_AbsolutePathName = fso.GetAbsolutePathName(CF_FILE_AbsolutePathName) ' ENSURE AN ABSOLUTE
+	CF_FILE_ParentFolderName = fso.GetParentFolderName(CF_FILE_AbsolutePathName)
+	CF_FILE_BaseName = fso.GetBaseName(CF_FILE_AbsolutePathName)
+	CF_FILE_Ext = fso.GetExtensionName(CF_FILE_AbsolutePathName)
+	'
+	CF_QSF_ParentFolderName = CF_temp_path
+	CF_QSF_BaseName = CF_FILE_BaseName
+	CF_QSF_Ext = ??? depends on codec
+	CF_QSF_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_QSF_ParentFolderName,CF_QSF_BaseName & "." & CF_QSF_Ext)
+	'
+	CF_TARGET_ParentFolderName = CF_destination_mp4_Folder
+	CF_TARGET_BaseName = CF_FILE_BaseName
+	CF_TARGET_Ext = "mp4"		' always .mp4
+	CF_TARGET_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_TARGET_ParentFolderName,CF_TARGET_BaseName & "." & CF_TARGET_Ext)
+	'
+	CF_VPY_ParentFolderName = CF_temp_path
+	CF_VPY_BaseName = CF_FILE_BaseName
+	CF_VPY_Ext = "vpy"			' always .vpy
+	CF_VPY_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_VPY_ParentFolderName,CF_VPY_BaseName & "." & CF_VPY_Ext)
+	'
+	CF_DGI_ParentFolderName = CF_temp_path
+	CF_DGI_BaseName = CF_FILE_BaseName
+	CF_VPY_Ext = "dgi"			' always .dgi
+	CF_VPY_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_DGI_ParentFolderName,CF_QSF_BaseName & "." & CF_DGI_Ext)
+	'
+	CF_BPRJ_ParentFolderName = CF_destination_mp4_Folder
+	CF_BPRJ_BaseName = CF_FILE_BaseName
+	CF_BPRJ_Ext = "bprj"		' always .bprj
+	CF_BPRJ_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_BPRJ_ParentFolderName,CF_BPRJ_BaseName & "." & CF_BPRJ_Ext)
+	'
+
+
+
+
+
+
+
+
+
+
+	vrdtvs_Convert_File = 0				
 End Function
