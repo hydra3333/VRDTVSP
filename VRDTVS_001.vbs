@@ -32,9 +32,21 @@ Option explicit
 '    NOTE:  For ANY of this to work, the vb script MUST be run under Cscript host - or, things like stdout fail to work.
 WScript.StdOut.WriteLine("------------------------------------------------------------------------------------------------------")
 Dim  cscript_wshShell, cscript_strEngine
+Dim vrdtvs_ComputerName
 '
 Set cscript_wshShell = CreateObject( "WScript.Shell" )
 cscript_strEngine = UCase( Right( WScript.FullName, 12 ) )
+vrdtvs_ComputerName = cscript_wshShell.ExpandEnvironmentStrings( "%COMPUTERNAME%" )
+'Dim wshNetwork
+'Set wshNetwork = CreateObject( "WScript.Network" )
+'vrdtvs_ComputerName = wshNetwork.ComputerName
+'WScript.StdOut.WriteLine("wshNetwork.ComputerName Computer Name: " & vrdtvs_ComputerName)
+'set wshNetwork = Nothing
+'Dim objSysInfo
+'Set objSysInfo = CreateObject( "WinNTSystemInfo" )
+'vrdtvs_ComputerName = objSysInfo.ComputerName
+'WScript.StdOut.WriteLine("objSysInfo.ComputerName Computer Name: " & vrdtvs_ComputerName)
+'set objSysInfo = Nothing
 Set cscript_wshShell = Nothing
 WScript.Echo "Checked and CSCRIPT Engine = """ & cscript_strEngine & """" ' .Echo works in both wscript and cscript
 If UCase(cscript_strEngine) <> UCase("\CSCRIPT.EXE") Then
@@ -49,6 +61,7 @@ End If
 WScript.StdOut.WriteLine("VRDTVS cscript Engine: """ & cscript_strEngine & """")
 WScript.StdOut.WriteLine("VRDTVS    Script name: " & Wscript.ScriptName)
 WScript.StdOut.WriteLine("VRDTVS    Script path: " & Wscript.ScriptFullName)
+WScript.StdOut.WriteLine("VRDTVS   ComputerName: " & vrdtvs_ComputerName)
 WScript.StdOut.WriteLine("------------------------------------------------------------------------------------------------------")
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
@@ -2159,24 +2172,6 @@ End If
 	C_object_saved_ffmpeg_commands.WriteLine("REM")
 	'	
 	' 
-	dim strComputerName
-	dim wshShell
-	Set wshShell = CreateObject( "WScript.Shell" )
-	strComputerName = wshShell.ExpandEnvironmentStrings( "%COMPUTERNAME%" )
-	WScript.StdOut.WriteLine("wshShell.ExpandEnvironmentStrings Computer Name: " & strComputerName)
-	set wshShell = Nothing
-
-	Dim wshNetwork
-	Set wshNetwork = CreateObject( "WScript.Network" )
-	strComputerName = wshNetwork.ComputerName
-	WScript.StdOut.WriteLine("wshNetwork.ComputerName Computer Name: " & strComputerName)
-	set wshNetwork = Nothing
-
-	Dim objSysInfo
-	Set objSysInfo = CreateObject( "WinNTSystemInfo" )
-	strComputerName = objSysInfo.ComputerName
-	WScript.StdOut.WriteLine("objSysInfo.ComputerName Computer Name: " & strComputerName)
-	set objSysInfo = Nothing
 
 
 	Set C_object_Folder = fso.GetFolder(C_source_TS_Folder)
