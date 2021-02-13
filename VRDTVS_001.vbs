@@ -687,7 +687,7 @@ Function vrdtvs_Calculate_ElapsedTime_string (timer_StartTime, timer_EndTime)
     End If
 End Function
 '
-Function vrdtvs_get_mediainfo_parameter (mi_Section, mi_Parameter, mi_MediaFilename, mi_Legacy) 
+Function vrdtvs_get_mediainfo_parameter (byVal mi_Section, byVal mi_Parameter, byVal mi_MediaFilename, byVal mi_Legacy) 
     ' rely on global variable "wso"
     ' rely on global variable vrdtvs_mediainfoexe64 exists pointing to the mediainfo exe
     ' Note \r\n is Windows new-line, 
@@ -765,7 +765,7 @@ Function vrdtvs_get_mediainfo_parameter (mi_Section, mi_Parameter, mi_MediaFilen
     vrdtvs_get_mediainfo_parameter = mi_tmp
 End Function
 '
-Function vrdtvs_get_ffprobe_video_stream_parameter (ffp_Parameter, ffp_MediaFilename) 
+Function vrdtvs_get_ffprobe_video_stream_parameter (byVal ffp_Parameter, byVal ffp_MediaFilename) 
     ' rely on global variable "wso"
     ' rely on global variable vrdtvs_ffprobeexe64 exists pointing to the ffprobe exe
     ' Note \r\n is Windows new-line, which is for the case of multiple audio streams, 
@@ -2375,14 +2375,26 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	End If
 	'
 	CF_temp_path = fso.GetAbsolutePathName(CF_temp_path & "\")
-	'
-	'
-	'
-	'
 	CF_FILE_AbsolutePathName = fso.GetAbsolutePathName(CF_FILE_AbsolutePathName) ' ENSURE AN ABSOLUTE
 	CF_FILE_ParentFolderName = fso.GetParentFolderName(CF_FILE_AbsolutePathName)
 	CF_FILE_BaseName = fso.GetBaseName(CF_FILE_AbsolutePathName)
 	CF_FILE_Ext = fso.GetExtensionName(CF_FILE_AbsolutePathName)
+	'
+	' GET a bunch of useful info from the SOURCE media file
+	'	CF_tmp = vrdtvs_get_mediainfo_parameter (mi_Section, mi_Parameter, mi_MediaFilename, mi_Legacy) 
+	??? = vrdtvs_get_mediainfo_parameter (mi_Section, mi_Parameter, CF_FILE_AbsolutePathName, False) 
+	??? = vrdtvs_get_mediainfo_parameter (mi_Section, mi_Parameter, CF_FILE_AbsolutePathName, False) 
+	??? = vrdtvs_get_mediainfo_parameter (mi_Section, mi_Parameter, CF_FILE_AbsolutePathName, False) 
+	??? = vrdtvs_get_mediainfo_parameter (mi_Section, mi_Parameter, CF_FILE_AbsolutePathName, False) 
+	??? = vrdtvs_get_mediainfo_parameter (mi_Section, mi_Parameter, CF_FILE_AbsolutePathName, False) 
+	??? = vrdtvs_get_mediainfo_parameter (mi_Section, mi_Parameter, CF_FILE_AbsolutePathName, False) 
+	??? = vrdtvs_get_mediainfo_parameter (mi_Section, mi_Parameter, CF_FILE_AbsolutePathName, False) 
+	??? = vrdtvs_get_mediainfo_parameter (mi_Section, mi_Parameter, CF_FILE_AbsolutePathName, False) 
+	??? = vrdtvs_get_mediainfo_parameter (mi_Section, mi_Parameter, CF_FILE_AbsolutePathName, False) 
+	??? = vrdtvs_get_mediainfo_parameter (mi_Section, mi_Parameter, CF_FILE_AbsolutePathName, False) 
+	??? = vrdtvs_get_mediainfo_parameter (mi_Section, mi_Parameter, CF_FILE_AbsolutePathName, False) 
+
+
 	'
 	CF_QSF_ParentFolderName = CF_temp_path
 	CF_QSF_BaseName = CF_FILE_BaseName
