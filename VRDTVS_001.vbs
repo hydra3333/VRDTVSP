@@ -2376,7 +2376,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Unrecognised video codec """ & CF_FILE_AbsolutePathName & """ """ & V_Codec_legacy & """ ... Ignoring file ...")
 		'Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 		?????????? move input file to FAILED folder
-		?????????? set exit status to -1, 
+		vrdtvs_Convert_File = -1
 		Exit Function
 	End If
 	If A_Video_Delay_ms_legacy = "" Then
@@ -2386,23 +2386,19 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		A_Audio_Delay_ms_legacy = 0 - A_Video_Delay_ms_legacy
 	End If
 
-		ECHO !DATE! !TIME! Unrecognised video codec !V_Codec_legacy! in "%~f1"
-		ECHO !DATE! !TIME! Unrecognised video codec !V_Codec_legacy! in "%~f1" >> "!vrdlog!" 2>&1
-		ECHO !DATE! !TIME! Renaming "%~f1" to "!unknown_codec_file!"
-		ECHO !DATE! !TIME! Renaming "%~f1" to "!unknown_codec_file!" >> "!vrdlog!" 2>&1
-		ECHO !DATE! !TIME!
-		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-		MOVE /Y "%~f1" "!unknown_codec_file!" >> "%vrdlog%" 2>&1
-		goto :eof
-	)
-	REM
+
+
+
+
+
+
 
 
 	'
 	CF_QSF_ParentFolderName = CF_temp_path
 	CF_QSF_BaseName = CF_FILE_BaseName
-	CF_QSF_Ext = ??? depends on codec
-	CF_QSF_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_QSF_ParentFolderName,CF_QSF_BaseName & "." & CF_QSF_Ext)
+	CF_QSF_Ext = vrd_extension ' set above based on incoming codec
+	CF_QSF_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_QSF_ParentFolderName,CF_QSF_BaseName & ".QSF." & CF_QSF_Ext)
 	'
 	CF_TARGET_ParentFolderName = CF_destination_mp4_Folder
 	CF_TARGET_BaseName = CF_FILE_BaseName
@@ -2416,8 +2412,13 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'
 	CF_DGI_ParentFolderName = CF_temp_path
 	CF_DGI_BaseName = CF_FILE_BaseName
-	CF_VPY_Ext = "dgi"			' always .dgi
-	CF_VPY_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_DGI_ParentFolderName,CF_QSF_BaseName & "." & CF_DGI_Ext)
+	CF_DGI_Ext = "dgi"			' always .dgi
+	CF_DGI_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_DGI_ParentFolderName,CF_QSF_BaseName & "." & CF_DGI_Ext)
+	'
+	CF_DGIlog_ParentFolderName = CF_temp_path
+	CF_DGIlog_BaseName = CF_FILE_BaseName
+	CF_DGIlog_Ext = "log"			' always .log
+	CF_DGIlog_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_DGI_ParentFolderName,CF_QSF_BaseName & "." & CF_DGIlog_Ext)
 	'
 	CF_BPRJ_ParentFolderName = CF_destination_mp4_Folder
 	CF_BPRJ_BaseName = CF_FILE_BaseName
