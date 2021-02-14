@@ -2415,8 +2415,11 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Else
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - Unrecognised video codec """ & CF_FILE_AbsolutePathName & """ """ & V_Codec_legacy & """ ... Ignoring file ...")
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Unrecognised video codec """ & CF_FILE_AbsolutePathName & """ """ & V_Codec_legacy & """ ... Ignoring file ...")
-		'Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
-		?????????? move input file to FAILED folder ?????????? and then ignore it
+		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
+			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+		Else
+			?????????? move input file to FAILED folder ?????????? and then ignore it
+		End If
 		vrdtvs_Convert_File = -1
 		Exit Function
 	End If
@@ -2519,8 +2522,11 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	If CF_exe_status <> 0 OR NOT fso.FileExists(CF_QSF_AbsolutePathName) Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - Error - Failed to QSF """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Failed to QSF """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
-		?????????? move input file to FAILED folder ?????????? and then ignore it
-		'Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
+			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+		Else
+			?????????? move input file to FAILED folder ?????????? and then ignore it
+		End If
 		vrdtvs_Convert_File = -1
 		Exit Function
 	End If
@@ -2536,8 +2542,11 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	If CF_exe_status <> 0 OR NOT fso.FileExists(CF_QSF_AbsolutePathName) Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - Error - Failed to copy QSF log """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Failed to copy QSF log """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
-		?????????? move input file to FAILED folder ?????????? and then ignore it
-		'Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
+			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+		Else
+			?????????? move input file to FAILED folder ?????????? and then ignore it
+		End If
 		vrdtvs_Convert_File = -1
 		Exit Function
 	End If
@@ -2599,8 +2608,11 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Else
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - Unrecognised Q_V_Codec_legacy video codec """ & CF_QSF_AbsolutePathName & """ Q_V_Codec_legacy=""" & Q_V_Codec_legacy & """ ... Ignoring file ...")
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Unrecognised Q_V_Codec_legacy video codec """ & CF_QSF_AbsolutePathName & """ Q_V_Codec_legacy=""" & Q_V_Codec_legacy & """ ... Ignoring file ...")
-		'Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
-		?????????? move input file to FAILED folder ?????????? and then ignore it
+		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
+			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+		Else
+			?????????? move input file to FAILED folder ?????????? and then ignore it
+		End If
 		vrdtvs_Convert_File = -1
 		Exit Function
 	End If
@@ -2749,8 +2761,11 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_INCOMING_BITRATE_FFPROBE=""" & V_INCOMING_BITRATE_FFPROBE & """") 
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_INCOMING_BITRATE_QSF_LOG=""" & V_INCOMING_BITRATE_QSF_LOG & """") 
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_INCOMING_BITRATE=""" & V_INCOMING_BITRATE & """") 
-		'Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
-		?????????? move input file to FAILED folder ?????????? and then ignore it
+		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
+			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+		Else
+			?????????? move input file to FAILED folder ?????????? and then ignore it
+		End If
 		vrdtvs_Convert_File = -1
 		Exit Function
 	End If
@@ -2813,8 +2828,11 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_INCOMING_BITRATE_FFPROBE=""" & V_INCOMING_BITRATE_FFPROBE & """") 
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_INCOMING_BITRATE_QSF_LOG=""" & V_INCOMING_BITRATE_QSF_LOG & """") 
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_INCOMING_BITRATE=""" & V_INCOMING_BITRATE & """") 
-		'Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
-		?????????? move input file to FAILED folder ?????????? and then ignore it
+		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
+			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+		Else
+			?????????? move input file to FAILED folder ?????????? and then ignore it
+		End If
 		vrdtvs_Convert_File = -1
 		Exit Function
 End If
