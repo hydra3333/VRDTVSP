@@ -2363,9 +2363,12 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Dim CF_status
 	'
 	If NOT fso.FileExists(CF_FILE_AbsolutePathName) Then
-		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - SUPPOSEDLY VALID FILE NOT FOUND """ & CF_FILE_AbsolutePathName & """... Aborting ...")
-		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - SUPPOSEDLY VALID FILE NOT FOUND """ & CF_FILE_AbsolutePathName & """... Aborting ...")
+		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - SUPPOSEDLY VALID SOURCE FILE NOT FOUND """ & CF_FILE_AbsolutePathName & """... Aborting ...")
+		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - SUPPOSEDLY VALID SOURCE FILE NOT FOUND """ & CF_FILE_AbsolutePathName & """... Aborting ...")
 		Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+	End If
+	If vrdtvs_DEBUG Then
+		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: Entered vrdtvs_Convert_File with VALID SOURCE FILE """ & CF_FILE_AbsolutePathName & """")
 	End If
 	'
 	CF_temp_path = fso.GetAbsolutePathName(CF_temp_path & "\")
@@ -2401,7 +2404,6 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	V_Duration_s_FF						= vrdtvs_get_ffprobe_video_stream_parameter("duration" "Q_V_Duration_s_FF", CF_FILE_AbsolutePathName)  
 	V_BitRate_FF						= vrdtvs_get_ffprobe_video_stream_parameter("bit_rate" "Q_V_BitRate_FF", CF_FILE_AbsolutePathName)  
 	V_BitRate_Maximum_FF				= vrdtvs_get_ffprobe_video_stream_parameter("max_bit_rate" "Q_V_BitRate_Maximum_FF", CF_FILE_AbsolutePathName)  
-	'
 	' Fix up the mediainfo parameters retrieved
 	V_DisplayAspectRatio_String_slash	= Replace(V_DisplayAspectRatio_String,":","/",1,-1,vbTextCompare)  ' Replace(string,find,replacewith[,start[,count[,compare]]])
 	If (Ucase(V_Codec_legacy) = Ucase("MPEG-2V") Then
@@ -2439,9 +2441,35 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Else
 		A_Audio_Delay_ms = 0 - A_Video_Delay_ms
 	End If
-	'
-	??????????????? If vrdtvs_DEBUG then Dump the SOURCE parameters
-
+	If vrdtvs_DEBUG Then
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File adjusted SOURCE media characteristics below:") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_Codec_legacy=""" & V_Codec_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_Format_legacy=""" & V_Format_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_DisplayAspectRatio_String=""" & V_DisplayAspectRatio_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_PixelAspectRatio=""" & V_PixelAspectRatio & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_ScanType=""" & V_ScanType & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_ScanOrder=""" & V_ScanOrder & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_Width=""" & V_Width & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_Height=""" & V_Height & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_BitRate=""" & V_BitRate & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_BitRate_Minimum=""" & V_BitRate_Minimum & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_BitRate_Maximum=""" & V_BitRate_Maximum & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File A_Codec_legacy=""" & A_Codec_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File A_CodecID_legacy=""" & A_CodecID_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File A_Format_legacy=""" & A_Format_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File A_Video_Delay_ms_legacy=""" & A_Video_Delay_ms_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File A_CodecID=""" & A_CodecID & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File A_CodecID_String=""" & A_CodecID_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File A_Video_Delay_ms=""" & A_Video_Delay_ms & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_CodecID_FF=""" & V_CodecID_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_CodecID_String_FF=""" & V_CodecID_String_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_Width_FF=""" & V_Width_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_Height_FF=""" & V_Height_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_Duration_s_FF=""" & V_Duration_s_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_BitRate_FF=""" & V_BitRate_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_BitRate_Maximum_FF=""" & V_BitRate_Maximum_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File adjusted SOURCE media characteristics above") 
+	End If
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ======================================================================================================================================================")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File End Examining of SOURCE """ & CF_FILE_AbsolutePathName & """")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File SOURCE file: V_Codec_legacy: """ & V_Codec_legacy & """ V_ScanType: """ & V_ScanType & """ V_ScanOrder: """ & V_ScanOrder & """ " & V_Width & "x" & V_Height & " dar=" & V_DisplayAspectRatio_String & " sar=" & V_PixelAspectRatio & " A_Codec_legacy: " & A_Codec_legacy & " A_Audio_Delay_ms: " & A_Audio_Delay_ms & " A_Audio_Delay_ms_legacy: " & A_Audio_Delay_ms_legacy)
@@ -2564,7 +2592,6 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Q_V_Duration_s_FF					= vrdtvs_get_ffprobe_video_stream_parameter("duration" "Q_V_Duration_s_FF", CF_QSF_AbsolutePathName)  
 	Q_V_BitRate_FF						= vrdtvs_get_ffprobe_video_stream_parameter("bit_rate" "Q_V_BitRate_FF", CF_QSF_AbsolutePathName)  
 	Q_V_BitRate_Maximum_FF				= vrdtvs_get_ffprobe_video_stream_parameter("max_bit_rate" "Q_V_BitRate_Maximum_FF", CF_QSF_AbsolutePathName
-	
 	' Fix up the QSF mediainfo parameters retrieved
 	Q_V_DisplayAspectRatio_String_slash	= Replace(Q_V_DisplayAspectRatio_String,":","/",1,-1,vbTextCompare)  ' Replace(string,find,replacewith[,start[,count[,compare]]])
 	If (Ucase(Q_V_Codec_legacy) = Ucase("MPEG-2V") Then
@@ -2621,9 +2648,39 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		' Jolly Bother and Dash it all, no valid bitrate found anywhere, we need to set an artifical incoming bitrate. Choose 4Mb/s for AVC
 		V_INCOMING_BITRATE = 4000000
 	End If
-
-	??????????????? If vrdtvs_DEBUG then Dump the QSF parameters
-	
+	If vrdtvs_DEBUG Then
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File adjusted QSF media characteristics below:") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_Codec_legacy=""" & Q_V_Codec_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_Format_legacy=""" & Q_V_Format_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_DisplayAspectRatio_String=""" & Q_V_DisplayAspectRatio_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_PixelAspectRatio=""" & Q_V_PixelAspectRatio & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_ScanType=""" & Q_V_ScanType & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_ScanOrder=""" & Q_V_ScanOrder & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_Width=""" & Q_V_Width & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_Height=""" & Q_V_Height & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_BitRate=""" & Q_V_BitRate & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_BitRate_Minimum=""" & Q_V_BitRate_Minimum & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_BitRate_Maximum=""" & Q_V_BitRate_Maximum & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_A_Codec_legacy=""" & Q_A_Codec_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_A_CodecID_legacy=""" & Q_A_CodecID_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_A_Format_legacy=""" & Q_A_Format_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_A_Video_Delay_ms_legacy=""" & Q_A_Video_Delay_ms_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_A_CodecID=""" & Q_A_CodecID & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_A_CodecID_String=""" & Q_A_CodecID_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File A_Video_Delay_ms=""" & Q_A_Video_Delay_ms & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_CodecID_FF=""" & Q_V_CodecID_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_CodecID_String_FF=""" & Q_V_CodecID_String_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_Width_FF=""" & Q_V_Width_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_Height_FF=""" & Q_V_Height_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_Duration_s_FF=""" & Q_V_Duration_s_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_BitRate_FF=""" & Q_V_BitRate_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_BitRate_Maximum_FF=""" & Q_V_BitRate_Maximum_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_INCOMING_BITRATE_MEDIAINFO=""" & V_INCOMING_BITRATE_MEDIAINFO & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_INCOMING_BITRATE_FFPROBE=""" & V_INCOMING_BITRATE_FFPROBE & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_INCOMING_BITRATE_QSF_LOG=""" & V_INCOMING_BITRATE_QSF_LOG & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_INCOMING_BITRATE=""" & V_INCOMING_BITRATE & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File adjusted QSF media characteristics above") 
+	End If
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ======================================================================================================================================================")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File End QSF of """ & CF_FILE_AbsolutePathName & """ into """ & CF_QSF_AbsolutePathName & """")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File output QSF file: Q_V_Codec_legacy: """ & Q_V_Codec_legacy & """ Q_V_ScanType: """ & Q_V_ScanType & """ Q_V_ScanOrder: """ & Q_V_ScanOrder & """ " & Q_V_Width & "x" & Q_V_Height & " dar=" & Q_V_DisplayAspectRatio_String & " sar=" & Q_V_PixelAspectRatio & " Q_A_Codec_legacy: " & Q_A_Codec_legacy & " Q_A_Audio_Delay_ms: " & Q_A_Audio_Delay_ms & " Q_A_Audio_Delay_ms_legacy: " & Q_A_Audio_Delay_ms_legacy)
@@ -2632,38 +2689,130 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File V_INCOMING_BITRATE: Using """ & CF_FILE_AbsolutePathName & """ and """ & CF_QSF_AbsolutePathName & """ The V_INCOMING_BITRATE=""" & V_INCOMING_BITRATE & """")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ======================================================================================================================================================")
 	'
-	' Cross-Check SOURCE ScanType and ScanOrder with QSF ScanType and ScanOrder and bail of not the same
+	' Cross-Check SOURCE ScanType and ScanOrder with QSF ScanType and ScanOrder and bail if not the same
 	If Ucase(V_ScanType) <> Ucase(Q_V_ScanType) Then
-		ECHO "ERROR - incoming V_ScanType NOT EQUAL Q_V_ScanType"
-		ECHO "V_ScanType=!V_ScanType!"
-		ECHO "V_ScanOrder=!V_ScanOrder!"
-		ECHO "Q_V_ScanType=!Q_V_ScanType!"
-		ECHO "Q_V_ScanOrder=!Q_V_ScanOrder!"
-		ECHO "ERROR - incoming V_ScanType NOT EQUAL Q_V_ScanType"
-		ECHO "V_ScanType=!V_ScanType!"
-		ECHO "V_ScanOrder=!V_ScanOrder!"
-		ECHO "Q_V_ScanType=!Q_V_ScanType!"
-		ECHO "Q_V_ScanOrder=!Q_V_ScanOrder!"
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - Ucase(V_ScanType) """ & Ucase(V_ScanType) & """ <> Ucase(Q_V_ScanType) """ & Ucase(Q_V_ScanType) & """  """ & CF_QSF_AbsolutePathName & """ """ & Q_V_Codec_legacy & """ ... Ignoring file ...")
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error -Ucase(V_ScanType) """ & Ucase(V_ScanType) & """ <> Ucase(Q_V_ScanType) """ & Ucase(Q_V_ScanType) & """  """ & CF_QSF_AbsolutePathName & """ """ & Q_V_Codec_legacy & """ ... Ignoring file ...")
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File adjusted SOURCE media characteristics below:") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_Codec_legacy=""" & V_Codec_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_Format_legacy=""" & V_Format_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_DisplayAspectRatio_String=""" & V_DisplayAspectRatio_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_PixelAspectRatio=""" & V_PixelAspectRatio & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_ScanType=""" & V_ScanType & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_ScanOrder=""" & V_ScanOrder & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_Width=""" & V_Width & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_Height=""" & V_Height & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_BitRate=""" & V_BitRate & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_BitRate_Minimum=""" & V_BitRate_Minimum & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_BitRate_Maximum=""" & V_BitRate_Maximum & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File A_Codec_legacy=""" & A_Codec_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File A_CodecID_legacy=""" & A_CodecID_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File A_Format_legacy=""" & A_Format_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File A_Video_Delay_ms_legacy=""" & A_Video_Delay_ms_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File A_CodecID=""" & A_CodecID & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File A_CodecID_String=""" & A_CodecID_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File A_Video_Delay_ms=""" & A_Video_Delay_ms & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_CodecID_FF=""" & V_CodecID_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_CodecID_String_FF=""" & V_CodecID_String_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_Width_FF=""" & V_Width_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_Height_FF=""" & V_Height_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_Duration_s_FF=""" & V_Duration_s_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_BitRate_FF=""" & V_BitRate_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_BitRate_Maximum_FF=""" & V_BitRate_Maximum_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File adjusted SOURCE media characteristics above") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_Codec_legacy=""" & Q_V_Codec_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_Format_legacy=""" & Q_V_Format_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_DisplayAspectRatio_String=""" & Q_V_DisplayAspectRatio_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_PixelAspectRatio=""" & Q_V_PixelAspectRatio & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_ScanType=""" & Q_V_ScanType & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_ScanOrder=""" & Q_V_ScanOrder & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_Width=""" & Q_V_Width & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_Height=""" & Q_V_Height & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_BitRate=""" & Q_V_BitRate & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_BitRate_Minimum=""" & Q_V_BitRate_Minimum & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_BitRate_Maximum=""" & Q_V_BitRate_Maximum & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_A_Codec_legacy=""" & Q_A_Codec_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_A_CodecID_legacy=""" & Q_A_CodecID_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_A_Format_legacy=""" & Q_A_Format_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_A_Video_Delay_ms_legacy=""" & Q_A_Video_Delay_ms_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_A_CodecID=""" & Q_A_CodecID & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_A_CodecID_String=""" & Q_A_CodecID_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File A_Video_Delay_ms=""" & Q_A_Video_Delay_ms & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_CodecID_FF=""" & Q_V_CodecID_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_CodecID_String_FF=""" & Q_V_CodecID_String_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_Width_FF=""" & Q_V_Width_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_Height_FF=""" & Q_V_Height_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_Duration_s_FF=""" & Q_V_Duration_s_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_BitRate_FF=""" & Q_V_BitRate_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_BitRate_Maximum_FF=""" & Q_V_BitRate_Maximum_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_INCOMING_BITRATE_MEDIAINFO=""" & V_INCOMING_BITRATE_MEDIAINFO & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_INCOMING_BITRATE_FFPROBE=""" & V_INCOMING_BITRATE_FFPROBE & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_INCOMING_BITRATE_QSF_LOG=""" & V_INCOMING_BITRATE_QSF_LOG & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_INCOMING_BITRATE=""" & V_INCOMING_BITRATE & """") 
 		'Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 		?????????? move input file to FAILED folder ?????????? and then ignore it
 		vrdtvs_Convert_File = -1
 		Exit Function
 	End If
 	If Ucase(V_ScanOrder) <> Ucase(Q_V_ScanOrder) Then
-		ECHO "ERROR - incoming V_ScanOrder NOT EQUAL Q_V_ScanOrder"
-		ECHO "V_ScanType=!V_ScanType!"
-		ECHO "V_ScanOrder=!V_ScanOrder!"
-		ECHO "Q_V_ScanType=!Q_V_ScanType!"
-		ECHO "Q_V_ScanOrder=!Q_V_ScanOrder!"
-		ECHO "ERROR - incoming V_ScanOrder NOT EQUAL Q_V_ScanOrder"
-		ECHO "V_ScanType=!V_ScanType!"
-		ECHO "V_ScanOrder=!V_ScanOrder!"
-		ECHO "Q_V_ScanType=!Q_V_ScanType!"
-		ECHO "Q_V_ScanOrder=!Q_V_ScanOrder!"
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - Ucase(V_ScanOrder) """ & Ucase(V_ScanOrder) & """ <> Ucase(Q_V_ScanOrder) """ & Ucase(Q_V_ScanOrder) & """  """ & CF_QSF_AbsolutePathName & """ """ & Q_V_Codec_legacy & """ ... Ignoring file ...")
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Ucase(V_ScanOrder) """ & Ucase(V_ScanOrder) & """ <> Ucase(Q_V_ScanOrder) """ & Ucase(Q_V_ScanOrder) & """ """ & CF_QSF_AbsolutePathName & """ """ & Q_V_Codec_legacy & """ ... Ignoring file ...")
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File adjusted SOURCE media characteristics below:") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_Codec_legacy=""" & V_Codec_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_Format_legacy=""" & V_Format_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_DisplayAspectRatio_String=""" & V_DisplayAspectRatio_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_PixelAspectRatio=""" & V_PixelAspectRatio & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_ScanType=""" & V_ScanType & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_ScanOrder=""" & V_ScanOrder & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_Width=""" & V_Width & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_Height=""" & V_Height & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_BitRate=""" & V_BitRate & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_BitRate_Minimum=""" & V_BitRate_Minimum & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_BitRate_Maximum=""" & V_BitRate_Maximum & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File A_Codec_legacy=""" & A_Codec_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File A_CodecID_legacy=""" & A_CodecID_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File A_Format_legacy=""" & A_Format_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File A_Video_Delay_ms_legacy=""" & A_Video_Delay_ms_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File A_CodecID=""" & A_CodecID & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File A_CodecID_String=""" & A_CodecID_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File A_Video_Delay_ms=""" & A_Video_Delay_ms & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_CodecID_FF=""" & V_CodecID_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_CodecID_String_FF=""" & V_CodecID_String_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_Width_FF=""" & V_Width_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_Height_FF=""" & V_Height_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_Duration_s_FF=""" & V_Duration_s_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_BitRate_FF=""" & V_BitRate_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_BitRate_Maximum_FF=""" & V_BitRate_Maximum_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File adjusted SOURCE media characteristics above") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_Codec_legacy=""" & Q_V_Codec_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_Format_legacy=""" & Q_V_Format_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_DisplayAspectRatio_String=""" & Q_V_DisplayAspectRatio_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_PixelAspectRatio=""" & Q_V_PixelAspectRatio & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_ScanType=""" & Q_V_ScanType & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_ScanOrder=""" & Q_V_ScanOrder & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_Width=""" & Q_V_Width & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_Height=""" & Q_V_Height & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_BitRate=""" & Q_V_BitRate & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_BitRate_Minimum=""" & Q_V_BitRate_Minimum & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_BitRate_Maximum=""" & Q_V_BitRate_Maximum & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_A_Codec_legacy=""" & Q_A_Codec_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_A_CodecID_legacy=""" & Q_A_CodecID_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_A_Format_legacy=""" & Q_A_Format_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_A_Video_Delay_ms_legacy=""" & Q_A_Video_Delay_ms_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_A_CodecID=""" & Q_A_CodecID & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_A_CodecID_String=""" & Q_A_CodecID_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File A_Video_Delay_ms=""" & Q_A_Video_Delay_ms & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_CodecID_FF=""" & Q_V_CodecID_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_CodecID_String_FF=""" & Q_V_CodecID_String_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_Width_FF=""" & Q_V_Width_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_Height_FF=""" & Q_V_Height_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_Duration_s_FF=""" & Q_V_Duration_s_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_BitRate_FF=""" & Q_V_BitRate_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_BitRate_Maximum_FF=""" & Q_V_BitRate_Maximum_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_INCOMING_BITRATE_MEDIAINFO=""" & V_INCOMING_BITRATE_MEDIAINFO & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_INCOMING_BITRATE_FFPROBE=""" & V_INCOMING_BITRATE_FFPROBE & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_INCOMING_BITRATE_QSF_LOG=""" & V_INCOMING_BITRATE_QSF_LOG & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_INCOMING_BITRATE=""" & V_INCOMING_BITRATE & """") 
 		'Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 		?????????? move input file to FAILED folder ?????????? and then ignore it
 		vrdtvs_Convert_File = -1
