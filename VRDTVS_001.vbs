@@ -2510,14 +2510,52 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	CF_BPRJ_Ext = "bprj"		' always .bprj
 	CF_BPRJ_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_BPRJ_ParentFolderName,CF_BPRJ_BaseName & "." & CF_BPRJ_Ext)
 	'
-	' Do the QSF
-	vrdtvs_status = vrdtvs_delete_a_file(CF_QSF_AbsolutePathName, False) ' True=silently delete it
+	' START ======================================================  Do the QSF ======================================================
+	'
+		vrdtvs_status = vrdtvs_delete_a_file(CF_QSF_AbsolutePathName, False) ' True=silently delete it
 	vrdtvs_status = vrdtvs_delete_a_file(vrd_logfile_wildcard_QSF, False) ' True=silently delete it 	' is a wildcard, in fso.DeleteFile the filespec can contain wildcard characters in the last path component
 	vrdtvs_status = vrdtvs_delete_a_file(vrd_logfile_wildcard_ADSCAN, False) ' True=silently delete it	' is a wildcard, in fso.DeleteFile the filespec can contain wildcard characters in the last path component
 	CF_exe_cmd_string = "cscript //Nologo """ & vrd_path_for_qsf_vbs & """ """ & CF_FILE_AbsolutePathName & """  """ & CF_QSF_AbsolutePathName & """ /qsf /p """ & vrd_profile_name_for_qsf & """ /q /na"
 	If vrdtvs_DEBUG Then 
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ do QSF with CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
 	End If
+	' save QSF command	
+	C_object_saved_ffmpeg_commands.WriteLine("REM")
+	C_object_saved_ffmpeg_commands.WriteLine("REM ===============================================================================================================")
+	C_object_saved_ffmpeg_commands.WriteLine("REM ===============================================================================================================")
+	C_object_saved_ffmpeg_commands.WriteLine("REM ===============================================================================================================")
+	C_object_saved_ffmpeg_commands.WriteLine("REM  adjusted SOURCE media characteristics below:") 
+	C_object_saved_ffmpeg_commands.WriteLine("REM  V_Codec_legacy=""" & V_Codec_legacy & """") 
+	C_object_saved_ffmpeg_commands.WriteLine("REM  V_Format_legacy=""" & V_Format_legacy & """") 
+	C_object_saved_ffmpeg_commands.WriteLine("REM  V_DisplayAspectRatio_String=""" & V_DisplayAspectRatio_String & """") 
+	C_object_saved_ffmpeg_commands.WriteLine("REM  V_PixelAspectRatio=""" & V_PixelAspectRatio & """") 
+	C_object_saved_ffmpeg_commands.WriteLine("REM  V_ScanType=""" & V_ScanType & """") 
+	C_object_saved_ffmpeg_commands.WriteLine("REM  V_ScanOrder=""" & V_ScanOrder & """") 
+	C_object_saved_ffmpeg_commands.WriteLine("REM  V_Width=""" & V_Width & """") 
+	C_object_saved_ffmpeg_commands.WriteLine("REM  V_Height=""" & V_Height & """") 
+	C_object_saved_ffmpeg_commands.WriteLine("REM  V_BitRate=""" & V_BitRate & """") 
+	C_object_saved_ffmpeg_commands.WriteLine("REM  V_BitRate_Minimum=""" & V_BitRate_Minimum & """") 
+	C_object_saved_ffmpeg_commands.WriteLine("REM  V_BitRate_Maximum=""" & V_BitRate_Maximum & """") 
+	C_object_saved_ffmpeg_commands.WriteLine("REM  A_Codec_legacy=""" & A_Codec_legacy & """") 
+	C_object_saved_ffmpeg_commands.WriteLine("REM  A_CodecID_legacy=""" & A_CodecID_legacy & """") 
+	C_object_saved_ffmpeg_commands.WriteLine("REM  A_Format_legacy=""" & A_Format_legacy & """") 
+	C_object_saved_ffmpeg_commands.WriteLine("REM  A_Video_Delay_ms_legacy=""" & A_Video_Delay_ms_legacy & """") 
+	C_object_saved_ffmpeg_commands.WriteLine("REM  A_CodecID=""" & A_CodecID & """") 
+	C_object_saved_ffmpeg_commands.WriteLine("REM  A_CodecID_String=""" & A_CodecID_String & """") 
+	C_object_saved_ffmpeg_commands.WriteLine("REM  A_Video_Delay_ms=""" & A_Video_Delay_ms & """") 
+	C_object_saved_ffmpeg_commands.WriteLine("REM  V_CodecID_FF=""" & V_CodecID_FF & """") 
+	C_object_saved_ffmpeg_commands.WriteLine("REM  V_CodecID_String_FF=""" & V_CodecID_String_FF & """") 
+	C_object_saved_ffmpeg_commands.WriteLine("REM  V_Width_FF=""" & V_Width_FF & """") 
+	C_object_saved_ffmpeg_commands.WriteLine("REM  V_Height_FF=""" & V_Height_FF & """") 
+	C_object_saved_ffmpeg_commands.WriteLine("REM  V_Duration_s_FF=""" & V_Duration_s_FF & """") 
+	C_object_saved_ffmpeg_commands.WriteLine("REM  V_BitRate_FF=""" & V_BitRate_FF & """") 
+	C_object_saved_ffmpeg_commands.WriteLine("REM  V_BitRate_Maximum_FF=""" & V_BitRate_Maximum_FF & """") 
+	C_object_saved_ffmpeg_commands.WriteLine("REM  adjusted SOURCE media characteristics above") 
+	C_object_saved_ffmpeg_commands.WriteLine("REM Do the QSF for """ & CF_FILE_AbsolutePathName & """")
+	C_object_saved_ffmpeg_commands.WriteLine("REM")
+	C_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string)
+	C_object_saved_ffmpeg_commands.WriteLine("REM")
+	' do the actual QSF command
 	CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string)
 	If CF_exe_status <> 0 OR NOT fso.FileExists(CF_QSF_AbsolutePathName) Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - Error - Failed to QSF """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
@@ -2530,6 +2568,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		vrdtvs_Convert_File = -1
 		Exit Function
 	End If
+	' END  ======================================================  Do the QSF ======================================================
 	'
 	' Copy the QSF log so we can search it for a bitrate value
 	CF_QSF_logfile =  CF_QSF_AbsolutePathName & ".log"
@@ -2853,15 +2892,43 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		FF_V_Target_Maximum_BitRate = FF_V_Target_BitRate * 2
 		FF_V_Target_BufSize = FF_V_Target_BitRate * 2
 	End If
+	'
+	' NOTE:	After testing, it has been found that ffprobe can mis-report bitrates in the QSF'd file by about double.
+	'		Although mediainfo and the "QSF log" values are reasonably close, testing shows ffprobe gets it more "right" when encoding.
+	'		Although hopefully correct, this can result in a much lower transcoded filesizes than the originals.
+	'		For now, accept what we PROPOSE on whether to "Up" the CQ from 0 to 24.
+	' Initial Default CQ options:
+	x_cq0 = "-cq:v 0"
+	x_cq24 = "-cq:v 24 -qmin 16 -qmax 48"
+	x_cq_options = x_cq0
+	PROPOSED_x_cq_options = x_cq_options
+
+
+	
+	If Ucase(vrdtvs_ComputerName) = "3900X" Then
+		vrdtvs_RTX2060super_extra_flags = "-spatial-aq 1 -temporal-aq 1 -refs 3"
+	Else
+		vrdtvs_RTX2060super_extra_flags = ""
+	End If
+	vrdtvs_Audio_flags = "-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000"
+
+
+
 	If vrdtvs_DEBUG Then
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Initially Calculated bitrates related to codec: """ & Q_V_Codec_legacy & """")
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - FF_V_Target_BitRate=" & FF_V_Target_BitRate)
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - FF_V_Target_Minimum_BitRate=" & FF_V_Target_Minimum_BitRate)
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - FF_V_Target_Maximum_BitRate=" & FF_V_Target_Maximum_BitRate)
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - FF_V_Target_BufSize=" & FF_V_Target_BufSize)
 	End If
+'
+' ?????????????????????????????????????????????????????????????????????????????????
+'
+?????????? PERHAPS PLACE THESE SETTINGS DOWN LATER ??????????
 
 
-
+	
+	
 
 
 
