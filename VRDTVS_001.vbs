@@ -2359,21 +2359,28 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	CF_FILE_Ext = fso.GetExtensionName(CF_FILE_AbsolutePathName)
 	'
 	' GET a bunch of useful info from the SOURCE media file
-	'	CF_tmp = vrdtvs_get_mediainfo_parameter (mi_Section, mi_Parameter, mi_MediaFilename, mi_Legacy) 
 	V_Codec_legacy						= vrdtvs_get_mediainfo_parameter("Video", "Codec", CF_FILE_AbsolutePathName, "--Legacy") 
 	V_Format_legacy						= vrdtvs_get_mediainfo_parameter("Video", "Format", CF_FILE_AbsolutePathName, "--Legacy") 
+	V_DisplayAspectRatio_String			= vrdtvs_get_mediainfo_parameter("Video", "DisplayAspectRatio/String", "")
+	V_PixelAspectRatio					= vrdtvs_get_mediainfo_parameter("Video", "PixelAspectRatio", "")
+	V_ScanType							= vrdtvs_get_mediainfo_parameter("Video", "ScanType", "")
+	V_ScanOrder 						= vrdtvs_get_mediainfo_parameter("Video", "ScanOrder", "")
+	V_Width								= vrdtvs_get_mediainfo_parameter("Video", "Width", "")
+	V_Height							= vrdtvs_get_mediainfo_parameter("Video", "Height"), "")
+	V_BitRate							= vrdtvs_get_mediainfo_parameter("Video", "BitRate", "")
+	V_BitRate_Minimum					= vrdtvs_get_mediainfo_parameter("Video", "BitRate_Minimum" "V_BitRate_Minimum", "")
+	V_BitRate_Maximum					= vrdtvs_get_mediainfo_parameter("Video", "BitRate_Maximum" "V_BitRate_Maximum", "")
+	A_Codec_legacy						= vrdtvs_get_mediainfo_parameter("Audio", "Codec", CF_FILE_AbsolutePathName, "--Legacy")
 	A_CodecID_legacy					= vrdtvs_get_mediainfo_parameter("Audio", "CodecID", CF_FILE_AbsolutePathName, "--Legacy") 
-	A_Format_legacy						= vrdtvs_get_mediainfo_parameter("Audio", "Format", CF_FILE_AbsolutePathName,  "--Legacy") 
-	A_Video_Delay_ms_legacy				= vrdtvs_get_mediainfo_parameter("Audio", "Video_Delay", CF_FILE_AbsolutePathName,  "--Legacy") 
-	V_DisplayAspectRatio_String			= vrdtvs_get_mediainfo_parameter("Video", "DisplayAspectRatio/String")
-	V_ScanType							= vrdtvs_get_mediainfo_parameter("Video", "ScanType")
-	V_ScanOrder 						= vrdtvs_get_mediainfo_parameter("Video", "ScanOrder")
-	V_Width								= vrdtvs_get_mediainfo_parameter("Video", "Width")
-	V_Height							= vrdtvs_get_mediainfo_parameter("Video", "Height")
-	A_CodecID							= vrdtvs_get_mediainfo_parameter("Audio", "CodecID")
-	A_CodecID_String					= vrdtvs_get_mediainfo_parameter("Audio", "CodecID/String")
-	A_Video_Delay_ms					= vrdtvs_get_mediainfo_parameter("Audio", "Video_Delay")
+	A_Format_legacy						= vrdtvs_get_mediainfo_parameter("Audio", "Format", CF_FILE_AbsolutePathName, "--Legacy") 
+	A_Video_Delay_ms_legacy				= vrdtvs_get_mediainfo_parameter("Audio", "Video_Delay", CF_FILE_AbsolutePathName, "--Legacy") 
+	A_CodecID							= vrdtvs_get_mediainfo_parameter("Audio", "CodecID", "")
+	A_CodecID_String					= vrdtvs_get_mediainfo_parameter("Audio", "CodecID/String", "")
+	A_Video_Delay_ms					= vrdtvs_get_mediainfo_parameter("Audio", "Video_Delay", "")
+	V_BitRate_FF						= :get_ffprobe_video_stream_parameter "bit_rate"
+	V_BitRate_Maximum_FF				= :get_ffprobe_video_stream_parameter "max_bit_rate"
 	'
+	' Fix up the media parameters retrieved
 	V_DisplayAspectRatio_String_slash	= Replace(V_DisplayAspectRatio_String,":","/",1,-1,vbTextCompare)  ' Replace(string,find,replacewith[,start[,count[,compare]]])
 	If (case(V_Codec_legacy) = Ucase("MPEG-2V") Then
 		vrd_extension = vrd_extension_mpeg2
@@ -2411,9 +2418,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		A_Audio_Delay_ms = 0 - A_Video_Delay_ms
 	End If
 	'
-	ECHO !DATE! !TIME! input TS file: Video Codec: "!V_Codec_legacy!" ScanType: "!V_ScanType!" ScanOrder: "!V_ScanOrder!" !V_Width!x!V_Height! dar=!V_DisplayAspectRatio_String! sar=!V_PixelAspectRatio! A_Codec_legacy: "!A_Codec_legacy!" A_Audio_Delay_ms: !A_Audio_Delay_ms! A_Audio_Delay_ms_legacy: !A_Audio_Delay_ms_legacy! TS: "%~f1"
-	ECHO !DATE! !TIME! input TS file: Video Codec: "!V_Codec_legacy!" ScanType: "!V_ScanType!" ScanOrder: "!V_ScanOrder!" !V_Width!x!V_Height! dar=!V_DisplayAspectRatio_String! sar=!V_PixelAspectRatio! A_Codec_legacy: "!A_Codec_legacy!" A_Audio_Delay_ms: !A_Audio_Delay_ms! A_Audio_Delay_ms_legacy: !A_Audio_Delay_ms_legacy! TS: "%~f1" >> "!vrdlog!" 2>&1
-	
+
+
 
 
 
