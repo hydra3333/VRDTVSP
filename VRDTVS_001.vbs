@@ -105,6 +105,7 @@ Set objFolder = Nothing
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Setup Global exe file paths, resolving them to Absolute paths
 '
+Dim HDTV_root
 Dim vs_root
 Dim vrdtvs_mp4boxexex64
 Dim vrdtvs_mediainfoexe64
@@ -114,6 +115,7 @@ Dim vrdtvs_dgindexNVexe64
 Dim vrdtvs_Insomniaexe64
 Dim vrdtvs_Insomnia64_tmp_filename, vrdtvs_Insomnia64_ProcessID
 '
+HDTV_root = fso.GetAbsolutePathName("G:\HDTV\") ' where vrd applicationlogs are
 vs_root = fso.GetAbsolutePathName("C:\SOFTWARE\Vapoursynth-x64\")
 vrdtvs_mp4boxexex64 = fso.GetAbsolutePathName(fso.BuildPath("C:\SOFTWARE\ffmpeg\0-homebuilt-x64\","MP4Box.exe"))
 vrdtvs_mediainfoexe64 = fso.GetAbsolutePathName(fso.BuildPath("C:\SOFTWARE\MediaInfo\","MediaInfo.exe"))
@@ -135,18 +137,22 @@ Dim vrd_profile_name_for_qsf
 Dim vrd_extension_mpeg2
 Dim vrd_extension_avc
 Dim vrd_extension
+Dim vrd_logfile_wildcard_QSF
+Dim vrd_logfile_wildcard_ADSCAN
 '
 Const const_vrd5_path = "C:\Program Files (x86)\VideoReDoTVSuite5"
 Const const_vrd5_profile_mpeg2 = "zzz-MPEG2ps"
 Const const_vrd5_profile_avc = "zzz-H.264-MP4-general"
 Const const_vrd5_extension_mpeg2 = "mpg"
 Const const_vrd5_extension_avc = "mp4"
+Const const_vrd5_logfile_wildcard =  fso.GetAbsolutePathName(HDTV_root & "\") & "\VideoReDo-5_*.Log"
 '
 Const const_vrd6_path =  "C:\Program Files (x86)\VideoReDoTVSuite6"
 Const const_vrd6_profile_mpeg2 = "VRDTVS-for-QSF-MPEG2"
 Const const_vrd6_profile_avc = "VRDTVS-for-QSF-H264"
 Const const_vrd6_extension_mpeg2 = "mpg"
 Const const_vrd6_extension_avc = "mp4"
+Const const_vrd6_logfile_wildcard =  fso.GetAbsolutePathName(HDTV_root & "\") & "\VideoReDo6_*.Log"
 '
 vrd_version_for_qsf = 6
 vrd_version_for_adscan = 6
@@ -200,20 +206,24 @@ If vrd_version_for_qsf = 5 Then '*** QSF
     vrd_profile_name_for_qsf_avc = const_vrd5_profile_avc
     vrd_extension_mpeg2 = const_vrd5_extension_mpeg2
     vrd_extension_avc = const_vrd5_extension_avc
+	vrd_logfile_wildcard_QSF = const_vrd5_logfile_wildcard
 ElseIf vrd_version_for_qsf = 6 Then
     vrd_path_for_qsf_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd6_path,"vp.vbs"))
     vrd_profile_name_for_qsf_mpeg2 = const_vrd6_profile_mpeg2
     vrd_profile_name_for_qsf_avc = const_vrd6_profile_avc
     vrd_extension_mpeg2 = const_vrd6_extension_mpeg2
     vrd_extension_avc = const_vrd6_extension_avc
+	vrd_logfile_wildcard_QSF = const_vrd6_logfile_wildcard
 Else
     WScript.StdOut.WriteLine("VRDTVS ERROR - vrd_version_for_qsf can only be 5 or 6 ... Aborting ...")
     WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
 If vrd_version_for_adscan = 5 Then '*** AdScan
     vrd_path_for_adscan_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd5_path,"AdScan.vbs"))
+	vrd_logfile_wildcard_ADSCAN = const_vrd5_logfile_wildcard
 ElseIf vrd_version_for_adscan = 6 Then
     vrd_path_for_adscan_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd6_path,"AdScan2.vbs"))
+	vrd_logfile_wildcard_ADSCAN= const_vrd6_logfile_wildcard
 Else
     WScript.StdOut.WriteLine("VRDTVS ERROR - vrd_path_for_adscan_vbs can only be 5 or 6 ... Aborting ...")
     WScript.Quit 17 ' Error 17 = cannot perform the requested operation
@@ -2392,7 +2402,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - Unrecognised video codec """ & CF_FILE_AbsolutePathName & """ """ & V_Codec_legacy & """ ... Ignoring file ...")
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Unrecognised video codec """ & CF_FILE_AbsolutePathName & """ """ & V_Codec_legacy & """ ... Ignoring file ...")
 		'Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
-		?????????? move input file to FAILED folder ??????????
+		?????????? move input file to FAILED folder ?????????? and then ignore it
 		vrdtvs_Convert_File = -1
 		Exit Function
 	End If
@@ -2418,23 +2428,11 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		A_Audio_Delay_ms = 0 - A_Video_Delay_ms
 	End If
 	'
-
-
-
-
-
-
-
-
-
-
-
-
-	'
+	' Now that we know the Video Codec and have determined that proper QSF File extension to use, set things up
 	CF_QSF_ParentFolderName = CF_temp_path
 	CF_QSF_BaseName = CF_FILE_BaseName
 	CF_QSF_Ext = vrd_extension ' set above based on incoming codec
-	CF_QSF_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_QSF_ParentFolderName,CF_QSF_BaseName & ".QSF." & CF_QSF_Ext)
+	CF_QSF_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_QSF_ParentFolderName,CF_QSF_BaseName & ".VRDTVS.QSF." & CF_QSF_Ext)
 	'
 	CF_TARGET_ParentFolderName = CF_destination_mp4_Folder
 	CF_TARGET_BaseName = CF_FILE_BaseName
@@ -2463,8 +2461,34 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'
 
 
+do the QSF and retrieve some QSF file parameters
+
+vrdtvs_status = vrdtvs_delete_a_file (CF_QSF_AbsolutePathName, False) ' True=silently delete it
 
 
+const_vrd5_logfile_wildcard
+const_vrd6_logfile_wildcard
+Dim vrd_logfile_wildcard_QSF
+Dim vrd_logfile_wildcard_ADSCAN
+
+
+
+REM Delete the version of VRD we are using
+IF /I "!_vrd_version!" == "5" (
+	DEL /F "G:\HDTV\VideoReDo-5_*.Log" >NUL 2>&1
+) ELSE IF /I "!_vrd_version!" == "6" ( 
+	DEL /F "G:\HDTV\VideoReDo6_*.Log" >NUL 2>&1
+) ELSE (
+   ECHO "VRD Version must be set to 5 or 6 not '!_vrd_version!' ... EXITING"
+   ECHO "VRD Version must be set to 5 or 6 not '!_vrd_version!' ... EXITING" >> "%vrdlog%" 2>&1
+   %xpause%
+   exit
+)
+REM note "/QSF" in the QSF line
+ECHO cscript //Nologo "!PTH2_vp_vbs!" "%~f1" "!scratch_file_qsf!" /qsf /p %VRDTVS_qsf_profile% /q /na
+ECHO cscript //Nologo "!PTH2_vp_vbs!" "%~f1" "!scratch_file_qsf!" /qsf /p %VRDTVS_qsf_profile% /q /na >> "%vrdlog%" 2>&1
+set "qsf_start_date_time=!date! !time!"
+cscript //Nologo "!PTH2_vp_vbs!" "%~f1"  "!scratch_file_qsf!" /qsf /p %VRDTVS_qsf_profile% /q /na >> "%vrdlog%" 2>&1
 
 
 
