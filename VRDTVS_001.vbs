@@ -2589,7 +2589,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		Q_A_Audio_Delay_ms = 0 - Q_A_Video_Delay_ms
 	End If
 	'
-	' Choose the most likely bitrate of the SOURCE file. 
+	' Choose the most likely bitrate of the SOURCE file from amongst the various options. 
 	' Sometimes ffprobe mis-reports the qsf'd file's bitrate and is perhaps double the others. 
 	' It looks to be correct though.
 	' Cross-check with other tool values.
