@@ -68,6 +68,9 @@ WScript.StdOut.WriteLine("------------------------------------------------------
 ' Setup Global constants which we don't group below
 '
 Const theLeadingReplaceCharacter_ForMovingDates = "."
+Const FORREADING = 1
+Const FORWRITING = 2
+Const FORAPPENDING = 8
 
 ' Setup Global variables
 '
@@ -2351,10 +2354,13 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Dim CF_DGI_AbsolutePathName,    CF_DGI_ParentFolderName,    CF_DGI_BaseName,    CF_DGI_Ext
 	Dim CF_DGIlog_AbsolutePathName, CF_DGIlog_ParentFolderName, CF_DGIlog_BaseName, CF_DGIlog_Ext
 	'
+	Dim CF_QSF_logfile, CF_QSF_logfile_object, CF_QSF_logfile_line, CF_QSF_logfile_string, CF_QSF_string_array(2)
+	'
 	Dim CF_exe_cmd_string
 	Dim CF_exe_object
 	Dim CF_exe_status
-	Dim CF_tmp, CF_status
+	Dim CF_tmp, CF_val
+	Dim CF_status
 	'
 	If NOT fso.FileExists(CF_FILE_AbsolutePathName) Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - SUPPOSEDLY VALID FILE NOT FOUND """ & CF_FILE_AbsolutePathName & """... Aborting ...")
@@ -2459,24 +2465,59 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	CF_BPRJ_Ext = "bprj"		' always .bprj
 	CF_BPRJ_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_BPRJ_ParentFolderName,CF_BPRJ_BaseName & "." & CF_BPRJ_Ext)
 	'
-
-
-do the QSF and retrieve some QSF file parameters
-
+	' Do the QSF
 	vrdtvs_status = vrdtvs_delete_a_file(CF_QSF_AbsolutePathName, False) ' True=silently delete it
 	vrdtvs_status = vrdtvs_delete_a_file(vrd_logfile_wildcard_QSF, False) ' True=silently delete it 	' is a wildcard, in fso.DeleteFile the filespec can contain wildcard characters in the last path component
 	vrdtvs_status = vrdtvs_delete_a_file(vrd_logfile_wildcard_ADSCAN, False) ' True=silently delete it	' is a wildcard, in fso.DeleteFile the filespec can contain wildcard characters in the last path component
-	'
 	CF_exe_cmd_string = "cscript //Nologo """ & vrd_path_for_qsf_vbs & """ """ & CF_FILE_AbsolutePathName & """  """ & CF_QSF_AbsolutePathName & """ /qsf /p """ & vrd_profile_name_for_qsf & """ /q /na"
 	If vrdtvs_DEBUG Then 
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ do QSF with CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
 	End If
 	CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string)
-	If CF_exe_status <> 0 Then
+	If CF_exe_status <> 0 OR NOT fso.FileExists(CF_QSF_AbsolutePathName) Then
+		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - Error - Failed to QSF """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
+		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Failed to QSF """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
 		?????????? move input file to FAILED folder ?????????? and then ignore it
 		vrdtvs_Convert_File = -1
 		Exit Function
 	End If
+	'
+	' Copy the QSF log so we can search it for a bitrate value
+	CF_QSF_logfile =  CF_QSF_AbsolutePathName & ".log"
+	vrdtvs_status = vrdtvs_delete_a_file(CF_QSF_logfile, False) ' True=silently delete it
+	CF_exe_cmd_string = "CMD /C COPY /Y """ & vrd_logfile_wildcard_QSF & """ """ & CF_QSF_logfile & """ 2>&1"
+	If vrdtvs_DEBUG Then 
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ copy log with CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
+	End If
+	CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string)
+	If CF_exe_status <> 0 OR NOT fso.FileExists(CF_QSF_AbsolutePathName) Then
+		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - Error - Failed to copy QSF log """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
+		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Failed to copy QSF log """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
+		?????????? move input file to FAILED folder ?????????? and then ignore it
+		vrdtvs_Convert_File = -1
+		Exit Function
+	End If
+	'
+	' Search the QSF logfile for the bitrate
+	Set CF_QSF_logfile_object = fso.OpenTextFile(CF_QSF_logfile, ForReading)
+	Const CF_Search_for_this_for_bitrate_in_QSF_logfile = "Actual Video Bitrate: "
+	Q_ACTUAL_QSF_LOG_BITRATE = 0
+	Do Until CF_QSF_logfile_object.AtEndOfStream
+		CF_QSF_logfile_line = objFile.ReadLine
+		CF_tmp = instr(1,CF_QSF_logfile_line, CF_Search_for_this_for_bitrate_in_QSF_logfile, vbTextCompare)
+		If CF_tmp > 0 Then ' InStr([start, ]string1, string2[, compare])
+			' OK, the line looks like "Actual Video Bitrate: 3.74 Mbps"
+			CF_QSF_logfile_string = Mid(CF_QSF_logfile_line,(CF_tmp+1))							' Mid(string, start[, length]))
+			CF_QSF_string_array = Split(CF_QSF_logfile_string," ",1,vbTextCompare) 				' Split(expression[,delimiter[,count[,compare]]])
+			CF_QSF_logfile_string = Replace(CF_QSF_string_array(0)," ","",1,-1,vbTextCompare)	' Replace(string,find,replacewith[,start[,count[,compare]]]) 'Always assume units is Mbps ...
+			If IsNumeric(CF_QSF_logfile_string) Then ' assume it's a decimal Mbps, convert it to 
+				Q_ACTUAL_QSF_LOG_BITRATE = CDbl(CF_QSF_logfile_string )* 1000000  ' turn the decimal number into a full integer number of Mbps
+			End If
+			Exit Do ' exits the READLINES Do loop at the first detection of the constant
+		End If
+	Loop
+	CF_QSF_logfile_object.Close
+	Set CF_QSF_logfile_object = Nothing
 
 
 
