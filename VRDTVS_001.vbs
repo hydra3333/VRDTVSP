@@ -2355,7 +2355,6 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Dim CF_DGIlog_AbsolutePathName, CF_DGIlog_ParentFolderName, CF_DGIlog_BaseName, CF_DGIlog_Ext
 	'
 	Dim CF_QSF_logfile, CF_QSF_logfile_object, CF_QSF_logfile_line, CF_QSF_logfile_string, CF_QSF_string_array(2)
-	Dim CF_ACTUAL_QSF_LOG_BITRATE
 	'
 	Dim CF_exe_cmd_string
 	Dim CF_exe_object
@@ -2508,7 +2507,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	' Search the QSF logfile for the "Actual Video Bitrate"
 	Set CF_QSF_logfile_object = fso.OpenTextFile(CF_QSF_logfile, ForReading)
 	Const CF_Search_for_this_for_bitrate_in_QSF_logfile = "Actual Video Bitrate: "
-	CF_ACTUAL_QSF_LOG_BITRATE = 0
+	Q_ACTUAL_QSF_LOG_BITRATE = 0
 	Do Until CF_QSF_logfile_object.AtEndOfStream
 		CF_QSF_logfile_line = objFile.ReadLine
 		CF_tmp = instr(1,CF_QSF_logfile_line, CF_Search_for_this_for_bitrate_in_QSF_logfile, vbTextCompare)
@@ -2518,7 +2517,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			CF_QSF_string_array = Split(CF_QSF_logfile_string," ",1,vbTextCompare) 				' Split(expression[,delimiter[,count[,compare]]])
 			CF_QSF_logfile_string = Replace(CF_QSF_string_array(0)," ","",1,-1,vbTextCompare)	' Replace(string,find,replacewith[,start[,count[,compare]]]) 'Always assume units is Mbps ...
 			If IsNumeric(CF_QSF_logfile_string) Then ' assume it's a decimal Mbps, convert it to 
-			CF_ACTUAL_QSF_LOG_BITRATE = CDbl(CF_QSF_logfile_string )* 1000000  ' expand the decimal number into a full integer number of Mbps
+				Q_ACTUAL_QSF_LOG_BITRATE = CDbl(CF_QSF_logfile_string )* 1000000  ' expand the decimal number into a full integer number of Mbps
 			End If
 			Exit Do ' exits the READLINES Do loop at the first detection of the constant
 		End If
@@ -2555,6 +2554,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Q_V_Duration_s_FF					= vrdtvs_get_ffprobe_video_stream_parameter("duration" "Q_V_Duration_s_FF", CF_QSF_AbsolutePathName)  
 	Q_V_BitRate_FF						= vrdtvs_get_ffprobe_video_stream_parameter("bit_rate" "Q_V_BitRate_FF", CF_QSF_AbsolutePathName)  
 	Q_V_BitRate_Maximum_FF				= vrdtvs_get_ffprobe_video_stream_parameter("max_bit_rate" "Q_V_BitRate_Maximum_FF", CF_QSF_AbsolutePathName
+	
 	' Fix up the QSF mediainfo parameters retrieved
 	Q_V_DisplayAspectRatio_String_slash	= Replace(Q_V_DisplayAspectRatio_String,":","/",1,-1,vbTextCompare)  ' Replace(string,find,replacewith[,start[,count[,compare]]])
 	If (case(Q_V_Codec_legacy) = Ucase("MPEG-2V") Then
@@ -2588,8 +2588,30 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Else
 		Q_A_Audio_Delay_ms = 0 - Q_A_Video_Delay_ms
 	End If
-
-
+	'
+	' Choose the most likely bitrate of the SOURCE file. 
+	' Sometimes ffprobe mis-reports the qsf'd file's bitrate and is perhaps double the others. 
+	' It looks to be correct though.
+	' Cross-check with other tool values.
+	' NOTE: use the maximum of MEDIAINFO bitrate and QSF bitrate from log (QSF bitrate from log is an "average actual").
+	'       also, note we seek biotrate values of the QSF'd file not the original TS which can have problematic values.
+	INCOMING_BITRATE_MEDIAINFO = 0
+	INCOMING_BITRATE_FFPROBE = 0
+	INCOMING_BITRATE_QSF_LOG = 0
+	'REM Check if supposed numbers are NUMERIC.
+	If IsNumeric(Q_V_BitRate) Then 				INCOMING_BITRATE_MEDIAINFO = Q_V_BitRate
+	If IsNumeric(Q_V_BitRate_FF) Then 			INCOMING_BITRATE_FFPROBE = Q_V_BitRate_FF
+	If IsNumeric(Q_ACTUAL_QSF_LOG_BITRATE) Then	INCOMING_BITRATE_MEDIAINFO = Q_ACTUAL_QSF_LOG_BITRATE
+	INCOMING_BITRATE = 0
+	'USE the ffprobe bitrate value, sometimes it mis-reports as a much larger bitrate value but it seems to be correct.
+	INCOMING_BITRATE = 0
+	IF INCOMING_BITRATE_FFPROBE   > INCOMING_BITRATE Then INCOMING_BITRATE = INCOMING_BITRATE_FFPROBE
+	IF INCOMING_BITRATE_MEDIAINFO > INCOMING_BITRATE Then INCOMING_BITRATE = INCOMING_BITRATE_MEDIAINFO
+	IF INCOMING_BITRATE_QSF_LOG   > INCOMING_BITRATE Then INCOMING_BITRATE = INCOMING_BITRATE_QSF_LOG
+	IF INCOMING_BITRATE = 0  Then
+		' Jolly Bother and Dash it all, no valid bitrate found anywhere, we need to set an artifical incoming bitrate. Choose 4Mb/s for AVC
+		INCOMING_BITRATE = 4000000
+	End If
 
 
 
