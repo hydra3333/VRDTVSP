@@ -2876,6 +2876,15 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		Exit Function
 	End If
 	'
+	' +++++++++++++++++++++++++++ define initial video/audio comversion parameters +++++++++++++++++++++++++++
+	'
+	vrdtvs_final_Audio_flags = "-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000"
+	If Ucase(vrdtvs_ComputerName) = Ucase("3900X") Then
+		vrdtvs_final_RTX2060super_extra_flags = "-spatial-aq 1 -temporal-aq 1 -refs 3"
+	Else
+		vrdtvs_final_RTX2060super_extra_flags = ""
+	End If
+	'
 	' Calculate the target minimum_bitrate, target_bitrate, maximum_bitrate, buffer size
 	' Note that the only reliable variable obtained from the QSF file is Q_V_BitRate
 	If Ucase(Q_V_Codec_legacy) = Ucase("AVC") Then
@@ -2900,18 +2909,63 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	' Initial Default CQ options:
 	x_cq0 = "-cq:v 0"
 	x_cq24 = "-cq:v 24 -qmin 16 -qmax 48"
-	x_cq_options = x_cq0
-	PROPOSED_x_cq_options = x_cq_options
+	final_cq_options = x_cq0 ' default to cq0
+	PROPOSED_x_cq_options = final_cq_options
+	'
+	' FOR AVC INPUT FILES ONLY, calculate the CQ to use (default to CQ0)
+	' There are special cases where Mediainfo detects a lower bitrate than FFPROBE
+	' and MediaInfo is likely right ... however FFPROBE is what we want it to be.
+	' When this happens, if we just leave the bitrate CQ as-is then ffmpeg just undershoots 
+	' even though we specify the higher bitrate of FFPROBE.
+	' So ...
+	' If we detect such a case, change to CQ24 instead of CQ0 and leave the 
+	' specified bitrate unchanged ... which "should" fix it up.
+	If Ucase(Q_V_Codec_legacy) = Ucase("AVC") Then
+		ECHO Example table of values and actions
+		ECHO	MI		FF		INCOMING	ACTION
+		ECHO	0		0		5Mb			set to CQ 0
+		ECHO	0		1.5Mb	1.5Mb		set to CQ 24
+		ECHO	0		4Mb		4Mb			set to CQ 0
+		ECHO	1.5Mb	0		1.5Mb		set to CQ 24
+		ECHO	1.5Mb 	1.5Mb	1.5Mb		set to CQ 24
+		ECHO	1.5Mb	4Mb		4Mb			set to CQ 24 *** this one
+		ECHO	4Mb		0		4Mb			set to CQ 0
+		ECHO	4Mb		1.5Mb	4Mb			set to CQ 0
+		ECHO	4Mb		5Mb		5Mb			set to CQ 0
+		If INCOMING_BITRATE < 2200000 Then ' low bitrate, do not touch the bitrate itself, instead bump to CQ24
+			PROPOSED_x_cq_options = x_cq24
+		End If
+		If INCOMING_BITRATE_MEDIAINFO > 0 AND INCOMING_BITRATE_MEDIAINFO < 2200000 AND INCOMING_BITRATE_FFPROBE < 3400000 Then
+			PROPOSED_x_cq_options = x_cq24
+		End If
+	End If
+	vrdtvs_final_cq_options = PROPOSED_x_cq_options
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 	
-	If Ucase(vrdtvs_ComputerName) = "3900X" Then
-		vrdtvs_RTX2060super_extra_flags = "-spatial-aq 1 -temporal-aq 1 -refs 3"
-	Else
-		vrdtvs_RTX2060super_extra_flags = ""
-	End If
-	vrdtvs_Audio_flags = "-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000"
-
 
 
 	If vrdtvs_DEBUG Then
