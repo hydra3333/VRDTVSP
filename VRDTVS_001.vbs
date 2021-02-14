@@ -2360,11 +2360,27 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'
 	' GET a bunch of useful info from the SOURCE media file
 	'	CF_tmp = vrdtvs_get_mediainfo_parameter (mi_Section, mi_Parameter, mi_MediaFilename, mi_Legacy) 
-	V_Codec_legacy          = vrdtvs_get_mediainfo_parameter("Video", "Codec", CF_FILE_AbsolutePathName, "--Legacy") 
-	V_Format_legacy         = vrdtvs_get_mediainfo_parameter("Video", "Format", CF_FILE_AbsolutePathName, "--Legacy") 
-	A_CodecID_legacy        = vrdtvs_get_mediainfo_parameter("Audio", "CodecID", CF_FILE_AbsolutePathName, "--Legacy") 
-	A_Format_legacy         = vrdtvs_get_mediainfo_parameter("Audio", "Format", CF_FILE_AbsolutePathName,  "--Legacy") 
-	A_Video_Delay_ms_legacy = vrdtvs_get_mediainfo_parameter("Audio", "Video_Delay", CF_FILE_AbsolutePathName,  "--Legacy") 
+	V_Codec_legacy						= vrdtvs_get_mediainfo_parameter("Video", "Codec", CF_FILE_AbsolutePathName, "--Legacy") 
+	V_Format_legacy						= vrdtvs_get_mediainfo_parameter("Video", "Format", CF_FILE_AbsolutePathName, "--Legacy") 
+	A_CodecID_legacy					= vrdtvs_get_mediainfo_parameter("Audio", "CodecID", CF_FILE_AbsolutePathName, "--Legacy") 
+	A_Format_legacy						= vrdtvs_get_mediainfo_parameter("Audio", "Format", CF_FILE_AbsolutePathName,  "--Legacy") 
+	A_Video_Delay_ms_legacy				= vrdtvs_get_mediainfo_parameter("Audio", "Video_Delay", CF_FILE_AbsolutePathName,  "--Legacy") 
+	V_DisplayAspectRatio_String			= vrdtvs_get_mediainfo_parameter("Video", "DisplayAspectRatio/String")
+	V_DisplayAspectRatio_String_slash	= Replace(V_DisplayAspectRatio_String,":","/",1,-1,vbTextCompare)  ' Replace(string,find,replacewith[,start[,count[,compare]]])
+	V_ScanType							= vrdtvs_get_mediainfo_parameter("Video", "ScanType")
+	If V_ScanType = "" Then
+		V_ScanType = "Progressive" ' Default to Progressive
+	End If
+	If V_ScanType = "MBAFF" Then
+		V_ScanType = "Interlaced"
+	End If
+	V_ScanOrder 						= vrdtvs_get_mediainfo_parameter("Video", "ScanOrder")
+	If V_ScanOrder = "" Then
+		V_ScanOrder = "TFF" ' Default to Top Field First
+	End If
+
+
+
 	If (case(V_Codec_legacy) = Ucase("MPEG-2V") Then
 		vrd_extension = vrd_extension_mpeg2
 		vrd_profile_name_for_qsf = vrd_profile_name_for_qsf_mpeg2
