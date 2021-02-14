@@ -429,7 +429,7 @@ vrdtvs_temp_powershell_filename = vrdtvs_gimme_a_temporary_absolute_filename("vr
 '
 'vrdtvs_cmd = "TaskKill /t /f /im """ & vrdtvs_Insomnia64_tmp_filename & """" ' we saved the ProcessId when we started it
 vrdtvs_cmd = "TaskKill /t /f /pid " & vrdtvs_Insomnia64_ProcessID ' we saved the ProcessId when we started it
-' taskkill /t /f /im "%iFile%" >> "!vrdlog!" 2>&1
+' taskkill /t /f /im "%iFile%"
 '   /f  Specifies that processes be forcefully ended.
 '   /t	Ends the specified process and any child processes started by it.
 '   /pid <processID>    Specifies the process ID of the process to be terminated.
@@ -2404,10 +2404,10 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'
 	' Fix up the mediainfo parameters retrieved
 	V_DisplayAspectRatio_String_slash	= Replace(V_DisplayAspectRatio_String,":","/",1,-1,vbTextCompare)  ' Replace(string,find,replacewith[,start[,count[,compare]]])
-	If (case(V_Codec_legacy) = Ucase("MPEG-2V") Then
+	If (Ucase(V_Codec_legacy) = Ucase("MPEG-2V") Then
 		vrd_extension = vrd_extension_mpeg2
 		vrd_profile_name_for_qsf = vrd_profile_name_for_qsf_mpeg2
-	Else If (case(V_Codec_legacy) = Ucase("AVC") Then
+	Else If (Ucase(V_Codec_legacy) = Ucase("AVC") Then
 		vrd_extension = vrd_extension_avc
 		vrd_profile_name_for_qsf = vrd_profile_name_for_qsf_avc
 	Else
@@ -2440,6 +2440,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		A_Audio_Delay_ms = 0 - A_Video_Delay_ms
 	End If
 	'
+	??????????????? If vrdtvs_DEBUG then Dump the SOURCE parameters
+
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ======================================================================================================================================================")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File End Examining of SOURCE """ & CF_FILE_AbsolutePathName & """")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File SOURCE file: V_Codec_legacy: """ & V_Codec_legacy & """ V_ScanType: """ & V_ScanType & """ V_ScanOrder: """ & V_ScanOrder & """ " & V_Width & "x" & V_Height & " dar=" & V_DisplayAspectRatio_String & " sar=" & V_PixelAspectRatio & " A_Codec_legacy: " & A_Codec_legacy & " A_Audio_Delay_ms: " & A_Audio_Delay_ms & " A_Audio_Delay_ms_legacy: " & A_Audio_Delay_ms_legacy)
@@ -2490,6 +2492,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - Error - Failed to QSF """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Failed to QSF """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
 		?????????? move input file to FAILED folder ?????????? and then ignore it
+		'Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 		vrdtvs_Convert_File = -1
 		Exit Function
 	End If
@@ -2506,6 +2509,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - Error - Failed to copy QSF log """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Failed to copy QSF log """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
 		?????????? move input file to FAILED folder ?????????? and then ignore it
+		'Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 		vrdtvs_Convert_File = -1
 		Exit Function
 	End If
@@ -2563,11 +2567,11 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	
 	' Fix up the QSF mediainfo parameters retrieved
 	Q_V_DisplayAspectRatio_String_slash	= Replace(Q_V_DisplayAspectRatio_String,":","/",1,-1,vbTextCompare)  ' Replace(string,find,replacewith[,start[,count[,compare]]])
-	If (case(Q_V_Codec_legacy) = Ucase("MPEG-2V") Then
-	Else If (case(Q_V_Codec_legacy) = Ucase("AVC") Then
+	If (Ucase(Q_V_Codec_legacy) = Ucase("MPEG-2V") Then
+	Else If (Ucase(Q_V_Codec_legacy) = Ucase("AVC") Then
 	Else
-		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - Unrecognised QSF video codec """ & CF_QSF_AbsolutePathName & """ """ & Q_V_Codec_legacy & """ ... Ignoring file ...")
-		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Unrecognised QSF video codec """ & CF_QSF_AbsolutePathName & """ """ & Q_V_Codec_legacy & """ ... Ignoring file ...")
+		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - Unrecognised Q_V_Codec_legacy video codec """ & CF_QSF_AbsolutePathName & """ Q_V_Codec_legacy=""" & Q_V_Codec_legacy & """ ... Ignoring file ...")
+		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Unrecognised Q_V_Codec_legacy video codec """ & CF_QSF_AbsolutePathName & """ Q_V_Codec_legacy=""" & Q_V_Codec_legacy & """ ... Ignoring file ...")
 		'Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 		?????????? move input file to FAILED folder ?????????? and then ignore it
 		vrdtvs_Convert_File = -1
@@ -2617,6 +2621,9 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		' Jolly Bother and Dash it all, no valid bitrate found anywhere, we need to set an artifical incoming bitrate. Choose 4Mb/s for AVC
 		V_INCOMING_BITRATE = 4000000
 	End If
+
+	??????????????? If vrdtvs_DEBUG then Dump the QSF parameters
+	
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ======================================================================================================================================================")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File End QSF of """ & CF_FILE_AbsolutePathName & """ into """ & CF_QSF_AbsolutePathName & """")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File output QSF file: Q_V_Codec_legacy: """ & Q_V_Codec_legacy & """ Q_V_ScanType: """ & Q_V_ScanType & """ Q_V_ScanOrder: """ & Q_V_ScanOrder & """ " & Q_V_Width & "x" & Q_V_Height & " dar=" & Q_V_DisplayAspectRatio_String & " sar=" & Q_V_PixelAspectRatio & " Q_A_Codec_legacy: " & Q_A_Codec_legacy & " Q_A_Audio_Delay_ms: " & Q_A_Audio_Delay_ms & " Q_A_Audio_Delay_ms_legacy: " & Q_A_Audio_Delay_ms_legacy)
@@ -2624,7 +2631,44 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ======================================================================================================================================================")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File V_INCOMING_BITRATE: Using """ & CF_FILE_AbsolutePathName & """ and """ & CF_QSF_AbsolutePathName & """ The V_INCOMING_BITRATE=""" & V_INCOMING_BITRATE & """")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ======================================================================================================================================================")
-	
+	'
+	' Cross-Check SOURCE ScanType and ScanOrder with QSF ScanType and ScanOrder and bail of not the same
+	If Ucase(V_ScanType) <> Ucase(Q_V_ScanType) Then
+		ECHO "ERROR - incoming V_ScanType NOT EQUAL Q_V_ScanType"
+		ECHO "V_ScanType=!V_ScanType!"
+		ECHO "V_ScanOrder=!V_ScanOrder!"
+		ECHO "Q_V_ScanType=!Q_V_ScanType!"
+		ECHO "Q_V_ScanOrder=!Q_V_ScanOrder!"
+		ECHO "ERROR - incoming V_ScanType NOT EQUAL Q_V_ScanType"
+		ECHO "V_ScanType=!V_ScanType!"
+		ECHO "V_ScanOrder=!V_ScanOrder!"
+		ECHO "Q_V_ScanType=!Q_V_ScanType!"
+		ECHO "Q_V_ScanOrder=!Q_V_ScanOrder!"
+		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - Ucase(V_ScanType) """ & Ucase(V_ScanType) & """ <> Ucase(Q_V_ScanType) """ & Ucase(Q_V_ScanType) & """  """ & CF_QSF_AbsolutePathName & """ """ & Q_V_Codec_legacy & """ ... Ignoring file ...")
+		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error -Ucase(V_ScanType) """ & Ucase(V_ScanType) & """ <> Ucase(Q_V_ScanType) """ & Ucase(Q_V_ScanType) & """  """ & CF_QSF_AbsolutePathName & """ """ & Q_V_Codec_legacy & """ ... Ignoring file ...")
+		'Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+		?????????? move input file to FAILED folder ?????????? and then ignore it
+		vrdtvs_Convert_File = -1
+		Exit Function
+	End If
+	If Ucase(V_ScanOrder) <> Ucase(Q_V_ScanOrder) Then
+		ECHO "ERROR - incoming V_ScanOrder NOT EQUAL Q_V_ScanOrder"
+		ECHO "V_ScanType=!V_ScanType!"
+		ECHO "V_ScanOrder=!V_ScanOrder!"
+		ECHO "Q_V_ScanType=!Q_V_ScanType!"
+		ECHO "Q_V_ScanOrder=!Q_V_ScanOrder!"
+		ECHO "ERROR - incoming V_ScanOrder NOT EQUAL Q_V_ScanOrder"
+		ECHO "V_ScanType=!V_ScanType!"
+		ECHO "V_ScanOrder=!V_ScanOrder!"
+		ECHO "Q_V_ScanType=!Q_V_ScanType!"
+		ECHO "Q_V_ScanOrder=!Q_V_ScanOrder!"
+		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - Ucase(V_ScanOrder) """ & Ucase(V_ScanOrder) & """ <> Ucase(Q_V_ScanOrder) """ & Ucase(Q_V_ScanOrder) & """  """ & CF_QSF_AbsolutePathName & """ """ & Q_V_Codec_legacy & """ ... Ignoring file ...")
+		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Ucase(V_ScanOrder) """ & Ucase(V_ScanOrder) & """ <> Ucase(Q_V_ScanOrder) """ & Ucase(Q_V_ScanOrder) & """ """ & CF_QSF_AbsolutePathName & """ """ & Q_V_Codec_legacy & """ ... Ignoring file ...")
+		'Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+		?????????? move input file to FAILED folder ?????????? and then ignore it
+		vrdtvs_Convert_File = -1
+		Exit Function
+End If
 
 
 
