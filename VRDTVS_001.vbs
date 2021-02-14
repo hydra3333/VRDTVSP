@@ -2117,7 +2117,7 @@ Function vrdtvs_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 	End If
 	'
 	' delete the saved FFMPEG COMMANDS file silently 
-	vrdtvs_status = vrdtvs_delete_a_file (C_saved_ffmpeg_commands_filename, True) ' delete it silently
+	vrdtvs_status = vrdtvs_delete_a_file (C_saved_ffmpeg_commands_filename, False)
 	If vrdtvs_status <> 0 AND vrdtvs_status <> 53 Then ' Something went wrong with deleting the file, but allow 53 "File not found"
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_files_in_a_folder - Error " & vrdtvs_status & " from vrdtvs_delete_a_file with saved FFMPEG COMMANDS """ & C_saved_ffmpeg_commands_filename & """... Aborting ...")
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_files_in_a_folder - Error " & vrdtvs_status & " from vrdtvs_delete_a_file with saved FFMPEG COMMANDS """ & C_saved_ffmpeg_commands_filename & """... Aborting ...")
@@ -2972,11 +2972,6 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		Footy_FF_V_Target_Maximum_BitRate = FF_V_Target_Maximum_BitRate
 		Footy_FF_V_Target_BufSize = FF_V_Target_BufSize
 	End If
-
-
-
-
-
 	If vrdtvs_DEBUG Then 
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - CF_QSF_AbsolutePathName              =""" & CF_QSF_AbsolutePathName & """")
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Q_V_Codec_legacy                     =""" & Q_V_Codec_legacy & """")
@@ -2997,16 +2992,34 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - FF_V_Target_Maximum_BitRate          =""" & FF_V_Target_Maximum_BitRate & """")
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - FF_V_Target_BufSize                  =""" & FF_V_Target_BufSize & """")
 	End If
-'
-' ?????????????????????????????????????????????????????????????????????????????????
-'
+	'
+	' +++++++++++++++++++++++++++ do the DGIndexNV, if required +++++++++++++++++++++++++++
+	'
+	If Ucase(V_ScanType) = Ucase("Progressive") AND Q_V_Codec_legacy <> "AVC" Then ' not required for Progressive-AVC where we just copy streams
+		C_object_saved_ffmpeg_commands.WriteLine("REM")
+		C_object_saved_ffmpeg_commands.WriteLine("REM DGIndexNV is NOT performed for Progressive-AVC where we just copy streams")
+		C_object_saved_ffmpeg_commands.WriteLine("REM")
+		If vrdtvs_DEBUG Then 
+			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - DGIndexNV is not performed for Progressive-AVC where we just copy streams")
+		End If
+	Else
+		C_object_saved_ffmpeg_commands.WriteLine("REM")
+		C_object_saved_ffmpeg_commands.WriteLine("REM DGIndexNV is performed for NON-Progressive OR NON-AVC video")
+		C_object_saved_ffmpeg_commands.WriteLine("REM")
+		If vrdtvs_DEBUG Then 
+			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - DGIndexNV is performed for NON-Progressive OR NON-AVC video")
+		End If
+	End If
+
+	vrdtvs_status = vrdtvs_delete_a_file (CF_DGI_AbsolutePathName, False		' Delete the DGI file created by DGIndexNV
+	vrdtvs_status = vrdtvs_delete_a_file (CF_DGIlog_AbsolutePathName, False)	' Delete the DGIlog file created by DGIndexNV
+
+	set _DGI_cmd="%VSdgindexNVexe64%" -i "!scratch_file_qsf!" -h -o "!_DGI_file!" -e
 
 
-
-	
-	
-
-
+	set _VPY_file=!scratch_Folder!%~n1.VPY
+	set _DGI_file=!scratch_Folder!%~n1.DGI
+	set _DGI_autolog=!scratch_Folder!%~n1.log
 
 
 	
