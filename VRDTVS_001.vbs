@@ -2355,6 +2355,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Dim CF_DGIlog_AbsolutePathName, CF_DGIlog_ParentFolderName, CF_DGIlog_BaseName, CF_DGIlog_Ext
 	'
 	Dim CF_QSF_logfile, CF_QSF_logfile_object, CF_QSF_logfile_line, CF_QSF_logfile_string, CF_QSF_string_array(2)
+	Dim CF_ACTUAL_QSF_LOG_BITRATE
 	'
 	Dim CF_exe_cmd_string
 	Dim CF_exe_object
@@ -2374,7 +2375,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	CF_FILE_BaseName = fso.GetBaseName(CF_FILE_AbsolutePathName)
 	CF_FILE_Ext = fso.GetExtensionName(CF_FILE_AbsolutePathName)
 	'
-	' GET a bunch of useful info from the SOURCE media file
+	' GET a bunch of useful info from the SOURCE media file via mediainfo
 	V_Codec_legacy						= vrdtvs_get_mediainfo_parameter("Video", "Codec", CF_FILE_AbsolutePathName, "--Legacy") 
 	V_Format_legacy						= vrdtvs_get_mediainfo_parameter("Video", "Format", CF_FILE_AbsolutePathName, "--Legacy") 
 	V_DisplayAspectRatio_String			= vrdtvs_get_mediainfo_parameter("Video", "DisplayAspectRatio/String", CF_FILE_AbsolutePathName, "")
@@ -2393,10 +2394,16 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	A_CodecID							= vrdtvs_get_mediainfo_parameter("Audio", "CodecID", CF_FILE_AbsolutePathName, "")
 	A_CodecID_String					= vrdtvs_get_mediainfo_parameter("Audio", "CodecID/String", CF_FILE_AbsolutePathName, "")
 	A_Video_Delay_ms					= vrdtvs_get_mediainfo_parameter("Audio", "Video_Delay", CF_FILE_AbsolutePathName, "")
-	V_BitRate_FF						= vrdtvs_get_ffprobe_video_stream_parameter("bit_rate",CF_FILE_AbsolutePathName)  
-	V_BitRate_Maximum_FF				= vrdtvs_get_ffprobe_video_stream_parameter("max_bit_rate", CF_FILE_AbsolutePathName)  
+	' Obtain SOURCE media file characteristics via ffprobe 
+	V_CodecID_FF						= vrdtvs_get_ffprobe_video_stream_parameter("codec_name", CF_FILE_AbsolutePathName)  
+	V_CodecID_String_FF					= vrdtvs_get_ffprobe_video_stream_parameter("codec_tag_string", CF_FILE_AbsolutePathName)  
+	V_Width_FF							= vrdtvs_get_ffprobe_video_stream_parameter("width" "Q_V_Width_FF", CF_FILE_AbsolutePathName)  
+	V_Height_FF							= vrdtvs_get_ffprobe_video_stream_parameter("height" "Q_V_Height_FF", CF_FILE_AbsolutePathName)  
+	V_Duration_s_FF						= vrdtvs_get_ffprobe_video_stream_parameter("duration" "Q_V_Duration_s_FF", CF_FILE_AbsolutePathName)  
+	V_BitRate_FF						= vrdtvs_get_ffprobe_video_stream_parameter("bit_rate" "Q_V_BitRate_FF", CF_FILE_AbsolutePathName)  
+	V_BitRate_Maximum_FF				= vrdtvs_get_ffprobe_video_stream_parameter("max_bit_rate" "Q_V_BitRate_Maximum_FF", CF_FILE_AbsolutePathName)  
 	'
-	' Fix up the media parameters retrieved
+	' Fix up the mediainfo parameters retrieved
 	V_DisplayAspectRatio_String_slash	= Replace(V_DisplayAspectRatio_String,":","/",1,-1,vbTextCompare)  ' Replace(string,find,replacewith[,start[,count[,compare]]])
 	If (case(V_Codec_legacy) = Ucase("MPEG-2V") Then
 		vrd_extension = vrd_extension_mpeg2
@@ -2498,10 +2505,10 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		Exit Function
 	End If
 	'
-	' Search the QSF logfile for the bitrate
+	' Search the QSF logfile for the "Actual Video Bitrate"
 	Set CF_QSF_logfile_object = fso.OpenTextFile(CF_QSF_logfile, ForReading)
 	Const CF_Search_for_this_for_bitrate_in_QSF_logfile = "Actual Video Bitrate: "
-	Q_ACTUAL_QSF_LOG_BITRATE = 0
+	CF_ACTUAL_QSF_LOG_BITRATE = 0
 	Do Until CF_QSF_logfile_object.AtEndOfStream
 		CF_QSF_logfile_line = objFile.ReadLine
 		CF_tmp = instr(1,CF_QSF_logfile_line, CF_Search_for_this_for_bitrate_in_QSF_logfile, vbTextCompare)
@@ -2511,13 +2518,77 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			CF_QSF_string_array = Split(CF_QSF_logfile_string," ",1,vbTextCompare) 				' Split(expression[,delimiter[,count[,compare]]])
 			CF_QSF_logfile_string = Replace(CF_QSF_string_array(0)," ","",1,-1,vbTextCompare)	' Replace(string,find,replacewith[,start[,count[,compare]]]) 'Always assume units is Mbps ...
 			If IsNumeric(CF_QSF_logfile_string) Then ' assume it's a decimal Mbps, convert it to 
-				Q_ACTUAL_QSF_LOG_BITRATE = CDbl(CF_QSF_logfile_string )* 1000000  ' turn the decimal number into a full integer number of Mbps
+			CF_ACTUAL_QSF_LOG_BITRATE = CDbl(CF_QSF_logfile_string )* 1000000  ' expand the decimal number into a full integer number of Mbps
 			End If
 			Exit Do ' exits the READLINES Do loop at the first detection of the constant
 		End If
 	Loop
 	CF_QSF_logfile_object.Close
 	Set CF_QSF_logfile_object = Nothing
+	'
+	' Obtain QSF file characteristics via mediainfo 
+	Q_V_Codec_legacy					= vrdtvs_get_mediainfo_parameter("Video", "Codec", CF_QSF_AbsolutePathName, "--Legacy") 
+	Q_V_Format_legacy					= vrdtvs_get_mediainfo_parameter("Video", "Format", CF_QSF_AbsolutePathName, "--Legacy") 
+	Q_V_DisplayAspectRatio_String		= vrdtvs_get_mediainfo_parameter("Video", "DisplayAspectRatio/String", CF_QSF_AbsolutePathName, "")
+	Q_V_PixelAspectRatio				= vrdtvs_get_mediainfo_parameter("Video", "PixelAspectRatio", CF_QSF_AbsolutePathName, "")
+	Q_V_ScanType						= vrdtvs_get_mediainfo_parameter("Video", "ScanType", CF_QSF_AbsolutePathName, "")
+	Q_V_ScanOrder 						= vrdtvs_get_mediainfo_parameter("Video", "ScanOrder", CF_QSF_AbsolutePathName, "")
+	Q_V_Width							= vrdtvs_get_mediainfo_parameter("Video", "Width", CF_QSF_AbsolutePathName, "")
+	Q_V_Height							= vrdtvs_get_mediainfo_parameter("Video", "Height", CF_QSF_AbsolutePathName, "")
+	Q_V_BitRate							= vrdtvs_get_mediainfo_parameter("Video", "BitRate", CF_QSF_AbsolutePathName, "")
+	Q_V_BitRate_Minimum					= vrdtvs_get_mediainfo_parameter("Video", "BitRate_Minimum" "V_BitRate_Minimum", CF_QSF_AbsolutePathName, "")
+	Q_V_BitRate_Maximum					= vrdtvs_get_mediainfo_parameter("Video", "BitRate_Maximum" "V_BitRate_Maximum", CF_QSF_AbsolutePathName, "")
+	Q_A_Codec_legacy					= vrdtvs_get_mediainfo_parameter("Audio", "Codec", CF_QSF_AbsolutePathName, "--Legacy")
+	Q_A_CodecID_legacy					= vrdtvs_get_mediainfo_parameter("Audio", "CodecID", CF_QSF_AbsolutePathName, "--Legacy") 
+	Q_A_Format_legacy					= vrdtvs_get_mediainfo_parameter("Audio", "Format", CF_QSF_AbsolutePathName, "--Legacy") 
+	Q_A_Video_Delay_ms_legacy			= vrdtvs_get_mediainfo_parameter("Audio", "Video_Delay", CF_QSF_AbsolutePathName, "--Legacy") 
+	Q_A_CodecID							= vrdtvs_get_mediainfo_parameter("Audio", "CodecID", CF_QSF_AbsolutePathName, "")
+	Q_A_CodecID_String					= vrdtvs_get_mediainfo_parameter("Audio", "CodecID/String", CF_QSF_AbsolutePathName, "")
+	Q_A_Video_Delay_ms					= vrdtvs_get_mediainfo_parameter("Audio", "Video_Delay", CF_QSF_AbsolutePathName, "")
+	Q_V_BitRate_FF						= vrdtvs_get_ffprobe_video_stream_parameter("bit_rate",CF_QSF_AbsolutePathName)  
+	Q_V_BitRate_Maximum_FF				= vrdtvs_get_ffprobe_video_stream_parameter("max_bit_rate", CF_QSF_AbsolutePathName)  
+	' Obtain QSF file characteristics via ffprobe 
+	Q_V_CodecID_FF						= vrdtvs_get_ffprobe_video_stream_parameter("codec_name", CF_QSF_AbsolutePathName)  
+	Q_V_CodecID_String_FF				= vrdtvs_get_ffprobe_video_stream_parameter("codec_tag_string", CF_QSF_AbsolutePathName)  
+	Q_V_Width_FF						= vrdtvs_get_ffprobe_video_stream_parameter("width" "Q_V_Width_FF", CF_QSF_AbsolutePathName)  
+	Q_V_Height_FF						= vrdtvs_get_ffprobe_video_stream_parameter("height" "Q_V_Height_FF", CF_QSF_AbsolutePathName)  
+	Q_V_Duration_s_FF					= vrdtvs_get_ffprobe_video_stream_parameter("duration" "Q_V_Duration_s_FF", CF_QSF_AbsolutePathName)  
+	Q_V_BitRate_FF						= vrdtvs_get_ffprobe_video_stream_parameter("bit_rate" "Q_V_BitRate_FF", CF_QSF_AbsolutePathName)  
+	Q_V_BitRate_Maximum_FF				= vrdtvs_get_ffprobe_video_stream_parameter("max_bit_rate" "Q_V_BitRate_Maximum_FF", CF_QSF_AbsolutePathName
+	' Fix up the QSF mediainfo parameters retrieved
+	Q_V_DisplayAspectRatio_String_slash	= Replace(Q_V_DisplayAspectRatio_String,":","/",1,-1,vbTextCompare)  ' Replace(string,find,replacewith[,start[,count[,compare]]])
+	If (case(Q_V_Codec_legacy) = Ucase("MPEG-2V") Then
+	Else If (case(Q_V_Codec_legacy) = Ucase("AVC") Then
+	Else
+		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - Unrecognised QSF video codec """ & CF_QSF_AbsolutePathName & """ """ & Q_V_Codec_legacy & """ ... Ignoring file ...")
+		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Unrecognised QSF video codec """ & CF_QSF_AbsolutePathName & """ """ & Q_V_Codec_legacy & """ ... Ignoring file ...")
+		'Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+		?????????? move input file to FAILED folder ?????????? and then ignore it
+		vrdtvs_Convert_File = -1
+		Exit Function
+	End If
+	If Q_A_Video_Delay_ms_legacy = "" Then
+		Q_A_Video_Delay_ms_legacy = 0
+		Q_A_Audio_Delay_ms_legacy = 0
+	Else
+		Q_A_Audio_Delay_ms_legacy = 0 - Q_A_Video_Delay_ms_legacy
+	End If
+	If Q_V_ScanType = "" Then
+		Q_V_ScanType = "Progressive" ' Default to Progressive
+	End If
+	If Q_V_ScanType = "MBAFF" Then
+		Q_V_ScanType = "Interlaced"
+	End If
+	If Q_V_ScanOrder = "" Then
+		Q_V_ScanOrder = "TFF" ' Default to Top Field First
+	End If
+	If Q_A_Video_Delay_ms = "" Then
+		Q_A_Video_Delay_ms = 0
+		Q_A_Audio_Delay_ms = 0
+	Else
+		Q_A_Audio_Delay_ms = 0 - Q_A_Video_Delay_ms
+	End If
+
 
 
 
