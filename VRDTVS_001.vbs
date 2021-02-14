@@ -2835,12 +2835,30 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		End If
 		vrdtvs_Convert_File = -1
 		Exit Function
-End If
-
-
-
-
-
+	End If
+	'
+	' Calculate the target minimum_bitrate, target_bitrate, maximum_bitrate, buffer size
+	' Note that the only reliable variable obtained from the QSF file is Q_V_BitRate
+	If Ucase(Q_V_Codec_legacy) = Ucase("AVC") Then
+		REM CALCULATE H.264 TARGET BITRATES FROM THE INCOMING BITRATE
+		REM ffmpeg nvenc typically seems to undershoot the target bitrate, so bump it up.
+		FF_V_Target_BitRate = INCOMING_BITRATE * 1.05			' + 5%
+		FF_V_Target_Minimum_BitRate = INCOMING_BITRATE * 0.20	' 20%
+		FF_V_Target_Maximum_BitRate = FF_V_Target_BitRate * 2	' double
+		FF_V_Target_BufSize = FF_V_Target_BitRate * 2			' double
+	Else ' by  the time it gets here it must be MPEG2
+		REM is MPEG2 input, so GUESS at reasonable H.264 TARGET BITRATE
+		FF_V_Target_BitRate = 2000000
+		FF_V_Target_Minimum_BitRate = 100000
+		FF_V_Target_Maximum_BitRate = FF_V_Target_BitRate * 2
+		FF_V_Target_BufSize = FF_V_Target_BitRate * 2
+	End If
+	If vrdtvs_DEBUG Then
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - FF_V_Target_BitRate=" & FF_V_Target_BitRate)
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - FF_V_Target_Minimum_BitRate=" & FF_V_Target_Minimum_BitRate)
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - FF_V_Target_Maximum_BitRate=" & FF_V_Target_Maximum_BitRate)
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - FF_V_Target_BufSize=" & FF_V_Target_BufSize)
+	End If
 
 
 
