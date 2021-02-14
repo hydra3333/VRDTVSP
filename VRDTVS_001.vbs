@@ -2440,6 +2440,12 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		A_Audio_Delay_ms = 0 - A_Video_Delay_ms
 	End If
 	'
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ======================================================================================================================================================")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File End Examining of SOURCE """ & CF_FILE_AbsolutePathName & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File SOURCE file: V_Codec_legacy: """ & V_Codec_legacy & """ V_ScanType: """ & V_ScanType & """ V_ScanOrder: """ & V_ScanOrder & """ " & V_Width & "x" & V_Height & " dar=" & V_DisplayAspectRatio_String & " sar=" & V_PixelAspectRatio & " A_Codec_legacy: " & A_Codec_legacy & " A_Audio_Delay_ms: " & A_Audio_Delay_ms & " A_Audio_Delay_ms_legacy: " & A_Audio_Delay_ms_legacy)
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File End Exmaining of SOURCE """ & CF_FILE_AbsolutePathName & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ======================================================================================================================================================")
+	'
 	' Now that we know the Video Codec and have determined that proper QSF File extension to use, set things up
 	CF_QSF_ParentFolderName = CF_temp_path
 	CF_QSF_BaseName = CF_FILE_BaseName
@@ -2589,7 +2595,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		Q_A_Audio_Delay_ms = 0 - Q_A_Video_Delay_ms
 	End If
 	'
-	' Choose the most likely bitrate of the SOURCE file from amongst the various options. 
+	' Choose the most likely video bitrate of the SOURCE file from amongst the various options. 
 	' Sometimes ffprobe mis-reports the qsf'd file's bitrate and is perhaps double the others. 
 	' It looks to be correct though.
 	' Cross-check with other tool values.
@@ -2611,7 +2617,14 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		' Jolly Bother and Dash it all, no valid bitrate found anywhere, we need to set an artifical incoming bitrate. Choose 4Mb/s for AVC
 		V_INCOMING_BITRATE = 4000000
 	End If
-
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ======================================================================================================================================================")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File End QSF of """ & CF_FILE_AbsolutePathName & """ into """ & CF_QSF_AbsolutePathName & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File output QSF file: Q_V_Codec_legacy: """ & Q_V_Codec_legacy & """ Q_V_ScanType: """ & Q_V_ScanType & """ Q_V_ScanOrder: """ & Q_V_ScanOrder & """ " & Q_V_Width & "x" & Q_V_Height & " dar=" & Q_V_DisplayAspectRatio_String & " sar=" & Q_V_PixelAspectRatio & " Q_A_Codec_legacy: " & Q_A_Codec_legacy & " Q_A_Audio_Delay_ms: " & Q_A_Audio_Delay_ms & " Q_A_Audio_Delay_ms_legacy: " & Q_A_Audio_Delay_ms_legacy)
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File End QSF of """ & CF_FILE_AbsolutePathName & """ into """ & CF_QSF_AbsolutePathName & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ======================================================================================================================================================")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File V_INCOMING_BITRATE: Using """ & CF_FILE_AbsolutePathName & """ and """ & CF_QSF_AbsolutePathName & """ The V_INCOMING_BITRATE=""" & V_INCOMING_BITRATE & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ======================================================================================================================================================")
+	
 
 
 
