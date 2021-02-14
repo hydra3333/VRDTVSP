@@ -2366,21 +2366,15 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	A_Format_legacy						= vrdtvs_get_mediainfo_parameter("Audio", "Format", CF_FILE_AbsolutePathName,  "--Legacy") 
 	A_Video_Delay_ms_legacy				= vrdtvs_get_mediainfo_parameter("Audio", "Video_Delay", CF_FILE_AbsolutePathName,  "--Legacy") 
 	V_DisplayAspectRatio_String			= vrdtvs_get_mediainfo_parameter("Video", "DisplayAspectRatio/String")
-	V_DisplayAspectRatio_String_slash	= Replace(V_DisplayAspectRatio_String,":","/",1,-1,vbTextCompare)  ' Replace(string,find,replacewith[,start[,count[,compare]]])
 	V_ScanType							= vrdtvs_get_mediainfo_parameter("Video", "ScanType")
-	If V_ScanType = "" Then
-		V_ScanType = "Progressive" ' Default to Progressive
-	End If
-	If V_ScanType = "MBAFF" Then
-		V_ScanType = "Interlaced"
-	End If
 	V_ScanOrder 						= vrdtvs_get_mediainfo_parameter("Video", "ScanOrder")
-	If V_ScanOrder = "" Then
-		V_ScanOrder = "TFF" ' Default to Top Field First
-	End If
-
-
-
+	V_Width								= vrdtvs_get_mediainfo_parameter("Video", "Width")
+	V_Height							= vrdtvs_get_mediainfo_parameter("Video", "Height")
+	A_CodecID							= vrdtvs_get_mediainfo_parameter("Audio", "CodecID")
+	A_CodecID_String					= vrdtvs_get_mediainfo_parameter("Audio", "CodecID/String")
+	A_Video_Delay_ms					= vrdtvs_get_mediainfo_parameter("Audio", "Video_Delay")
+	'
+	V_DisplayAspectRatio_String_slash	= Replace(V_DisplayAspectRatio_String,":","/",1,-1,vbTextCompare)  ' Replace(string,find,replacewith[,start[,count[,compare]]])
 	If (case(V_Codec_legacy) = Ucase("MPEG-2V") Then
 		vrd_extension = vrd_extension_mpeg2
 		vrd_profile_name_for_qsf = vrd_profile_name_for_qsf_mpeg2
@@ -2391,7 +2385,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - Unrecognised video codec """ & CF_FILE_AbsolutePathName & """ """ & V_Codec_legacy & """ ... Ignoring file ...")
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Unrecognised video codec """ & CF_FILE_AbsolutePathName & """ """ & V_Codec_legacy & """ ... Ignoring file ...")
 		'Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
-		?????????? move input file to FAILED folder
+		?????????? move input file to FAILED folder ??????????
 		vrdtvs_Convert_File = -1
 		Exit Function
 	End If
@@ -2401,6 +2395,26 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Else
 		A_Audio_Delay_ms_legacy = 0 - A_Video_Delay_ms_legacy
 	End If
+	If V_ScanType = "" Then
+		V_ScanType = "Progressive" ' Default to Progressive
+	End If
+	If V_ScanType = "MBAFF" Then
+		V_ScanType = "Interlaced"
+	End If
+	If V_ScanOrder = "" Then
+		V_ScanOrder = "TFF" ' Default to Top Field First
+	End If
+	If A_Video_Delay_ms = "" Then
+		A_Video_Delay_ms = 0
+		A_Audio_Delay_ms = 0
+	Else
+		A_Audio_Delay_ms = 0 - A_Video_Delay_ms
+	End If
+	'
+	ECHO !DATE! !TIME! input TS file: Video Codec: "!V_Codec_legacy!" ScanType: "!V_ScanType!" ScanOrder: "!V_ScanOrder!" !V_Width!x!V_Height! dar=!V_DisplayAspectRatio_String! sar=!V_PixelAspectRatio! A_Codec_legacy: "!A_Codec_legacy!" A_Audio_Delay_ms: !A_Audio_Delay_ms! A_Audio_Delay_ms_legacy: !A_Audio_Delay_ms_legacy! TS: "%~f1"
+	ECHO !DATE! !TIME! input TS file: Video Codec: "!V_Codec_legacy!" ScanType: "!V_ScanType!" ScanOrder: "!V_ScanOrder!" !V_Width!x!V_Height! dar=!V_DisplayAspectRatio_String! sar=!V_PixelAspectRatio! A_Codec_legacy: "!A_Codec_legacy!" A_Audio_Delay_ms: !A_Audio_Delay_ms! A_Audio_Delay_ms_legacy: !A_Audio_Delay_ms_legacy! TS: "%~f1" >> "!vrdlog!" 2>&1
+	
+
 
 
 
