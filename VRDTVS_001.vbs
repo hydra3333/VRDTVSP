@@ -2350,11 +2350,12 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Dim CF_QSF_AbsolutePathName,    CF_QSF_ParentFolderName,    CF_QSF_BaseName,    CF_QSF_Ext
 	Dim CF_TARGET_AbsolutePathName, CF_TARGET_ParentFolderName, CF_TARGET_BaseName, CF_TARGET_Ext
 	Dim CF_BPRJ_AbsolutePathName,   CF_BPRJ_ParentFolderName,   CF_BRRJ_BaseName,   CF_BPRJ_Ext
-	Dim CF_VPY_AbsolutePathName,    CF_VPY_ParentFolderName,    CF_VPY_BaseName,    CF_VPY_Ext, CF_VPY_object
+	Dim CF_VPY_AbsolutePathName,    CF_VPY_ParentFolderName,    CF_VPY_BaseName,    CF_VPY_Ext, CF_VPY_object, CF_VPY_string
 	Dim CF_DGI_AbsolutePathName,    CF_DGI_ParentFolderName,    CF_DGI_BaseName,    CF_DGI_Ext
 	Dim CF_DGIlog_AbsolutePathName, CF_DGIlog_ParentFolderName, CF_DGIlog_BaseName, CF_DGIlog_Ext
 	'
 	Dim vrdtvs_IsAVC, vrdtvs_IsMPEG2, vrdtvs_IsProgressive, vrdtvs_IsInterlaced
+	Dim ff_cmd_string
 	'
 	Dim CF_QSF_logfile, CF_QSF_logfile_object, CF_QSF_logfile_line, CF_QSF_logfile_string, CF_QSF_string_array(2)
 	'
@@ -2893,7 +2894,6 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'
 	' +++++++++++++++++++++++++++ define initial video/audio conversion parameters +++++++++++++++++++++++++++
 	'
-	vrdtvs_final_Audio_flags = "-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000"
 	If Ucase(vrdtvs_ComputerName) = Ucase("3900X") Then
 		vrdtvs_final_RTX2060super_extra_flags = "-spatial-aq 1 -temporal-aq 1 -refs 3"
 	Else
@@ -2992,7 +2992,6 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Q_V_Codec_legacy                     =""" & Q_V_Codec_legacy & """")
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - V_ScanType                           =""" & V_ScanType & """")
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - V_ScanOrder                          =""" & V_ScanOrder & """")
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - vrdtvs_final_Audio_flags             =""" & vrdtvs_final_Audio_flags & """")
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - vrdtvs_final_RTX2060super_extra_flags=""" & vrdtvs_final_RTX2060super_extra_flags & """")
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - vrdtvs_final_dg_tff                  =""" & vrdtvs_final_dg_tff & """")
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - vrdtvs_final_dg_deinterlace          =""" & vrdtvs_final_dg_deinterlace & """")
@@ -3062,11 +3061,35 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			vrdtvs_create_VPY = False ' this is a NO-OP
 			set vpy_denoise = ""								' flag no denoising for progressive AVC
 			set vpy_dsharpen = ""								' flag no sharpening for progressive AVC
-			set ff_cmd = copy video stream, convert audio stream, setDAR
+			ff_cmd_string =	"""" & vrdtvs_ffmpegexe64 & """ " &_
+							"-hide_banner -v verbose -nostats " &_
+							"-i """ & CF_QSF_AbsolutePathName & """ " &_
+							"-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
+							"-c:v copy " &_
+							"-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
+							"-profile:v high -level 5.2 -movflags +faststart+write_colr " &_
+							"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
+							" -y """ & CF_TARGET_AbsolutePathName & """"
 		ElseIf vrdtvs_IsMPEG2 Then 'Ucase(Q_V_Codec_legacy) = Ucase("MPEG2-2V")
 			set vpy_denoise  = "strength=0.06, cstrength=0.06"	' flag denoising  for progressive mpeg2
 			set vpy_dsharpen = "strength=0.3"					' flag sharpening for progressive mpeg2
-			set ff_cmd = convert video stream, convert audio stream, setDAR
+			ff_cmd_string =	"""" & vrdtvs_ffmpegexe64 & """ " &_
+							"-hide_banner -v verbose -nostats " &_
+							"-f vapoursynth -i """ & CF_VPY_AbsolutePathName & """ " &_
+							"-i """ & CF_QSF_AbsolutePathName & """ " &_
+							"-map 0:v:0 -map 1:a:0 " &_
+							"-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
+							"-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
+							"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres " &_
+							vrdtvs_final_RTX2060super_extra_flags & " " &_
+							"-rc:v vbr -cq:v 0 " &_
+							"-b:v " & FF_V_Target_BitRate & " " &_
+							"-minrate:v " & FF_V_Target_Minimum_BitRate" & "" " &_
+							"-maxrate:v " & FF_V_Target_Maximum_BitRate" & "" " &_
+							"-bufsize " & FF_V_Target_BufSize & " " &_
+							"-profile:v high -level 5.2 -movflags +faststart+write_colr " &_
+							"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
+							" -y """ & CF_TARGET_AbsolutePathName & """"
 		Else
 			????? print diagnostics and exit since not AVC nor MPEG2 ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
 			quit 17
@@ -3083,13 +3106,13 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			set vpy_denoise = "strength=0.06, cstrength=0.06"	' flag denoising  for interlaced mpeg2
 			set vpy_dsharpen = "strength=0.3"					' flag sharpening for interlaced mpeg2
 			set ff_cmd convert video stream, convert audio stream, setDAR
-			' Leave MPEG2 Interlaced Footy as if it were a normal file ... no code for that here
+			' Leave MPEG2 Interlaced Footy as if it were a normal video file ... no code for that here
 		Else
 			print diagnostics and exit since not AVC nor MPEG2 ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
 			quit 17
 		End If
 	Else
-		print diagnostics and exit since not progressive nor Interlaced ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
+		print diagnostics and exit since not Progressive nor Interlaced ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
 		quit 17
 	End If
 	If vrdtvs_create_VPY Then
@@ -3159,29 +3182,24 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		CF_VPY_object.WriteLine("#video = vs.core.text.ClipInfo(video^)")
 		CF_VPY_object.WriteLine("video.set_output()")
 		CF_VPY_object.Close
-		If vrdtvs_DEBUG Then
-			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Contents of VPY file """ & CF_VPY_AbsolutePathName & """ Below :")
-			Set CF_VPY_object = fso.OpenTextFile(CF_VPY_AbsolutePathName, ForReading)
-			
-			CF_VPY_object.Close
-			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Contents of VPY file """ & CF_VPY_AbsolutePathName & """ Above :")
-		End If
-
-
-
-
-
-		set ff_cmd = copy video stream, convert audio stream, setDAR
-	
-	Else ' previously flagged as not creating a VPY since incoming stream is progressive AVC so we just copy streams ... a copy of the first case in the If
-		set vpy_denoise = ""								' flag no denoising for progressive AVC
-		set vpy_dsharpen = ""								' flag no sharpening for progressive AVC
-		set ff_cmd = copy video stream, convert audio stream, setDAR
+		' display the content of .VPY file
+		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - Content of VPY file """ & CF_VPY_AbsolutePathName & """ Below :")
+		Set CF_VPY_object = fso.OpenTextFile(CF_VPY_AbsolutePathName, ForReading)
+		Do Until CF_VPY_object.AtEndOfStream
+			CF_VPY_string = CF_VPY_object.ReadLine
+			WScript.StdOut.WriteLine(CF_VPY_string)
+		Loop			
+		CF_VPY_object.Close
+		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - Content of VPY file """ & CF_VPY_AbsolutePathName & """ Above.")
+	Else ' Else is previously flagged as not creating a VPY since incoming stream is progressive AVC so we just copy streams ...
 	End If
 
 
 
-	
 
+
+
+	delete vpy file
+	delete dgi file
 	vrdtvs_Convert_File = 0				
 End Function
