@@ -2354,6 +2354,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Dim CF_DGI_AbsolutePathName,    CF_DGI_ParentFolderName,    CF_DGI_BaseName,    CF_DGI_Ext
 	Dim CF_DGIlog_AbsolutePathName, CF_DGIlog_ParentFolderName, CF_DGIlog_BaseName, CF_DGIlog_Ext
 	'
+	Dim vrdtvs_IsAVC, vrdtvs_IsMPEG2, vrdtvs_IsProgressive, vrdtvs_IsInterlaced
+	'
 	Dim CF_QSF_logfile, CF_QSF_logfile_object, CF_QSF_logfile_line, CF_QSF_logfile_string, CF_QSF_string_array(2)
 	'
 	Dim CF_exe_cmd_string
@@ -2370,6 +2372,11 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	If vrdtvs_DEBUG Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: Entered vrdtvs_Convert_File with VALID SOURCE FILE """ & CF_FILE_AbsolutePathName & """")
 	End If
+	'
+	vrdtvs_IsAVC = False
+	vrdtvs_IsMPEG2 = False
+	vrdtvs_IsProgressive = False
+	vrdtvs_IsInterlaced = False
 	'
 	CF_temp_path = fso.GetAbsolutePathName(CF_temp_path & "\")
 	CF_FILE_AbsolutePathName = fso.GetAbsolutePathName(CF_FILE_AbsolutePathName) ' ENSURE AN ABSOLUTE
@@ -2407,9 +2414,13 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	' Fix up the mediainfo parameters retrieved
 	V_DisplayAspectRatio_String_slash	= Replace(V_DisplayAspectRatio_String,":","/",1,-1,vbTextCompare)  ' Replace(string,find,replacewith[,start[,count[,compare]]])
 	If (Ucase(V_Codec_legacy) = Ucase("MPEG-2V") Then
+		vrdtvs_IsAVC = False
+		vrdtvs_IsMPEG2 = True
 		vrd_extension = vrd_extension_mpeg2
 		vrd_profile_name_for_qsf = vrd_profile_name_for_qsf_mpeg2
-	Else If (Ucase(V_Codec_legacy) = Ucase("AVC") Then
+	ElseIf (Ucase(V_Codec_legacy) = Ucase("AVC") Then
+		vrdtvs_IsAVC = True
+		vrdtvs_IsMPEG2 = False
 		vrd_extension = vrd_extension_avc
 		vrd_profile_name_for_qsf = vrd_profile_name_for_qsf_avc
 	Else
@@ -2644,8 +2655,10 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Q_V_BitRate_Maximum_FF				= vrdtvs_get_ffprobe_video_stream_parameter("max_bit_rate" "Q_V_BitRate_Maximum_FF", CF_QSF_AbsolutePathName
 	' Fix up the QSF mediainfo parameters retrieved
 	Q_V_DisplayAspectRatio_String_slash	= Replace(Q_V_DisplayAspectRatio_String,":","/",1,-1,vbTextCompare)  ' Replace(string,find,replacewith[,start[,count[,compare]]])
-	If (Ucase(Q_V_Codec_legacy) = Ucase("MPEG-2V") Then
-	Else If (Ucase(Q_V_Codec_legacy) = Ucase("AVC") Then
+
+
+	If vrdtvs_IsMPEG2 Then ' (Ucase(Q_V_Codec_legacy) = Ucase("MPEG-2V") 
+	ElseIf vrdtvs_IsAVC Then ' (Ucase(Q_V_Codec_legacy) = Ucase("AVC") 
 	Else
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - Unrecognised Q_V_Codec_legacy video codec """ & CF_QSF_AbsolutePathName & """ Q_V_Codec_legacy=""" & Q_V_Codec_legacy & """ ... Ignoring file ...")
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Unrecognised Q_V_Codec_legacy video codec """ & CF_QSF_AbsolutePathName & """ Q_V_Codec_legacy=""" & Q_V_Codec_legacy & """ ... Ignoring file ...")
@@ -2889,14 +2902,14 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'
 	' Calculate the target minimum_bitrate, target_bitrate, maximum_bitrate, buffer size
 	' Note that the only reliable variable obtained from the QSF file is Q_V_BitRate
-	If Ucase(Q_V_Codec_legacy) = Ucase("AVC") Then
+	If vrdtvs_IsAVC Then ' Ucase(Q_V_Codec_legacy) = Ucase("AVC")
 		REM CALCULATE H.264 TARGET BITRATES FROM THE INCOMING BITRATE
 		REM ffmpeg nvenc typically seems to undershoot the target bitrate, so bump it up.
 		FF_V_Target_BitRate = INCOMING_BITRATE * 1.05			' + 5%
 		FF_V_Target_Minimum_BitRate = INCOMING_BITRATE * 0.20	' 20%
 		FF_V_Target_Maximum_BitRate = FF_V_Target_BitRate * 2	' double
 		FF_V_Target_BufSize = FF_V_Target_BitRate * 2			' double
-	Else ' by  the time it gets here it must be MPEG2
+	Else ' by  the time it gets here it must be MPEG2 flagged as vrdtvs_IsMPEG2
 		REM is MPEG2 input, so GUESS at reasonable H.264 TARGET BITRATE
 		FF_V_Target_BitRate = 2000000
 		FF_V_Target_Minimum_BitRate = 100000
@@ -2922,18 +2935,18 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	' So ...
 	' If we detect such a case, change to CQ24 instead of CQ0 and leave the 
 	' specified bitrate unchanged ... which "should" fix it up.
-	If Ucase(Q_V_Codec_legacy) = Ucase("AVC") Then
-		ECHO Example table of values and actions
-		ECHO	MI		FF		INCOMING	ACTION
-		ECHO	0		0		5Mb			set to CQ 0
-		ECHO	0		1.5Mb	1.5Mb		set to CQ 24
-		ECHO	0		4Mb		4Mb			set to CQ 0
-		ECHO	1.5Mb	0		1.5Mb		set to CQ 24
-		ECHO	1.5Mb 	1.5Mb	1.5Mb		set to CQ 24
-		ECHO	1.5Mb	4Mb		4Mb			set to CQ 24 *** this one
-		ECHO	4Mb		0		4Mb			set to CQ 0
-		ECHO	4Mb		1.5Mb	4Mb			set to CQ 0
-		ECHO	4Mb		5Mb		5Mb			set to CQ 0
+	If vrdtvs_IsAVC Then ' Ucase(Q_V_Codec_legacy) = Ucase("AVC") 
+		'ECHO Example table of values and actions
+		'ECHO	MI		FF		INCOMING	ACTION
+		'ECHO	0		0		5Mb			set to CQ 0
+		'ECHO	0		1.5Mb	1.5Mb		set to CQ 24
+		'ECHO	0		4Mb		4Mb			set to CQ 0
+		'ECHO	1.5Mb	0		1.5Mb		set to CQ 24
+		'ECHO	1.5Mb 	1.5Mb	1.5Mb		set to CQ 24
+		'ECHO	1.5Mb	4Mb		4Mb			set to CQ 24 *** this one
+		'ECHO	4Mb		0		4Mb			set to CQ 0
+		'ECHO	4Mb		1.5Mb	4Mb			set to CQ 0
+		'ECHO	4Mb		5Mb		5Mb			set to CQ 0
 		If INCOMING_BITRATE < 2200000 Then ' low bitrate, do not touch the bitrate itself, instead bump to CQ24
 			PROPOSED_x_cq_options = x_cq24
 		End If
@@ -2997,7 +3010,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'
 	' START ======================================================  Do the DGIndexNV ======================================================
 	'
-	If Ucase(V_ScanType) = Ucase("Progressive") AND Q_V_Codec_legacy <> "AVC" Then ' not required for Progressive-AVC where we just copy streams
+	If IsProgressive AND vrdtvs_IsAVC Then ' not required for Progressive-AVC where we just copy streams ' Ucase(V_ScanType) = Ucase("Progressive") AND Q_V_Codec_legacy <> "AVC"
+		vrdtvs_create_VPY = False	' flag that no VPY needs to be created either
 		C_object_saved_ffmpeg_commands.WriteLine("REM")
 		C_object_saved_ffmpeg_commands.WriteLine("REM DGIndexNV is NOT performed for Progressive-AVC where we just copy streams")
 		C_object_saved_ffmpeg_commands.WriteLine("REM")
@@ -3011,33 +3025,83 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		If vrdtvs_DEBUG Then 
 			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - DGIndexNV is performed for NON-Progressive OR NON-AVC video")
 		End If
-	End If
-	CF_exe_cmd_string = """" & vrdtvs_dgindexNVexe64 & """ -i """ & CF_QSF_AbsolutePathName & """ -h -o """ & CF_DGI_AbsolutePathName & """"
-	C_object_saved_ffmpeg_commands.WriteLine("REM")
-	C_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_DGI_AbsolutePathName & """")
-	C_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_DGIlog_AbsolutePathName & """")
-	C_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string) ' write the QSF String to be executed
-	C_object_saved_ffmpeg_commands.WriteLine("REM")
-	If vrdtvs_DEBUG Then 
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File run DGIndexNV """ & CF_QSF_AbsolutePathName & """ with CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
-	End If
-	vrdtvs_status = vrdtvs_delete_a_file (CF_DGI_AbsolutePathName, False		' Delete the DGI file to be created by DGIndexNV
-	vrdtvs_status = vrdtvs_delete_a_file (CF_DGIlog_AbsolutePathName, False)	' Delete the DGIlog file to be created by DGIndexNV
-	CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string)
-	If CF_exe_status <> 0 OR NOT fso.FileExists(CF_QSF_AbsolutePathName) Then
-		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - Error - run DGIndexNV """ & CF_QSF_AbsolutePathName & """ with CF_exe_cmd_string=""" & CF_exe_cmd_string & """ CF_exe_status=" & CF_exe_status)
-		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - run DGIndexNV """ & CF_QSF_AbsolutePathName & """ with CF_exe_cmd_string=""" & CF_exe_cmd_string & """ CF_exe_status=" & CF_exe_status)
-		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
-			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
-		Else
-			?????????? move input file to FAILED folder ?????????? and then ignore it
+		CF_exe_cmd_string = """" & vrdtvs_dgindexNVexe64 & """ -i """ & CF_QSF_AbsolutePathName & """ -h -o """ & CF_DGI_AbsolutePathName & """"
+		C_object_saved_ffmpeg_commands.WriteLine("REM")
+		C_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_DGI_AbsolutePathName & """")
+		C_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_DGIlog_AbsolutePathName & """")
+		C_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string) ' write the QSF String to be executed
+		C_object_saved_ffmpeg_commands.WriteLine("REM")
+		If vrdtvs_DEBUG Then 
+			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File run DGIndexNV """ & CF_QSF_AbsolutePathName & """ with CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
 		End If
-		vrdtvs_Convert_File = -1
-		Exit Function
+		vrdtvs_status = vrdtvs_delete_a_file (CF_DGI_AbsolutePathName, False)		' Delete the DGI file to be created by DGIndexNV
+		vrdtvs_status = vrdtvs_delete_a_file (CF_DGIlog_AbsolutePathName, False)	' Delete the DGIlog file to be created by DGIndexNV
+		CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string)
+		If CF_exe_status <> 0 OR NOT fso.FileExists(CF_QSF_AbsolutePathName) Then
+			If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - Error - run DGIndexNV """ & CF_QSF_AbsolutePathName & """ with CF_exe_cmd_string=""" & CF_exe_cmd_string & """ CF_exe_status=" & CF_exe_status)
+			WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - run DGIndexNV """ & CF_QSF_AbsolutePathName & """ with CF_exe_cmd_string=""" & CF_exe_cmd_string & """ CF_exe_status=" & CF_exe_status)
+			If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
+				Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+			Else
+				?????????? move input file to FAILED folder ?????????? and then ignore it
+			End If
+			vrdtvs_Convert_File = -1
+			Exit Function
+		End If
+		vrdtvs_status = vrdtvs_delete_a_file (CF_DGIlog_AbsolutePathName, False)	' Delete the DGIlog file created by DGIndexNV
 	End If
-	vrdtvs_status = vrdtvs_delete_a_file (CF_DGIlog_AbsolutePathName, False)	' Delete the DGIlog file created by DGIndexNV
-	' END  ======================================================  Do the DGIndexNV ======================================================
 
+	' END  ======================================================  Do the DGIndexNV ======================================================
+	'
+	' START  ======================================================  Create the .VPY ======================================================
+	'
+	C_object_saved_ffmpeg_commands.WriteLine("REM")
+	C_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_VPY_AbsolutePathName & """")
+	vrdtvs_status = vrdtvs_delete_a_file (CF_VPY_AbsolutePathName, False)		' Delete the VPY file to be created
+
+	If vrdtvs_create_VPY Then ' this flag was set above, when deciding whether to do a DGIndexNV
+		set vpy_denoise  = ""
+		set vpy_dsharpen = ""
+		If If Ucase(V_ScanType) = Ucase("Progressive") Then 
+			If vrdtvs_IsAVC Then ' Ucase(Q_V_Codec_legacy) = Ucase("AVC") 
+				vrdtvs_create_VPY = False ' this is a NO-OP
+				set vpy_denoise = "" # flag no denoising
+				set vpy_dsharpen = "" # flag no sharpening
+			ElseIf vrdtvs_IsMPEG2 Then 'Ucase(Q_V_Codec_legacy) = Ucase("MPEG2-2V")
+				set vpy_denoise  = "strength=0.06, cstrength=0.06"	# flag denoising
+				set vpy_dsharpen = "strength=0.3"					# flag sharpening
+				set ff_cmd = convert video stream, convert audio stream, setDAR
+			Else
+				print diagnostics and exit since not AVC nor MPEG2 ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
+				quit 17
+			End If
+		else if Interlaced
+			set dg_deinterlace=1 # set for normal single framerate deinterlace
+			set dg_cmd = the DG Index command
+			if AVC
+				set vpy_denoise = "" # flag no denoising
+				set vpy_dsharpen = "strength=0.2" # flag sharpening
+				set ff_cmd = convert video stream, convert audio stream, setDAR
+				if "!Footy_found!" then
+					set dg_deinterlace=2 # set for double framerate deinterlace
+					set ff_cmd = special options to convert video stream, convert audio stream, setDAR, double framerate
+			else if MPEG2
+				set vpy_denoise = "strength=0.06, cstrength=0.06" # flag no denoising
+				set vpy_dsharpen = "strength=0.3" # flag sharpening
+				set ff_cmd convert video stream, convert audio stream, setDAR
+			else
+				print diagnostics and exit since not AVC nor MPEG2 ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
+				quit 17
+		else
+			print diagnostics and exit since not progressive nor Interlaced ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
+			quit 17
+		endif
+	Else ' previously flagged as not creatin a VPY since incoming stream is progressive AVC so we just copy streams
+		' ???????????? just copying streams, simply create a small ffmpeg command
+		set vpy_denoise = "" # flag no denoising
+		set vpy_dsharpen = "" # flag no sharpening
+		set ff_cmd = copy video stream, convert audio stream, setDAR
+	End If
 
 
 
