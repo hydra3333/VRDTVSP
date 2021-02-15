@@ -2333,7 +2333,12 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'
 	Dim vrdtvs_final_dg_tff
 	Dim vrdtvs_final_dg_deinterlace
+	'
 	Dim Footy_found
+	Dim Footy_FF_V_Target_BitRate
+	Dim Footy_FF_V_Target_Minimum_BitRate
+	Dim Footy_FF_V_Target_Maximum_BitRate
+	Dim Footy_FF_V_Target_BufSize
 	'
 	If NOT fso.FileExists(CF_FILE_AbsolutePathName) Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - SUPPOSEDLY VALID SOURCE FILE NOT FOUND """ & CF_FILE_AbsolutePathName & """... Aborting ...")
