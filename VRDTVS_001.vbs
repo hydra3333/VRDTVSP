@@ -2476,7 +2476,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'
 	' START ======================================================  Do the QSF ======================================================
 	'
-		vrdtvs_status = vrdtvs_delete_a_file(CF_QSF_AbsolutePathName, False) ' True=silently delete it
+	vrdtvs_status = vrdtvs_delete_a_file(CF_QSF_AbsolutePathName, False) ' True=silently delete it
 	vrdtvs_status = vrdtvs_delete_a_file(vrd_logfile_wildcard_QSF, False) ' True=silently delete it 	' is a wildcard, in fso.DeleteFile the filespec can contain wildcard characters in the last path component
 	vrdtvs_status = vrdtvs_delete_a_file(vrd_logfile_wildcard_ADSCAN, False) ' True=silently delete it	' is a wildcard, in fso.DeleteFile the filespec can contain wildcard characters in the last path component
 	CF_exe_cmd_string = "cscript //Nologo """ & vrd_path_for_qsf_vbs & """ """ & CF_FILE_AbsolutePathName & """  """ & CF_QSF_AbsolutePathName & """ /qsf /p """ & vrd_profile_name_for_qsf & """ /q /na"
@@ -2484,42 +2484,42 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ do QSF with CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
 	End If
 	' save QSF command	
-	C_object_saved_ffmpeg_commands.WriteLine("REM")
-	C_object_saved_ffmpeg_commands.WriteLine("REM ===============================================================================================================")
-	C_object_saved_ffmpeg_commands.WriteLine("REM ===============================================================================================================")
-	C_object_saved_ffmpeg_commands.WriteLine("REM ===============================================================================================================")
-	C_object_saved_ffmpeg_commands.WriteLine("REM  adjusted SOURCE media characteristics below:") 
-	C_object_saved_ffmpeg_commands.WriteLine("REM  V_Codec_legacy=""" & V_Codec_legacy & """") 
-	C_object_saved_ffmpeg_commands.WriteLine("REM  V_Format_legacy=""" & V_Format_legacy & """") 
-	C_object_saved_ffmpeg_commands.WriteLine("REM  V_DisplayAspectRatio_String=""" & V_DisplayAspectRatio_String & """") 
-	C_object_saved_ffmpeg_commands.WriteLine("REM  V_PixelAspectRatio=""" & V_PixelAspectRatio & """") 
-	C_object_saved_ffmpeg_commands.WriteLine("REM  V_ScanType=""" & V_ScanType & """") 
-	C_object_saved_ffmpeg_commands.WriteLine("REM  V_ScanOrder=""" & V_ScanOrder & """") 
-	C_object_saved_ffmpeg_commands.WriteLine("REM  V_Width=""" & V_Width & """") 
-	C_object_saved_ffmpeg_commands.WriteLine("REM  V_Height=""" & V_Height & """") 
-	C_object_saved_ffmpeg_commands.WriteLine("REM  V_BitRate=""" & V_BitRate & """") 
-	C_object_saved_ffmpeg_commands.WriteLine("REM  V_BitRate_Minimum=""" & V_BitRate_Minimum & """") 
-	C_object_saved_ffmpeg_commands.WriteLine("REM  V_BitRate_Maximum=""" & V_BitRate_Maximum & """") 
-	C_object_saved_ffmpeg_commands.WriteLine("REM  A_Codec_legacy=""" & A_Codec_legacy & """") 
-	C_object_saved_ffmpeg_commands.WriteLine("REM  A_CodecID_legacy=""" & A_CodecID_legacy & """") 
-	C_object_saved_ffmpeg_commands.WriteLine("REM  A_Format_legacy=""" & A_Format_legacy & """") 
-	C_object_saved_ffmpeg_commands.WriteLine("REM  A_Video_Delay_ms_legacy=""" & A_Video_Delay_ms_legacy & """") 
-	C_object_saved_ffmpeg_commands.WriteLine("REM  A_CodecID=""" & A_CodecID & """") 
-	C_object_saved_ffmpeg_commands.WriteLine("REM  A_CodecID_String=""" & A_CodecID_String & """") 
-	C_object_saved_ffmpeg_commands.WriteLine("REM  A_Video_Delay_ms=""" & A_Video_Delay_ms & """") 
-	C_object_saved_ffmpeg_commands.WriteLine("REM  V_CodecID_FF=""" & V_CodecID_FF & """") 
-	C_object_saved_ffmpeg_commands.WriteLine("REM  V_CodecID_String_FF=""" & V_CodecID_String_FF & """") 
-	C_object_saved_ffmpeg_commands.WriteLine("REM  V_Width_FF=""" & V_Width_FF & """") 
-	C_object_saved_ffmpeg_commands.WriteLine("REM  V_Height_FF=""" & V_Height_FF & """") 
-	C_object_saved_ffmpeg_commands.WriteLine("REM  V_Duration_s_FF=""" & V_Duration_s_FF & """") 
-	C_object_saved_ffmpeg_commands.WriteLine("REM  V_BitRate_FF=""" & V_BitRate_FF & """") 
-	C_object_saved_ffmpeg_commands.WriteLine("REM  V_BitRate_Maximum_FF=""" & V_BitRate_Maximum_FF & """") 
-	C_object_saved_ffmpeg_commands.WriteLine("REM  adjusted SOURCE media characteristics above") 
-	C_object_saved_ffmpeg_commands.WriteLine("REM Do the QSF for """ & CF_FILE_AbsolutePathName & """")
-	C_object_saved_ffmpeg_commands.WriteLine("REM")
-	C_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_QSF_AbsolutePathName & """")
-	C_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string) ' write the QSF String to be executed
-	C_object_saved_ffmpeg_commands.WriteLine("REM")
+	CF_object_saved_ffmpeg_commands.WriteLine("REM")
+	CF_object_saved_ffmpeg_commands.WriteLine("REM ===============================================================================================================")
+	CF_object_saved_ffmpeg_commands.WriteLine("REM ===============================================================================================================")
+	CF_object_saved_ffmpeg_commands.WriteLine("REM ===============================================================================================================")
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  adjusted SOURCE media characteristics below:") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_Codec_legacy=""" & V_Codec_legacy & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_Format_legacy=""" & V_Format_legacy & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_DisplayAspectRatio_String=""" & V_DisplayAspectRatio_String & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_PixelAspectRatio=""" & V_PixelAspectRatio & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_ScanType=""" & V_ScanType & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_ScanOrder=""" & V_ScanOrder & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_Width=""" & V_Width & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_Height=""" & V_Height & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_BitRate=""" & V_BitRate & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_BitRate_Minimum=""" & V_BitRate_Minimum & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_BitRate_Maximum=""" & V_BitRate_Maximum & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  A_Codec_legacy=""" & A_Codec_legacy & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  A_CodecID_legacy=""" & A_CodecID_legacy & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  A_Format_legacy=""" & A_Format_legacy & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  A_Video_Delay_ms_legacy=""" & A_Video_Delay_ms_legacy & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  A_CodecID=""" & A_CodecID & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  A_CodecID_String=""" & A_CodecID_String & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  A_Video_Delay_ms=""" & A_Video_Delay_ms & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_CodecID_FF=""" & V_CodecID_FF & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_CodecID_String_FF=""" & V_CodecID_String_FF & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_Width_FF=""" & V_Width_FF & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_Height_FF=""" & V_Height_FF & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_Duration_s_FF=""" & V_Duration_s_FF & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_BitRate_FF=""" & V_BitRate_FF & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_BitRate_Maximum_FF=""" & V_BitRate_Maximum_FF & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  adjusted SOURCE media characteristics above") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM Do the QSF for """ & CF_FILE_AbsolutePathName & """")
+	CF_object_saved_ffmpeg_commands.WriteLine("REM")
+	CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_QSF_AbsolutePathName & """")
+	CF_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string) ' write the QSF String to be executed
+	CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	' do the actual QSF command (delete the QSF file first)
 	vrdtvs_status = vrdtvs_delete_a_file(CF_QSF_AbsolutePathName, False) ' True=silently delete it
 	CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string)
@@ -2966,25 +2966,25 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	' START ======================================================  Do the DGIndexNV ======================================================
 	'
 	If vrdtvs_IsProgressive AND vrdtvs_IsAVC Then ' not required for Progressive-AVC where we just copy streams ' Ucase(V_ScanType) = Ucase("Progressive") AND Q_V_Codec_legacy <> "AVC"
-		C_object_saved_ffmpeg_commands.WriteLine("REM")
-		C_object_saved_ffmpeg_commands.WriteLine("REM DGIndexNV is NOT performed for Progressive-AVC where we just copy streams")
-		C_object_saved_ffmpeg_commands.WriteLine("REM")
+		CF_object_saved_ffmpeg_commands.WriteLine("REM")
+		CF_object_saved_ffmpeg_commands.WriteLine("REM DGIndexNV is NOT performed for Progressive-AVC where we just copy streams")
+		CF_object_saved_ffmpeg_commands.WriteLine("REM")
 		If vrdtvs_DEBUG Then 
 			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - DGIndexNV is not performed for Progressive-AVC where we just copy streams")
 		End If
 	Else
-		C_object_saved_ffmpeg_commands.WriteLine("REM")
-		C_object_saved_ffmpeg_commands.WriteLine("REM DGIndexNV is performed for NON-Progressive OR NON-AVC video")
-		C_object_saved_ffmpeg_commands.WriteLine("REM")
+		CF_object_saved_ffmpeg_commands.WriteLine("REM")
+		CF_object_saved_ffmpeg_commands.WriteLine("REM DGIndexNV is performed for NON-Progressive OR NON-AVC video")
+		CF_object_saved_ffmpeg_commands.WriteLine("REM")
 		If vrdtvs_DEBUG Then 
 			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - DGIndexNV is performed for NON-Progressive OR NON-AVC video")
 		End If
 		CF_exe_cmd_string = """" & vrdtvs_dgindexNVexe64 & """ -i """ & CF_QSF_AbsolutePathName & """ -h -o """ & CF_DGI_AbsolutePathName & """"
-		C_object_saved_ffmpeg_commands.WriteLine("REM")
-		C_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_DGI_AbsolutePathName & """")
-		C_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_DGIlog_AbsolutePathName & """")
-		C_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string) ' write the QSF String to be executed
-		C_object_saved_ffmpeg_commands.WriteLine("REM")
+		CF_object_saved_ffmpeg_commands.WriteLine("REM")
+		CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_DGI_AbsolutePathName & """")
+		CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_DGIlog_AbsolutePathName & """")
+		CF_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string) ' write the QSF String to be executed
+		CF_object_saved_ffmpeg_commands.WriteLine("REM")
 		If vrdtvs_DEBUG Then 
 			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File run DGIndexNV """ & CF_QSF_AbsolutePathName & """ with CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
 		End If
@@ -3133,35 +3133,35 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Nothing object returned from fso.CreateTextFile with VPY file  """ & CF_VPY_AbsolutePathName & """... Aborting ...")
 			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
-		C_object_saved_ffmpeg_commands.WriteLine("REM")
-		C_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_VPY_AbsolutePathName & """")
-		C_object_saved_ffmpeg_commands.WriteLine("SET ""_VPY_file=" & CF_VPY_AbsolutePathName & """")		
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "import vapoursynth as vs		# this allows use of constants eg vs.YUV420P8", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "from vapoursynth import core	# actual vapoursynth core", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#import functool", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#import mvsfunc as mvs			# this relies on the .py residing at the VS folder root level - see run_vsrepo.bat", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#import havsfunc as haf		# this relies on the .py residing at the VS folder root level - see run_vsrepo.bat", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "core.std.LoadPlugin(r'!_vs_root!DGIndex\DGDecodeNV.dll') # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "core.avs.LoadPlugin(r'!_vs_root!DGIndex\DGDecodeNV.dll') # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "video = core.dgdecodenv.DGSource(r'" & CF_DGI_AbsolutePathName & "', deinterlace=" & vrdtvs_final_dg_deinterlace & ", use_top_field=" & vrdtvs_final_dg_tff & ", use_pf=False)", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "# DGDecNV changes -", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "# 2020.10.21 Added new parameters cstrength and cblend to independently control the chroma denoising.", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "# 2020.11.07 Revised DGDenoise parameters. The 'chroma' option is removed.", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#            Now, if 'strength' is set to 0.0 then luma denoising is disabled,", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#            and if cstrength is set to 0.0 then chroma denoising is disabled.", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#            'cstrength' is now defaulted to 0.0, and 'searchw' is defaulted to 9.", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "# example: video = core.avs.DGDenoise(video, strength=0.06, cstrength=0.06) # replaced chroma=True", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		If vpy_denoise <> "" Then CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "video = core.avs.DGDenoise(video, " & vpy_denoise & ") # replaced chroma=True", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "# example: video = core.avs.DGSharpen(video, strength=0.3)", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		If vpy_dsharpen <> "" Then CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "video = core.avs.DGSharpen(video, " & vpy_dsharpen & ")", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#video = vs.core.text.ClipInfo(video)", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "video.set_output()", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_object_saved_ffmpeg_commands.WriteLine("REM")
+		CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_VPY_AbsolutePathName & """")
+		CF_object_saved_ffmpeg_commands.WriteLine("SET ""_VPY_file=" & CF_VPY_AbsolutePathName & """")		
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "import vapoursynth as vs		# this allows use of constants eg vs.YUV420P8", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "from vapoursynth import core	# actual vapoursynth core", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "#import functool", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "#import mvsfunc as mvs			# this relies on the .py residing at the VS folder root level - see run_vsrepo.bat", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "#import havsfunc as haf		# this relies on the .py residing at the VS folder root level - see run_vsrepo.bat", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "core.std.LoadPlugin(r'!_vs_root!DGIndex\DGDecodeNV.dll') # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "core.avs.LoadPlugin(r'!_vs_root!DGIndex\DGDecodeNV.dll') # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "video = core.dgdecodenv.DGSource(r'" & CF_DGI_AbsolutePathName & "', deinterlace=" & vrdtvs_final_dg_deinterlace & ", use_top_field=" & vrdtvs_final_dg_tff & ", use_pf=False)", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "# DGDecNV changes -", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "# 2020.10.21 Added new parameters cstrength and cblend to independently control the chroma denoising.", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "# 2020.11.07 Revised DGDenoise parameters. The 'chroma' option is removed.", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "#            Now, if 'strength' is set to 0.0 then luma denoising is disabled,", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "#            and if cstrength is set to 0.0 then chroma denoising is disabled.", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "#            'cstrength' is now defaulted to 0.0, and 'searchw' is defaulted to 9.", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "# example: video = core.avs.DGDenoise(video, strength=0.06, cstrength=0.06) # replaced chroma=True", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		If vpy_denoise <> "" Then CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "video = core.avs.DGDenoise(video, " & vpy_denoise & ") # replaced chroma=True", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "# example: video = core.avs.DGSharpen(video, strength=0.3)", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		If vpy_dsharpen <> "" Then CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "video = core.avs.DGSharpen(video, " & vpy_dsharpen & ")", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "#video = vs.core.text.ClipInfo(video)", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "video.set_output()", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_VPY_object.Close
-		C_object_saved_ffmpeg_commands.WriteLine("REM")
-		C_object_saved_ffmpeg_commands.WriteLine("ECHO ---------------------------- 2>&1")
-		C_object_saved_ffmpeg_commands.WriteLine("ECHO TYPE ""!_VPY_file!"" 2>&1")
-		C_object_saved_ffmpeg_commands.WriteLine("ECHO ---------------------------- 2>&1")
-		C_object_saved_ffmpeg_commands.WriteLine("REM")
+		CF_object_saved_ffmpeg_commands.WriteLine("REM")
+		CF_object_saved_ffmpeg_commands.WriteLine("ECHO ---------------------------- 2>&1")
+		CF_object_saved_ffmpeg_commands.WriteLine("ECHO TYPE ""!_VPY_file!"" 2>&1")
+		CF_object_saved_ffmpeg_commands.WriteLine("ECHO ---------------------------- 2>&1")
+		CF_object_saved_ffmpeg_commands.WriteLine("REM")
 		' display the content of .VPY file
 		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - Content of VPY file """ & CF_VPY_AbsolutePathName & """ Below :")
 		Set CF_VPY_object = fso.OpenTextFile(CF_VPY_AbsolutePathName, ForReading)
@@ -3174,16 +3174,16 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Else ' Else is previously flagged as not creating a VPY since incoming stream is Progressive/AVC
 	End If
 	'
-	C_object_saved_ffmpeg_commands.WriteLine("REM")
+	CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	If Footy_found Then
 		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - Footy Found, using Footy double-framerate deinterlacing and bitrate settings")
-		C_object_saved_ffmpeg_commands.WriteLine("REM Footy Found, using Footy double-framerate deinterlacing and bitrate settings")
-		C_object_saved_ffmpeg_commands.WriteLine("REM")
+		CF_object_saved_ffmpeg_commands.WriteLine("REM Footy Found, using Footy double-framerate deinterlacing and bitrate settings")
+		CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	End If
-	C_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_TARGET_AbsolutePathName & """")
-	C_object_saved_ffmpeg_commands.WriteLine("REM")
-	C_object_saved_ffmpeg_commands.WriteLine(ff_cmd_string)
-	C_object_saved_ffmpeg_commands.WriteLine("REM")
+	CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_TARGET_AbsolutePathName & """")
+	CF_object_saved_ffmpeg_commands.WriteLine("REM")
+	CF_object_saved_ffmpeg_commands.WriteLine(ff_cmd_string)
+	CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	'
 	' ++++ START Run the ffmpeg command
 	ff_timerStart = Timer
@@ -3207,11 +3207,11 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	' ++++ END Run the ffmpeg command
 	'
 	' Cleanup files
-	C_object_saved_ffmpeg_commands.WriteLine("REM")
-	C_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_DGI_AbsolutePathName & """")
-	C_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_VPY_AbsolutePathName & """")
-	C_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_QSF_AbsolutePathName & """")
-	C_object_saved_ffmpeg_commands.WriteLine("REM")
+	CF_object_saved_ffmpeg_commands.WriteLine("REM")
+	CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_DGI_AbsolutePathName & """")
+	CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_VPY_AbsolutePathName & """")
+	CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_QSF_AbsolutePathName & """")
+	CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	vrdtvs_status = vrdtvs_delete_a_file (CF_DGI_AbsolutePathName, False)
 	vrdtvs_status = vrdtvs_delete_a_file (CF_VPY_AbsolutePathName, False)
 	vrdtvs_status = vrdtvs_delete_a_file (CF_QSF_AbsolutePathName, False)
