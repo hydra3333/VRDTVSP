@@ -3054,13 +3054,9 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'
 	' START  ======================================================  Create the .VPY ======================================================
 	'
-	C_object_saved_ffmpeg_commands.WriteLine("REM")
-	C_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_VPY_AbsolutePathName & """")
-	vrdtvs_status = vrdtvs_delete_a_file (CF_VPY_AbsolutePathName, False)		' Delete the VPY file to be created
-	'
+	vrdtvs_create_VPY = True
 	set vpy_denoise  = ""
 	set vpy_dsharpen = ""
-	vrdtvs_create_VPY = True
 	If vrdtvs_IsProgressive Then ' Ucase(V_ScanType) = Ucase("Progressive")
 		If vrdtvs_IsAVC Then ' Ucase(Q_V_Codec_legacy) = Ucase("AVC") 
 			vrdtvs_create_VPY = False ' this is a NO-OP
@@ -3080,13 +3076,14 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			set vpy_denoise = ""								' flag no denoising for interlaced AVC
 			set vpy_dsharpen = "strength=0.2"					' flag sharpening   for interlaced AVC
 			set ff_cmd = convert video stream, convert audio stream, setDAR
-			if "!Footy_found!" then
+			if "!Footy_found!" Then	' Must be AVC Interlaced Footy to pass this test
 				set ff_cmd = special options to convert video stream, convert audio stream, setDAR, double framerate
 			End If
 		ElseIf vrdtvs_IsMPEG2 Then
 			set vpy_denoise = "strength=0.06, cstrength=0.06"	' flag denoising  for interlaced mpeg2
 			set vpy_dsharpen = "strength=0.3"					' flag sharpening for interlaced mpeg2
 			set ff_cmd convert video stream, convert audio stream, setDAR
+			' Leave MPEG2 Interlaced Footy as if it were a normal file ... no code for that here
 		Else
 			print diagnostics and exit since not AVC nor MPEG2 ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
 			quit 17
@@ -3095,12 +3092,51 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		print diagnostics and exit since not progressive nor Interlaced ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
 		quit 17
 	End If
+	If vrdtvs_create_VPY Then
+		' first add to the fmpeg commands
+		C_object_saved_ffmpeg_commands.WriteLine("REM")
+		C_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_VPY_AbsolutePathName & """")
+		vrdtvs_status = vrdtvs_delete_a_file (CF_VPY_AbsolutePathName, False)		' Delete the VPY file to be created
+		C_object_saved_ffmpeg_commands.WriteLine("REM")
+		C_object_saved_ffmpeg_commands.WriteLine("SET ""_VPY_file=" & CF_VPY_AbsolutePathName & """")
+		C_object_saved_ffmpeg_commands.WriteLine("ECHO import vapoursynth as vs		# this allows use of constants eg vs.YUV420P8 >> ""!_VPY_file!"" 2>&1")
+		C_object_saved_ffmpeg_commands.WriteLine("ECHO from vapoursynth import core	# actual vapoursynth core >> ""!_VPY_file!"" 2>&1")
+		C_object_saved_ffmpeg_commands.WriteLine("ECHO #import functool >> ""!_VPY_file!"" 2>&1")
+		C_object_saved_ffmpeg_commands.WriteLine("ECHO #import mvsfunc as mvs			# this relies on the .py residing at the VS folder root level - see run_vsrepo.bat >> ""!_VPY_file!"" 2>&1")
+		C_object_saved_ffmpeg_commands.WriteLine("ECHO #import havsfunc as haf		# this relies on the .py residing at the VS folder root level - see run_vsrepo.bat >> ""!_VPY_file!"" 2>&1")
+		C_object_saved_ffmpeg_commands.WriteLine("ECHO core.std.LoadPlugin^(r'!_vs_root!DGIndex\DGDecodeNV.dll'^) # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765 >> ""!_VPY_file!"" 2>&1")
+		C_object_saved_ffmpeg_commands.WriteLine("ECHO core.avs.LoadPlugin^(r'!_vs_root!DGIndex\DGDecodeNV.dll'^) # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765 >> ""!_VPY_file!"" 2>&1")
+		C_object_saved_ffmpeg_commands.WriteLine("ECHO video = core.dgdecodenv.DGSource^(r'!_DGI_file!', deinterlace=!dg_deinterlace!, use_top_field=!dg_tff!, use_pf=False^) >> ""!_VPY_file!"" 2>&1")
+		C_object_saved_ffmpeg_commands.WriteLine("ECHO # DGDecNV changes - >> ""!_VPY_file!"" 2>&1")
+		C_object_saved_ffmpeg_commands.WriteLine("ECHO # 2020.10.21 Added new parameters cstrength and cblend to independently control the chroma denoising. >> ""!_VPY_file!"" 2>&1")
+		C_object_saved_ffmpeg_commands.WriteLine("ECHO # 2020.11.07 Revised DGDenoise parameters. The 'chroma' option is removed. >> ""!_VPY_file!"" 2>&1")
+		C_object_saved_ffmpeg_commands.WriteLine("ECHO #            Now, if 'strength' is set to 0.0 then luma denoising is disabled, >> ""!_VPY_file!"" 2>&1")
+		C_object_saved_ffmpeg_commands.WriteLine("ECHO #            and if cstrength is set to 0.0 then chroma denoising is disabled. >> ""!_VPY_file!"" 2>&1")
+		C_object_saved_ffmpeg_commands.WriteLine("ECHO #            'cstrength' is now defaulted to 0.0, and 'searchw' is defaulted to 9. >> ""!_VPY_file!"" 2>&1")
+		C_object_saved_ffmpeg_commands.WriteLine("ECHO # example: video = core.avs.DGDenoise^(video, strength=0.06, cstrength=0.06^) # replaced chroma=True >> ""!_VPY_file!"" 2>&1")
+		If vpy_denoise <> "" Then 
+			C_object_saved_ffmpeg_commands.WriteLine("ECHO video = core.avs.DGDenoise^(video, " & vpy_denoise & "^) # replaced chroma=True >> ""!_VPY_file!"" 2>&1")
+		End If
+		C_object_saved_ffmpeg_commands.WriteLine("ECHO # example: video = core.avs.DGSharpen^(video, strength=0.3^) >> ""!_VPY_file!"" 2>&1")
+		If vpy_dsharpen <> "" Then 
+			C_object_saved_ffmpeg_commands.WriteLine("ECHO video = core.avs.DGSharpen^(video, " & vpy_dsharpen & "^) >> ""!_VPY_file!"" 2>&1")
+		End If
+		C_object_saved_ffmpeg_commands.WriteLine("ECHO #video = vs.core.text.ClipInfo^(video^) >> ""!_VPY_file!"" 2>&1")
+		C_object_saved_ffmpeg_commands.WriteLine("ECHO video.set_output^(^) >> ""!_VPY_file!"" 2>&1")
+		C_object_saved_ffmpeg_commands.WriteLine("ECHO ---------------------------- 2>&1")
+		C_object_saved_ffmpeg_commands.WriteLine("ECHO TYPE ""!_VPY_file!"" 2>&1")
+		C_object_saved_ffmpeg_commands.WriteLine("ECHO ---------------------------- 2>&1")
+		C_object_saved_ffmpeg_commands.WriteLine("REM")
+		
 
-	vrdtvs_create_VPY
 
 
+
+
+
+
+	
 	Else ' previously flagged as not creating a VPY since incoming stream is progressive AVC so we just copy streams ... a copy of the first case in the If
-		vrdtvs_create_VPY = False ' this is a NO-OP
 		set vpy_denoise = ""								' flag no denoising for progressive AVC
 		set vpy_dsharpen = ""								' flag no sharpening for progressive AVC
 		set ff_cmd = copy video stream, convert audio stream, setDAR
