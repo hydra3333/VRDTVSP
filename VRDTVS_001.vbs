@@ -2365,6 +2365,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Dim CF_tmp, CF_val
 	Dim CF_status
 	'
+	Dim ff_timerStart, ff_timerEnd
+	'
 	If NOT fso.FileExists(CF_FILE_AbsolutePathName) Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - SUPPOSEDLY VALID SOURCE FILE NOT FOUND """ & CF_FILE_AbsolutePathName & """... Aborting ...")
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - SUPPOSEDLY VALID SOURCE FILE NOT FOUND """ & CF_FILE_AbsolutePathName & """... Aborting ...")
@@ -3041,7 +3043,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 				Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 			Else
-				?????????? move input file to FAILED folder ?????????? and then ignore it
+				'?????????? move input file to FAILED folder ?????????? and then ignore it
+				Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 			End If
 			vrdtvs_Convert_File = -1
 			Exit Function
@@ -3059,8 +3062,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	If vrdtvs_IsProgressive Then ' Ucase(V_ScanType) = Ucase("Progressive")
 		If vrdtvs_IsAVC Then ' Ucase(Q_V_Codec_legacy) = Ucase("AVC") 
 			vrdtvs_create_VPY = False ' this is a NO-OP
-			set vpy_denoise = ""								' flag no denoising for progressive AVC
-			set vpy_dsharpen = ""								' flag no sharpening for progressive AVC
+			vpy_denoise = ""								' flag no denoising for progressive AVC
+			vpy_dsharpen = ""								' flag no sharpening for progressive AVC
 			ff_cmd_string =	"""" & vrdtvs_ffmpegexe64 & """ " &_
 							"-hide_banner -v verbose -nostats " &_
 							"-i """ & CF_QSF_AbsolutePathName & """ " &_
@@ -3071,8 +3074,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
 							" -y """ & CF_TARGET_AbsolutePathName & """"
 		ElseIf vrdtvs_IsMPEG2 Then 'Ucase(Q_V_Codec_legacy) = Ucase("MPEG2-2V")
-			set vpy_denoise  = "strength=0.06, cstrength=0.06"	' flag denoising  for progressive mpeg2
-			set vpy_dsharpen = "strength=0.3"					' flag sharpening for progressive mpeg2
+			vpy_denoise  = "strength=0.06, cstrength=0.06"	' flag denoising  for progressive mpeg2
+			vpy_dsharpen = "strength=0.3"					' flag sharpening for progressive mpeg2
 			ff_cmd_string =	"""" & vrdtvs_ffmpegexe64 & """ " &_
 							"-hide_banner -v verbose -nostats " &_
 							"-f vapoursynth -i """ & CF_VPY_AbsolutePathName & """ " &_
@@ -3082,7 +3085,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
 							"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres " &_
 							vrdtvs_final_RTX2060super_extra_flags & " " &_
-							"-rc:v vbr -cq:v 0 " &_
+							"-rc:v vbr " &_
+							"-cq:v 0" & " " &_
 							"-b:v " & FF_V_Target_BitRate & " " &_
 							"-minrate:v " & FF_V_Target_Minimum_BitRate" & "" " &_
 							"-maxrate:v " & FF_V_Target_Maximum_BitRate" & "" " &_
@@ -3092,31 +3096,81 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							" -y """ & CF_TARGET_AbsolutePathName & """"
 		Else
 			????? print diagnostics and exit since not AVC nor MPEG2 ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
-			quit 17
+			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 	ElseIf vrdtvs_IsInterlaced Then
 		if vrdtvs_IsAVC Then
-			set vpy_denoise = ""								' flag no denoising for interlaced AVC
-			set vpy_dsharpen = "strength=0.2"					' flag sharpening   for interlaced AVC
-			set ff_cmd = convert video stream, convert audio stream, setDAR
-			if "!Footy_found!" Then	' Must be AVC Interlaced Footy to pass this test
-				set ff_cmd = special options to convert video stream, convert audio stream, setDAR, double framerate
+			vpy_denoise = ""								' flag no denoising for interlaced AVC
+			vpy_dsharpen = "strength=0.2"					' flag sharpening   for interlaced AVC
+			ff_cmd_string =	"""" & vrdtvs_ffmpegexe64 & """ " &_
+							"-hide_banner -v verbose -nostats " &_
+							"-f vapoursynth -i """ & CF_VPY_AbsolutePathName & """ " &_
+							"-i """ & CF_QSF_AbsolutePathName & """ " &_
+							"-map 0:v:0 -map 1:a:0 " &_
+							"-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
+							"-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
+							"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres " &_
+							vrdtvs_final_RTX2060super_extra_flags & " " &_
+							"-rc:v vbr " &_
+							vrdtvs_final_cq_options & " " &_
+							"-b:v " & FF_V_Target_BitRate & " " &_
+							"-minrate:v " & FF_V_Target_Minimum_BitRate" & "" " &_
+							"-maxrate:v " & FF_V_Target_Maximum_BitRate" & "" " &_
+							"-bufsize " & FF_V_Target_BufSize & " " &_
+							"-profile:v high -level 5.2 -movflags +faststart+write_colr " &_
+							"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
+							" -y """ & CF_TARGET_AbsolutePathName & """"
+			If Footy_found Then	' Must be AVC Interlaced Footy to pass this test, USE DIFFERENT SETTINGS since we deinterlace with double framerate
+				ff_cmd_string =	"""" & vrdtvs_ffmpegexe64 & """ " &_
+								"-hide_banner -v verbose -nostats " &_
+								"-f vapoursynth -i """ & CF_VPY_AbsolutePathName & """ " &_
+								"-i """ & CF_QSF_AbsolutePathName & """ " &_
+								"-map 0:v:0 -map 1:a:0 " &_
+								"-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
+								"-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
+								"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres " &_
+								vrdtvs_final_RTX2060super_extra_flags & " " &_
+								"-rc:v vbr " &_
+								vrdtvs_final_cq_options & " " &_
+								"-b:v " & Footy_FF_V_Target_BitRate & " " &_
+								"-minrate:v " & Footy_FF_V_Target_Minimum_BitRate" & "" " &_
+								"-maxrate:v " & Footy_FF_V_Target_Maximum_BitRate" & "" " &_
+								"-bufsize " & Footy_FF_V_Target_BufSize & " " &_
+								"-profile:v high -level 5.2 -movflags +faststart+write_colr " &_
+								"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
+								" -y """ & CF_TARGET_AbsolutePathName & """"
 			End If
 		ElseIf vrdtvs_IsMPEG2 Then
-			set vpy_denoise = "strength=0.06, cstrength=0.06"	' flag denoising  for interlaced mpeg2
-			set vpy_dsharpen = "strength=0.3"					' flag sharpening for interlaced mpeg2
-			set ff_cmd convert video stream, convert audio stream, setDAR
-			' Leave MPEG2 Interlaced Footy as if it were a normal video file ... no code for that here
+			vpy_denoise = "strength=0.06, cstrength=0.06"	' flag denoising  for interlaced mpeg2
+			vpy_dsharpen = "strength=0.3"					' flag sharpening for interlaced mpeg2
+			ff_cmd_string =	"""" & vrdtvs_ffmpegexe64 & """ " &_
+							"-hide_banner -v verbose -nostats " &_
+							"-f vapoursynth -i """ & CF_VPY_AbsolutePathName & """ " &_
+							"-i """ & CF_QSF_AbsolutePathName & """ " &_
+							"-map 0:v:0 -map 1:a:0 " &_
+							"-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
+							"-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
+							"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres " &_
+							vrdtvs_final_RTX2060super_extra_flags & " " &_
+							"-rc:v vbr " &_
+							vrdtvs_final_cq_options & " " &_
+							"-b:v " & FF_V_Target_BitRate & " " &_
+							"-minrate:v " & FF_V_Target_Minimum_BitRate" & "" " &_
+							"-maxrate:v " & FF_V_Target_Maximum_BitRate" & "" " &_
+							"-bufsize " & FF_V_Target_BufSize & " " &_
+							"-profile:v high -level 5.2 -movflags +faststart+write_colr " &_
+							"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
+							" -y """ & CF_TARGET_AbsolutePathName & """"
+			' Leave MPEG2 Interlaced Footy alone, as if it were a normal video file ... no code for MPEG2 Interlaced Footy in here
 		Else
 			print diagnostics and exit since not AVC nor MPEG2 ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
-			quit 17
+			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 	Else
 		print diagnostics and exit since not Progressive nor Interlaced ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
-		quit 17
+		Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 	End If
 	If vrdtvs_create_VPY Then
-
 		'create the vpy file
 		vrdtvs_status = vrdtvs_delete_a_file (CF_VPY_AbsolutePathName, False)		' Delete the VPY file to be created
 		set CF_VPY_object = fso.CreateTextFile(CF_VPY_AbsolutePathName, True, True) ' [ filename, Overwrite[, Unicode]])
@@ -3162,16 +3216,51 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		Loop			
 		CF_VPY_object.Close
 		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - Content of VPY file """ & CF_VPY_AbsolutePathName & """ Above.")
-	Else ' Else is previously flagged as not creating a VPY since incoming stream is progressive AVC so we just copy streams ...
+	Else ' Else is previously flagged as not creating a VPY since incoming stream is Progressive/AVC
 	End If
-
-
-
-
-
-
-	delete vpy file
-	delete dgi file
+	'
+	C_object_saved_ffmpeg_commands.WriteLine("REM")
+	If Footy_found Then
+		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - Footy Found, using Footy double-framerate deinterlacing and bitrate settings")
+		C_object_saved_ffmpeg_commands.WriteLine("REM Footy Found, using Footy double-framerate deinterlacing and bitrate settings")
+		C_object_saved_ffmpeg_commands.WriteLine("REM")
+	End If
+	C_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_TARGET_AbsolutePathName & """")
+	C_object_saved_ffmpeg_commands.WriteLine("REM")
+	C_object_saved_ffmpeg_commands.WriteLine(ff_cmd_string)
+	C_object_saved_ffmpeg_commands.WriteLine("REM")
+	'
+	' ++++ START Run the ffmpeg command
+	ff_timerStart = Timer
+	vrdtvs_status = vrdtvs_delete_a_file (CF_TARGET_AbsolutePathName, False)
+	WScript.StdOut.WriteLine(ff_cmd_string)
+	CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(ff_cmd_string)
+	If CF_exe_status <> 0 OR NOT fso.FileExists(CF_TARGET_AbsolutePathName) Then
+		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - FFMPEG Error - " & """ with ff_cmd_string=""" & ff_cmd_string & """ CF_exe_status=" & CF_exe_status)
+		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - FFMPEG Error - " & """ with ff_cmd_string=""" & ff_cmd_string & """ CF_exe_status=" & CF_exe_status)
+		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
+			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+		Else
+			'?????????? move input file to FAILED folder ?????????? and then ignore it
+			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+		End If
+		vrdtvs_Convert_File = -1
+		Exit Function
+	End If
+	ff_timerEnd = Timer
+    WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ffmpeg command completed with ELapsed Time " & vrdtvs_Calculate_ElapsedTime_string(ff_timerStart, ff_timerEnd))
+	' ++++ END Run the ffmpeg command
+	'
+	' Cleanup files
+	C_object_saved_ffmpeg_commands.WriteLine("REM")
+	C_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_DGI_AbsolutePathName & """")
+	C_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_VPY_AbsolutePathName & """")
+	C_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_QSF_AbsolutePathName & """")
+	C_object_saved_ffmpeg_commands.WriteLine("REM")
+	vrdtvs_status = vrdtvs_delete_a_file (CF_DGI_AbsolutePathName, False)
+	vrdtvs_status = vrdtvs_delete_a_file (CF_VPY_AbsolutePathName, False)
+	vrdtvs_status = vrdtvs_delete_a_file (CF_QSF_AbsolutePathName, False)
+	'?????????? move input file to DONE folder ??????????
 	vrdtvs_Convert_File = 0				
 End Function
 '
