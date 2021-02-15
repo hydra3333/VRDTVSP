@@ -148,14 +148,16 @@ Const const_vrd5_profile_mpeg2 = "zzz-MPEG2ps"
 Const const_vrd5_profile_avc = "zzz-H.264-MP4-general"
 Const const_vrd5_extension_mpeg2 = "mpg"
 Const const_vrd5_extension_avc = "mp4"
-Const const_vrd5_logfile_wildcard =  fso.GetAbsolutePathName(HDTV_root & "\") & "\VideoReDo-5_*.Log"
+Dim vrd5_logfile_wildcard
+vrd5_logfile_wildcard =  fso.GetAbsolutePathName(HDTV_root & "\") & "\VideoReDo-5_*.Log"
 '
 Const const_vrd6_path =  "C:\Program Files (x86)\VideoReDoTVSuite6"
 Const const_vrd6_profile_mpeg2 = "VRDTVS-for-QSF-MPEG2"
 Const const_vrd6_profile_avc = "VRDTVS-for-QSF-H264"
 Const const_vrd6_extension_mpeg2 = "mpg"
 Const const_vrd6_extension_avc = "mp4"
-Const const_vrd6_logfile_wildcard =  fso.GetAbsolutePathName(HDTV_root & "\") & "\VideoReDo6_*.Log"
+Dim vrd6_logfile_wildcard
+vrd6_logfile_wildcard =  fso.GetAbsolutePathName(HDTV_root & "\") & "\VideoReDo6_*.Log"
 '
 vrd_version_for_qsf = 6
 vrd_version_for_adscan = 6
@@ -223,10 +225,10 @@ Else
 End If
 If vrd_version_for_adscan = 5 Then '*** AdScan
     vrd_path_for_adscan_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd5_path,"AdScan.vbs"))
-	vrd_logfile_wildcard_ADSCAN = const_vrd5_logfile_wildcard
+	vrd_logfile_wildcard_ADSCAN = vrd5_logfile_wildcard
 ElseIf vrd_version_for_adscan = 6 Then
     vrd_path_for_adscan_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd6_path,"AdScan2.vbs"))
-	vrd_logfile_wildcard_ADSCAN= const_vrd6_logfile_wildcard
+	vrd_logfile_wildcard_ADSCAN= vrd6_logfile_wildcard
 Else
     WScript.StdOut.WriteLine("VRDTVS ERROR - vrd_path_for_adscan_vbs can only be 5 or 6 ... Aborting ...")
     WScript.Quit 17 ' Error 17 = cannot perform the requested operation
