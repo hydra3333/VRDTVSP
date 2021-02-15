@@ -3005,8 +3005,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-rc:v vbr " &_
 							"-cq:v 0" & " " &_
 							"-b:v " & FF_V_Target_BitRate & " " &_
-							"-minrate:v " & FF_V_Target_Minimum_BitRate" & "" " &_
-							"-maxrate:v " & FF_V_Target_Maximum_BitRate" & "" " &_
+							"-minrate:v " & FF_V_Target_Minimum_BitRate & " " &_
+							"-maxrate:v " & FF_V_Target_Maximum_BitRate & " " &_
 							"-bufsize " & FF_V_Target_BufSize & " " &_
 							"-profile:v high -level 5.2 -movflags +faststart+write_colr " &_
 							"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
@@ -3031,8 +3031,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-rc:v vbr " &_
 							vrdtvs_final_cq_options & " " &_
 							"-b:v " & FF_V_Target_BitRate & " " &_
-							"-minrate:v " & FF_V_Target_Minimum_BitRate" & "" " &_
-							"-maxrate:v " & FF_V_Target_Maximum_BitRate" & "" " &_
+							"-minrate:v " & FF_V_Target_Minimum_BitRate & " " &_
+							"-maxrate:v " & FF_V_Target_Maximum_BitRate & " " &_
 							"-bufsize " & FF_V_Target_BufSize & " " &_
 							"-profile:v high -level 5.2 -movflags +faststart+write_colr " &_
 							"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
@@ -3050,8 +3050,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 								"-rc:v vbr " &_
 								vrdtvs_final_cq_options & " " &_
 								"-b:v " & Footy_FF_V_Target_BitRate & " " &_
-								"-minrate:v " & Footy_FF_V_Target_Minimum_BitRate" & "" " &_
-								"-maxrate:v " & Footy_FF_V_Target_Maximum_BitRate" & "" " &_
+								"-minrate:v " & Footy_FF_V_Target_Minimum_BitRate & " " &_
+								"-maxrate:v " & Footy_FF_V_Target_Maximum_BitRate & " " &_
 								"-bufsize " & Footy_FF_V_Target_BufSize & " " &_
 								"-profile:v high -level 5.2 -movflags +faststart+write_colr " &_
 								"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
@@ -3072,8 +3072,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-rc:v vbr " &_
 							vrdtvs_final_cq_options & " " &_
 							"-b:v " & FF_V_Target_BitRate & " " &_
-							"-minrate:v " & FF_V_Target_Minimum_BitRate" & "" " &_
-							"-maxrate:v " & FF_V_Target_Maximum_BitRate" & "" " &_
+							"-minrate:v " & FF_V_Target_Minimum_BitRate & " " &_
+							"-maxrate:v " & FF_V_Target_Maximum_BitRate & " " &_
 							"-bufsize " & FF_V_Target_BufSize & " " &_
 							"-profile:v high -level 5.2 -movflags +faststart+write_colr " &_
 							"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
@@ -3098,7 +3098,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		End If
 		C_object_saved_ffmpeg_commands.WriteLine("REM")
 		C_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_VPY_AbsolutePathName & """")
-		C_object_saved_ffmpeg_commands.WriteLine("SET ""_VPY_file=" & CF_VPY_AbsolutePathName & """")		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "import vapoursynth as vs		# this allows use of constants eg vs.YUV420P8", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		C_object_saved_ffmpeg_commands.WriteLine("SET ""_VPY_file=" & CF_VPY_AbsolutePathName & """")		
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "import vapoursynth as vs		# this allows use of constants eg vs.YUV420P8", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "from vapoursynth import core	# actual vapoursynth core", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#import functool", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#import mvsfunc as mvs			# this relies on the .py residing at the VS folder root level - see run_vsrepo.bat", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
