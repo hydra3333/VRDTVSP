@@ -2331,6 +2331,10 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Dim x_cq0, x_cq24, PROPOSED_x_cq_options
 	Dim vrdtvs_final_cq_options
 	'
+	Dim vrdtvs_final_dg_tff
+	Dim vrdtvs_final_dg_deinterlace
+	Dim Footy_found
+	'
 	If NOT fso.FileExists(CF_FILE_AbsolutePathName) Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - SUPPOSEDLY VALID SOURCE FILE NOT FOUND """ & CF_FILE_AbsolutePathName & """... Aborting ...")
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - SUPPOSEDLY VALID SOURCE FILE NOT FOUND """ & CF_FILE_AbsolutePathName & """... Aborting ...")
@@ -2953,10 +2957,10 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	If Ucase(V_ScanType) = Ucase("Progressive") Then ' 
 		vrdtvs_final_dg_deinterlace = 0	' no deinterlace for progressive files
 	Else ' only check FOOTY for interlaced files
-		If Instr(1,UCcase(fso.GetBaseName(CF_QSF_AbsolutePathName)), Ucase("AFL"), vbTextCompare) > 0 Then Footy_found = True
-		If Instr(1,UCcase(fso.GetBaseName(CF_QSF_AbsolutePathName)), Ucase("SANFL"), vbTextCompare) > 0 Then Footy_found = True
-		If Instr(1,UCcase(fso.GetBaseName(CF_QSF_AbsolutePathName)), Ucase("Adelaide Crows"), vbTextCompare) > 0 Then Footy_found = True
-		If Instr(1,UCcase(fso.GetBaseName(CF_QSF_AbsolutePathName)), Ucase("Crows"), vbTextCompare) > 0 Then Footy_found = True
+		If Instr(1,Ucase(fso.GetBaseName(CF_QSF_AbsolutePathName)), Ucase("AFL"), vbTextCompare) > 0 Then Footy_found = True
+		If Instr(1,Ucase(fso.GetBaseName(CF_QSF_AbsolutePathName)), Ucase("SANFL"), vbTextCompare) > 0 Then Footy_found = True
+		If Instr(1,Ucase(fso.GetBaseName(CF_QSF_AbsolutePathName)), Ucase("Adelaide Crows"), vbTextCompare) > 0 Then Footy_found = True
+		If Instr(1,Ucase(fso.GetBaseName(CF_QSF_AbsolutePathName)), Ucase("Crows"), vbTextCompare) > 0 Then Footy_found = True
 	End If		
 	If Footy_found Then ' bump up the bitrates due o double framerate deinterlacing
 		vrdtvs_final_dg_deinterlace = 2	' set for double framerate deinterlace
