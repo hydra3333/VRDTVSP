@@ -2316,6 +2316,12 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Dim Q_A_Audio_Delay_ms
 	Dim Q_A_Audio_Delay_ms_legacy
 	'
+	Dim Q_ACTUAL_QSF_LOG_BITRATE
+	Dim V_INCOMING_BITRATE
+	Dim V_INCOMING_BITRATE_MEDIAINFO
+	Dim V_INCOMING_BITRATE_FFPROBE
+	Dim V_INCOMING_BITRATE_QSF_LOG
+	'
 	If NOT fso.FileExists(CF_FILE_AbsolutePathName) Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - SUPPOSEDLY VALID SOURCE FILE NOT FOUND """ & CF_FILE_AbsolutePathName & """... Aborting ...")
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - SUPPOSEDLY VALID SOURCE FILE NOT FOUND """ & CF_FILE_AbsolutePathName & """... Aborting ...")
@@ -2563,7 +2569,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Const CF_Search_for_this_for_bitrate_in_QSF_logfile = "Actual Video Bitrate: "
 	Q_ACTUAL_QSF_LOG_BITRATE = 0
 	Do Until CF_QSF_logfile_object.AtEndOfStream
-		CF_QSF_logfile_line = objFile.ReadLine
+		CF_QSF_logfile_line = CF_QSF_logfile_object.ReadLine
 		CF_tmp = instr(1,CF_QSF_logfile_line, CF_Search_for_this_for_bitrate_in_QSF_logfile, vbTextCompare)
 		If CF_tmp > 0 Then ' InStr([start, ]string1, string2[, compare])
 			' OK, the line looks like "Actual Video Bitrate: 3.74 Mbps"
@@ -2571,7 +2577,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			CF_QSF_string_array = Split(CF_QSF_logfile_string," ",1,vbTextCompare) 				' Split(expression[,delimiter[,count[,compare]]])
 			CF_QSF_logfile_string = Replace(CF_QSF_string_array(0)," ","",1,-1,vbTextCompare)	' Replace(string,find,replacewith[,start[,count[,compare]]]) 'Always assume units is Mbps ...
 			If IsNumeric(CF_QSF_logfile_string) Then ' assume it's a decimal Mbps, convert it to 
-				Q_ACTUAL_QSF_LOG_BITRATE = CDbl(CF_QSF_logfile_string )* 1000000  ' expand the decimal number into a full integer number of Mbps
+				Q_ACTUAL_QSF_LOG_BITRATE = CDbl(CF_QSF_logfile_string) * 1000000  ' expand the decimal number into a full integer number of Mbps
 			End If
 			Exit Do ' exits the READLINES Do loop at the first detection of the constant
 		End If
