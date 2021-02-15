@@ -2995,7 +2995,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - FF_V_Target_BufSize                  =""" & FF_V_Target_BufSize & """")
 	End If
 	'
-	' +++++++++++++++++++++++++++ Run DGIndexNV, if required +++++++++++++++++++++++++++
+	' START ======================================================  Do the DGIndexNV ======================================================
 	'
 	If Ucase(V_ScanType) = Ucase("Progressive") AND Q_V_Codec_legacy <> "AVC" Then ' not required for Progressive-AVC where we just copy streams
 		C_object_saved_ffmpeg_commands.WriteLine("REM")
@@ -3036,6 +3036,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		Exit Function
 	End If
 	vrdtvs_status = vrdtvs_delete_a_file (CF_DGIlog_AbsolutePathName, False)	' Delete the DGIlog file created by DGIndexNV
+	' END  ======================================================  Do the DGIndexNV ======================================================
 
 
 
