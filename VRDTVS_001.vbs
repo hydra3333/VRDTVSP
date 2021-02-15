@@ -3227,6 +3227,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		End If
 	Else
 		'??????????????print diagnostics and exit since not Progressive nor Interlaced ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
+		Wscript.Echo "Unable to create ff_cmd_string as flag is neither Interlaced nor Progressive .. vrdtvs_IsInterlaced=" & vrdtvs_IsInterlaced & " Progressive=" & vrdtvs_IsProgressive
 		Wscript.Echo "Error 17 = cannot perform the requested operation"
 		On Error goto 0
 		WScript.Quit 17 ' Error 17 = cannot perform the requested operation
