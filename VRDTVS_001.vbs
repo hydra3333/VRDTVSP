@@ -2570,7 +2570,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		vrdtvs_Convert_File = -1
 		Exit Function
 	End If
-	' END  ======================================================  Do the QSF ======================================================
+	' End ======================================================  Do the QSF ======================================================
 	'
 	' Copy the QSF log so we can search it for a bitrate value
 	CF_QSF_logfile =  CF_QSF_AbsolutePathName & ".log"
@@ -2995,7 +2995,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - FF_V_Target_BufSize                  =""" & FF_V_Target_BufSize & """")
 	End If
 	'
-	' +++++++++++++++++++++++++++ do the DGIndexNV, if required +++++++++++++++++++++++++++
+	' +++++++++++++++++++++++++++ Run DGIndexNV, if required +++++++++++++++++++++++++++
 	'
 	If Ucase(V_ScanType) = Ucase("Progressive") AND Q_V_Codec_legacy <> "AVC" Then ' not required for Progressive-AVC where we just copy streams
 		C_object_saved_ffmpeg_commands.WriteLine("REM")
@@ -3012,24 +3012,21 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - DGIndexNV is performed for NON-Progressive OR NON-AVC video")
 		End If
 	End If
-
-	vrdtvs_status = vrdtvs_delete_a_file (CF_DGI_AbsolutePathName, False		' Delete the DGI file created by DGIndexNV
-	vrdtvs_status = vrdtvs_delete_a_file (CF_DGIlog_AbsolutePathName, False)	' Delete the DGIlog file created by DGIndexNV
-
+	CF_exe_cmd_string = """" & vrdtvs_dgindexNVexe64 & """ -i """ & CF_QSF_AbsolutePathName & """ -h -o """ & CF_DGI_AbsolutePathName & """"
 	C_object_saved_ffmpeg_commands.WriteLine("REM")
+	C_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_DGI_AbsolutePathName & """")
+	C_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_DGIlog_AbsolutePathName & """")
 	C_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string) ' write the QSF String to be executed
 	C_object_saved_ffmpeg_commands.WriteLine("REM")
-
-	???CF_exe_cmd_string = """" & vrdtvs_dgindexNVexe64 & """ -i """ & CF_QSF_AbsolutePathName & """ -h -o """ & CF_DGI_AbsolutePathName & """"
-
-
 	If vrdtvs_DEBUG Then 
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File DGIndexNV """ & CF_QSF_AbsolutePathName & """ with CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File run DGIndexNV """ & CF_QSF_AbsolutePathName & """ with CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
 	End If
+	vrdtvs_status = vrdtvs_delete_a_file (CF_DGI_AbsolutePathName, False		' Delete the DGI file to be created by DGIndexNV
+	vrdtvs_status = vrdtvs_delete_a_file (CF_DGIlog_AbsolutePathName, False)	' Delete the DGIlog file to be created by DGIndexNV
 	CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string)
 	If CF_exe_status <> 0 OR NOT fso.FileExists(CF_QSF_AbsolutePathName) Then
-		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - Error - Failed to copy QSF log """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
-		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Failed to copy QSF log """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
+		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - Error - run DGIndexNV """ & CF_QSF_AbsolutePathName & """ with CF_exe_cmd_string=""" & CF_exe_cmd_string & """ CF_exe_status=" & CF_exe_status)
+		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - run DGIndexNV """ & CF_QSF_AbsolutePathName & """ with CF_exe_cmd_string=""" & CF_exe_cmd_string & """ CF_exe_status=" & CF_exe_status)
 		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 		Else
@@ -3038,6 +3035,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		vrdtvs_Convert_File = -1
 		Exit Function
 	End If
+	vrdtvs_status = vrdtvs_delete_a_file (CF_DGIlog_AbsolutePathName, False)	' Delete the DGIlog file created by DGIndexNV
 
 
 
