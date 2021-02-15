@@ -3082,18 +3082,27 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		vrdtvs_status = vrdtvs_delete_a_file (CF_DGI_AbsolutePathName, False)		' Delete the DGI file to be created by DGIndexNV
 		vrdtvs_status = vrdtvs_delete_a_file (CF_DGIlog_AbsolutePathName, False)	' Delete the DGIlog file to be created by DGIndexNV
 		CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string)
-		If CF_exe_status <> 0 OR NOT fso.FileExists(CF_QSF_AbsolutePathName) Then
-			If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - Error - run DGIndexNV """ & CF_QSF_AbsolutePathName & """ with CF_exe_cmd_string=""" & CF_exe_cmd_string & """ CF_exe_status=" & CF_exe_status)
+		If CF_exe_status <> 0 OR NOT fso.FileExists(CF_DGI_AbsolutePathName) Then
+			If vrdtvs_DEBUG Then 
+				WScript.StdOut.WriteLine("")
+				WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - Error - run DGIndexNV """ & CF_QSF_AbsolutePathName & """ with CF_exe_cmd_string=""" & CF_exe_cmd_string & """ CF_exe_status=" & CF_exe_status)
+			End If
+			WScript.StdOut.WriteLine("")
 			WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - run DGIndexNV """ & CF_QSF_AbsolutePathName & """ with CF_exe_cmd_string=""" & CF_exe_cmd_string & """ CF_exe_status=" & CF_exe_status)
 			If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
+				Wscript.Echo "DEV error after DGindexNV " & CF_exe_status
 				Wscript.Echo "Error 17 = cannot perform the requested operation"
 				On Error goto 0
 				WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 			Else
+				Wscript.Echo "error after DGindexNV " & CF_exe_status
 				Wscript.Echo "Error 17 = cannot perform the requested operation"
 				On Error goto 0
 				WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 			End If
+		End If
+		If vrdtvs_DEBUG Then
+			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File about to delete DG autolog " & CF_DGIlog_AbsolutePathName)
 		End If
 		vrdtvs_status = vrdtvs_delete_a_file (CF_DGIlog_AbsolutePathName, False)	' Delete the DGIlog file created by DGIndexNV
 	End If
