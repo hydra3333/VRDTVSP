@@ -3116,10 +3116,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		quit 17
 	End If
 	If vrdtvs_create_VPY Then
-		' first add to the saved fmpeg commands file
-		C_object_saved_ffmpeg_commands.WriteLine("REM")
-		C_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_VPY_AbsolutePathName & """")
-		C_object_saved_ffmpeg_commands.WriteLine("SET ""_VPY_file=" & CF_VPY_AbsolutePathName & """")
+
 		'create the vpy file
 		vrdtvs_status = vrdtvs_delete_a_file (CF_VPY_AbsolutePathName, False)		' Delete the VPY file to be created
 		set CF_VPY_object = fso.CreateTextFile(CF_VPY_AbsolutePathName, True, True) ' [ filename, Overwrite[, Unicode]])
@@ -3128,7 +3125,9 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Nothing object returned from fso.CreateTextFile with VPY file  """ & CF_VPY_AbsolutePathName & """... Aborting ...")
 			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "import vapoursynth as vs		# this allows use of constants eg vs.YUV420P8", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		C_object_saved_ffmpeg_commands.WriteLine("REM")
+		C_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_VPY_AbsolutePathName & """")
+		C_object_saved_ffmpeg_commands.WriteLine("SET ""_VPY_file=" & CF_VPY_AbsolutePathName & """")		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "import vapoursynth as vs		# this allows use of constants eg vs.YUV420P8", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "from vapoursynth import core	# actual vapoursynth core", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#import functool", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#import mvsfunc as mvs			# this relies on the .py residing at the VS folder root level - see run_vsrepo.bat", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
@@ -3143,13 +3142,9 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#            and if cstrength is set to 0.0 then chroma denoising is disabled.", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#            'cstrength' is now defaulted to 0.0, and 'searchw' is defaulted to 9.", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "# example: video = core.avs.DGDenoise(video, strength=0.06, cstrength=0.06) # replaced chroma=True", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		If vpy_denoise <> "" Then 
-			CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "video = core.avs.DGDenoise(video, " & vpy_denoise & ") # replaced chroma=True", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		End If
+		If vpy_denoise <> "" Then CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "video = core.avs.DGDenoise(video, " & vpy_denoise & ") # replaced chroma=True", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "# example: video = core.avs.DGSharpen(video, strength=0.3)", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		If vpy_dsharpen <> "" Then 
-			CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "video = core.avs.DGSharpen(video, " & vpy_dsharpen & ")", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		End If
+		If vpy_dsharpen <> "" Then CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "video = core.avs.DGSharpen(video, " & vpy_dsharpen & ")", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#video = vs.core.text.ClipInfo(video)", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "video.set_output()", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_VPY_object.Close
