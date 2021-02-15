@@ -562,7 +562,7 @@ Function vrdtvs_delete_a_file (filename_to_delete, do_it_silently)
     '       x = vrdtvs_delete_a_file("c:\temp\temp.tmp",False)
     Dim daf_Err_number, daf_Err_Description, daf_Err_Helpfile, daf_Err_HelpContext
     Dim daf_filename_to_delete
-    If NOT do_it_silently Then WScript.StdOut.WriteLine("vrdtvs_delete_a_file Deleting file: """ & filename_to_delete & """")
+    If NOT do_it_silently Then WScript.StdOut.WriteLine("VRDTVS vrdtvs_delete_a_file Deleting file: """ & filename_to_delete & """")
     If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_delete_a_file Deleting file: """ & filename_to_delete & """")
     'If fso.FileExists(filename_to_delete) Then
     	On Error Resume Next
@@ -572,8 +572,8 @@ Function vrdtvs_delete_a_file (filename_to_delete, do_it_silently)
         daf_Err_Helpfile = Err.Helpfile
         daf_Err_HelpContext = Err.HelpContext
         If daf_Err_number <> 0 Then
-            If NOT do_it_silently Then WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_delete_a_file error " &  daf_Err_number &  " " &  daf_Err_Description & " : raised when Deleting file """ & filename_to_delete & """")
-            'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_delete_a_file Error " &  daf_Err_number &  " " &  daf_Err_Description & " : raised when Deleting file """ & filename_to_delete & """")
+            If NOT do_it_silently Then WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_delete_a_file error " &  daf_Err_number &  " """ &  daf_Err_Description & """ : raised when Deleting file """ & filename_to_delete & """")
+            'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_delete_a_file Error " &  daf_Err_number &  " """ &  daf_Err_Description & """ : raised when Deleting file """ & filename_to_delete & """")
 	        Err.Clear
         Else
             If NOT do_it_silently Then WScript.StdOut.WriteLine("vrdtvs_delete_a_file Deleted file """ & filename_to_delete & """")
@@ -2074,7 +2074,6 @@ Function vrdtvs_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 
 	Dim C_object_Folder, C_object_Folders_Collection
 	Dim C_object_File, C_object_Files_Collection
-	Dim C_AbsolutePathName, C_ParentFolderName, C_FileName, C_Basename, C_Ext
 	Dim C_FILE_AbsolutePathName, C_FILE_ParentFolderName, C_FILE_BaseName, C_FILE_Ext
 	Dim C_object_saved_ffmpeg_commands
 	Dim C_exe_cmd_string
@@ -2184,7 +2183,7 @@ Function vrdtvs_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 		C_FILE_BaseName = fso.GetBaseName(C_FILE_AbsolutePathName)
 		C_FILE_Ext = fso.GetExtensionName(C_FILE_AbsolutePathName)
         '********* FILTER BY FILE EXTENSION *********
-		If Ucase(C_Ext) = Ucase("ts") OR Ucase(C_Ext) = Ucase("mp4") OR Ucase(C_Ext) = Ucase("mpg") OR Ucase(C_Ext) = Ucase("bprj") Then ' ********** only process specific file extensions
+		If Ucase(C_FILE_Ext) = Ucase("ts") OR Ucase(C_FILE_Ext) = Ucase("mp4") OR Ucase(C_FILE_Ext) = Ucase("mpg") OR Ucase(C_FILE_Ext) = Ucase("bprj") Then ' ********** only process specific file extensions
 			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder Processing file C_FILE_AbsolutePathName=""" & C_FILE_AbsolutePathName & """")
 			Select Case Ucase(C_FILE_Ext)
 			Case Ucase("bprj") 										' it's in the source folder, ignore it
@@ -2272,6 +2271,35 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Dim CF_status
 	'
 	Dim ff_timerStart, ff_timerEnd
+	'
+	Dim V_Codec_legacy
+	Dim V_Format_legacy
+	Dim V_DisplayAspectRatio_String
+	Dim V_PixelAspectRatio
+	Dim V_ScanType
+	Dim V_ScanOrder
+	Dim V_Width
+	Dim V_Height
+	Dim V_BitRate
+	Dim V_BitRate_Minimum
+	Dim V_BitRate_Maximum
+	Dim A_Codec_legacy
+	Dim A_CodecID_legacy
+	Dim A_Format_legacy
+	Dim A_Video_Delay_ms_legacy
+	Dim A_CodecID
+	Dim A_CodecID_String
+	Dim A_Video_Delay_ms
+	Dim V_CodecID_FF
+	Dim V_CodecID_String_FF
+	Dim V_Width_FF
+	Dim V_Height_FF
+	Dim V_Duration_s_FF
+	Dim V_BitRate_FF
+	Dim V_BitRate_Maximum_FF
+	Dim V_DisplayAspectRatio_String_slash
+	Dim A_Audio_Delay_ms
+	Dim A_Audio_Delay_ms_legacy
 	'
 	If NOT fso.FileExists(CF_FILE_AbsolutePathName) Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - SUPPOSEDLY VALID SOURCE FILE NOT FOUND """ & CF_FILE_AbsolutePathName & """... Aborting ...")
