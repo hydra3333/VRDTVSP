@@ -2207,24 +2207,24 @@ Function vrdtvs_exec_a_command_and_show_stdout_stderr (byVal eac_command_string)
 	If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 		eac_exe_object = "REM " & eac_command_string ' comment out any action
 	End If
-	WScript.StdOut.WriteLine("vrdtvs_exec_a_command Exec command: " & eac_command_string)
+	WScript.StdOut.WriteLine("vrdtvs_exec_a_command_and_show_stdout_stderr Exec command: " & eac_command_string)
 	set eac_exe_object = wso.Exec(eac_command_string)
 	Do While eac_exe_object.Status = 0 '0 is running and 1 is ending
 	 	Wscript.Sleep 100
 	Loop
 	Do Until eac_exe_object.StdOut.AtEndOfStream
 		eac_tmp = eac_exe_object.StdOut.ReadLine()
-		WScript.StdOut.WriteLine("vrdtvs_exec_a_command StdOut: " & eac_tmp)
+		WScript.StdOut.WriteLine("vrdtvs_exec_a_command_and_show_stdout_stderr StdOut: " & eac_tmp)
 	Loop
 	Do Until eac_exe_object.StdErr.AtEndOfStream
 		eac_tmp = eac_exe_object.StdErr.ReadLine()
-		WScript.StdOut.WriteLine("vrdtvs_exec_a_command StdErr: " & eac_tmp)
+		WScript.StdOut.WriteLine("vrdtvs_exec_a_command_and_show_stdout_stderr StdErr: " & eac_tmp)
 	Loop
 	eac_exe_status = eac_exe_object.ExitCode
-	WScript.StdOut.WriteLine("vrdtvs_exec_a_command Exit Status: " & eac_exe_status)
+	WScript.StdOut.WriteLine("vrdtvs_exec_a_command_and_show_stdout_stderr Exit Status: " & eac_exe_status)
 	Set eac_exe_object = Nothing
-	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_exec_a_command exiting with status=""" & eac_exe_status & """")
-	vrdtvs_exec_a_command = eac_exe_status
+	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_exec_a_command_and_show_stdout_stderr exiting with status=""" & eac_exe_status & """")
+	vrdtvs_exec_a_command_and_show_stdout_stderr = eac_exe_status
 End Function
 '
 Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
