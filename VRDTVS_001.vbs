@@ -2240,7 +2240,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Dim                             CF_FILE_ParentFolderName,   CF_FILE_BaseName,   CF_FILE_Ext
 	Dim CF_QSF_AbsolutePathName,    CF_QSF_ParentFolderName,    CF_QSF_BaseName,    CF_QSF_Ext
 	Dim CF_TARGET_AbsolutePathName, CF_TARGET_ParentFolderName, CF_TARGET_BaseName, CF_TARGET_Ext
-	Dim CF_BPRJ_AbsolutePathName,   CF_BPRJ_ParentFolderName,   CF_BRRJ_BaseName,   CF_BPRJ_Ext
+	Dim CF_BPRJ_AbsolutePathName,   CF_BPRJ_ParentFolderName,   CF_BPRJ_BaseName,   CF_BPRJ_Ext
 	Dim CF_VPY_AbsolutePathName,    CF_VPY_ParentFolderName,    CF_VPY_BaseName,    CF_VPY_Ext, CF_VPY_object, CF_VPY_string
 	Dim CF_DGI_AbsolutePathName,    CF_DGI_ParentFolderName,    CF_DGI_BaseName,    CF_DGI_Ext
 	Dim CF_DGIlog_AbsolutePathName, CF_DGIlog_ParentFolderName, CF_DGIlog_BaseName, CF_DGIlog_Ext
