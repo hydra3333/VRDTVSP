@@ -3260,7 +3260,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	vrdtvs_status = vrdtvs_delete_a_file (CF_DGI_AbsolutePathName, False)
 	vrdtvs_status = vrdtvs_delete_a_file (CF_VPY_AbsolutePathName, False)
 	vrdtvs_status = vrdtvs_delete_a_file (CF_QSF_AbsolutePathName, False)
-	'?????????? move input file to DONE folder ??????????
+	'?????????? move SOURCE file to DONE folder ?????????? ... if DEV don't
 	vrdtvs_Convert_File = 0				
 End Function
 '
