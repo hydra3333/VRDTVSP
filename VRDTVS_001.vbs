@@ -2580,9 +2580,10 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 
 			Wscript.Echo "CF_QSF_logfile_string=" & CF_QSF_logfile_string
 
-			CF_QSF_string_array = Split(CF_QSF_logfile_string," ",1,vbTextCompare) 				' Split(expression[,delimiter[,count[,compare]]])
+			CF_QSF_string_array = Split(CF_QSF_logfile_string," ",2,vbTextCompare) 				' Split(expression[,delimiter[,count[,compare]]])
 
-			Wscript.Echo "split CF_QSF_logfile_string CF_QSF_string_array=" & CF_QSF_string_array
+			Wscript.Echo "split CF_QSF_logfile_string CF_QSF_string_array(0)=" & CF_QSF_string_array(0)
+			Wscript.Echo "split CF_QSF_logfile_string CF_QSF_string_array(1)=" & CF_QSF_string_array(1)
 
 			CF_QSF_logfile_string = Replace(CF_QSF_string_array(0)," ","",1,-1,vbTextCompare)	' Replace(string,find,replacewith[,start[,count[,compare]]]) 'Always assume units is Mbps ...
 
