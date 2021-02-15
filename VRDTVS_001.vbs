@@ -1187,7 +1187,7 @@ Function vrdtvs_ffiaft_pfis_Process_a_BPRJ (byVal theOriginalParentFolderName, b
 			' a) rename the .bprj file to match the new BaseName of the media file ... abort on a failure to simply rename the .bprj file
 			on error resume next
 			If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
-				WScript.StdOut.WriteLine("VRDTVS DEV: vrdtvs_DEVELOPMENT_NO_ACTIONS: DEV: vrdtvs_ffiavrdtvs_ffiaft_pfis_Process_a_BPRJft_pfis_Rename_a_File NOT RENAMING """ & Original_BPRJ_AbsoluteFilename & """ to """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
+				WScript.StdOut.WriteLine("VRDTVS DEV: vrdtvs_DEVELOPMENT_NO_ACTIONS: DEV: vrdtvs_ffiaft_pfis_Process_a_BPRJ NOT RENAMING """ & Original_BPRJ_AbsoluteFilename & """ to """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
 			Else
 				fso.MoveFile Original_BPRJ_AbsoluteFilename, Final_Renamed_BPRJ_AbsoluteFilename ' this is the actual File Rename
 			End If
@@ -2350,7 +2350,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Dim CF_QSF_AbsolutePathName,    CF_QSF_ParentFolderName,    CF_QSF_BaseName,    CF_QSF_Ext
 	Dim CF_TARGET_AbsolutePathName, CF_TARGET_ParentFolderName, CF_TARGET_BaseName, CF_TARGET_Ext
 	Dim CF_BPRJ_AbsolutePathName,   CF_BPRJ_ParentFolderName,   CF_BRRJ_BaseName,   CF_BPRJ_Ext
-	Dim CF_VPY_AbsolutePathName,    CF_VPY_ParentFolderName,    CF_VPY_BaseName,    CF_VPY_Ext
+	Dim CF_VPY_AbsolutePathName,    CF_VPY_ParentFolderName,    CF_VPY_BaseName,    CF_VPY_Ext, CF_VPY_object
 	Dim CF_DGI_AbsolutePathName,    CF_DGI_ParentFolderName,    CF_DGI_BaseName,    CF_DGI_Ext
 	Dim CF_DGIlog_AbsolutePathName, CF_DGIlog_ParentFolderName, CF_DGIlog_BaseName, CF_DGIlog_Ext
 	'
@@ -3093,10 +3093,9 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		quit 17
 	End If
 	If vrdtvs_create_VPY Then
-		' first add to the fmpeg commands
+		' first add to the saved fmpeg commands file
 		C_object_saved_ffmpeg_commands.WriteLine("REM")
 		C_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_VPY_AbsolutePathName & """")
-		vrdtvs_status = vrdtvs_delete_a_file (CF_VPY_AbsolutePathName, False)		' Delete the VPY file to be created
 		C_object_saved_ffmpeg_commands.WriteLine("REM")
 		C_object_saved_ffmpeg_commands.WriteLine("SET ""_VPY_file=" & CF_VPY_AbsolutePathName & """")
 		C_object_saved_ffmpeg_commands.WriteLine("ECHO import vapoursynth as vs		# this allows use of constants eg vs.YUV420P8 >> ""!_VPY_file!"" 2>&1")
@@ -3106,7 +3105,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		C_object_saved_ffmpeg_commands.WriteLine("ECHO #import havsfunc as haf		# this relies on the .py residing at the VS folder root level - see run_vsrepo.bat >> ""!_VPY_file!"" 2>&1")
 		C_object_saved_ffmpeg_commands.WriteLine("ECHO core.std.LoadPlugin^(r'!_vs_root!DGIndex\DGDecodeNV.dll'^) # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765 >> ""!_VPY_file!"" 2>&1")
 		C_object_saved_ffmpeg_commands.WriteLine("ECHO core.avs.LoadPlugin^(r'!_vs_root!DGIndex\DGDecodeNV.dll'^) # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765 >> ""!_VPY_file!"" 2>&1")
-		C_object_saved_ffmpeg_commands.WriteLine("ECHO video = core.dgdecodenv.DGSource^(r'!_DGI_file!', deinterlace=!dg_deinterlace!, use_top_field=!dg_tff!, use_pf=False^) >> ""!_VPY_file!"" 2>&1")
+		C_object_saved_ffmpeg_commands.WriteLine("ECHO video = core.dgdecodenv.DGSource^(r'" & CF_DGI_AbsolutePathName & "', deinterlace=" & vrdtvs_final_dg_deinterlace & ", use_top_field=" & vrdtvs_final_dg_tff & ", use_pf=False^) >> ""!_VPY_file!"" 2>&1")  ??????????????? 3 things to fix
 		C_object_saved_ffmpeg_commands.WriteLine("ECHO # DGDecNV changes - >> ""!_VPY_file!"" 2>&1")
 		C_object_saved_ffmpeg_commands.WriteLine("ECHO # 2020.10.21 Added new parameters cstrength and cblend to independently control the chroma denoising. >> ""!_VPY_file!"" 2>&1")
 		C_object_saved_ffmpeg_commands.WriteLine("ECHO # 2020.11.07 Revised DGDenoise parameters. The 'chroma' option is removed. >> ""!_VPY_file!"" 2>&1")
@@ -3127,14 +3126,52 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		C_object_saved_ffmpeg_commands.WriteLine("ECHO TYPE ""!_VPY_file!"" 2>&1")
 		C_object_saved_ffmpeg_commands.WriteLine("ECHO ---------------------------- 2>&1")
 		C_object_saved_ffmpeg_commands.WriteLine("REM")
-		
+		' next create the vpy file
+		vrdtvs_status = vrdtvs_delete_a_file (CF_VPY_AbsolutePathName, False)		' Delete the VPY file to be created
+		set CF_VPY_object = fso.CreateTextFile(CF_VPY_AbsolutePathName, True, True) ' [ filename, Overwrite[, Unicode]])
+		If CF_VPY_object is Nothing  Then ' Something went wrong with creating the file
+			If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - Nothing object returned from fso.CreateTextFile with VPY file """ & CF_VPY_AbsolutePathName & """... Aborting ...")
+			WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Nothing object returned from fso.CreateTextFile with VPY file  """ & CF_VPY_AbsolutePathName & """... Aborting ...")
+			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+		End If
+		CF_VPY_object.WriteLine("import vapoursynth as vs		# this allows use of constants eg vs.YUV420P8")
+		CF_VPY_object.WriteLine("from vapoursynth import core	# actual vapoursynth core")
+		CF_VPY_object.WriteLine("#import functool")
+		CF_VPY_object.WriteLine("#import mvsfunc as mvs			# this relies on the .py residing at the VS folder root level - see run_vsrepo.bat")
+		CF_VPY_object.WriteLine("#import havsfunc as haf		# this relies on the .py residing at the VS folder root level - see run_vsrepo.bat")
+		CF_VPY_object.WriteLine("core.std.LoadPlugin(r'!_vs_root!DGIndex\DGDecodeNV.dll') # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765")
+		CF_VPY_object.WriteLine("core.avs.LoadPlugin(r'!_vs_root!DGIndex\DGDecodeNV.dll') # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765")
+		CF_VPY_object.WriteLine("video = core.dgdecodenv.DGSource(r'" & CF_DGI_AbsolutePathName & "', deinterlace=" & vrdtvs_final_dg_deinterlace & ", use_top_field=" & vrdtvs_final_dg_tff & ", use_pf=False)") ??????????????? 3 things to fix
+		CF_VPY_object.WriteLine("# DGDecNV changes -")
+		CF_VPY_object.WriteLine("# 2020.10.21 Added new parameters cstrength and cblend to independently control the chroma denoising.")
+		CF_VPY_object.WriteLine("# 2020.11.07 Revised DGDenoise parameters. The 'chroma' option is removed.")
+		CF_VPY_object.WriteLine("#            Now, if 'strength' is set to 0.0 then luma denoising is disabled,")
+		CF_VPY_object.WriteLine("#            and if cstrength is set to 0.0 then chroma denoising is disabled.")
+		CF_VPY_object.WriteLine("#            'cstrength' is now defaulted to 0.0, and 'searchw' is defaulted to 9.")
+		CF_VPY_object.WriteLine("# example: video = core.avs.DGDenoise(video, strength=0.06, cstrength=0.06) # replaced chroma=True")
+		If vpy_denoise <> "" Then 
+			CF_VPY_object.WriteLine("video = core.avs.DGDenoise(video, " & vpy_denoise & ") # replaced chroma=True")
+		End If
+		CF_VPY_object.WriteLine("# example: video = core.avs.DGSharpen(video, strength=0.3)")
+		If vpy_dsharpen <> "" Then 
+			CF_VPY_object.WriteLine("video = core.avs.DGSharpen(video, " & vpy_dsharpen & ")")
+		End If
+		CF_VPY_object.WriteLine("#video = vs.core.text.ClipInfo(video^)")
+		CF_VPY_object.WriteLine("video.set_output()")
+		CF_VPY_object.Close
+		If vrdtvs_DEBUG Then
+			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Contents of VPY file """ & CF_VPY_AbsolutePathName & """ Below :")
+			Set CF_VPY_object = fso.OpenTextFile(CF_VPY_AbsolutePathName, ForReading)
+			
+			CF_VPY_object.Close
+			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Contents of VPY file """ & CF_VPY_AbsolutePathName & """ Above :")
+		End If
 
 
 
 
 
-
-
+		set ff_cmd = copy video stream, convert audio stream, setDAR
 	
 	Else ' previously flagged as not creating a VPY since incoming stream is progressive AVC so we just copy streams ... a copy of the first case in the If
 		set vpy_denoise = ""								' flag no denoising for progressive AVC
