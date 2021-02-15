@@ -19,7 +19,8 @@ Option explicit
 '/failed_Folder:"G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Failed-Conversion\" ^
 '/temp_path:"D:\VRDTVS-SCRATCH\" ^
 '/vrd_version_for_qsf:6 ^
-'/vrd_version_for_adscan:6
+'/vrd_version_for_adscan:6 ^
+'/do_adscan:True
 '
 ' ... use /capture_Folder:"" to prevent the moving of files from a capture folder, eg when testing
 ' ... note
@@ -142,6 +143,7 @@ Dim vrd_extension_avc
 Dim vrd_extension
 Dim vrd_logfile_wildcard_QSF
 Dim vrd_logfile_wildcard_ADSCAN
+Dim vrd_do_adscan
 '
 Const const_vrd5_path = "C:\Program Files (x86)\VideoReDoTVSuite5"
 Const const_vrd5_profile_mpeg2 = "zzz-MPEG2ps"
@@ -161,6 +163,7 @@ vrd6_logfile_wildcard =  fso.GetAbsolutePathName(HDTV_root & "\") & "\VideoReDo6
 '
 vrd_version_for_qsf = 6
 vrd_version_for_adscan = 6
+vrd_do_adscan = True
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Setup Global Default Paths, resolving them to Absolute paths
@@ -205,6 +208,8 @@ vrdtvs_temp_path = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("tem
 '
 vrd_version_for_qsf = vrdtvs_get_commandline_parameter("vrd_version_for_qsf",vrd_version_for_qsf)                                                   ' /vrd_version_for_qsf:6
 vrd_version_for_adscan = vrdtvs_get_commandline_parameter("vrd_version_for_adscan",vrd_version_for_adscan)                                          ' /vrd_version_for_adscan:6
+vrd_do_adscan = vrdtvs_get_commandline_parameter("vrd_version_for_adscan",vrd_do_adscan)                      		                    			' /do_adscan:True
+
 If vrd_version_for_qsf = 5 Then '*** QSF
     vrd_path_for_qsf_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd5_path,"vp.vbs"))
     vrd_profile_name_for_qsf_mpeg2 = const_vrd5_profile_mpeg2
@@ -254,6 +259,8 @@ vrdtvs_ComputerName
     WScript.StdOut.WriteLine("VRDTVS DEBUG: final                  vrd_extension_avc=""" & vrd_extension_avc & """")
     WScript.StdOut.WriteLine("VRDTVS DEBUG: final             vrd_version_for_adscan=" & vrd_version_for_adscan)
     WScript.StdOut.WriteLine("VRDTVS DEBUG: final            vrd_path_for_adscan_vbs=""" & vrd_path_for_adscan_vbs & """")
+	WScript.StdOut.WriteLine("VRDTVS DEBUG: final                      vrd_do_adscan=" & vrd_do_adscan)
+	
 End If
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
@@ -371,7 +378,7 @@ vrdtvs_status = vrdtvs_Convert_files_in_a_folder(	vrdtvs_source_TS_Folder, _
 													vrdtvs_failed_conversion_TS_Folder, _
 													vrdtvs_temp_path, _
 													vrdtvs_saved_ffmpeg_commands_filename, _
-													True ) ' True means do an Adscan
+													vrd_do_adscan ) ' True means do an Adscan
 If vrdtvs_status <> 0 Then ' Something bad went wrong (invididual conversion failures just result in moving the source file to the Failed folder)
 	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_Convert_files_in_a_folder ... Aborting ...")
 	WScript.StdOut.WriteLine("VRDTVS ERROR  VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_Convert_files_in_a_folder ... Aborting ...")
@@ -2049,7 +2056,7 @@ Function vrdtvs_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 											byVal	C_failed_conversion_TS_Folder, _
 											byVal	C_temp_path, _
 											byVal	C_saved_ffmpeg_commands_filename, _
-											byVal	C_do_an_Adcsan )
+											byVal	C_do_an_Adcsan ) ' vrd_do_adscan
 	' Loop and convert .TS .mp4 .mpg Source files in a folder into acceptable avc/aac .mp4 Destination files 
     ' Parameters: see below
 	' NOTES: 
@@ -2174,9 +2181,7 @@ Function vrdtvs_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 	C_object_saved_ffmpeg_commands.WriteLine("REM NO FILES WILL BE MOVED between folders ")
 	C_object_saved_ffmpeg_commands.WriteLine("REM")
 	'	
-	' 
-
-
+	' ' loop through all files in the source folder, treating each one according to its Extension
 	Set C_object_Folder = fso.GetFolder(C_source_TS_Folder)
 	Set C_object_Files_Collection = C_object_Folder.Files
 	For Each C_object_File in C_object_Files_Collection ' loop through all files in the source folder, treating each one according to its Extension
@@ -2190,115 +2195,20 @@ Function vrdtvs_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 			Select Case Ucase(C_FILE_Ext)
 			Case Ucase("bprj") 										' it's in the source folder, ignore it
 			Case Ucase("ts"), Ucase("mp4"), Case Ucase("mpg")		' if it's one of these then convert it
-				vrdtvs_status = ??????????????
-			Case Else												' not recognised, do nothing
+				vrdtvs_status = vrdtvs_Convert_File(	C_FILE_AbsolutePathName, _
+														C_object_saved_ffmpeg_commands, _
+														C_source_TS_Folder, _
+														C_done_TS_Folder, _
+														C_destination_mp4_Folder, _
+														C_failed_conversion_TS_Folder, _
+														C_temp_path, _
+														C_saved_ffmpeg_commands_filename, _
+														C_do_an_Adcsan )
+			Case Else	' extension not recognised, do nothing
 			End Select 
 		End If
 	Next
-
-
-
-'	Loop processing INPUT files *.TS,*.MP4,*.MPG in SOURCE folder
-'	determine INPUT file characteristics including interlacing and video codec and AspectRatio and AudioDelay etc
-'	if stream not in AVC, MPEG2
-'		print diagnostics and exit ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
-'	Calculate INPUT file ffmpeg audio delay "-af" setting
-'	
-'	QSF with profile according to VRD version and profile
-'	if error  
-'		print diagnostics and exit ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
-'	if NOT QSF file exists 
-'		print diagnostics and exit ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
-'	
-'	determine QSF file characteristics including interlacing and video codec and AspectRatio and AudioDelay etc
-'	check SCANTYPE and SCANORDER of INPUT and QSF files are the same
-'		print diagnostics and exit if not the same ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
-'	Calculate INPUT file ffmpeg audio delay "-af" setting
-'	calculate target BITRATES etc
-'	check for FOOTY and set flag and calculate effect of FOOTY on target BITRATES
-'	
-'	IF /I "%COMPUTERNAME%" == "3900X" 
-'		set extra RTX2060 ffmpeg encoding options
-'	else
-'		set non RTX2060 options, eg for a 1050Ti
-'	endif
-'	
-'	set the DGIndex file path/name and DGautolog path/name
-'	if Progressive
-'		set dg_deinterlace=0 to flag as no deinterlacing
-'		if AVC
-'			set dg_cmd = "" # flag no dgindex and no VPY to be done
-'			set vpy_denoise = "" # flag no denoising
-'			set vpy_dsharpen = "" # flag no sharpening
-'			set ff_cmd = copy video stream, convert audio stream, setDAR
-'		else if MPEG2
-'			set dg_cmd = the DG Index command
-'			set vpy_denoise = strength=0.06, cstrength=0.06" # flag denoising
-'			set vpy_dsharpen = "strength=0.3" # flag sharpening
-'			set ff_cmd = convert video stream, convert audio stream, setDAR
-'		else
-'			print diagnostics and exit since not AVC nor MPEG2 ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
-'	else if Interlaced
-'		set dg_deinterlace=1 # set for normal single framerate deinterlace
-'		set dg_cmd = the DG Index command
-'		if AVC
-'			set vpy_denoise = "" # flag no denoising
-'			set vpy_dsharpen = "strength=0.2" # flag sharpening
-'			set ff_cmd = convert video stream, convert audio stream, setDAR
-'			if "!Footy_found!" then
-'				set dg_deinterlace=2 # set for double framerate deinterlace
-'				set ff_cmd = special options to convert video stream, convert audio stream, setDAR, double framerate
-'		else if MPEG2
-'			set vpy_denoise = "strength=0.06, cstrength=0.06" # flag no denoising
-'			set vpy_dsharpen = "strength=0.3" # flag sharpening
-'			set ff_cmd convert video stream, convert audio stream, setDAR
-'		else
-'			print diagnostics and exit since not AVC nor MPEG2 ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
-'	else
-'		print diagnostics and exit since not progressive nor Interlaced ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
-'	endif
-'	
-'	run dg_cmd DGindex to create the index file and autolog
-'	if error  
-'		print diagnostics and exit ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
-'	if not DG Index file exists
-'		print diagnostics and exit ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
-'	if NOT dg_cmd = ""
-'		RUN dg_cmd, creating DGIndex file path/name
-'		create the VPY file
-'			use DGIndex file path/name
-'			use dg_deinterlace in the DGSource line
-'			if NOT vpy_denoise = ""
-'				add a core.avs.DGDenoise line
-'			if NOT vpy_dsharpen = ""
-'				add a core.avs.DGSharpen line
-'	RUN ff_cmd to convert to the TARGET mp4
-'	if error  
-'		print diagnostics and exit ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
-'	if NOT TARGET file exists 
-'		print diagnostics and exit ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
-'	determine TARGET file characteristics including interlacing and video codec and AspectRatio and AudioDelay etc
-'	
-'	setup for ADSCAN
-'	do ADSCAN
-'	if error  
-'		print diagnostics and exit ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
-'	if NOT ADSCAN file exists 
-'		print diagnostics and exit ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
-'	
-'	delete DGI file
-'	delete VPY file
-'	delete QSF file
-'	delete temporary files
-'	move INPUT file to DONE folder
-'Loop ends
-
-' vrdtvs_status = vrdtvs_exec_a_command_and_show_stdout_stderr("REM CMD /C ""something""")
-' If vrdtvs_status <> 0 Then
-'	something
-' End If
-
-
+	'
 	vrdtvs_status = C_object_saved_ffmpeg_commands.Close
 	Set C_object_saved_ffmpeg_commands = Nothing
 	vrdtvs_Convert_files_in_a_folder = 0 ' return success
