@@ -2340,6 +2340,10 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Dim Footy_FF_V_Target_Maximum_BitRate
 	Dim Footy_FF_V_Target_BufSize
 	'
+	Dim vrdtvs_create_VPY
+	Dim vpy_denoise
+	Dim vpy_dsharpen
+	'
 	If NOT fso.FileExists(CF_FILE_AbsolutePathName) Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - SUPPOSEDLY VALID SOURCE FILE NOT FOUND """ & CF_FILE_AbsolutePathName & """... Aborting ...")
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - SUPPOSEDLY VALID SOURCE FILE NOT FOUND """ & CF_FILE_AbsolutePathName & """... Aborting ...")
@@ -3048,8 +3052,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	' START  ======================================================  Create the .VPY ======================================================
 	'
 	vrdtvs_create_VPY = True
-	set vpy_denoise  = ""
-	set vpy_dsharpen = ""
+	vpy_denoise  = ""
+	vpy_dsharpen = ""
 	If vrdtvs_IsProgressive Then ' Ucase(V_ScanType) = Ucase("Progressive")
 		If vrdtvs_IsAVC Then ' Ucase(Q_V_Codec_legacy) = Ucase("AVC") 
 			vrdtvs_create_VPY = False ' this is a NO-OP
