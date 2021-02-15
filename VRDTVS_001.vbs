@@ -2328,12 +2328,12 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	V_BitRate_Maximum_FF				= vrdtvs_get_ffprobe_video_stream_parameter("max_bit_rate", CF_FILE_AbsolutePathName)  
 	' Fix up the mediainfo parameters retrieved
 	V_DisplayAspectRatio_String_slash	= Replace(V_DisplayAspectRatio_String,":","/",1,-1,vbTextCompare)  ' Replace(string,find,replacewith[,start[,count[,compare]]])
-	If (Ucase(V_Codec_legacy) = Ucase("MPEG-2V") Then
+	If Ucase(V_Codec_legacy) = Ucase("MPEG-2V") Then
 		vrdtvs_IsAVC = False
 		vrdtvs_IsMPEG2 = True
 		vrd_extension = vrd_extension_mpeg2
 		vrd_profile_name_for_qsf = vrd_profile_name_for_qsf_mpeg2
-	ElseIf (Ucase(V_Codec_legacy) = Ucase("AVC") Then
+	ElseIf Ucase(V_Codec_legacy) = Ucase("AVC") Then
 		vrdtvs_IsAVC = True
 		vrdtvs_IsMPEG2 = False
 		vrd_extension = vrd_extension_avc
@@ -2344,7 +2344,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 		Else
-			?????????? move input file to FAILED folder ?????????? and then ignore it
+			'?????????? move input file to FAILED folder ?????????? and then ignore it
+			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 		vrdtvs_Convert_File = -1
 		Exit Function
@@ -2409,32 +2410,32 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	CF_QSF_ParentFolderName = CF_temp_path
 	CF_QSF_BaseName = CF_FILE_BaseName
 	CF_QSF_Ext = vrd_extension ' set above based on incoming codec
-	CF_QSF_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_QSF_ParentFolderName,CF_QSF_BaseName & ".VRDTVS.QSF." & CF_QSF_Ext)
+	CF_QSF_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_QSF_ParentFolderName,CF_QSF_BaseName & ".VRDTVS.QSF." & CF_QSF_Ext))
 	'
 	CF_TARGET_ParentFolderName = CF_destination_mp4_Folder
 	CF_TARGET_BaseName = CF_FILE_BaseName
 	CF_TARGET_Ext = "mp4"		' always .mp4
-	CF_TARGET_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_TARGET_ParentFolderName,CF_TARGET_BaseName & "." & CF_TARGET_Ext)
+	CF_TARGET_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_TARGET_ParentFolderName,CF_TARGET_BaseName & "." & CF_TARGET_Ext))
 	'
 	CF_VPY_ParentFolderName = CF_temp_path
 	CF_VPY_BaseName = CF_FILE_BaseName
 	CF_VPY_Ext = "vpy"			' always .vpy
-	CF_VPY_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_VPY_ParentFolderName,CF_VPY_BaseName & "." & CF_VPY_Ext)
+	CF_VPY_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_VPY_ParentFolderName,CF_VPY_BaseName & "." & CF_VPY_Ext))
 	'
 	CF_DGI_ParentFolderName = CF_temp_path
 	CF_DGI_BaseName = CF_FILE_BaseName
 	CF_DGI_Ext = "dgi"			' always .dgi
-	CF_DGI_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_DGI_ParentFolderName,CF_QSF_BaseName & "." & CF_DGI_Ext)
+	CF_DGI_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_DGI_ParentFolderName,CF_QSF_BaseName & "." & CF_DGI_Ext))
 	'
 	CF_DGIlog_ParentFolderName = CF_temp_path
 	CF_DGIlog_BaseName = CF_FILE_BaseName
 	CF_DGIlog_Ext = "log"			' always .log
-	CF_DGIlog_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_DGI_ParentFolderName,CF_QSF_BaseName & "." & CF_DGIlog_Ext)
+	CF_DGIlog_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_DGI_ParentFolderName,CF_QSF_BaseName & "." & CF_DGIlog_Ext))
 	'
 	CF_BPRJ_ParentFolderName = CF_destination_mp4_Folder
 	CF_BPRJ_BaseName = CF_FILE_BaseName
 	CF_BPRJ_Ext = "bprj"		' always .bprj
-	CF_BPRJ_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_BPRJ_ParentFolderName,CF_BPRJ_BaseName & "." & CF_BPRJ_Ext)
+	CF_BPRJ_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_BPRJ_ParentFolderName,CF_BPRJ_BaseName & "." & CF_BPRJ_Ext))
 	'
 	' START ======================================================  Do the QSF ======================================================
 	'
@@ -2491,7 +2492,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 		Else
-			?????????? move input file to FAILED folder ?????????? and then ignore it
+			'?????????? move input file to FAILED folder ?????????? and then ignore it
+			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 		vrdtvs_Convert_File = -1
 		Exit Function
@@ -2512,7 +2514,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 		Else
-			?????????? move input file to FAILED folder ?????????? and then ignore it
+			'?????????? move input file to FAILED folder ?????????? and then ignore it
+			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 		vrdtvs_Convert_File = -1
 		Exit Function
@@ -2570,8 +2573,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Q_V_BitRate_Maximum_FF				= vrdtvs_get_ffprobe_video_stream_parameter("max_bit_rate", CF_QSF_AbsolutePathName)
 	' Fix up the QSF mediainfo parameters retrieved
 	Q_V_DisplayAspectRatio_String_slash	= Replace(Q_V_DisplayAspectRatio_String,":","/",1,-1,vbTextCompare)  ' Replace(string,find,replacewith[,start[,count[,compare]]])
-
-
+	'
 	If vrdtvs_IsMPEG2 Then ' (Ucase(Q_V_Codec_legacy) = Ucase("MPEG-2V") 
 	ElseIf vrdtvs_IsAVC Then ' (Ucase(Q_V_Codec_legacy) = Ucase("AVC") 
 	Else
