@@ -2248,7 +2248,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Dim vrdtvs_IsAVC, vrdtvs_IsMPEG2, vrdtvs_IsProgressive, vrdtvs_IsInterlaced
 	Dim ff_cmd_string
 	'
-	Dim CF_QSF_logfile, CF_QSF_logfile_object, CF_QSF_logfile_line, CF_QSF_logfile_string, CF_QSF_string_array(2)
+	Dim CF_QSF_logfile, CF_QSF_logfile_object, CF_QSF_logfile_line, CF_QSF_logfile_string, CF_QSF_string_array
 	'
 	Dim CF_exe_cmd_string
 	Dim CF_exe_object
@@ -2566,16 +2566,28 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'
 	' Search the QSF logfile for the "Actual Video Bitrate"
 	Set CF_QSF_logfile_object = fso.OpenTextFile(CF_QSF_logfile, ForReading)
-	Const CF_Search_for_this_for_bitrate_in_QSF_logfile = "Actual Video Bitrate: "
+	Const CF_Search_for_this_for_bitrate_in_QSF_logfile = "Actual Video Bitrate: " ' the trailing space is important
 	Q_ACTUAL_QSF_LOG_BITRATE = 0
 	Do Until CF_QSF_logfile_object.AtEndOfStream
 		CF_QSF_logfile_line = CF_QSF_logfile_object.ReadLine
 		CF_tmp = instr(1,CF_QSF_logfile_line, CF_Search_for_this_for_bitrate_in_QSF_logfile, vbTextCompare)
 		If CF_tmp > 0 Then ' InStr([start, ]string1, string2[, compare])
 			' OK, the line looks like "Actual Video Bitrate: 3.74 Mbps"
-			CF_QSF_logfile_string = Mid(CF_QSF_logfile_line,(CF_tmp+1))							' Mid(string, start[, length]))
+			
+			Wscript.Echo "CF_QSF_logfile_line=" & CF_QSF_logfile_line
+
+			CF_QSF_logfile_string = Mid(CF_QSF_logfile_line,(CF_tmp+len(CF_Search_for_this_for_bitrate_in_QSF_logfile)))	' Mid(string, start[, length]))
+
+			Wscript.Echo "CF_QSF_logfile_string=" & CF_QSF_logfile_string
+
 			CF_QSF_string_array = Split(CF_QSF_logfile_string," ",1,vbTextCompare) 				' Split(expression[,delimiter[,count[,compare]]])
+
+			Wscript.Echo "split CF_QSF_logfile_string CF_QSF_string_array=" & CF_QSF_string_array
+
 			CF_QSF_logfile_string = Replace(CF_QSF_string_array(0)," ","",1,-1,vbTextCompare)	' Replace(string,find,replacewith[,start[,count[,compare]]]) 'Always assume units is Mbps ...
+
+			Wscript.Echo "hopefully numeric CF_QSF_logfile_string =" & CF_QSF_logfile_string
+			
 			If IsNumeric(CF_QSF_logfile_string) Then ' assume it's a decimal Mbps, convert it to 
 				Q_ACTUAL_QSF_LOG_BITRATE = CDbl(CF_QSF_logfile_string) * 1000000  ' expand the decimal number into a full integer number of Mbps
 			End If
