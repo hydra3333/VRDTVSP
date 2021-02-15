@@ -2109,7 +2109,7 @@ Function vrdtvs_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder   ""vrd_profile_name_for_qsf_mpeg2=" & vrd_profile_name_for_qsf_mpeg2 & """")
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder              ""vrd_extension_mpeg2=" & vrd_extension_mpeg2 & """")
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder     ""vrd_profile_name_for_qsf_avc=" & vrd_profile_name_for_qsf_avc & """")
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder                ""vrd_extension_avc=" & vrd__extension_avc & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder                ""vrd_extension_avc=" & vrd_extension_avc & """")
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder              ""vrd_version_for_qsf=" & vrd_version_for_qsf & """")
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder             ""vrd_path_for_qsf_vbs=" & vrd_path_for_qsf_vbs & """")
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder           ""vrd_version_for_adscan=" & vrd_version_for_adscan & """")
