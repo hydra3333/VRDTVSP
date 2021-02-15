@@ -3119,7 +3119,6 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		' first add to the saved fmpeg commands file
 		C_object_saved_ffmpeg_commands.WriteLine("REM")
 		C_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_VPY_AbsolutePathName & """")
-		C_object_saved_ffmpeg_commands.WriteLine("REM")
 		C_object_saved_ffmpeg_commands.WriteLine("SET ""_VPY_file=" & CF_VPY_AbsolutePathName & """")
 		'create the vpy file
 		vrdtvs_status = vrdtvs_delete_a_file (CF_VPY_AbsolutePathName, False)		' Delete the VPY file to be created
@@ -3129,31 +3128,32 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Nothing object returned from fso.CreateTextFile with VPY file  """ & CF_VPY_AbsolutePathName & """... Aborting ...")
 			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "import vapoursynth as vs		# this allows use of constants eg vs.YUV420P8", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "from vapoursynth import core	# actual vapoursynth core", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#import functool", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#import mvsfunc as mvs			# this relies on the .py residing at the VS folder root level - see run_vsrepo.bat", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#import havsfunc as haf		# this relies on the .py residing at the VS folder root level - see run_vsrepo.bat", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "core.std.LoadPlugin(r'!_vs_root!DGIndex\DGDecodeNV.dll') # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "core.avs.LoadPlugin(r'!_vs_root!DGIndex\DGDecodeNV.dll') # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "video = core.dgdecodenv.DGSource(r'" & CF_DGI_AbsolutePathName & "', deinterlace=" & vrdtvs_final_dg_deinterlace & ", use_top_field=" & vrdtvs_final_dg_tff & ", use_pf=False)", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "# DGDecNV changes -", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "# 2020.10.21 Added new parameters cstrength and cblend to independently control the chroma denoising.", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "# 2020.11.07 Revised DGDenoise parameters. The 'chroma' option is removed.", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#            Now, if 'strength' is set to 0.0 then luma denoising is disabled,", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#            and if cstrength is set to 0.0 then chroma denoising is disabled.", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#            'cstrength' is now defaulted to 0.0, and 'searchw' is defaulted to 9.", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "# example: video = core.avs.DGDenoise(video, strength=0.06, cstrength=0.06) # replaced chroma=True", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "import vapoursynth as vs		# this allows use of constants eg vs.YUV420P8", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "from vapoursynth import core	# actual vapoursynth core", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#import functool", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#import mvsfunc as mvs			# this relies on the .py residing at the VS folder root level - see run_vsrepo.bat", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#import havsfunc as haf		# this relies on the .py residing at the VS folder root level - see run_vsrepo.bat", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "core.std.LoadPlugin(r'!_vs_root!DGIndex\DGDecodeNV.dll') # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "core.avs.LoadPlugin(r'!_vs_root!DGIndex\DGDecodeNV.dll') # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "video = core.dgdecodenv.DGSource(r'" & CF_DGI_AbsolutePathName & "', deinterlace=" & vrdtvs_final_dg_deinterlace & ", use_top_field=" & vrdtvs_final_dg_tff & ", use_pf=False)", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "# DGDecNV changes -", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "# 2020.10.21 Added new parameters cstrength and cblend to independently control the chroma denoising.", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "# 2020.11.07 Revised DGDenoise parameters. The 'chroma' option is removed.", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#            Now, if 'strength' is set to 0.0 then luma denoising is disabled,", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#            and if cstrength is set to 0.0 then chroma denoising is disabled.", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#            'cstrength' is now defaulted to 0.0, and 'searchw' is defaulted to 9.", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "# example: video = core.avs.DGDenoise(video, strength=0.06, cstrength=0.06) # replaced chroma=True", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		If vpy_denoise <> "" Then 
-			CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "video = core.avs.DGDenoise(video, " & vpy_denoise & ") # replaced chroma=True", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
+			CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "video = core.avs.DGDenoise(video, " & vpy_denoise & ") # replaced chroma=True", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		End If
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "# example: video = core.avs.DGSharpen(video, strength=0.3)", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "# example: video = core.avs.DGSharpen(video, strength=0.3)", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		If vpy_dsharpen <> "" Then 
-			CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "video = core.avs.DGSharpen(video, " & vpy_dsharpen & ")", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
+			CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "video = core.avs.DGSharpen(video, " & vpy_dsharpen & ")", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		End If
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#video = vs.core.text.ClipInfo(video^)", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "video.set_output()", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#video = vs.core.text.ClipInfo(video)", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "video.set_output()", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_VPY_object.Close
+		C_object_saved_ffmpeg_commands.WriteLine("REM")
 		C_object_saved_ffmpeg_commands.WriteLine("ECHO ---------------------------- 2>&1")
 		C_object_saved_ffmpeg_commands.WriteLine("ECHO TYPE ""!_VPY_file!"" 2>&1")
 		C_object_saved_ffmpeg_commands.WriteLine("ECHO ---------------------------- 2>&1")
@@ -3181,7 +3181,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 End Function
 '
 Function vrdtvs_writeline_for_vpy (vpy_filename_object, bat_filename_object, a_vpy_statement, prepend_string, append_string)
-	' Write vpy statements to a "normal" .vpy file and "escaped" to the batch file used to re-create the .vpy file
+	' Write vpy statements to a "normal" .vpy file and ".BAT-escaped" to the batch file used to re-create the .vpy file
 	' Parameters
 	'		vpy_filename_object		ALREADY OPENED FOR WRITE
 	'		bat_filename_object		ALREADY OPENED FOR WRITE
