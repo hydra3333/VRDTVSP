@@ -208,7 +208,7 @@ vrdtvs_temp_path = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("tem
 '
 vrd_version_for_qsf = vrdtvs_get_commandline_parameter("vrd_version_for_qsf",vrd_version_for_qsf)                                                   ' /vrd_version_for_qsf:6
 vrd_version_for_adscan = vrdtvs_get_commandline_parameter("vrd_version_for_adscan",vrd_version_for_adscan)                                          ' /vrd_version_for_adscan:6
-vrd_do_adscan = vrdtvs_get_commandline_parameter("vrd_version_for_adscan",vrd_do_adscan)                      		                    			' /do_adscan:True
+vrd_do_adscan = vrdtvs_get_commandline_parameter("do_adscan",vrd_do_adscan)                      		                    			' /do_adscan:True
 
 If vrd_version_for_qsf = 5 Then '*** QSF
     vrd_path_for_qsf_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd5_path,"vp.vbs"))
@@ -2088,8 +2088,6 @@ Function vrdtvs_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 	C_destination_mp4_Folder = fso.GetAbsolutePathName(C_destination_mp4_Folder & "\")
 	C_failed_conversion_TS_Folder = fso.GetAbsolutePathName(C_failed_conversion_TS_Folder & "\")
 	C_temp_path = fso.GetAbsolutePathName(C_temp_path & "\")
-	C_path_for_qsf_vbs = fso.GetAbsolutePathName(C_path_for_qsf_vbs & "\")
-	C_path_for_adscan_vbs = fso.GetAbsolutePathName(C_path_for_adscan_vbs & "\")
 	C_saved_ffmpeg_commands_filename = fso.GetAbsolutePathName(C_saved_ffmpeg_commands_filename & "\")
 	'
 	If vrdtvs_DEBUG Then 
@@ -2113,10 +2111,6 @@ Function vrdtvs_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder  ""C_extension_mpeg2=" & C_extension_mpeg2 & """")
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder  ""C_profile_name_for_qsf_avc=" & C_profile_name_for_qsf_avc & """")
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder  ""C_extension_avc=" & C_extension_avc & """")
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder  ""C_vrd_version_for_qsf=" & C_vrd_version_for_qsf & """")
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder  ""C_path_for_qsf_vbs=" & C_path_for_qsf_vbs & """")
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder  ""C_vrd_version_for_adscan=" & C_vrd_version_for_adscan & """")
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder  ""C_path_for_adscan_vbs=" & C_path_for_adscan_vbs & """")
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder  ""C_saved_ffmpeg_commands_filename=" & C_saved_ffmpeg_commands_filename & """")
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder  ""C_do_an_Adcsan=" & C_do_an_Adcsan & """")
 	End If
@@ -2164,10 +2158,11 @@ Function vrdtvs_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 	C_object_saved_ffmpeg_commands.WriteLine("Set ""C_profile_name_for_qsf_avc=" & C_profile_name_for_qsf_avc & """")
 	C_object_saved_ffmpeg_commands.WriteLine("Set ""C_extension_avc=" & C_extension_avc & """")
 	C_object_saved_ffmpeg_commands.WriteLine("REM")
-	C_object_saved_ffmpeg_commands.WriteLine("Set ""C_vrd_version_for_qsf=" & C_vrd_version_for_qsf & """")
-	C_object_saved_ffmpeg_commands.WriteLine("Set ""C_path_for_qsf_vbs=" & C_path_for_qsf_vbs & """")
-	C_object_saved_ffmpeg_commands.WriteLine("Set ""C_vrd_version_for_adscan=" & C_vrd_version_for_adscan & """")
-	C_object_saved_ffmpeg_commands.WriteLine("Set ""C_path_for_adscan_vbs=" & C_path_for_adscan_vbs & """")
+	C_object_saved_ffmpeg_commands.WriteLine("Set ""vrd_version_for_qsf=" & vrd_version_for_qsf & """")
+	C_object_saved_ffmpeg_commands.WriteLine("Set ""vrd_path_for_qsf_vbs=" & vrd_path_for_qsf_vbs & """")
+	C_object_saved_ffmpeg_commands.WriteLine("Set ""vrd_version_for_adscan=" & vrd_version_for_adscan & """")
+	C_object_saved_ffmpeg_commands.WriteLine("Set ""vrd_path_for_adscan_vbs=" & vrd_path_for_adscan_vbs & """")
+	C_object_saved_ffmpeg_commands.WriteLine("REM")
 	C_object_saved_ffmpeg_commands.WriteLine("Set ""C_saved_ffmpeg_commands_filename=" & C_saved_ffmpeg_commands_filename & """")
 	C_object_saved_ffmpeg_commands.WriteLine("Set ""C_do_an_Adcsan=" & C_do_an_Adcsan & """")
 	C_object_saved_ffmpeg_commands.WriteLine("REM")
