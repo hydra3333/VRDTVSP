@@ -2653,6 +2653,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	' Cross-check with other tool values.
 	' NOTE: use the maximum of MEDIAINFO bitrate and QSF bitrate from log (QSF bitrate from log is an "average actual").
 	'       also, note we seek biotrate values of the QSF'd file not the original TS which can have problematic values.
+	V_INCOMING_BITRATE = 0
 	V_INCOMING_BITRATE_MEDIAINFO = 0
 	V_INCOMING_BITRATE_FFPROBE = 0
 	V_INCOMING_BITRATE_QSF_LOG = 0
@@ -2661,7 +2662,6 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	If IsNumeric(Q_V_BitRate_FF) Then 			V_INCOMING_BITRATE_FFPROBE = Q_V_BitRate_FF
 	If IsNumeric(Q_ACTUAL_QSF_LOG_BITRATE) Then	V_INCOMING_BITRATE_MEDIAINFO = Q_ACTUAL_QSF_LOG_BITRATE
 	'USE the ffprobe bitrate value, sometimes it mis-reports as a much larger bitrate value but it seems to be correct.
-	V_INCOMING_BITRATE = 0
 	IF V_INCOMING_BITRATE_FFPROBE   > V_INCOMING_BITRATE Then V_INCOMING_BITRATE = V_INCOMING_BITRATE_FFPROBE
 	IF V_INCOMING_BITRATE_MEDIAINFO > V_INCOMING_BITRATE Then V_INCOMING_BITRATE = V_INCOMING_BITRATE_MEDIAINFO
 	IF V_INCOMING_BITRATE_QSF_LOG   > V_INCOMING_BITRATE Then V_INCOMING_BITRATE = V_INCOMING_BITRATE_QSF_LOG
