@@ -2324,6 +2324,13 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'
 	Dim vrdtvs_final_RTX2060super_extra_flags
 	'
+	Dim FF_V_Target_BitRate
+	Dim FF_V_Target_Minimum_BitRate
+	Dim FF_V_Target_Maximum_BitRate
+	Dim FF_V_Target_BufSize
+	Dim x_cq0, x_cq24, PROPOSED_x_cq_options
+	Dim vrdtvs_final_cq_options
+	'
 	If NOT fso.FileExists(CF_FILE_AbsolutePathName) Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - SUPPOSEDLY VALID SOURCE FILE NOT FOUND """ & CF_FILE_AbsolutePathName & """... Aborting ...")
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - SUPPOSEDLY VALID SOURCE FILE NOT FOUND """ & CF_FILE_AbsolutePathName & """... Aborting ...")
