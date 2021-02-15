@@ -216,14 +216,14 @@ If vrd_version_for_qsf = 5 Then '*** QSF
     vrd_profile_name_for_qsf_avc = const_vrd5_profile_avc
     vrd_extension_mpeg2 = const_vrd5_extension_mpeg2
     vrd_extension_avc = const_vrd5_extension_avc
-	vrd_logfile_wildcard_QSF = const_vrd5_logfile_wildcard
+	vrd_logfile_wildcard_QSF = vrd5_logfile_wildcard
 ElseIf vrd_version_for_qsf = 6 Then
     vrd_path_for_qsf_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd6_path,"vp.vbs"))
     vrd_profile_name_for_qsf_mpeg2 = const_vrd6_profile_mpeg2
     vrd_profile_name_for_qsf_avc = const_vrd6_profile_avc
     vrd_extension_mpeg2 = const_vrd6_extension_mpeg2
     vrd_extension_avc = const_vrd6_extension_avc
-	vrd_logfile_wildcard_QSF = const_vrd6_logfile_wildcard
+	vrd_logfile_wildcard_QSF = vrd6_logfile_wildcard
 Else
     WScript.StdOut.WriteLine("VRDTVS ERROR - vrd_version_for_qsf can only be 5 or 6 ... Aborting ...")
     WScript.Quit 17 ' Error 17 = cannot perform the requested operation
