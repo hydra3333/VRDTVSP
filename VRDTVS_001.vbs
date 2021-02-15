@@ -3121,35 +3121,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		C_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_VPY_AbsolutePathName & """")
 		C_object_saved_ffmpeg_commands.WriteLine("REM")
 		C_object_saved_ffmpeg_commands.WriteLine("SET ""_VPY_file=" & CF_VPY_AbsolutePathName & """")
-		C_object_saved_ffmpeg_commands.WriteLine("ECHO import vapoursynth as vs		# this allows use of constants eg vs.YUV420P8 >> ""!_VPY_file!"" 2>&1")
-		C_object_saved_ffmpeg_commands.WriteLine("ECHO from vapoursynth import core	# actual vapoursynth core >> ""!_VPY_file!"" 2>&1")
-		C_object_saved_ffmpeg_commands.WriteLine("ECHO #import functool >> ""!_VPY_file!"" 2>&1")
-		C_object_saved_ffmpeg_commands.WriteLine("ECHO #import mvsfunc as mvs			# this relies on the .py residing at the VS folder root level - see run_vsrepo.bat >> ""!_VPY_file!"" 2>&1")
-		C_object_saved_ffmpeg_commands.WriteLine("ECHO #import havsfunc as haf		# this relies on the .py residing at the VS folder root level - see run_vsrepo.bat >> ""!_VPY_file!"" 2>&1")
-		C_object_saved_ffmpeg_commands.WriteLine("ECHO core.std.LoadPlugin^(r'!_vs_root!DGIndex\DGDecodeNV.dll'^) # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765 >> ""!_VPY_file!"" 2>&1")
-		C_object_saved_ffmpeg_commands.WriteLine("ECHO core.avs.LoadPlugin^(r'!_vs_root!DGIndex\DGDecodeNV.dll'^) # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765 >> ""!_VPY_file!"" 2>&1")
-		C_object_saved_ffmpeg_commands.WriteLine("ECHO video = core.dgdecodenv.DGSource^(r'" & CF_DGI_AbsolutePathName & "', deinterlace=" & vrdtvs_final_dg_deinterlace & ", use_top_field=" & vrdtvs_final_dg_tff & ", use_pf=False^) >> ""!_VPY_file!"" 2>&1")  ??????????????? 3 things to fix
-		C_object_saved_ffmpeg_commands.WriteLine("ECHO # DGDecNV changes - >> ""!_VPY_file!"" 2>&1")
-		C_object_saved_ffmpeg_commands.WriteLine("ECHO # 2020.10.21 Added new parameters cstrength and cblend to independently control the chroma denoising. >> ""!_VPY_file!"" 2>&1")
-		C_object_saved_ffmpeg_commands.WriteLine("ECHO # 2020.11.07 Revised DGDenoise parameters. The 'chroma' option is removed. >> ""!_VPY_file!"" 2>&1")
-		C_object_saved_ffmpeg_commands.WriteLine("ECHO #            Now, if 'strength' is set to 0.0 then luma denoising is disabled, >> ""!_VPY_file!"" 2>&1")
-		C_object_saved_ffmpeg_commands.WriteLine("ECHO #            and if cstrength is set to 0.0 then chroma denoising is disabled. >> ""!_VPY_file!"" 2>&1")
-		C_object_saved_ffmpeg_commands.WriteLine("ECHO #            'cstrength' is now defaulted to 0.0, and 'searchw' is defaulted to 9. >> ""!_VPY_file!"" 2>&1")
-		C_object_saved_ffmpeg_commands.WriteLine("ECHO # example: video = core.avs.DGDenoise^(video, strength=0.06, cstrength=0.06^) # replaced chroma=True >> ""!_VPY_file!"" 2>&1")
-		If vpy_denoise <> "" Then 
-			C_object_saved_ffmpeg_commands.WriteLine("ECHO video = core.avs.DGDenoise^(video, " & vpy_denoise & "^) # replaced chroma=True >> ""!_VPY_file!"" 2>&1")
-		End If
-		C_object_saved_ffmpeg_commands.WriteLine("ECHO # example: video = core.avs.DGSharpen^(video, strength=0.3^) >> ""!_VPY_file!"" 2>&1")
-		If vpy_dsharpen <> "" Then 
-			C_object_saved_ffmpeg_commands.WriteLine("ECHO video = core.avs.DGSharpen^(video, " & vpy_dsharpen & "^) >> ""!_VPY_file!"" 2>&1")
-		End If
-		C_object_saved_ffmpeg_commands.WriteLine("ECHO #video = vs.core.text.ClipInfo^(video^) >> ""!_VPY_file!"" 2>&1")
-		C_object_saved_ffmpeg_commands.WriteLine("ECHO video.set_output^(^) >> ""!_VPY_file!"" 2>&1")
-		C_object_saved_ffmpeg_commands.WriteLine("ECHO ---------------------------- 2>&1")
-		C_object_saved_ffmpeg_commands.WriteLine("ECHO TYPE ""!_VPY_file!"" 2>&1")
-		C_object_saved_ffmpeg_commands.WriteLine("ECHO ---------------------------- 2>&1")
-		C_object_saved_ffmpeg_commands.WriteLine("REM")
-		' next create the vpy file
+		'create the vpy file
 		vrdtvs_status = vrdtvs_delete_a_file (CF_VPY_AbsolutePathName, False)		' Delete the VPY file to be created
 		set CF_VPY_object = fso.CreateTextFile(CF_VPY_AbsolutePathName, True, True) ' [ filename, Overwrite[, Unicode]])
 		If CF_VPY_object is Nothing  Then ' Something went wrong with creating the file
@@ -3157,31 +3129,35 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Nothing object returned from fso.CreateTextFile with VPY file  """ & CF_VPY_AbsolutePathName & """... Aborting ...")
 			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
-		CF_VPY_object.WriteLine("import vapoursynth as vs		# this allows use of constants eg vs.YUV420P8")
-		CF_VPY_object.WriteLine("from vapoursynth import core	# actual vapoursynth core")
-		CF_VPY_object.WriteLine("#import functool")
-		CF_VPY_object.WriteLine("#import mvsfunc as mvs			# this relies on the .py residing at the VS folder root level - see run_vsrepo.bat")
-		CF_VPY_object.WriteLine("#import havsfunc as haf		# this relies on the .py residing at the VS folder root level - see run_vsrepo.bat")
-		CF_VPY_object.WriteLine("core.std.LoadPlugin(r'!_vs_root!DGIndex\DGDecodeNV.dll') # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765")
-		CF_VPY_object.WriteLine("core.avs.LoadPlugin(r'!_vs_root!DGIndex\DGDecodeNV.dll') # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765")
-		CF_VPY_object.WriteLine("video = core.dgdecodenv.DGSource(r'" & CF_DGI_AbsolutePathName & "', deinterlace=" & vrdtvs_final_dg_deinterlace & ", use_top_field=" & vrdtvs_final_dg_tff & ", use_pf=False)") ??????????????? 3 things to fix
-		CF_VPY_object.WriteLine("# DGDecNV changes -")
-		CF_VPY_object.WriteLine("# 2020.10.21 Added new parameters cstrength and cblend to independently control the chroma denoising.")
-		CF_VPY_object.WriteLine("# 2020.11.07 Revised DGDenoise parameters. The 'chroma' option is removed.")
-		CF_VPY_object.WriteLine("#            Now, if 'strength' is set to 0.0 then luma denoising is disabled,")
-		CF_VPY_object.WriteLine("#            and if cstrength is set to 0.0 then chroma denoising is disabled.")
-		CF_VPY_object.WriteLine("#            'cstrength' is now defaulted to 0.0, and 'searchw' is defaulted to 9.")
-		CF_VPY_object.WriteLine("# example: video = core.avs.DGDenoise(video, strength=0.06, cstrength=0.06) # replaced chroma=True")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "import vapoursynth as vs		# this allows use of constants eg vs.YUV420P8", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "from vapoursynth import core	# actual vapoursynth core", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#import functool", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#import mvsfunc as mvs			# this relies on the .py residing at the VS folder root level - see run_vsrepo.bat", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#import havsfunc as haf		# this relies on the .py residing at the VS folder root level - see run_vsrepo.bat", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "core.std.LoadPlugin(r'!_vs_root!DGIndex\DGDecodeNV.dll') # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "core.avs.LoadPlugin(r'!_vs_root!DGIndex\DGDecodeNV.dll') # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "video = core.dgdecodenv.DGSource(r'" & CF_DGI_AbsolutePathName & "', deinterlace=" & vrdtvs_final_dg_deinterlace & ", use_top_field=" & vrdtvs_final_dg_tff & ", use_pf=False)", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "# DGDecNV changes -", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "# 2020.10.21 Added new parameters cstrength and cblend to independently control the chroma denoising.", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "# 2020.11.07 Revised DGDenoise parameters. The 'chroma' option is removed.", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#            Now, if 'strength' is set to 0.0 then luma denoising is disabled,", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#            and if cstrength is set to 0.0 then chroma denoising is disabled.", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#            'cstrength' is now defaulted to 0.0, and 'searchw' is defaulted to 9.", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "# example: video = core.avs.DGDenoise(video, strength=0.06, cstrength=0.06) # replaced chroma=True", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
 		If vpy_denoise <> "" Then 
-			CF_VPY_object.WriteLine("video = core.avs.DGDenoise(video, " & vpy_denoise & ") # replaced chroma=True")
+			CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "video = core.avs.DGDenoise(video, " & vpy_denoise & ") # replaced chroma=True", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
 		End If
-		CF_VPY_object.WriteLine("# example: video = core.avs.DGSharpen(video, strength=0.3)")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "# example: video = core.avs.DGSharpen(video, strength=0.3)", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
 		If vpy_dsharpen <> "" Then 
-			CF_VPY_object.WriteLine("video = core.avs.DGSharpen(video, " & vpy_dsharpen & ")")
+			CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "video = core.avs.DGSharpen(video, " & vpy_dsharpen & ")", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
 		End If
-		CF_VPY_object.WriteLine("#video = vs.core.text.ClipInfo(video^)")
-		CF_VPY_object.WriteLine("video.set_output()")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "#video = vs.core.text.ClipInfo(video^)", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, C_object_saved_ffmpeg_commands, "video.set_output()", "ECHO ", """ >> ""!_VPY_file!"" 2>&1")
 		CF_VPY_object.Close
+		C_object_saved_ffmpeg_commands.WriteLine("ECHO ---------------------------- 2>&1")
+		C_object_saved_ffmpeg_commands.WriteLine("ECHO TYPE ""!_VPY_file!"" 2>&1")
+		C_object_saved_ffmpeg_commands.WriteLine("ECHO ---------------------------- 2>&1")
+		C_object_saved_ffmpeg_commands.WriteLine("REM")
 		' display the content of .VPY file
 		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - Content of VPY file """ & CF_VPY_AbsolutePathName & """ Below :")
 		Set CF_VPY_object = fso.OpenTextFile(CF_VPY_AbsolutePathName, ForReading)
@@ -3202,4 +3178,23 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	delete vpy file
 	delete dgi file
 	vrdtvs_Convert_File = 0				
+End Function
+'
+Function vrdtvs_writeline_for_vpy (vpy_filename_object, bat_filename_object, a_vpy_statement, prepend_string, append_string)
+	' Write vpy statements to a "normal" .vpy file and "escaped" to the batch file used to re-create the .vpy file
+	' Parameters
+	'		vpy_filename_object		ALREADY OPENED FOR WRITE
+	'		bat_filename_object		ALREADY OPENED FOR WRITE
+	'		prepend_string			eg "ECHO " including a trailing space
+	'		append_string			eg " >> "!_VPY_file!" 2>&1"  including a trailing space
+	Dim escaped_vpy_statement
+	'
+	vpy_filename_object.WriteLine(a_vpy_statement)
+	escaped_vpy_statement = a_vpy_statement
+	escaped_vpy_statement = Replace(escaped_vpy_statement, "(", "^(", 1, -1, vbTextCompare)
+	escaped_vpy_statement = Replace(escaped_vpy_statement, ")", "^)", 1, -1, vbTextCompare)
+	escaped_vpy_statement = Replace(escaped_vpy_statement, "<", "^<", 1, -1, vbTextCompare)
+	escaped_vpy_statement = Replace(escaped_vpy_statement, ">", "^>", 1, -1, vbTextCompare)
+	bat_filename_object.WriteLine(prepend_string & a_vpy_statement & append_string)
+	vrdtvs_writeline_for_vpy = 0
 End Function
