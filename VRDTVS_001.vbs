@@ -3010,7 +3010,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'
 	' START ======================================================  Do the DGIndexNV ======================================================
 	'
-	If IsProgressive AND vrdtvs_IsAVC Then ' not required for Progressive-AVC where we just copy streams ' Ucase(V_ScanType) = Ucase("Progressive") AND Q_V_Codec_legacy <> "AVC"
+	If vrdtvs_IsProgressive AND vrdtvs_IsAVC Then ' not required for Progressive-AVC where we just copy streams ' Ucase(V_ScanType) = Ucase("Progressive") AND Q_V_Codec_legacy <> "AVC"
 		vrdtvs_create_VPY = False	' flag that no VPY needs to be created either
 		C_object_saved_ffmpeg_commands.WriteLine("REM")
 		C_object_saved_ffmpeg_commands.WriteLine("REM DGIndexNV is NOT performed for Progressive-AVC where we just copy streams")
