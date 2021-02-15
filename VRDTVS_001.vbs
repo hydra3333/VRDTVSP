@@ -238,30 +238,26 @@ Else
     WScript.StdOut.WriteLine("VRDTVS ERROR - vrd_path_for_adscan_vbs can only be 5 or 6 ... Aborting ...")
     WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
-WScript.StdOut.WriteLine("NOTE: final                       vrdtvs_DEBUG=" & vrdtvs_DEBUG)
-WScript.StdOut.WriteLine("NOTE: final      vrdtvs_DEVELOPMENT_NO_ACTIONS=" & vrdtvs_DEVELOPMENT_NO_ACTIONS)
-If vrdtvs_DEBUG Then 
-vrdtvs_ComputerName
-	WScript.StdOut.WriteLine("VRDTVS DEBUG: final                vrdtvs_ComputerName=""" & vrdtvs_ComputerName & """")
-	WScript.StdOut.WriteLine("VRDTVS DEBUG: final                       vrdtvs_DEBUG=" & vrdtvs_DEBUG)
-    WScript.StdOut.WriteLine("VRDTVS DEBUG: final      vrdtvs_DEVELOPMENT_NO_ACTIONS=" & vrdtvs_DEVELOPMENT_NO_ACTIONS & """")
-    WScript.StdOut.WriteLine("VRDTVS DEBUG: final           vrdtvs_CAPTURE_TS_Folder=""" & vrdtvs_CAPTURE_TS_Folder & """")
-    WScript.StdOut.WriteLine("VRDTVS DEBUG: final            vrdtvs_source_TS_Folder=""" & vrdtvs_source_TS_Folder & """")
-    WScript.StdOut.WriteLine("VRDTVS DEBUG: final              vrdtvs_done_TS_Folder=""" & vrdtvs_done_TS_Folder & """")
-    WScript.StdOut.WriteLine("VRDTVS DEBUG: final      vrdtvs_destination_mp4_Folder=""" & vrdtvs_destination_mp4_Folder & """")
-    WScript.StdOut.WriteLine("VRDTVS DEBUG: final vrdtvs_failed_conversion_TS_Folder=""" & vrdtvs_failed_conversion_TS_Folder & """")
-    WScript.StdOut.WriteLine("VRDTVS DEBUG: final                   vrdtvs_temp_path=""" & vrdtvs_temp_path & """")
-    WScript.StdOut.WriteLine("VRDTVS DEBUG: final                vrd_version_for_qsf=" & vrd_version_for_qsf)
-    WScript.StdOut.WriteLine("VRDTVS DEBUG: final               vrd_path_for_qsf_vbs=""" & vrd_path_for_qsf_vbs & """")
-    WScript.StdOut.WriteLine("VRDTVS DEBUG: final     vrd_profile_name_for_qsf_mpeg2=""" & vrd_profile_name_for_qsf_mpeg2 & """")
-    WScript.StdOut.WriteLine("VRDTVS DEBUG: final       vrd_profile_name_for_qsf_avc=""" & vrd_profile_name_for_qsf_avc & """")
-    WScript.StdOut.WriteLine("VRDTVS DEBUG: final                vrd_extension_mpeg2=""" & vrd_extension_mpeg2 & """")
-    WScript.StdOut.WriteLine("VRDTVS DEBUG: final                  vrd_extension_avc=""" & vrd_extension_avc & """")
-    WScript.StdOut.WriteLine("VRDTVS DEBUG: final             vrd_version_for_adscan=" & vrd_version_for_adscan)
-    WScript.StdOut.WriteLine("VRDTVS DEBUG: final            vrd_path_for_adscan_vbs=""" & vrd_path_for_adscan_vbs & """")
-	WScript.StdOut.WriteLine("VRDTVS DEBUG: final                      vrd_do_adscan=" & vrd_do_adscan)
-	
-End If
+WScript.StdOut.WriteLine("VRDTVS NOTE: final                       vrdtvs_DEBUG=" & vrdtvs_DEBUG)
+WScript.StdOut.WriteLine("VRDTVS NOTE: final      vrdtvs_DEVELOPMENT_NO_ACTIONS=" & vrdtvs_DEVELOPMENT_NO_ACTIONS)
+WScript.StdOut.WriteLine("VRDTVS NOTE: final                vrdtvs_ComputerName=""" & vrdtvs_ComputerName & """")
+WScript.StdOut.WriteLine("VRDTVS NOTE: final                       vrdtvs_DEBUG=" & vrdtvs_DEBUG)
+WScript.StdOut.WriteLine("VRDTVS NOTE: final      vrdtvs_DEVELOPMENT_NO_ACTIONS=" & vrdtvs_DEVELOPMENT_NO_ACTIONS & """")
+WScript.StdOut.WriteLine("VRDTVS NOTE: final           vrdtvs_CAPTURE_TS_Folder=""" & vrdtvs_CAPTURE_TS_Folder & """")
+WScript.StdOut.WriteLine("VRDTVS NOTE: final            vrdtvs_source_TS_Folder=""" & vrdtvs_source_TS_Folder & """")
+WScript.StdOut.WriteLine("VRDTVS NOTE: final              vrdtvs_done_TS_Folder=""" & vrdtvs_done_TS_Folder & """")
+WScript.StdOut.WriteLine("VRDTVS NOTE: final      vrdtvs_destination_mp4_Folder=""" & vrdtvs_destination_mp4_Folder & """")
+WScript.StdOut.WriteLine("VRDTVS NOTE: final vrdtvs_failed_conversion_TS_Folder=""" & vrdtvs_failed_conversion_TS_Folder & """")
+WScript.StdOut.WriteLine("VRDTVS NOTE: final                   vrdtvs_temp_path=""" & vrdtvs_temp_path & """")
+WScript.StdOut.WriteLine("VRDTVS NOTE: final                vrd_version_for_qsf=" & vrd_version_for_qsf)
+WScript.StdOut.WriteLine("VRDTVS NOTE: final               vrd_path_for_qsf_vbs=""" & vrd_path_for_qsf_vbs & """")
+WScript.StdOut.WriteLine("VRDTVS NOTE: final     vrd_profile_name_for_qsf_mpeg2=""" & vrd_profile_name_for_qsf_mpeg2 & """")
+WScript.StdOut.WriteLine("VRDTVS NOTE: final       vrd_profile_name_for_qsf_avc=""" & vrd_profile_name_for_qsf_avc & """")
+WScript.StdOut.WriteLine("VRDTVS NOTE: final                vrd_extension_mpeg2=""" & vrd_extension_mpeg2 & """")
+WScript.StdOut.WriteLine("VRDTVS NOTE: final                  vrd_extension_avc=""" & vrd_extension_avc & """")
+WScript.StdOut.WriteLine("VRDTVS NOTE: final             vrd_version_for_adscan=" & vrd_version_for_adscan)
+WScript.StdOut.WriteLine("VRDTVS NOTE: final            vrd_path_for_adscan_vbs=""" & vrd_path_for_adscan_vbs & """")
+WScript.StdOut.WriteLine("VRDTVS NOTE: final                      vrd_do_adscan=" & vrd_do_adscan)
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Create the working folders if they do not already exist
