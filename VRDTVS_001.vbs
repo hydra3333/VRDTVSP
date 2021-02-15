@@ -2194,7 +2194,7 @@ Function vrdtvs_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder Processing file C_FILE_AbsolutePathName=""" & C_FILE_AbsolutePathName & """")
 			Select Case Ucase(C_FILE_Ext)
 			Case Ucase("bprj") 										' it's in the source folder, ignore it
-			Case Ucase("ts"), Ucase("mp4"), Case Ucase("mpg")		' if it's one of these then convert it
+			Case Ucase("ts"), Ucase("mp4"), Ucase("mpg")			' if it's one of these then convert it
 				vrdtvs_status = vrdtvs_Convert_File(	C_FILE_AbsolutePathName, _
 														C_object_saved_ffmpeg_commands, _
 														C_source_TS_Folder, _
@@ -2309,8 +2309,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	V_Width								= vrdtvs_get_mediainfo_parameter("Video", "Width", CF_FILE_AbsolutePathName, "")
 	V_Height							= vrdtvs_get_mediainfo_parameter("Video", "Height", CF_FILE_AbsolutePathName, "")
 	V_BitRate							= vrdtvs_get_mediainfo_parameter("Video", "BitRate", CF_FILE_AbsolutePathName, "")
-	V_BitRate_Minimum					= vrdtvs_get_mediainfo_parameter("Video", "BitRate_Minimum" "V_BitRate_Minimum", CF_FILE_AbsolutePathName, "")
-	V_BitRate_Maximum					= vrdtvs_get_mediainfo_parameter("Video", "BitRate_Maximum" "V_BitRate_Maximum", CF_FILE_AbsolutePathName, "")
+	V_BitRate_Minimum					= vrdtvs_get_mediainfo_parameter("Video", "BitRate_Minimum", CF_FILE_AbsolutePathName, "")
+	V_BitRate_Maximum					= vrdtvs_get_mediainfo_parameter("Video", "BitRate_Maximum", CF_FILE_AbsolutePathName, "")
 	A_Codec_legacy						= vrdtvs_get_mediainfo_parameter("Audio", "Codec", CF_FILE_AbsolutePathName, "--Legacy")
 	A_CodecID_legacy					= vrdtvs_get_mediainfo_parameter("Audio", "CodecID", CF_FILE_AbsolutePathName, "--Legacy") 
 	A_Format_legacy						= vrdtvs_get_mediainfo_parameter("Audio", "Format", CF_FILE_AbsolutePathName, "--Legacy") 
@@ -2321,11 +2321,11 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	' Obtain SOURCE media file characteristics via ffprobe 
 	V_CodecID_FF						= vrdtvs_get_ffprobe_video_stream_parameter("codec_name", CF_FILE_AbsolutePathName)  
 	V_CodecID_String_FF					= vrdtvs_get_ffprobe_video_stream_parameter("codec_tag_string", CF_FILE_AbsolutePathName)  
-	V_Width_FF							= vrdtvs_get_ffprobe_video_stream_parameter("width" "Q_V_Width_FF", CF_FILE_AbsolutePathName)  
-	V_Height_FF							= vrdtvs_get_ffprobe_video_stream_parameter("height" "Q_V_Height_FF", CF_FILE_AbsolutePathName)  
-	V_Duration_s_FF						= vrdtvs_get_ffprobe_video_stream_parameter("duration" "Q_V_Duration_s_FF", CF_FILE_AbsolutePathName)  
-	V_BitRate_FF						= vrdtvs_get_ffprobe_video_stream_parameter("bit_rate" "Q_V_BitRate_FF", CF_FILE_AbsolutePathName)  
-	V_BitRate_Maximum_FF				= vrdtvs_get_ffprobe_video_stream_parameter("max_bit_rate" "Q_V_BitRate_Maximum_FF", CF_FILE_AbsolutePathName)  
+	V_Width_FF							= vrdtvs_get_ffprobe_video_stream_parameter("width", CF_FILE_AbsolutePathName)  
+	V_Height_FF							= vrdtvs_get_ffprobe_video_stream_parameter("height", CF_FILE_AbsolutePathName)  
+	V_Duration_s_FF						= vrdtvs_get_ffprobe_video_stream_parameter("duration", CF_FILE_AbsolutePathName)  
+	V_BitRate_FF						= vrdtvs_get_ffprobe_video_stream_parameter("bit_rate", CF_FILE_AbsolutePathName)  
+	V_BitRate_Maximum_FF				= vrdtvs_get_ffprobe_video_stream_parameter("max_bit_rate", CF_FILE_AbsolutePathName)  
 	' Fix up the mediainfo parameters retrieved
 	V_DisplayAspectRatio_String_slash	= Replace(V_DisplayAspectRatio_String,":","/",1,-1,vbTextCompare)  ' Replace(string,find,replacewith[,start[,count[,compare]]])
 	If (Ucase(V_Codec_legacy) = Ucase("MPEG-2V") Then
@@ -2549,8 +2549,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Q_V_Width							= vrdtvs_get_mediainfo_parameter("Video", "Width", CF_QSF_AbsolutePathName, "")
 	Q_V_Height							= vrdtvs_get_mediainfo_parameter("Video", "Height", CF_QSF_AbsolutePathName, "")
 	Q_V_BitRate							= vrdtvs_get_mediainfo_parameter("Video", "BitRate", CF_QSF_AbsolutePathName, "")
-	Q_V_BitRate_Minimum					= vrdtvs_get_mediainfo_parameter("Video", "BitRate_Minimum" "V_BitRate_Minimum", CF_QSF_AbsolutePathName, "")
-	Q_V_BitRate_Maximum					= vrdtvs_get_mediainfo_parameter("Video", "BitRate_Maximum" "V_BitRate_Maximum", CF_QSF_AbsolutePathName, "")
+	Q_V_BitRate_Minimum					= vrdtvs_get_mediainfo_parameter("Video", "BitRate_Minimum", CF_QSF_AbsolutePathName, "")
+	Q_V_BitRate_Maximum					= vrdtvs_get_mediainfo_parameter("Video", "BitRate_Maximum", CF_QSF_AbsolutePathName, "")
 	Q_A_Codec_legacy					= vrdtvs_get_mediainfo_parameter("Audio", "Codec", CF_QSF_AbsolutePathName, "--Legacy")
 	Q_A_CodecID_legacy					= vrdtvs_get_mediainfo_parameter("Audio", "CodecID", CF_QSF_AbsolutePathName, "--Legacy") 
 	Q_A_Format_legacy					= vrdtvs_get_mediainfo_parameter("Audio", "Format", CF_QSF_AbsolutePathName, "--Legacy") 
@@ -2563,11 +2563,11 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	' Obtain QSF file characteristics via ffprobe 
 	Q_V_CodecID_FF						= vrdtvs_get_ffprobe_video_stream_parameter("codec_name", CF_QSF_AbsolutePathName)  
 	Q_V_CodecID_String_FF				= vrdtvs_get_ffprobe_video_stream_parameter("codec_tag_string", CF_QSF_AbsolutePathName)  
-	Q_V_Width_FF						= vrdtvs_get_ffprobe_video_stream_parameter("width" "Q_V_Width_FF", CF_QSF_AbsolutePathName)  
-	Q_V_Height_FF						= vrdtvs_get_ffprobe_video_stream_parameter("height" "Q_V_Height_FF", CF_QSF_AbsolutePathName)  
-	Q_V_Duration_s_FF					= vrdtvs_get_ffprobe_video_stream_parameter("duration" "Q_V_Duration_s_FF", CF_QSF_AbsolutePathName)  
-	Q_V_BitRate_FF						= vrdtvs_get_ffprobe_video_stream_parameter("bit_rate" "Q_V_BitRate_FF", CF_QSF_AbsolutePathName)  
-	Q_V_BitRate_Maximum_FF				= vrdtvs_get_ffprobe_video_stream_parameter("max_bit_rate" "Q_V_BitRate_Maximum_FF", CF_QSF_AbsolutePathName
+	Q_V_Width_FF						= vrdtvs_get_ffprobe_video_stream_parameter("width", CF_QSF_AbsolutePathName)  
+	Q_V_Height_FF						= vrdtvs_get_ffprobe_video_stream_parameter("height", CF_QSF_AbsolutePathName)  
+	Q_V_Duration_s_FF					= vrdtvs_get_ffprobe_video_stream_parameter("duration", CF_QSF_AbsolutePathName)  
+	Q_V_BitRate_FF						= vrdtvs_get_ffprobe_video_stream_parameter("bit_rate", CF_QSF_AbsolutePathName)  
+	Q_V_BitRate_Maximum_FF				= vrdtvs_get_ffprobe_video_stream_parameter("max_bit_rate", CF_QSF_AbsolutePathName)
 	' Fix up the QSF mediainfo parameters retrieved
 	Q_V_DisplayAspectRatio_String_slash	= Replace(Q_V_DisplayAspectRatio_String,":","/",1,-1,vbTextCompare)  ' Replace(string,find,replacewith[,start[,count[,compare]]])
 
