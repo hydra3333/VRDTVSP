@@ -3011,7 +3011,6 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	' START ======================================================  Do the DGIndexNV ======================================================
 	'
 	If vrdtvs_IsProgressive AND vrdtvs_IsAVC Then ' not required for Progressive-AVC where we just copy streams ' Ucase(V_ScanType) = Ucase("Progressive") AND Q_V_Codec_legacy <> "AVC"
-		vrdtvs_create_VPY = False	' flag that no VPY needs to be created either
 		C_object_saved_ffmpeg_commands.WriteLine("REM")
 		C_object_saved_ffmpeg_commands.WriteLine("REM DGIndexNV is NOT performed for Progressive-AVC where we just copy streams")
 		C_object_saved_ffmpeg_commands.WriteLine("REM")
@@ -3058,48 +3057,52 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	C_object_saved_ffmpeg_commands.WriteLine("REM")
 	C_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_VPY_AbsolutePathName & """")
 	vrdtvs_status = vrdtvs_delete_a_file (CF_VPY_AbsolutePathName, False)		' Delete the VPY file to be created
-
-	If vrdtvs_create_VPY Then ' this flag was set above, when deciding whether to do a DGIndexNV
-		set vpy_denoise  = ""
-		set vpy_dsharpen = ""
-		If If Ucase(V_ScanType) = Ucase("Progressive") Then 
-			If vrdtvs_IsAVC Then ' Ucase(Q_V_Codec_legacy) = Ucase("AVC") 
-				vrdtvs_create_VPY = False ' this is a NO-OP
-				set vpy_denoise = "" # flag no denoising
-				set vpy_dsharpen = "" # flag no sharpening
-			ElseIf vrdtvs_IsMPEG2 Then 'Ucase(Q_V_Codec_legacy) = Ucase("MPEG2-2V")
-				set vpy_denoise  = "strength=0.06, cstrength=0.06"	# flag denoising
-				set vpy_dsharpen = "strength=0.3"					# flag sharpening
-				set ff_cmd = convert video stream, convert audio stream, setDAR
-			Else
-				print diagnostics and exit since not AVC nor MPEG2 ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
-				quit 17
-			End If
-		else if Interlaced
-			set dg_deinterlace=1 # set for normal single framerate deinterlace
-			set dg_cmd = the DG Index command
-			if AVC
-				set vpy_denoise = "" # flag no denoising
-				set vpy_dsharpen = "strength=0.2" # flag sharpening
-				set ff_cmd = convert video stream, convert audio stream, setDAR
-				if "!Footy_found!" then
-					set dg_deinterlace=2 # set for double framerate deinterlace
-					set ff_cmd = special options to convert video stream, convert audio stream, setDAR, double framerate
-			else if MPEG2
-				set vpy_denoise = "strength=0.06, cstrength=0.06" # flag no denoising
-				set vpy_dsharpen = "strength=0.3" # flag sharpening
-				set ff_cmd convert video stream, convert audio stream, setDAR
-			else
-				print diagnostics and exit since not AVC nor MPEG2 ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
-				quit 17
-		else
-			print diagnostics and exit since not progressive nor Interlaced ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
+	'
+	set vpy_denoise  = ""
+	set vpy_dsharpen = ""
+	vrdtvs_create_VPY = True
+	If vrdtvs_IsProgressive Then ' Ucase(V_ScanType) = Ucase("Progressive")
+		If vrdtvs_IsAVC Then ' Ucase(Q_V_Codec_legacy) = Ucase("AVC") 
+			vrdtvs_create_VPY = False ' this is a NO-OP
+			set vpy_denoise = ""								' flag no denoising for progressive AVC
+			set vpy_dsharpen = ""								' flag no sharpening for progressive AVC
+			set ff_cmd = copy video stream, convert audio stream, setDAR
+		ElseIf vrdtvs_IsMPEG2 Then 'Ucase(Q_V_Codec_legacy) = Ucase("MPEG2-2V")
+			set vpy_denoise  = "strength=0.06, cstrength=0.06"	' flag denoising  for progressive mpeg2
+			set vpy_dsharpen = "strength=0.3"					' flag sharpening for progressive mpeg2
+			set ff_cmd = convert video stream, convert audio stream, setDAR
+		Else
+			????? print diagnostics and exit since not AVC nor MPEG2 ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
 			quit 17
-		endif
-	Else ' previously flagged as not creatin a VPY since incoming stream is progressive AVC so we just copy streams
-		' ???????????? just copying streams, simply create a small ffmpeg command
-		set vpy_denoise = "" # flag no denoising
-		set vpy_dsharpen = "" # flag no sharpening
+		End If
+	ElseIf vrdtvs_IsInterlaced Then
+		if vrdtvs_IsAVC Then
+			set vpy_denoise = ""								' flag no denoising for interlaced AVC
+			set vpy_dsharpen = "strength=0.2"					' flag sharpening   for interlaced AVC
+			set ff_cmd = convert video stream, convert audio stream, setDAR
+			if "!Footy_found!" then
+				set ff_cmd = special options to convert video stream, convert audio stream, setDAR, double framerate
+			End If
+		ElseIf vrdtvs_IsMPEG2 Then
+			set vpy_denoise = "strength=0.06, cstrength=0.06"	' flag denoising  for interlaced mpeg2
+			set vpy_dsharpen = "strength=0.3"					' flag sharpening for interlaced mpeg2
+			set ff_cmd convert video stream, convert audio stream, setDAR
+		Else
+			print diagnostics and exit since not AVC nor MPEG2 ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
+			quit 17
+		End If
+	Else
+		print diagnostics and exit since not progressive nor Interlaced ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
+		quit 17
+	End If
+
+	vrdtvs_create_VPY
+
+
+	Else ' previously flagged as not creating a VPY since incoming stream is progressive AVC so we just copy streams ... a copy of the first case in the If
+		vrdtvs_create_VPY = False ' this is a NO-OP
+		set vpy_denoise = ""								' flag no denoising for progressive AVC
+		set vpy_dsharpen = ""								' flag no sharpening for progressive AVC
 		set ff_cmd = copy video stream, convert audio stream, setDAR
 	End If
 
