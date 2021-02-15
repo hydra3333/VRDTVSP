@@ -57,6 +57,7 @@ If UCase(cscript_strEngine) <> UCase("\CSCRIPT.EXE") Then
     '      cscript //NOLOGO "test.vbs" /p1:"This is the value for p1" /p2:500
     ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
     WScript.Echo "CSCRIPT Engine MUST be CSCRIPT not WSCRIPT ... Aborting ..."
+	On Error goto 0
 	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
 WScript.StdOut.WriteLine("VRDTVS cscript Engine: """ & cscript_strEngine & """")
@@ -226,7 +227,8 @@ ElseIf vrd_version_for_qsf = 6 Then
 	vrd_logfile_wildcard_QSF = vrd6_logfile_wildcard
 Else
     WScript.StdOut.WriteLine("VRDTVS ERROR - vrd_version_for_qsf can only be 5 or 6 ... Aborting ...")
-    WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+    On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
 If vrd_version_for_adscan = 5 Then '*** AdScan
     vrd_path_for_adscan_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd5_path,"AdScan.vbs"))
@@ -237,7 +239,8 @@ ElseIf vrd_version_for_adscan = 6 Then
 Else
     WScript.StdOut.WriteLine("VRDTVS ERROR - vrd_path_for_adscan_vbs can only be 5 or 6 ... Aborting ...")
 	Wscript.Echo "Error 17 = cannot perform the requested operation"
-	Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+	On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
 WScript.StdOut.WriteLine("VRDTVS NOTE: final                       vrdtvs_DEBUG=" & vrdtvs_DEBUG)
 WScript.StdOut.WriteLine("VRDTVS NOTE: final      vrdtvs_DEVELOPMENT_NO_ACTIONS=" & vrdtvs_DEVELOPMENT_NO_ACTIONS)
@@ -308,7 +311,8 @@ If vrdrvs_Err_Code <> 0 Then
     WScript.StdOut.WriteLine("VRDTVS Insomnia: ERROR - " & vrdrvs_Err_Description)
     ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
 	Wscript.Echo "Error 17 = cannot perform the requested operation"
-	Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+	On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
 '
 ' Exec it asynchronously and do not wait for it to finish
@@ -328,7 +332,8 @@ WScript.StdOut.WriteLine("VTDRVS Insomnia: has run asynchronously with vrdtvs_In
 If vrdtvs_Insomnia64_ProcessID = 0 Then
     WScript.StdOut.WriteLine("VRDTVS Insomnia: ERROR - Insomnia START command created ProcessID is zero ... Aborting ...")
 	Wscript.Echo "Error 17 = cannot perform the requested operation"
-	Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+	On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
 WScript.StdOut.WriteLine("VTDRVS Insomnia: Exec Exit Status: " & vrdtvs_status)
 If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: Insomnia: Exec Exit Status: " & vrdtvs_status)
@@ -356,7 +361,8 @@ If vrdtvs_status <> 0 Then ' Something went wrong with processing files in the S
 	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_fix_filenames_in_a_folder_tree in """ & vrdtvs_source_TS_Folder & """... Aborting ...")
 	WScript.StdOut.WriteLine("VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_fix_filenames_in_a_folder_tree in """ & vrdtvs_source_TS_Folder & """ ... Aborting ...")
 	Wscript.Echo "Error 17 = cannot perform the requested operation"
-	Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+	On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
@@ -382,7 +388,8 @@ If vrdtvs_status <> 0 Then ' Something bad went wrong (invididual conversion fai
 	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_Convert_files_in_a_folder ... Aborting ...")
 	WScript.StdOut.WriteLine("VRDTVS ERROR  VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_Convert_files_in_a_folder ... Aborting ...")
 	Wscript.Echo "Error 17 = cannot perform the requested operation"
-	Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+	On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
 '.................. END video processing for the FULL SOURCE TS folder (not tree) - the function has a big loop - converts Source files then moves them to Done or Failed
 '
@@ -733,7 +740,8 @@ Function vrdtvs_get_mediainfo_parameter (byVal mi_Section, byVal mi_Parameter, b
         WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_get_mediainfo_parameter UNRECOGNISED LEGACY PARAMETER: " & mi_Legacy & " : it should only be an empty string or --Legacy")
         ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
 		Wscript.Echo "Error 17 = cannot perform the requested operation"
-		Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+		On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
     End If
     '
     ' If piping to a temporary file, cmd looks something like this:
@@ -757,7 +765,8 @@ Function vrdtvs_get_mediainfo_parameter (byVal mi_Section, byVal mi_Parameter, b
         WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_get_mediainfo_parameter ABORTING with  Exit Status: " & mi_status)
         ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
 		Wscript.Echo "Error 17 = cannot perform the requested operation"
-		Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+		On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
     End If
     mi_tmp="" ' default to nothing
     Do Until mi_exe.StdOut.AtEndOfStream ' we need to read only one line though
@@ -820,7 +829,8 @@ Function vrdtvs_get_ffprobe_video_stream_parameter (byVal ffp_Parameter, byVal f
         WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_get_ffprobe_video_stream_parameter ABORTING with  Exit Status: " & ffp_status)
         ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
 		Wscript.Echo "Error 17 = cannot perform the requested operation"
-		Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+		On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
     End If
         ffp_tmp="" ' default to nothing
     Do Until ffp_exe.StdOut.AtEndOfStream ' we need to read only one line though
@@ -1018,7 +1028,8 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 			' Silly Error detected here, it should never occur unless we have some sort of logic issue ;)
 			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: Final_Renamed_AbsoluteFilename_AfterRetries is not properly set after vrdtvs_do_a_Rename_Try99Times <" & Final_Renamed_AbsoluteFilename_AfterRetries & ">")
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+			On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 		Final_Renamed_ParentFolderName = fso.GetParentFolderName(Final_Renamed_AbsoluteFilename_AfterRetries)
 		Final_Renamed_BaseName = fso.GetBaseName(Final_Renamed_AbsoluteFilename_AfterRetries)
@@ -1031,7 +1042,8 @@ Sub vrdtvs_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR - vrdtvs_ffiaft_pfis_Rename_a_File Error " & vrdtvs_status & " returned from vrdtvs_ffiaft_pfis_Process_a_BPRJ ... Aborting ...")
 		WScript.StdOut.WriteLine("VRDTVS ERROR - vrdtvs_ffiaft_pfis_Rename_a_File Error " & vrdtvs_status & " returned from vrdtvs_ffiaft_pfis_Process_a_BPRJ ... Aborting ...")
 		Wscript.Echo "Error 17 = cannot perform the requested operation"
-		Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+		On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 	End If
 	'
 	'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1097,7 +1109,8 @@ Function vrdtvs_do_a_Rename_Try99Times(OriginalAbsoluteFilename, TargetAbsoluteF
 		' successful rename ... debug statement here please
 	ElseIf vrdtvs_t99tr_ErrNo <> 58 Then ' catch any non-0 non-58 error and abort
 		WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_do_a_Rename_Try99Times ABORTING: error " & vrdtvs_t99tr_ErrNo & " " & vrdtvs_t99tr_ErrDescription & " ... ABORTING since vbscript non-error-58 was detected at first attempt")
-		Wscript.Quit 17 ' Error 17 = cannot perform the requested operation ' vrdtvs_t99tr_ErrNo
+		On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation ' vrdtvs_t99tr_ErrNo
 		vrdtvs_do_a_Rename_Try99Times = ""
 		Exit Function
 	Else ' if it gets to here then it MUST be error 58 = File already exists ... meaning we must re-try up to vrdtvs_t99tr_MaxReTries times
@@ -1120,7 +1133,8 @@ Function vrdtvs_do_a_Rename_Try99Times(OriginalAbsoluteFilename, TargetAbsoluteF
 			on error goto 0
 			If (vrdtvs_t99tr_ErrNo <> 0 AND vrdtvs_t99tr_ErrNo <> 58) Then ' catch any non-0 non-58 error and abort ... it catches everything like that before a Wend
 				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_do_a_Rename_Try99Times ABORTING: error " & vrdtvs_t99tr_ErrNo & " " & vrdtvs_t99tr_ErrDescription & " ... ABORTING since vbscript non-error-58 was detected during retries")
-				Wscript.Quit 17 ' Error 17 = cannot perform the requested operation ' vrdtvs_t99tr_ErrNo
+				On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation ' vrdtvs_t99tr_ErrNo
 				vrdtvs_do_a_Rename_Try99Times = ""
 				Exit Function
 			End If
@@ -1128,7 +1142,8 @@ Function vrdtvs_do_a_Rename_Try99Times(OriginalAbsoluteFilename, TargetAbsoluteF
 		If (vrdtvs_t99tr_ErrNo = 58 and vrdtvs_t99tr_ErrCount >= vrdtvs_t99tr_MaxReTries) Then ' Error 0 is OK and doesn't get caught by this test
 			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_do_a_Rename_Try99Times ABORTING: error " & vrdtvs_t99tr_ErrNo & " - ABORTING since done " & vrdtvs_t99tr_ErrCount & " retries and still detected error-58 File already exists")
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+			On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 			vrdtvs_do_a_Rename_Try99Times = ""
 			Exit Function
 		End If
@@ -1202,7 +1217,8 @@ Function vrdtvs_ffiaft_pfis_Process_a_BPRJ (byVal theOriginalParentFolderName, b
 				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Process_a_BPRJ ABORTING: error renaming .bprj      Original_BPRJ_AbsoluteFilename=""" & Original_BPRJ_AbsoluteFilename & """")
 				WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Process_a_BPRJ ABORTING: error renaming .bprj Final_Renamed_BPRJ_AbsoluteFilename=""" & Final_Renamed_BPRJ_AbsoluteFilename & """")
 				Wscript.Echo "Error 17 = cannot perform the requested operation"
-				Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+				On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 			End If
 		End If
 		' b) process/fix the content of .bprj file (it's xml) so the media filename in it is updated to match the renamed media filename
@@ -1230,7 +1246,8 @@ Function vrdtvs_ffiaft_pfis_Process_a_BPRJ (byVal theOriginalParentFolderName, b
 			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Process_a_BPRJ ABORTING: Failed to load XML doc .BPRJ file """ & xml_file_to_load & """")
 			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Process_a_BPRJ ABORTING: bprj_status: " & bprj_status & " XML error: " & bprj_errorCode & " : " & bprj_reason)
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+			On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 		'WScript.StdOut.WriteLine("vbs_rename_files: debug: loaded xml doc " & new_name)
 		'Locate the desired node. Note the use of XPATH instead of looping over all the child nodes.
@@ -1238,7 +1255,8 @@ Function vrdtvs_ffiaft_pfis_Process_a_BPRJ (byVal theOriginalParentFolderName, b
 		If bprj_nNode is Nothing Then
 			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Process_a_BPRJ ABORTING: Could not find XML node //VideoReDoProject/Filename in file " & xml_file_to_load)
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation exit with an error ... soft or hard ?
+			On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation exit with an error ... soft or hard ?
 		End If
 		bprj_txtbefore = bprj_nNode.text ' this is the pathname to the associated media file 
 		' find the rightmost \ then replace everything at it to the start with .\ ... i.e. replace the full path of the associated media file with "\."
@@ -1271,7 +1289,8 @@ Function vrdtvs_ffiaft_pfis_Process_a_BPRJ (byVal theOriginalParentFolderName, b
 		If NOT bprj_status Then ' Error 0 is OK
 			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Process_a_BPRJ ABORTING: XSL vrdtvs_xslStylesheet_string load error bprj_status: " & bprj_status & " ErrorCode: " & bprj_errorCode & " : " & bprj_reason)
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+			On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 		on error resume next 
 		bprj_txtafter = vrdtvs_xmlDoc.transformNode(vrdtvs_xslDoc) ' transform using the xsl stylesheet
@@ -1284,7 +1303,8 @@ Function vrdtvs_ffiaft_pfis_Process_a_BPRJ (byVal theOriginalParentFolderName, b
 		If (bprj_errorCode <> 0) Then ' Error 0 is OK
 			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Process_a_BPRJ ABORTING: XML/XSL transformNode error bprj_status: " & bprj_status & " ErrorCode: " & bprj_errorCode & " : " & bprj_reason)
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
-		Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+		On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 		bprj_xmlafter = vrdtvs_xmlDoc.xml ' save the overall XML after we fix and transform
 		If vrdtvs_DEBUG Then
@@ -1308,7 +1328,8 @@ Function vrdtvs_ffiaft_pfis_Process_a_BPRJ (byVal theOriginalParentFolderName, b
 		If not bprj_status Then
 			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Process_a_BPRJ ABORTING: Failed to save XML doc into .BPRJ file """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
 			WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_ffiaft_pfis_Rename_a_File ABORTING: XML error: " & bprj_errorCode & " : Reason: " & bprj_reason)
-			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+			On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 		Set vrdtvs_xmlDoc = Nothing
 		WScript.StdOut.WriteLine("VRDTVS vrdtvs_ffiaft_pfis_Process_a_BPRJ .bprj autofixed: """ & Original_BPRJ_AbsoluteFilename & """ into """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
@@ -1976,7 +1997,8 @@ Function vrdtvs_Move_Date_to_End_of_String(theOriginalString)
 							If vrdtvs_DEBUG Then 
 								WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Move_Date_to_End_of_String: ?????? vrdtvs_Move_Date_to_End_of_String should have exited Loop with Exit Do but has not ??????")
 								Wscript.Echo "Error 17 = cannot perform the requested operation"
-								Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+								On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 						End If
 					End If
                     Next
@@ -2121,7 +2143,8 @@ Function vrdtvs_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_files_in_a_folder - Error " & vrdtvs_status & " from vrdtvs_delete_a_file with saved FFMPEG COMMANDS """ & C_saved_ffmpeg_commands_filename & """... Aborting ...")
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_files_in_a_folder - Error " & vrdtvs_status & " from vrdtvs_delete_a_file with saved FFMPEG COMMANDS """ & C_saved_ffmpeg_commands_filename & """... Aborting ...")
 		Wscript.Echo "Error 17 = cannot perform the requested operation"
-		Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+		On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 	End If
 	' create a new empty FFMPEG COMMANDS file with overwrite
 	set C_object_saved_ffmpeg_commands = fso.CreateTextFile(C_saved_ffmpeg_commands_filename, True, True) ' [ filename, Overwrite[, Unicode]])
@@ -2129,7 +2152,8 @@ Function vrdtvs_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_files_in_a_folder - Error - Nothing object returned from fso.CreateTextFile with saved FFMPEG COMMANDS """ & C_saved_ffmpeg_commands_filename & """... Aborting ...")
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_files_in_a_folder - Error - Nothing object returned from fso.CreateTextFile with saved FFMPEG COMMANDS """ & C_saved_ffmpeg_commands_filename & """... Aborting ...")
 		Wscript.Echo "Error 17 = cannot perform the requested operation"
-		Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+		On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 	End If
 	'
 	' Initialize the saved-ffmpeg-commands file
@@ -2361,7 +2385,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	If NOT fso.FileExists(CF_FILE_AbsolutePathName) Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - SUPPOSEDLY VALID SOURCE FILE NOT FOUND """ & CF_FILE_AbsolutePathName & """... Aborting ...")
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - SUPPOSEDLY VALID SOURCE FILE NOT FOUND """ & CF_FILE_AbsolutePathName & """... Aborting ...")
-		Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+		On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 	End If
 	If vrdtvs_DEBUG Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: Entered vrdtvs_Convert_File with VALID SOURCE FILE """ & CF_FILE_AbsolutePathName & """")
@@ -2422,11 +2447,13 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Unrecognised video codec """ & CF_FILE_AbsolutePathName & """ """ & V_Codec_legacy & """ ... Ignoring file ...")
 		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+			On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		Else
 			'?????????? move input file to FAILED folder ?????????? and then ignore it
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+			On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 		vrdtvs_Convert_File = -1
 		Exit Function
@@ -2572,11 +2599,13 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Failed to QSF """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
 		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+			On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		Else
 			'?????????? move input file to FAILED folder ?????????? and then ignore it
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+			On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 		vrdtvs_Convert_File = -1
 		Exit Function
@@ -2596,11 +2625,13 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Failed to copy QSF log """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
 		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+			On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		Else
 			'?????????? move input file to FAILED folder ?????????? and then ignore it
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+			On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 		vrdtvs_Convert_File = -1
 		Exit Function
@@ -2666,11 +2697,13 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Unrecognised Q_V_Codec_legacy video codec """ & CF_QSF_AbsolutePathName & """ Q_V_Codec_legacy=""" & Q_V_Codec_legacy & """ ... Ignoring file ...")
 		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+			On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		Else
 			'?????????? move input file to FAILED folder ?????????? and then ignore it
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+			On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 		vrdtvs_Convert_File = -1
 		Exit Function
@@ -2822,11 +2855,13 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_INCOMING_BITRATE=""" & V_INCOMING_BITRATE & """") 
 		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+			On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		Else
 			'?????????? move input file to FAILED folder ?????????? and then ignore it
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+			On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 		vrdtvs_Convert_File = -1
 		Exit Function
@@ -2892,11 +2927,13 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_INCOMING_BITRATE=""" & V_INCOMING_BITRATE & """") 
 		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+			On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		Else
 			'?????????? move input file to FAILED folder ?????????? and then ignore it
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+			On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 		vrdtvs_Convert_File = -1
 		Exit Function
@@ -3050,10 +3087,12 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - run DGIndexNV """ & CF_QSF_AbsolutePathName & """ with CF_exe_cmd_string=""" & CF_exe_cmd_string & """ CF_exe_status=" & CF_exe_status)
 			If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 				Wscript.Echo "Error 17 = cannot perform the requested operation"
-				Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+				On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 			Else
 				Wscript.Echo "Error 17 = cannot perform the requested operation"
-				Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+				On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 			End If
 		End If
 		vrdtvs_status = vrdtvs_delete_a_file (CF_DGIlog_AbsolutePathName, False)	' Delete the DGIlog file created by DGIndexNV
@@ -3106,7 +3145,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							" -y """ & CF_TARGET_AbsolutePathName & """"
 		Else
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+			On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 	ElseIf vrdtvs_IsInterlaced Then
 		if vrdtvs_IsAVC Then
@@ -3174,12 +3214,14 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			' Leave MPEG2 Interlaced Footy alone, as if it were a normal video file ... no code for MPEG2 Interlaced Footy in here
 		Else
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+			On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 	Else
 		'??????????????print diagnostics and exit since not Progressive nor Interlaced ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
 		Wscript.Echo "Error 17 = cannot perform the requested operation"
-		Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+		On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 	End If
 
 	Wscript.Echo " about to create ff_cmd_string"
@@ -3192,7 +3234,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		If CF_VPY_object is Nothing  Then ' Something went wrong with creating the file
 			If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - Nothing object returned from fso.CreateTextFile with VPY file """ & CF_VPY_AbsolutePathName & """... Aborting ...")
 			WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Nothing object returned from fso.CreateTextFile with VPY file  """ & CF_VPY_AbsolutePathName & """... Aborting ...")
-			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+			On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 		CF_object_saved_ffmpeg_commands.WriteLine("REM")
 		CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_VPY_AbsolutePathName & """")
@@ -3255,10 +3298,12 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - FFMPEG Error - " & """ with ff_cmd_string=""" & ff_cmd_string & """ CF_exe_status=" & CF_exe_status)
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - FFMPEG Error - " & """ with ff_cmd_string=""" & ff_cmd_string & """ CF_exe_status=" & CF_exe_status)
 		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
-			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+			On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		Else
 			'?????????? move input file to FAILED folder ?????????? and then ignore it
-			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
+			On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 		vrdtvs_Convert_File = -1
 		Exit Function
