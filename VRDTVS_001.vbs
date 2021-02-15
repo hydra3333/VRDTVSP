@@ -2582,7 +2582,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 		Else
-			?????????? move input file to FAILED folder ?????????? and then ignore it
+			'?????????? move input file to FAILED folder ?????????? and then ignore it
+			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 		vrdtvs_Convert_File = -1
 		Exit Function
@@ -2735,7 +2736,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 		Else
-			?????????? move input file to FAILED folder ?????????? and then ignore it
+			'?????????? move input file to FAILED folder ?????????? and then ignore it
+			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 		vrdtvs_Convert_File = -1
 		Exit Function
@@ -2802,7 +2804,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 		Else
-			?????????? move input file to FAILED folder ?????????? and then ignore it
+			'?????????? move input file to FAILED folder ?????????? and then ignore it
+			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 		vrdtvs_Convert_File = -1
 		Exit Function
@@ -3009,7 +3012,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
 							" -y """ & CF_TARGET_AbsolutePathName & """"
 		Else
-			????? print diagnostics and exit since not AVC nor MPEG2 ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
+			'??????? print diagnostics and exit since not AVC nor MPEG2 ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
 			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 	ElseIf vrdtvs_IsInterlaced Then
@@ -3077,11 +3080,11 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							" -y """ & CF_TARGET_AbsolutePathName & """"
 			' Leave MPEG2 Interlaced Footy alone, as if it were a normal video file ... no code for MPEG2 Interlaced Footy in here
 		Else
-			print diagnostics and exit since not AVC nor MPEG2 ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
+			'???????????? print diagnostics and exit since not AVC nor MPEG2 ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
 			Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 	Else
-		print diagnostics and exit since not Progressive nor Interlaced ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
+		'??????????????print diagnostics and exit since not Progressive nor Interlaced ... CONSIDER MOVING INPUT FILE TO FAILED FOLDER AND SKIPPING LOOP TO NEXT FILE
 		Wscript.Quit 17 ' Error 17 = cannot perform the requested operation
 	End If
 	If vrdtvs_create_VPY Then
