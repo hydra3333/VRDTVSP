@@ -3314,8 +3314,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "#import functool", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "#import mvsfunc as mvs			# this relies on the .py residing at the VS folder root level - see run_vsrepo.bat", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "#import havsfunc as haf		# this relies on the .py residing at the VS folder root level - see run_vsrepo.bat", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "core.std.LoadPlugin(r'!_vs_root!DGIndex\DGDecodeNV.dll') # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "core.avs.LoadPlugin(r'!_vs_root!DGIndex\DGDecodeNV.dll') # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "core.std.LoadPlugin(r'" & vs_root & "\DGIndex\DGDecodeNV.dll') # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "core.avs.LoadPlugin(r'" & vs_root & "\DGIndex\DGDecodeNV.dll') # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "video = core.dgdecodenv.DGSource(r'" & CF_DGI_AbsolutePathName & "', deinterlace=" & vrdtvs_final_dg_deinterlace & ", use_top_field=" & vrdtvs_final_dg_tff & ", use_pf=False)", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "# DGDecNV changes -", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "# 2020.10.21 Added new parameters cstrength and cblend to independently control the chroma denoising.", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
@@ -3329,21 +3329,22 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		If vpy_dsharpen <> "" Then CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "video = core.avs.DGSharpen(video, " & vpy_dsharpen & ")", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "#video = vs.core.text.ClipInfo(video)", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "video.set_output()", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		CF_VPY_object.Close
+		CF_status = CF_VPY_object.Close
+		Wscript.Echo "Created VPY file """ & CF_VPY_AbsolutePathName & """"
 		CF_object_saved_ffmpeg_commands.WriteLine("REM")
 		CF_object_saved_ffmpeg_commands.WriteLine("ECHO ---------------------------- 2>&1")
 		CF_object_saved_ffmpeg_commands.WriteLine("ECHO TYPE ""!_VPY_file!"" 2>&1")
 		CF_object_saved_ffmpeg_commands.WriteLine("ECHO ---------------------------- 2>&1")
 		CF_object_saved_ffmpeg_commands.WriteLine("REM")
 		' display the content of .VPY file
-		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - Content of VPY file """ & CF_VPY_AbsolutePathName & """ Below :")
-		Set CF_VPY_object = fso.OpenTextFile(CF_VPY_AbsolutePathName, ForReading)
-		Do Until CF_VPY_object.AtEndOfStream
-			CF_VPY_string = CF_VPY_object.ReadLine
-			WScript.StdOut.WriteLine(CF_VPY_string)
-		Loop			
-		CF_VPY_object.Close
-		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - Content of VPY file """ & CF_VPY_AbsolutePathName & """ Above.")
+		'WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - Content of VPY file """ & CF_VPY_AbsolutePathName & """ Below :")
+		'Set CF_VPY_object = fso.OpenTextFile(CF_VPY_AbsolutePathName, ForReading)
+		'Do Until CF_VPY_object.AtEndOfStream
+		'	CF_VPY_string = CF_VPY_object.ReadLine
+		'	WScript.StdOut.WriteLine(CF_VPY_string)
+		'Loop			
+		'CF_status = CF_VPY_object.Close
+		'WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - Content of VPY file """ & CF_VPY_AbsolutePathName & """ Above.")
 	Else ' Else is previously flagged as not creating a VPY since incoming stream is Progressive/AVC
 	End If
 	'
