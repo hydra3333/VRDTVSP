@@ -3254,11 +3254,15 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-i """ & CF_QSF_AbsolutePathName & """ " &_
 							"-c:v copy " &_
 							"-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
-							"-movflags +faststart+write_colr " &_
-							"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
-							" -y """ & CF_TARGET_AbsolutePathName & """"
+							"-movflags +faststart+write_colr " 
 							' removed this line, since ffmpeg throws an error due to "-c:v copy" and this together: "-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
 							' removed this line since ffmpeg throws an error "-profile:v high -level 5.2 -movflags +faststart+write_colr " &_
+			If Ucase(A_Codec_legacy) = Ucase("AAC LC") Then
+				ff_cmd_string =	ff_cmd_string & "-c:a copy "
+			Else
+				ff_cmd_string =	ff_cmd_string & "-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 "
+			End If
+			ff_cmd_string =	ff_cmd_string & " -y """ & CF_TARGET_AbsolutePathName & """"
 							WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ========== Created ffmpeg_cmd_string, hopefully Progressive/AVC vs file: " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
 			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ========== Created ffmpeg_cmd_string <" & ff_cmd_string & ">")
 		ElseIf vrdtvs_IsMPEG2 Then 'Ucase(Q_V_Codec_legacy) = Ucase("MPEG2-2V")
