@@ -2221,7 +2221,9 @@ Function vrdtvs_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 		C_FILE_Ext = fso.GetExtensionName(C_FILE_AbsolutePathName)
         '********* FILTER BY FILE EXTENSION *********
 		If Ucase(C_FILE_Ext) = Ucase("ts") OR Ucase(C_FILE_Ext) = Ucase("mp4") OR Ucase(C_FILE_Ext) = Ucase("mpg") OR Ucase(C_FILE_Ext) = Ucase("bprj") Then ' ********** only process specific file extensions
-			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder Processing file C_FILE_AbsolutePathName=""" & C_FILE_AbsolutePathName & """")
+			WScript.StdOut.WriteLine(" ")
+			WScript.StdOut.WriteLine(" ")
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder ========== Processing C_FILE_AbsolutePathName=""" & C_FILE_AbsolutePathName & """ ==========")
 			Select Case Ucase(C_FILE_Ext)
 			Case Ucase("bprj") 										' it's in the source folder, ignore it
 			Case Ucase("ts"), Ucase("mp4"), Ucase("mpg")			' if it's one of these then convert it
@@ -2437,8 +2439,6 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Dim vpy_denoise
 	Dim vpy_dsharpen
 	'
-	WScript.StdOut.WriteLine(" ")
-	WScript.StdOut.WriteLine(" ")
 	WScript.StdOut.WriteLine(" ")
 	WScript.StdOut.WriteLine(" ")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File STARTED " & vrdtvs_current_datetime_string() & " ======================================================================================================================================================")
