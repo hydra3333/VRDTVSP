@@ -2101,6 +2101,15 @@ Function vrdtvs_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 	Dim C_exe_status
 	Dim C_tmp, c_status
 	'
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder STARTED " & vrdtvs_current_datetime_string() & "======================================================================================================================================================")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder:                C_source_TS_Folder=""" & C_source_TS_Folder & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder:                  C_done_TS_Folder=""" & C_done_TS_Folder & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder:          C_destination_mp4_Folder=""" & C_destination_mp4_Folder & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder:     C_failed_conversion_TS_Folder=""" & C_failed_conversion_TS_Folder & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder:                       C_temp_path=""" & C_temp_path & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder:  C_saved_ffmpeg_commands_filename=""" & C_saved_ffmpeg_commands_filename & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder:                    C_do_an_Adcsan=""" & C_do_an_Adcsan & """")
+	'
 	' force absolute PathNnames
 	C_source_TS_Folder = fso.GetAbsolutePathName(C_source_TS_Folder & "\")
 	C_done_TS_Folder = fso.GetAbsolutePathName(C_done_TS_Folder & "\")
@@ -2228,6 +2237,7 @@ Function vrdtvs_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 	'
 	vrdtvs_status = C_object_saved_ffmpeg_commands.Close
 	Set C_object_saved_ffmpeg_commands = Nothing
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder FINISHED " & vrdtvs_current_datetime_string() & "======================================================================================================================================================")
 	vrdtvs_Convert_files_in_a_folder = 0 ' return success
 End Function
 '
@@ -2422,6 +2432,17 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Dim vrdtvs_create_VPY
 	Dim vpy_denoise
 	Dim vpy_dsharpen
+	'
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File STARTED " & vrdtvs_current_datetime_string() & "======================================================================================================================================================")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File STARTED " & vrdtvs_current_datetime_string() & "======================================================================================================================================================")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File:           CF_FILE_AbsolutePathName=""" & CF_FILE_AbsolutePathName & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File:                CF_source_TS_Folder=""" & CF_source_TS_Folder & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File:                  CF_done_TS_Folder=""" & CF_done_TS_Folder & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File:          CF_destination_mp4_Folder=""" & CF_destination_mp4_Folder & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File:     CF_failed_conversion_TS_Folder=""" & CF_failed_conversion_TS_Folder & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File:                       CF_temp_path=""" & CF_temp_path & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File:  CF_saved_ffmpeg_commands_filename=""" & CF_saved_ffmpeg_commands_filename & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File:                     C_do_an_Adcsan=""" & C_do_an_Adcsan & """")
 	'
 	If NOT fso.FileExists(CF_FILE_AbsolutePathName) Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - SUPPOSEDLY VALID SOURCE FILE NOT FOUND """ & CF_FILE_AbsolutePathName & """... Aborting ...")
@@ -3446,8 +3467,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'???????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????
 	CF_exe_status = ff_run_errorlevel
 	If CF_exe_status <> 0 OR NOT fso.FileExists(CF_TARGET_AbsolutePathName) Then
-		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - FFMPEG Error - CF_exe_status=""" & CF_exe_status) & """ with ff_cmd_string=""" & ff_cmd_string)
-		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - FFMPEG Error - CF_exe_status=""" & CF_exe_status) & """ with ff_cmd_string=""" & ff_cmd_string)
+		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - FFMPEG Error - CF_exe_status=""" & CF_exe_status & """ with ff_cmd_string=""" & ff_cmd_string)
+		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - FFMPEG Error - CF_exe_status=""" & CF_exe_status & """ with ff_cmd_string=""" & ff_cmd_string)
 		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 			On Error goto 0
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
@@ -3474,6 +3495,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	vrdtvs_status = vrdtvs_delete_a_file (CF_QSF_AbsolutePathName, False)
 	'?????????? move SOURCE file to DONE folder ?????????? ... if DEV don't
 	vrdtvs_Convert_File = 0				
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File FINISHED " & vrdtvs_current_datetime_string() & "======================================================================================================================================================")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File FINISHED " & vrdtvs_current_datetime_string() & "======================================================================================================================================================")
 End Function
 '
 Function vrdtvs_writeline_for_vpy (vpy_filename_object, bat_filename_object, a_vpy_statement, prepend_string, append_string)
