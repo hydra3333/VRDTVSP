@@ -2016,6 +2016,8 @@ Function vrdtvs_Move_Date_to_End_of_String(theOriginalString)
 		is_a_date_there = False ' this only means exit the Do loop !!!
 		Exit Do
     Loop
+	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "..", ".", 1, -1, vbTextCompare)
 	timerEnd_MDES = Timer
     'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Move_Date_to_End_of_String: exiting with return value   """ & theNewString & """ having Loop ELapsed Time " & vrdtvs_Calculate_ElapsedTime_string(timerStart_MDES, timerEnd_MDES))
 	vrdtvs_Move_Date_to_End_of_String = theNewString
