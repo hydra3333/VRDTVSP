@@ -3120,10 +3120,10 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		'ECHO	4Mb		0		4Mb			set to CQ 0
 		'ECHO	4Mb		1.5Mb	4Mb			set to CQ 0
 		'ECHO	4Mb		5Mb		5Mb			set to CQ 0
-		If INCOMING_BITRATE < 2200000 Then ' low bitrate, do not touch the bitrate itself, instead bump to CQ24
+		If V_INCOMING_BITRATE < 2200000 Then ' low bitrate, do not touch the bitrate itself, instead bump to CQ24
 			PROPOSED_x_cq_options = x_cq24
 		End If
-		If INCOMING_BITRATE_MEDIAINFO > 0 AND INCOMING_BITRATE_MEDIAINFO < 2200000 AND INCOMING_BITRATE_FFPROBE < 3400000 Then
+		If V_INCOMING_BITRATE_MEDIAINFO > 0 AND V_INCOMING_BITRATE_MEDIAINFO < 2200000 AND V_INCOMING_BITRATE_FFPROBE < 3400000 Then
 			PROPOSED_x_cq_options = x_cq24
 		End If
 	End If
