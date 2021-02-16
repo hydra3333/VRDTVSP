@@ -3252,13 +3252,13 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			ff_cmd_string =	"""" & vrdtvs_ffmpegexe64 & """ " &_
 							"-hide_banner -v verbose -nostats " &_
 							"-i """ & CF_QSF_AbsolutePathName & """ " &_
-							"-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
 							"-c:v copy " &_
 							"-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
 							"-profile:v high -level 5.2 -movflags +faststart+write_colr " &_
 							"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
 							" -y """ & CF_TARGET_AbsolutePathName & """"
-			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ========== Created ffmpeg_cmd_string, hopefully Progressive/AVC vs file: " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
+							' removed this line, since ffmpeg throws an error due to "-c:v copy" and this together: "-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
+							WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ========== Created ffmpeg_cmd_string, hopefully Progressive/AVC vs file: " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
 			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ========== Created ffmpeg_cmd_string <" & ff_cmd_string & ">")
 		ElseIf vrdtvs_IsMPEG2 Then 'Ucase(Q_V_Codec_legacy) = Ucase("MPEG2-2V")
 			vpy_denoise  = "strength=0.06, cstrength=0.06"	' flag denoising  for progressive mpeg2
