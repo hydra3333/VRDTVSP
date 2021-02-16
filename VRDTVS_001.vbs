@@ -3409,12 +3409,12 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(ff_cmd_string)
 	'CF_exe_status = vrdtvs_exec_a_FFMPEG_command_and_show_stderr_only(ff_cmd_string) ' since ffmpeg ONLY write log messages to stderr. ignore stdout
 
-	vrdtvs_tmp = vrdtvs_gimme_a_temporary_absolute_filename ("ffmpeg-command-" & vrdtvs_run_datetime) & ".BAT")
+	vrdtvs_tmp = vrdtvs_gimme_a_temporary_absolute_filename ("ffmpeg-command-" & vrdtvs_run_datetime) & ".BAT"
 	vrdtvs_status = vrdtvs_delete_a_file (vrdtvs_tmp, False)		' Delete the .bat file to be created with the ffmpeg command
 	set ff_tmp_object = fso.CreateTextFile(vrdtvs_tmp, True, False) ' *** vapoursynth fails with unicode input file *** [ filename, Overwrite[, Unicode]])
-	ff_tmp_object.WriteLine(@ECHO ON)
+	ff_tmp_object.WriteLine("@ECHO ON")
 	ff_tmp_object.WriteLine(ff_cmd_string)
-	ff_tmp_object.WriteLine(exit %ERRORLEVEL%)
+	ff_tmp_object.WriteLine("exit %ERRORLEVEL%")
 	ff_tmp_object.close
 	set ff_tmp_object = Nothing
 	CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr("CMD /C """ & vrdtvs_tmp & """")
