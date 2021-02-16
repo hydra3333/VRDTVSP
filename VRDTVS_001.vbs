@@ -469,6 +469,9 @@ WScript.StdOut.WriteLine("VTDRVS TaskKill: Insomnia TaskKill Exec Exit Status: "
 Set vrdtvs_exe_obj = Nothing
 If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VTDRVS TaskKill Insomnia exiting with status=""" & vrdtvs_status & """")
 '
+'Delete the temporary Insomnia .exe file
+vrdtvs_exit_code = vrdtvs_delete_a_file(vrdtvs_Insomnia64_tmp_filename, False) ' True=silently delete. Ignore any errors.
+
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Finish and Quit
 '
