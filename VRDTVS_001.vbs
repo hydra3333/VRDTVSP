@@ -3251,6 +3251,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-profile:v high -level 5.2 -movflags +faststart+write_colr " &_
 							"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
 							" -y """ & CF_TARGET_AbsolutePathName & """"
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: Created ffmpeg_cmd_string, hopefully Progressive/AVC vs file: " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: Created ffmpeg_cmd_string <" & ff_cmd_string & ">")
 		ElseIf vrdtvs_IsMPEG2 Then 'Ucase(Q_V_Codec_legacy) = Ucase("MPEG2-2V")
 			vpy_denoise  = "strength=0.06, cstrength=0.06"	' flag denoising  for progressive mpeg2
 			vpy_dsharpen = "strength=0.3"					' flag sharpening for progressive mpeg2
@@ -3272,6 +3274,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-profile:v high -level 5.2 -movflags +faststart+write_colr " &_
 							"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
 							" -y """ & CF_TARGET_AbsolutePathName & """"
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: Created ffmpeg_cmd_string, hopefully Progressive/MPEG2 vs file: " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: Created ffmpeg_cmd_string <" & ff_cmd_string & ">")
 		Else
 			Wscript.Echo "Unable to create ff_cmd_string Progressive avc/mpeg2 - unknown codec " & Q_V_Codec_legacy
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
@@ -3319,7 +3323,10 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 								"-profile:v high -level 5.2 -movflags +faststart+write_colr " &_
 								"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
 								" -y """ & CF_TARGET_AbsolutePathName & """"
+				WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: FOOTY detected, hopefully Interlaced/AVC vs file: " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
 			End If
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: Created ffmpeg_cmd_string, hopefully Interlaced/AVC vs file: " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: Created ffmpeg_cmd_string <" & ff_cmd_string & ">")
 		ElseIf vrdtvs_IsMPEG2 Then
 			vpy_denoise = "strength=0.06, cstrength=0.06"	' flag denoising  for interlaced mpeg2
 			vpy_dsharpen = "strength=0.3"					' flag sharpening for interlaced mpeg2
@@ -3342,6 +3349,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
 							" -y """ & CF_TARGET_AbsolutePathName & """"
 			' Leave MPEG2 Interlaced Footy alone, as if it were a normal video file ... no code for MPEG2 Interlaced Footy in here
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: Created ffmpeg_cmd_string, hopefully Interlaced/MPEG2 vs file: " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: Created ffmpeg_cmd_string <" & ff_cmd_string & ">")
 		Else
 			Wscript.Echo "Unable to create ff_cmd_string Interlaced avc/mpeg2 - unknown codec " & Q_V_Codec_legacy
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
