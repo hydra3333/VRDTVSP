@@ -3491,7 +3491,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	CF_status = ff_tmp_object.Close
 	Set ff_tmp_object = Nothing
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ******************** END Content of FFMPEG LOG file """ & ff_logfile & """ Above.")
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ******************** RETURNED ff_run_errorleve=" & ff_run_errorlevel)
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ******************** RETURNED ff_run_errorlevel=" & ff_run_errorlevel)
 	CF_exe_status = ff_run_errorlevel
 	If (CF_exe_status <> 0) OR (NOT fso.FileExists(CF_TARGET_AbsolutePathName)) Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - FFMPEG Error - CF_exe_status=""" & CF_exe_status & """ with ff_cmd_string=""" & ff_cmd_string)
