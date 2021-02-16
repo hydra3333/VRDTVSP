@@ -3337,14 +3337,14 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		CF_object_saved_ffmpeg_commands.WriteLine("ECHO ---------------------------- 2>&1")
 		CF_object_saved_ffmpeg_commands.WriteLine("REM")
 		' display the content of .VPY file
-		'WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - Content of VPY file """ & CF_VPY_AbsolutePathName & """ Below :")
-		'Set CF_VPY_object = fso.OpenTextFile(CF_VPY_AbsolutePathName, ForReading)
-		'Do Until CF_VPY_object.AtEndOfStream
-		'	CF_VPY_string = CF_VPY_object.ReadLine
-		'	WScript.StdOut.WriteLine(CF_VPY_string)
-		'Loop			
-		'CF_status = CF_VPY_object.Close
-		'WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - Content of VPY file """ & CF_VPY_AbsolutePathName & """ Above.")
+		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - Content of VPY file """ & CF_VPY_AbsolutePathName & """ Below :")
+		Set CF_VPY_object = fso.OpenTextFile(CF_VPY_AbsolutePathName, ForReading)
+		Do Until CF_VPY_object.AtEndOfStream
+			CF_VPY_string = CF_VPY_object.ReadLine
+			WScript.StdOut.WriteLine(CF_VPY_string)
+		Loop			
+		CF_status = CF_VPY_object.Close
+		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - Content of VPY file """ & CF_VPY_AbsolutePathName & """ Above.")
 	Else ' Else is previously flagged as not creating a VPY since incoming stream is Progressive/AVC
 	End If
 	'
@@ -3362,7 +3362,12 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	' ++++ START Run the ffmpeg command
 	ff_timerStart = Timer
 	vrdtvs_status = vrdtvs_delete_a_file (CF_TARGET_AbsolutePathName, False)
-	WScript.StdOut.WriteLine(ff_cmd_string)
+
+	"CMD /C "
+	'WScript.StdOut.WriteLine(ff_cmd_string)
+	WScript.StdOut.WriteLine("CMD /C " & ff_cmd_string)
+	
+	
 	CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(ff_cmd_string)
 	If CF_exe_status <> 0 OR NOT fso.FileExists(CF_TARGET_AbsolutePathName) Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - FFMPEG Error - " & """ with ff_cmd_string=""" & ff_cmd_string & """ CF_exe_status=" & CF_exe_status)
