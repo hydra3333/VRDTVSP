@@ -3403,7 +3403,7 @@ Function vrdtvs_writeline_for_vpy (vpy_filename_object, bat_filename_object, a_v
 	'		append_string			eg " >> "!_VPY_file!" 2>&1"  including a trailing space
 	Dim escaped_vpy_statement
 	If vrdtvs_DEBUG Then
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_writeline_for_vpy about to writeline vpy_filename_object a_vpy_statement=<" & a_vpy_statement & ">")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_writeline_for_vpy about to writeline vpy_filename_object       a_vpy_statement=<" & a_vpy_statement & ">")
 	End If
 	vpy_filename_object.WriteLine(a_vpy_statement)
 	escaped_vpy_statement = a_vpy_statement
