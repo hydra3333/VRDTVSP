@@ -2281,8 +2281,10 @@ Function vrdtvs_exec_a_FFMPEG_command_and_show_stderr_only (byVal eac_command_st
 	WScript.StdOut.WriteLine("vrdtvs_exec_a_command_and_show_stdout_stderr Exec command: " & eac_command_string)
 	set eac_exe_object = wso.Exec(eac_command_string)
 	Do While eac_exe_object.Status = 0 '0 is running and 1 is ending
-	 	Wscript.Sleep 100
-	Loop
+	 	'Wscript.Sleep 100
+		Wscript.Echo "vrdtvs_exec_a_FFMPEG_command_and_show_stderr_only About to sleep for 5 seconds"
+		Wscript.Sleep 5000
+		 Loop
 	'WScript.StdOut.WriteLine("vrdtvs_exec_a_command_and_show_stdout_stderr START StdOut: ")
 	'Do Until eac_exe_object.StdOut.AtEndOfStream
 	'	eac_tmp = eac_exe_object.StdOut.ReadLine()
@@ -3403,10 +3405,12 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 
 
 	WScript.StdOut.WriteLine(ff_cmd_string)
-	
-	
 	'CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(ff_cmd_string)
-	CF_exe_status = vrdtvs_exec_a_FFMPEG_command_and_show_stderr_only(ff_cmd_string) ' since ffmpeg ONLY write log messages to stderr. ignore stdout
+	'CF_exe_status = vrdtvs_exec_a_FFMPEG_command_and_show_stderr_only(ff_cmd_string) ' since ffmpeg ONLY write log messages to stderr. ignore stdout
+	CF_exe_status = vrdtvs_exec_a_FFMPEG_command_and_show_stderr_only("CMD /C /S """ & ff_cmd_string & """") ' since ffmpeg ONLY write log messages to stderr. ignore stdout
+
+
+
 
 	If CF_exe_status <> 0 OR NOT fso.FileExists(CF_TARGET_AbsolutePathName) Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - FFMPEG Error - " & """ with ff_cmd_string=""" & ff_cmd_string & """ CF_exe_status=" & CF_exe_status)
