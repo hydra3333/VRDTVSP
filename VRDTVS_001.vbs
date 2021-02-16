@@ -2477,8 +2477,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		vrdtvs_IsProgressive = True
 		vrdtvs_IsInterlaced = False
 	Else
-		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - DO NOT KNOW IF SOURCE IS INTERLACED OR PROGRESSIVE """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ V_ScanType=""" & V_ScanType """ ... Ignoring file ...")
-		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - DO NOT KNOW IF SOURCE IS INTERLACED OR PROGRESSIVE """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ V_ScanType=""" & V_ScanType """ ... Ignoring file ...")
+		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - DO NOT KNOW IF SOURCE IS INTERLACED OR PROGRESSIVE """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ V_ScanType=""" & V_ScanType & """ ... Ignoring file ...")
+		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - DO NOT KNOW IF SOURCE IS INTERLACED OR PROGRESSIVE """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ V_ScanType=""" & V_ScanType & """ ... Ignoring file ...")
 		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
 			On Error goto 0
@@ -2747,8 +2747,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		q_vrdtvs_IsProgressive = True
 		q_vrdtvs_IsInterlaced = False
 	Else
-		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - DO NOT KNOW IF QSF IS INTERLACED OR PROGRESSIVE """ & CF_QSF_AbsolutePathName & """ Q_V_Codec_legacy=""" & Q_V_Codec_legacy & """ V_ScanType=""" & Q_V_ScanType """ ... Ignoring file ...")
-		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - DO NOT KNOW IF QSF IS INTERLACED OR PROGRESSIVE """ & CF_FILE_AbsolutePathName & """ Q_V_Codec_legacy=""" & Q_V_Codec_legacy & """ Q_V_ScanType=""" & Q_V_ScanType """ ... Ignoring file ...")
+		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - DO NOT KNOW IF QSF IS INTERLACED OR PROGRESSIVE """ & CF_QSF_AbsolutePathName & """ Q_V_Codec_legacy=""" & Q_V_Codec_legacy & """ V_ScanType=""" & Q_V_ScanType & """ ... Ignoring file ...")
+		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - DO NOT KNOW IF QSF IS INTERLACED OR PROGRESSIVE """ & CF_FILE_AbsolutePathName & """ Q_V_Codec_legacy=""" & Q_V_Codec_legacy & """ Q_V_ScanType=""" & Q_V_ScanType & """ ... Ignoring file ...")
 		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
 			On Error goto 0
@@ -2761,8 +2761,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		End If
 	End If
 	If (vrdtvs_IsProgressive <> q_vrdtvs_IsProgressive) OR (vrdtvs_IsInterlaced <> q_vrdtvs_IsInterlaced) Then
-		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - UNEQUAL SOURCE AND QSF INTERLACED/PROGRESSIVE V_ScanType=""" & V_ScanType """ Q_V_ScanType=""" & Q_V_ScanType """ ... Ignoring file ...")
-		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - UNEQUAL SOURCE AND QSF INTERLACED/PROGRESSIVE V_ScanType=""" & V_ScanType """ Q_V_ScanType=""" & Q_V_ScanType """ ... Ignoring file ...")
+		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - UNEQUAL SOURCE AND QSF INTERLACED/PROGRESSIVE V_ScanType=""" & V_ScanType """ Q_V_ScanType=""" & Q_V_ScanType&  """ ... Ignoring file ...")
+		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - UNEQUAL SOURCE AND QSF INTERLACED/PROGRESSIVE V_ScanType=""" & V_ScanType """ Q_V_ScanType=""" & Q_V_ScanType & """ ... Ignoring file ...")
 		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
 			On Error goto 0
