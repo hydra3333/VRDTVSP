@@ -3078,8 +3078,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	If vrdtvs_IsAVC Then ' Ucase(Q_V_Codec_legacy) = Ucase("AVC")
 		REM CALCULATE H.264 TARGET BITRATES FROM THE INCOMING BITRATE
 		REM ffmpeg nvenc typically seems to undershoot the target bitrate, so bump it up.
-		FF_V_Target_BitRate = INCOMING_BITRATE * 1.05			' + 5%
-		FF_V_Target_Minimum_BitRate = INCOMING_BITRATE * 0.20	' 20%
+		FF_V_Target_BitRate = V_INCOMING_BITRATE * 1.05			' + 5%
+		FF_V_Target_Minimum_BitRate = V_INCOMING_BITRATE * 0.20	' 20%
 		FF_V_Target_Maximum_BitRate = FF_V_Target_BitRate * 2	' double
 		FF_V_Target_BufSize = FF_V_Target_BitRate * 2			' double
 	Else ' by  the time it gets here it must be MPEG2 flagged as vrdtvs_IsMPEG2
