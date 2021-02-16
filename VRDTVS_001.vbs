@@ -3502,8 +3502,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		vrdtvs_Convert_File = -1
 		Exit Function
 	End If
-	vrdtvs_status = vrdtvs_delete_a_file(ff_logfile, False)		' Delete the .bat file to be created with the ffmpeg command
-	vrdtvs_status = vrdtvs_delete_a_file(ff_batfile, False)		' Delete the .bat file to be created with the ffmpeg command
+	vrdtvs_status = vrdtvs_delete_a_file(ff_logfile, True)		' Delete the .bat file to be created with the ffmpeg command
+	vrdtvs_status = vrdtvs_delete_a_file(ff_batfile, True)		' Delete the .bat file to be created with the ffmpeg command
 	ff_timerEnd = Timer
     WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ffmpeg command completed with ELapsed Time " & vrdtvs_Calculate_ElapsedTime_string(ff_timerStart, ff_timerEnd))
 	' ++++ END Run the ffmpeg command
