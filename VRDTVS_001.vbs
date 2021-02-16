@@ -2473,7 +2473,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	If Ucase(V_ScanType) = Ucase("Interlaced") Then
 		vrdtvs_IsProgressive = False
 		vrdtvs_IsInterlaced = True
-	Else If Ucase(V_ScanType) = Ucase("Progressive") Then
+	ElseIf Ucase(V_ScanType) = Ucase("Progressive") Then
 		vrdtvs_IsProgressive = True
 		vrdtvs_IsInterlaced = False
 	Else
@@ -2743,7 +2743,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	If Ucase(Q_V_ScanType) = Ucase("Interlaced") Then
 		q_vrdtvs_IsProgressive = False
 		q_vrdtvs_IsInterlaced = True
-	Else If Ucase(V_SQ_V_ScanTypecanType) = Ucase("Progressive") Then
+	ElseIf Ucase(Q_V_ScanType) = Ucase("Progressive") Then
 		q_vrdtvs_IsProgressive = True
 		q_vrdtvs_IsInterlaced = False
 	Else
