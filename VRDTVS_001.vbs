@@ -2250,14 +2250,18 @@ Function vrdtvs_exec_a_command_and_show_stdout_stderr (byVal eac_command_string)
 	Do While eac_exe_object.Status = 0 '0 is running and 1 is ending
 	 	Wscript.Sleep 100
 	Loop
+	WScript.StdOut.WriteLine("vrdtvs_exec_a_command_and_show_stdout_stderr START StdOut: ")
 	Do Until eac_exe_object.StdOut.AtEndOfStream
 		eac_tmp = eac_exe_object.StdOut.ReadLine()
-		WScript.StdOut.WriteLine("vrdtvs_exec_a_command_and_show_stdout_stderr StdOut: " & eac_tmp)
+		WScript.StdOut.WriteLine(eac_tmp)
 	Loop
+	WScript.StdOut.WriteLine("vrdtvs_exec_a_command_and_show_stdout_stderr END   StdOut: ")
+	WScript.StdOut.WriteLine("vrdtvs_exec_a_command_and_show_stdout_stderr START StdErr: ")
 	Do Until eac_exe_object.StdErr.AtEndOfStream
 		eac_tmp = eac_exe_object.StdErr.ReadLine()
-		WScript.StdOut.WriteLine("vrdtvs_exec_a_command_and_show_stdout_stderr StdErr: " & eac_tmp)
+		WScript.StdOut.WriteLine(eac_tmp)
 	Loop
+	WScript.StdOut.WriteLine("vrdtvs_exec_a_command_and_show_stdout_stderr END   StdErr: ")
 	eac_exe_status = eac_exe_object.ExitCode
 	WScript.StdOut.WriteLine("vrdtvs_exec_a_command_and_show_stdout_stderr Exit Status: " & eac_exe_status)
 	Set eac_exe_object = Nothing
@@ -3365,13 +3369,13 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 
 
 
-	'WScript.StdOut.WriteLine(ff_cmd_string)
-	WScript.StdOut.WriteLine(ff_cmd_string & " 2>&1")
+	WScript.StdOut.WriteLine(ff_cmd_string)
+	'WScript.StdOut.WriteLine(ff_cmd_string & " 2>>&1")
 	'WScript.StdOut.WriteLine("CMD /C " & ff_cmd_string)
 	
 	
-	'CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(ff_cmd_string)
-	CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(ff_cmd_string & " 2>&1")
+	CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(ff_cmd_string)
+	'CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(ff_cmd_string & " 2>>&1")
 	'CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr("CMD /C " & ff_cmd_string)
 	If CF_exe_status <> 0 OR NOT fso.FileExists(CF_TARGET_AbsolutePathName) Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - FFMPEG Error - " & """ with ff_cmd_string=""" & ff_cmd_string & """ CF_exe_status=" & CF_exe_status)
