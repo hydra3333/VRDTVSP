@@ -2442,7 +2442,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File:     CF_failed_conversion_TS_Folder=""" & CF_failed_conversion_TS_Folder & """")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File:                       CF_temp_path=""" & CF_temp_path & """")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File:  CF_saved_ffmpeg_commands_filename=""" & CF_saved_ffmpeg_commands_filename & """")
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File:                     C_do_an_Adcsan=""" & C_do_an_Adcsan & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File:                    CF_do_an_Adcsan=""" & CF_do_an_Adcsan & """")
 	'
 	If NOT fso.FileExists(CF_FILE_AbsolutePathName) Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - SUPPOSEDLY VALID SOURCE FILE NOT FOUND """ & CF_FILE_AbsolutePathName & """... Aborting ...")
