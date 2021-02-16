@@ -2643,7 +2643,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	' save QSF command	
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	CF_object_saved_ffmpeg_commands.WriteLine("REM ===============================================================================================================")
-	CF_object_saved_ffmpeg_commands.WriteLine("REM ===============================================================================================================")
+	CF_object_saved_ffmpeg_commands.WriteLine("REM SOURCE """ & CF_FILE_AbsolutePathName & """"")
 	CF_object_saved_ffmpeg_commands.WriteLine("REM ===============================================================================================================")
 	CF_object_saved_ffmpeg_commands.WriteLine("REM  adjusted SOURCE media characteristics below:") 
 	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_Codec_legacy=""" & V_Codec_legacy & """") 
@@ -2678,7 +2678,6 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_QSF_AbsolutePathName & """")
 	CF_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string) ' write the QSF String to be executed
-	CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	' do the actual QSF command (delete the QSF file first)
 	vrdtvs_status = vrdtvs_delete_a_file(CF_QSF_AbsolutePathName, False) ' True=silently delete it
 	CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string)
@@ -3187,13 +3186,12 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		End If
 	Else
 		CF_object_saved_ffmpeg_commands.WriteLine("REM")
-		CF_object_saved_ffmpeg_commands.WriteLine("REM DGIndexNV is performed for NON-Progressive OR NON-AVC video")
+		CF_object_saved_ffmpeg_commands.WriteLine("REM DGIndexNV is ONLY *not* performed for Progressive/AVC combination video")
 		CF_object_saved_ffmpeg_commands.WriteLine("REM")
 		If vrdtvs_DEBUG Then 
 			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - DGIndexNV is performed for NON-Progressive OR NON-AVC video")
 		End If
 		CF_exe_cmd_string = """" & vrdtvs_dgindexNVexe64 & """ -i """ & CF_QSF_AbsolutePathName & """ -h -o """ & CF_DGI_AbsolutePathName & """"
-		CF_object_saved_ffmpeg_commands.WriteLine("REM")
 		CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_DGI_AbsolutePathName & """")
 		CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_DGIlog_AbsolutePathName & """")
 		CF_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string) ' write the QSF String to be executed
@@ -3394,7 +3392,6 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		CF_object_saved_ffmpeg_commands.WriteLine("ECHO ---------------------------- 2>&1")
 		CF_object_saved_ffmpeg_commands.WriteLine("ECHO TYPE ""!_VPY_file!"" 2>&1")
 		CF_object_saved_ffmpeg_commands.WriteLine("ECHO ---------------------------- 2>&1")
-		CF_object_saved_ffmpeg_commands.WriteLine("REM")
 		' display the content of .VPY file
 		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - Content of VPY file """ & CF_VPY_AbsolutePathName & """ Below :")
 		Set CF_VPY_object = fso.OpenTextFile(CF_VPY_AbsolutePathName, ForReading)
