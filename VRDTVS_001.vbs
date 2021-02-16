@@ -2643,7 +2643,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	' save QSF command	
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	CF_object_saved_ffmpeg_commands.WriteLine("REM ===============================================================================================================")
-	CF_object_saved_ffmpeg_commands.WriteLine("REM SOURCE """ & CF_FILE_AbsolutePathName & """"")
+	CF_object_saved_ffmpeg_commands.WriteLine("REM SOURCE """ & CF_FILE_AbsolutePathName & """")
 	CF_object_saved_ffmpeg_commands.WriteLine("REM ===============================================================================================================")
 	CF_object_saved_ffmpeg_commands.WriteLine("REM  adjusted SOURCE media characteristics below:") 
 	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_Codec_legacy=""" & V_Codec_legacy & """") 
@@ -2674,11 +2674,14 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_BitRate_FF=""" & V_BitRate_FF & """") 
 	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_BitRate_Maximum_FF=""" & V_BitRate_Maximum_FF & """") 
 	CF_object_saved_ffmpeg_commands.WriteLine("REM  adjusted SOURCE media characteristics above") 
-	CF_object_saved_ffmpeg_commands.WriteLine("REM Do the QSF for """ & CF_FILE_AbsolutePathName & """")
+	CF_object_saved_ffmpeg_commands.WriteLine("REM")
+	CF_object_saved_ffmpeg_commands.WriteLine("REM Do the QSF for """ & CF_FILE_AbsolutePathName & """ ... " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_QSF_AbsolutePathName & """")
 	CF_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string) ' write the QSF String to be executed
 	' do the actual QSF command (delete the QSF file first)
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: Doing QSF for """ & CF_FILE_AbsolutePathName & """ ... " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: QSF command: " & CF_exe_cmd_string)
 	vrdtvs_status = vrdtvs_delete_a_file(CF_QSF_AbsolutePathName, False) ' True=silently delete it
 	CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string)
 	If CF_exe_status <> 0 OR NOT fso.FileExists(CF_QSF_AbsolutePathName) Then
