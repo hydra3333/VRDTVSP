@@ -3489,16 +3489,20 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	CF_status = ff_tmp_object.Close
 	Set ff_tmp_object = Nothing
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ******************** END Content of FFMPEG LOG file """ & ff_logfile & """ Above.")
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ******************** RETURNED ff_run_errorleve=l" & ff_run_errorlevel)
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ******************** RETURNED ff_run_errorleve=" & ff_run_errorlevel)
 	CF_exe_status = ff_run_errorlevel
-	If CF_exe_status <> 0 OR NOT fso.FileExists(CF_TARGET_AbsolutePathName) Then
+	If (CF_exe_status <> 0) OR (NOT fso.FileExists(CF_TARGET_AbsolutePathName)) Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - FFMPEG Error - CF_exe_status=""" & CF_exe_status & """ with ff_cmd_string=""" & ff_cmd_string)
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - FFMPEG Error - CF_exe_status=""" & CF_exe_status & """ with ff_cmd_string=""" & ff_cmd_string)
 		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 			WScript.StdOut.WriteLine("VRDTVS DEV: vrdtvs_DEVELOPMENT_NO_ACTIONS: DEV: vrdtvs_Convert_File NOT moving file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 		Else
-			vrdtvs_status = vrdtvs_move_files_to_folder(CF_FILE_AbsolutePathName, CF_done_TS_Folder)
-			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File moved file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			vrdtvs_status = vrdtvs_move_files_to_folder(CF_FILE_AbsolutePathName, CF_failed_conversion_TS_Folder)
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 		End If
 		On Error goto 0
 		'WScript.Quit 17 ' Error 17 = cannot perform the requested operation
