@@ -2147,7 +2147,7 @@ Function vrdtvs_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 		WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 	End If
 	' create a new empty FFMPEG COMMANDS file with overwrite
-	set C_object_saved_ffmpeg_commands = fso.CreateTextFile(C_saved_ffmpeg_commands_filename, True, True) ' [ filename, Overwrite[, Unicode]])
+	set C_object_saved_ffmpeg_commands = fso.CreateTextFile(C_saved_ffmpeg_commands_filename, True, False) ' *** make .BAT file ascii for compatibility, since vapoursynth fails with unicode files [ filename, Overwrite[, Unicode]])
 	If C_object_saved_ffmpeg_commands is Nothing  Then ' Something went wrong with creating the file
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_files_in_a_folder - Error - Nothing object returned from fso.CreateTextFile with saved FFMPEG COMMANDS """ & C_saved_ffmpeg_commands_filename & """... Aborting ...")
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_files_in_a_folder - Error - Nothing object returned from fso.CreateTextFile with saved FFMPEG COMMANDS """ & C_saved_ffmpeg_commands_filename & """... Aborting ...")
@@ -3299,7 +3299,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	If vrdtvs_create_VPY Then
 		'create the vpy file
 		vrdtvs_status = vrdtvs_delete_a_file (CF_VPY_AbsolutePathName, False)		' Delete the VPY file to be created
-		set CF_VPY_object = fso.CreateTextFile(CF_VPY_AbsolutePathName, True, True) ' [ filename, Overwrite[, Unicode]])
+		set CF_VPY_object = fso.CreateTextFile(CF_VPY_AbsolutePathName, True, False) ' *** vapoursynth fails with unicode input file *** [ filename, Overwrite[, Unicode]])
 		If CF_VPY_object is Nothing  Then ' Something went wrong with creating the file
 			If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - Nothing object returned from fso.CreateTextFile with VPY file """ & CF_VPY_AbsolutePathName & """... Aborting ...")
 			WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Nothing object returned from fso.CreateTextFile with VPY file  """ & CF_VPY_AbsolutePathName & """... Aborting ...")
