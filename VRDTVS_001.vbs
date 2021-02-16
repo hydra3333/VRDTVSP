@@ -3460,7 +3460,6 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ******************** About to .Run FFMPEG .BAT file """ & ff_batfile & """ :")
 	ff_run_errorlevel = wso.Run("CMD /C """ & ff_batfile & """", 7, True) '(strCommand, [intWindowStyle], [bWaitOnReturn]) ' https://ss64.com/vb/run.html
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ******************** .Run FFMPEG .BAT file """ & ff_batfile & """ Exit status :" & ff_run_errorlevel)
-	vrdtvs_status = vrdtvs_delete_a_file (ff_batfile, False)		' Delete the .bat file to be created with the ffmpeg command
 	' let's dump the resulting ffmpeg log
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ******************** START Content of FFMPEG LOG file """ & ff_logfile & """ Below:")
 	Set ff_tmp_object = fso.OpenTextFile(ff_logfile, ForReading)
@@ -3486,6 +3485,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		vrdtvs_Convert_File = -1
 		Exit Function
 	End If
+	vrdtvs_status = vrdtvs_delete_a_file(ff_logfile, False)		' Delete the .bat file to be created with the ffmpeg command
+	vrdtvs_status = vrdtvs_delete_a_file(ff_batfile, False)		' Delete the .bat file to be created with the ffmpeg command
 	ff_timerEnd = Timer
     WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ffmpeg command completed with ELapsed Time " & vrdtvs_Calculate_ElapsedTime_string(ff_timerStart, ff_timerEnd))
 	' ++++ END Run the ffmpeg command
