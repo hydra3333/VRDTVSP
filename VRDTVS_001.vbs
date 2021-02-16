@@ -3363,12 +3363,14 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	ff_timerStart = Timer
 	vrdtvs_status = vrdtvs_delete_a_file (CF_TARGET_AbsolutePathName, False)
 
-	"CMD /C "
+
+
 	'WScript.StdOut.WriteLine(ff_cmd_string)
 	WScript.StdOut.WriteLine("CMD /C " & ff_cmd_string)
 	
 	
-	CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(ff_cmd_string)
+	'CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(ff_cmd_string)
+	CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr("CMD /C " & ff_cmd_string)
 	If CF_exe_status <> 0 OR NOT fso.FileExists(CF_TARGET_AbsolutePathName) Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - FFMPEG Error - " & """ with ff_cmd_string=""" & ff_cmd_string & """ CF_exe_status=" & CF_exe_status)
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - FFMPEG Error - " & """ with ff_cmd_string=""" & ff_cmd_string & """ CF_exe_status=" & CF_exe_status)
@@ -3409,7 +3411,7 @@ Function vrdtvs_writeline_for_vpy (vpy_filename_object, bat_filename_object, a_v
 	'		append_string			eg " >> "!_VPY_file!" 2>&1"  including a trailing space
 	Dim escaped_vpy_statement
 	If vrdtvs_DEBUG Then
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_writeline_for_vpy about to writeline vpy_filename_object       a_vpy_statement=<" & a_vpy_statement & ">")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_writeline_for_vpy about to writeline vpy_filename_object       a_vpy_statement" & Space(Len(prepend_string)) & "=<" & a_vpy_statement & ">")
 	End If
 	vpy_filename_object.WriteLine(a_vpy_statement)
 	escaped_vpy_statement = a_vpy_statement
