@@ -2269,6 +2269,39 @@ Function vrdtvs_exec_a_command_and_show_stdout_stderr (byVal eac_command_string)
 	vrdtvs_exec_a_command_and_show_stdout_stderr = eac_exe_status
 End Function
 '
+Function vrdtvs_exec_a_FFMPEG_command_and_show_stderr_only (byVal eac_command_string)
+	Dim  eac_exe_cmd_string, eac_exe_object, eac_exe_status, eac_tmp
+	If eac_command_string = "" then
+		vrdtvs_exec_a_command = 0
+		Exit Function
+	End If
+	If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
+		eac_exe_object = "REM " & eac_command_string ' comment out any action
+	End If
+	WScript.StdOut.WriteLine("vrdtvs_exec_a_command_and_show_stdout_stderr Exec command: " & eac_command_string)
+	set eac_exe_object = wso.Exec(eac_command_string)
+	Do While eac_exe_object.Status = 0 '0 is running and 1 is ending
+	 	Wscript.Sleep 100
+	Loop
+	'WScript.StdOut.WriteLine("vrdtvs_exec_a_command_and_show_stdout_stderr START StdOut: ")
+	'Do Until eac_exe_object.StdOut.AtEndOfStream
+	'	eac_tmp = eac_exe_object.StdOut.ReadLine()
+	'	WScript.StdOut.WriteLine(eac_tmp)
+	'Loop
+	'WScript.StdOut.WriteLine("vrdtvs_exec_a_command_and_show_stdout_stderr END   StdOut: ")
+	WScript.StdOut.WriteLine("vrdtvs_exec_a_command_and_show_stdout_stderr START StdErr: ")
+	Do Until eac_exe_object.StdErr.AtEndOfStream
+		eac_tmp = eac_exe_object.StdErr.ReadLine()
+		WScript.StdOut.WriteLine(eac_tmp)
+	Loop
+	WScript.StdOut.WriteLine("vrdtvs_exec_a_command_and_show_stdout_stderr END   StdErr: ")
+	eac_exe_status = eac_exe_object.ExitCode
+	WScript.StdOut.WriteLine("vrdtvs_exec_a_command_and_show_stdout_stderr Exit Status: " & eac_exe_status)
+	Set eac_exe_object = Nothing
+	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_exec_a_command_and_show_stdout_stderr exiting with status=""" & eac_exe_status & """")
+	vrdtvs_exec_a_command_and_show_stdout_stderr = eac_exe_status
+End Function
+'
 Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 								byRef	CF_object_saved_ffmpeg_commands, _
 								byVal 	CF_source_TS_Folder, _
@@ -3370,13 +3403,11 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 
 
 	WScript.StdOut.WriteLine(ff_cmd_string)
-	'WScript.StdOut.WriteLine(ff_cmd_string & " 2>>&1")
-	'WScript.StdOut.WriteLine("CMD /C " & ff_cmd_string)
 	
 	
-	CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(ff_cmd_string)
-	'CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(ff_cmd_string & " 2>>&1")
-	'CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr("CMD /C " & ff_cmd_string)
+	'CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(ff_cmd_string)
+	CF_exe_status = vrdtvs_exec_a_FFMPEG_command_and_show_stderr_only(ff_cmd_string) ' since ffmpeg ONLY write log messages to stderr. ignore stdout
+
 	If CF_exe_status <> 0 OR NOT fso.FileExists(CF_TARGET_AbsolutePathName) Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - FFMPEG Error - " & """ with ff_cmd_string=""" & ff_cmd_string & """ CF_exe_status=" & CF_exe_status)
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - FFMPEG Error - " & """ with ff_cmd_string=""" & ff_cmd_string & """ CF_exe_status=" & CF_exe_status)
