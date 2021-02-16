@@ -2512,7 +2512,6 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			On Error goto 0
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		Else
-			'?????????? move input file to FAILED folder ?????????? and then ignore it
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
 			On Error goto 0
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
@@ -2546,7 +2545,6 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			On Error goto 0
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		Else
-			'?????????? move input file to FAILED folder ?????????? and then ignore it
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
 			On Error goto 0
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
@@ -2688,7 +2686,6 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			On Error goto 0
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		Else
-			'?????????? move input file to FAILED folder ?????????? and then ignore it
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
 			On Error goto 0
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
@@ -2714,7 +2711,6 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			On Error goto 0
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		Else
-			'?????????? move input file to FAILED folder ?????????? and then ignore it
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
 			On Error goto 0
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
@@ -2786,7 +2782,6 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			On Error goto 0
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		Else
-			'?????????? move input file to FAILED folder ?????????? and then ignore it
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
 			On Error goto 0
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
@@ -2820,7 +2815,6 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			On Error goto 0
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		Else
-			'?????????? move input file to FAILED folder ?????????? and then ignore it
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
 			On Error goto 0
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
@@ -2834,7 +2828,6 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			On Error goto 0
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		Else
-			'?????????? move input file to FAILED folder ?????????? and then ignore it
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
 			On Error goto 0
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
@@ -2918,7 +2911,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	' Cross-Check SOURCE ScanType and ScanOrder with QSF ScanType and ScanOrder and bail if not the same
 	If Ucase(V_ScanType) <> Ucase(Q_V_ScanType) Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - Ucase(V_ScanType) """ & Ucase(V_ScanType) & """ <> Ucase(Q_V_ScanType) """ & Ucase(Q_V_ScanType) & """  """ & CF_QSF_AbsolutePathName & """ """ & Q_V_Codec_legacy & """ ... Ignoring file ...")
-		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error -Ucase(V_ScanType) """ & Ucase(V_ScanType) & """ <> Ucase(Q_V_ScanType) """ & Ucase(Q_V_ScanType) & """  """ & CF_QSF_AbsolutePathName & """ """ & Q_V_Codec_legacy & """ ... Ignoring file ...")
+		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Ucase(V_ScanType) """ & Ucase(V_ScanType) & """ <> Ucase(Q_V_ScanType) """ & Ucase(Q_V_ScanType) & """  """ & CF_QSF_AbsolutePathName & """ """ & Q_V_Codec_legacy & """ ... Ignoring file ...")
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File adjusted SOURCE media characteristics below:") 
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_Codec_legacy=""" & V_Codec_legacy & """") 
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_Format_legacy=""" & V_Format_legacy & """") 
@@ -2984,7 +2977,6 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			On Error goto 0
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		Else
-			'?????????? move input file to FAILED folder ?????????? and then ignore it
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
 			On Error goto 0
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
@@ -3056,7 +3048,6 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			On Error goto 0
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		Else
-			'?????????? move input file to FAILED folder ?????????? and then ignore it
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
 			On Error goto 0
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
