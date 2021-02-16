@@ -342,6 +342,7 @@ If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: Insomnia: Exec Exit
 ' Move .ts .mp4 .mpg .brpj files from the Source Folder to the source folder sincethat is where we process from
 '
 If vrdtvs_CAPTURE_TS_Folder <> "" Then
+	WScript.StdOut.WriteLine("VRDTVS Insomnia: ERROR - Insomnia START command created ProcessID is zero ... Aborting ...")
     vrdtvs_status = vrdtvs_move_files_to_folder(vrdtvs_CAPTURE_TS_Folder & "\*.ts", vrdtvs_source_TS_Folder & "\")    ' ignore any status
     vrdtvs_status = vrdtvs_move_files_to_folder(vrdtvs_CAPTURE_TS_Folder & "\*.mp4", vrdtvs_source_TS_Folder & "\")   ' ignore any status
     vrdtvs_status = vrdtvs_move_files_to_folder(vrdtvs_CAPTURE_TS_Folder & "\*.mpg", vrdtvs_source_TS_Folder & "\")   ' ignore any status
@@ -2742,6 +2743,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Loop
 	CF_QSF_logfile_object.Close
 	Set CF_QSF_logfile_object = Nothing
+	vrdtvs_status = vrdtvs_delete_a_file(CF_QSF_logfile, False) ' True=silently delete the QSF logfile
 	'
 	' Obtain QSF file characteristics via mediainfo 
 	Q_V_Codec_legacy					= vrdtvs_get_mediainfo_parameter("Video", "Codec", CF_QSF_AbsolutePathName, "--Legacy") 
