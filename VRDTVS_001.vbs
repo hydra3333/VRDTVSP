@@ -641,7 +641,7 @@ Function vrdtvs_move_files_to_folder (mf_source_path_wildcard, mv_destination_fo
     Loop
     Do Until mf_exe.StdErr.AtEndOfStream
         mf_tmp = mf_exe.StdErr.ReadLine()
-        WScript.StdOut.WriteLin("vrdtvs_move_files_to_folder StdErr: " & mf_tmp)
+        WScript.StdOut.WriteLine("vrdtvs_move_files_to_folder StdErr: " & mf_tmp)
     Loop
     mf_status = mf_exe.ExitCode
     WScript.StdOut.WriteLine("vrdtvs_move_files_to_folder Exit Status: " & mf_status)
@@ -2323,7 +2323,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Dim CF_DGIlog_AbsolutePathName, CF_DGIlog_ParentFolderName, CF_DGIlog_BaseName, CF_DGIlog_Ext
 	'
 	Dim vrdtvs_IsAVC, vrdtvs_IsMPEG2, vrdtvs_IsProgressive, vrdtvs_IsInterlaced, Q_vrdtvs_IsProgressive, Q_vrdtvs_IsInterlaced
-	Dim ff_cmd_string
+	Dim ff_cmd_string, ff_tmp_object
 	'
 	Dim CF_QSF_logfile, CF_QSF_logfile_object, CF_QSF_logfile_line, CF_QSF_logfile_string, CF_QSF_string_array
 	'
@@ -3369,6 +3369,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "#video = vs.core.text.ClipInfo(video)", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "video.set_output()", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = CF_VPY_object.Close
+		Set CF_VPY_object = Nothing
 		Wscript.Echo "Created VPY file """ & CF_VPY_AbsolutePathName & """"
 		CF_object_saved_ffmpeg_commands.WriteLine("REM")
 		CF_object_saved_ffmpeg_commands.WriteLine("ECHO ---------------------------- 2>&1")
@@ -3383,6 +3384,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			WScript.StdOut.WriteLine(CF_VPY_string)
 		Loop			
 		CF_status = CF_VPY_object.Close
+		Set CF_VPY_object = Nothing
 		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - Content of VPY file """ & CF_VPY_AbsolutePathName & """ Above.")
 	Else ' Else is previously flagged as not creating a VPY since incoming stream is Progressive/AVC
 	End If
@@ -3404,12 +3406,19 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 
 
 
-	WScript.StdOut.WriteLine(ff_cmd_string)
 	'CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(ff_cmd_string)
 	'CF_exe_status = vrdtvs_exec_a_FFMPEG_command_and_show_stderr_only(ff_cmd_string) ' since ffmpeg ONLY write log messages to stderr. ignore stdout
-	CF_exe_status = vrdtvs_exec_a_FFMPEG_command_and_show_stderr_only("CMD /C /S """ & ff_cmd_string & """") ' since ffmpeg ONLY write log messages to stderr. ignore stdout
 
-
+	vrdtvs_tmp = vrdtvs_gimme_a_temporary_absolute_filename ("ffmpeg-command-" & vrdtvs_run_datetime) & ".BAT")
+	vrdtvs_status = vrdtvs_delete_a_file (vrdtvs_tmp, False)		' Delete the .bat file to be created with the ffmpeg command
+	set ff_tmp_object = fso.CreateTextFile(vrdtvs_tmp, True, False) ' *** vapoursynth fails with unicode input file *** [ filename, Overwrite[, Unicode]])
+	ff_tmp_object.WriteLine(@ECHO ON)
+	ff_tmp_object.WriteLine(ff_cmd_string)
+	ff_tmp_object.WriteLine(exit %ERRORLEVEL%)
+	ff_tmp_object.close
+	set ff_tmp_object = Nothing
+	CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr("CMD /C """ & vrdtvs_tmp & """")
+	'vrdtvs_status = vrdtvs_delete_a_file (vrdtvs_tmp, False)		' Delete the .bat file with the ffmpeg command
 
 
 	If CF_exe_status <> 0 OR NOT fso.FileExists(CF_TARGET_AbsolutePathName) Then
