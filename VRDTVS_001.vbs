@@ -471,7 +471,7 @@ Set vrdtvs_exe_obj = Nothing
 If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VTDRVS TaskKill Insomnia exiting with status=""" & vrdtvs_status & """")
 '
 'Delete the temporary Insomnia .exe file
-vrdtvs_exit_code = vrdtvs_delete_a_file(vrdtvs_Insomnia64_tmp_filename, False) ' True=silently delete. Ignore any errors.
+vrdtvs_exit_code = vrdtvs_delete_a_file(vrdtvs_Insomnia64_tmp_filename, True) ' True=silently delete. Ignore any errors.
 
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Finish and Quit
@@ -2151,7 +2151,7 @@ Function vrdtvs_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 	End If
 	'
 	' delete the saved FFMPEG COMMANDS file silently 
-	vrdtvs_status = vrdtvs_delete_a_file (C_saved_ffmpeg_commands_filename, False)
+	vrdtvs_status = vrdtvs_delete_a_file(C_saved_ffmpeg_commands_filename, True)
 	If vrdtvs_status <> 0 AND vrdtvs_status <> 53 Then ' Something went wrong with deleting the file, but allow 53 "File not found"
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_files_in_a_folder - Error " & vrdtvs_status & " from vrdtvs_delete_a_file with saved FFMPEG COMMANDS """ & C_saved_ffmpeg_commands_filename & """... Aborting ...")
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_files_in_a_folder - Error " & vrdtvs_status & " from vrdtvs_delete_a_file with saved FFMPEG COMMANDS """ & C_saved_ffmpeg_commands_filename & """... Aborting ...")
@@ -2633,9 +2633,9 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'
 	' START ======================================================  Do the QSF ======================================================
 	'
-	vrdtvs_status = vrdtvs_delete_a_file(CF_QSF_AbsolutePathName, False) ' True=silently delete it
-	vrdtvs_status = vrdtvs_delete_a_file(vrd_logfile_wildcard_QSF, False) ' True=silently delete it 	' is a wildcard, in fso.DeleteFile the filespec can contain wildcard characters in the last path component
-	vrdtvs_status = vrdtvs_delete_a_file(vrd_logfile_wildcard_ADSCAN, False) ' True=silently delete it	' is a wildcard, in fso.DeleteFile the filespec can contain wildcard characters in the last path component
+	vrdtvs_status = vrdtvs_delete_a_file(CF_QSF_AbsolutePathName, True) ' True=silently delete it
+	vrdtvs_status = vrdtvs_delete_a_file(vrd_logfile_wildcard_QSF, True) ' True=silently delete it 	' is a wildcard, in fso.DeleteFile the filespec can contain wildcard characters in the last path component
+	vrdtvs_status = vrdtvs_delete_a_file(vrd_logfile_wildcard_ADSCAN, True) ' True=silently delete it	' is a wildcard, in fso.DeleteFile the filespec can contain wildcard characters in the last path component
 	CF_exe_cmd_string = "cscript //Nologo """ & vrd_path_for_qsf_vbs & """ """ & CF_FILE_AbsolutePathName & """  """ & CF_QSF_AbsolutePathName & """ /qsf /p """ & vrd_profile_name_for_qsf & """ /q /na"
 	If vrdtvs_DEBUG Then 
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ do QSF with CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
@@ -2682,7 +2682,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	' do the actual QSF command (delete the QSF file first)
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: Doing QSF for """ & CF_FILE_AbsolutePathName & """ ... " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: QSF command: " & CF_exe_cmd_string)
-	vrdtvs_status = vrdtvs_delete_a_file(CF_QSF_AbsolutePathName, False) ' True=silently delete it
+	vrdtvs_status = vrdtvs_delete_a_file(CF_QSF_AbsolutePathName, True) ' True=silently delete it
 	CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string)
 	If CF_exe_status <> 0 OR NOT fso.FileExists(CF_QSF_AbsolutePathName) Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - Error - Failed to QSF """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
@@ -2703,7 +2703,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'
 	' Copy the QSF log so we can search it for a bitrate value
 	CF_QSF_logfile =  CF_QSF_AbsolutePathName & ".log"
-	vrdtvs_status = vrdtvs_delete_a_file(CF_QSF_logfile, False) ' True=silently delete it
+	vrdtvs_status = vrdtvs_delete_a_file(CF_QSF_logfile, True) ' True=silently delete it
 	CF_exe_cmd_string = "CMD /C COPY /Y """ & vrd_logfile_wildcard_QSF & """ """ & CF_QSF_logfile & """ 2>&1"
 	If vrdtvs_DEBUG Then 
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ copy log with CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
@@ -2745,7 +2745,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Loop
 	CF_QSF_logfile_object.Close
 	Set CF_QSF_logfile_object = Nothing
-	vrdtvs_status = vrdtvs_delete_a_file(CF_QSF_logfile, False) ' True=silently delete the QSF logfile
+	vrdtvs_status = vrdtvs_delete_a_file(CF_QSF_logfile, True) ' True=silently delete the QSF logfile
 	'
 	' Obtain QSF file characteristics via mediainfo 
 	Q_V_Codec_legacy					= vrdtvs_get_mediainfo_parameter("Video", "Codec", CF_QSF_AbsolutePathName, "--Legacy") 
@@ -3202,8 +3202,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		If vrdtvs_DEBUG Then 
 			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File run DGIndexNV """ & CF_QSF_AbsolutePathName & """ with CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
 		End If
-		vrdtvs_status = vrdtvs_delete_a_file (CF_DGI_AbsolutePathName, False)		' Delete the DGI file to be created by DGIndexNV
-		vrdtvs_status = vrdtvs_delete_a_file (CF_DGIlog_AbsolutePathName, False)	' Delete the DGIlog file to be created by DGIndexNV
+		vrdtvs_status = vrdtvs_delete_a_file(CF_DGI_AbsolutePathName, True)		' Delete the DGI file to be created by DGIndexNV
+		vrdtvs_status = vrdtvs_delete_a_file(CF_DGIlog_AbsolutePathName, True)	' Delete the DGIlog file to be created by DGIndexNV
 		CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string)
 		If CF_exe_status <> 0 OR NOT fso.FileExists(CF_DGI_AbsolutePathName) Then
 			If vrdtvs_DEBUG Then 
@@ -3251,8 +3251,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-profile:v high -level 5.2 -movflags +faststart+write_colr " &_
 							"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
 							" -y """ & CF_TARGET_AbsolutePathName & """"
-			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: Created ffmpeg_cmd_string, hopefully Progressive/AVC vs file: " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
-			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: Created ffmpeg_cmd_string <" & ff_cmd_string & ">")
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ========== Created ffmpeg_cmd_string, hopefully Progressive/AVC vs file: " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ========== Created ffmpeg_cmd_string <" & ff_cmd_string & ">")
 		ElseIf vrdtvs_IsMPEG2 Then 'Ucase(Q_V_Codec_legacy) = Ucase("MPEG2-2V")
 			vpy_denoise  = "strength=0.06, cstrength=0.06"	' flag denoising  for progressive mpeg2
 			vpy_dsharpen = "strength=0.3"					' flag sharpening for progressive mpeg2
@@ -3274,8 +3274,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-profile:v high -level 5.2 -movflags +faststart+write_colr " &_
 							"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
 							" -y """ & CF_TARGET_AbsolutePathName & """"
-			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: Created ffmpeg_cmd_string, hopefully Progressive/MPEG2 vs file: " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
-			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: Created ffmpeg_cmd_string <" & ff_cmd_string & ">")
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ========== Created ffmpeg_cmd_string, hopefully Progressive/MPEG2 vs file: " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ========== Created ffmpeg_cmd_string <" & ff_cmd_string & ">")
 		Else
 			Wscript.Echo "Unable to create ff_cmd_string Progressive avc/mpeg2 - unknown codec " & Q_V_Codec_legacy
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
@@ -3323,10 +3323,10 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 								"-profile:v high -level 5.2 -movflags +faststart+write_colr " &_
 								"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
 								" -y """ & CF_TARGET_AbsolutePathName & """"
-				WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: FOOTY detected, hopefully Interlaced/AVC vs file: " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
+				WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ========== FOOTY detected, hopefully Interlaced/AVC vs file: " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
 			End If
-			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: Created ffmpeg_cmd_string, hopefully Interlaced/AVC vs file: " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
-			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: Created ffmpeg_cmd_string <" & ff_cmd_string & ">")
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ========== Created ffmpeg_cmd_string, hopefully Interlaced/AVC vs file: " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ========== Created ffmpeg_cmd_string <" & ff_cmd_string & ">")
 		ElseIf vrdtvs_IsMPEG2 Then
 			vpy_denoise = "strength=0.06, cstrength=0.06"	' flag denoising  for interlaced mpeg2
 			vpy_dsharpen = "strength=0.3"					' flag sharpening for interlaced mpeg2
@@ -3349,8 +3349,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
 							" -y """ & CF_TARGET_AbsolutePathName & """"
 			' Leave MPEG2 Interlaced Footy alone, as if it were a normal video file ... no code for MPEG2 Interlaced Footy in here
-			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: Created ffmpeg_cmd_string, hopefully Interlaced/MPEG2 vs file: " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
-			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: Created ffmpeg_cmd_string <" & ff_cmd_string & ">")
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ========== Created ffmpeg_cmd_string, hopefully Interlaced/MPEG2 vs file: " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ========== Created ffmpeg_cmd_string <" & ff_cmd_string & ">")
 		Else
 			Wscript.Echo "Unable to create ff_cmd_string Interlaced avc/mpeg2 - unknown codec " & Q_V_Codec_legacy
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
@@ -3366,7 +3366,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	End If
 	If vrdtvs_create_VPY Then
 		'create the vpy file
-		vrdtvs_status = vrdtvs_delete_a_file (CF_VPY_AbsolutePathName, False)		' Delete the VPY file to be created
+		vrdtvs_status = vrdtvs_delete_a_file(CF_VPY_AbsolutePathName, True)		' Delete the VPY file to be created
 		set CF_VPY_object = fso.CreateTextFile(CF_VPY_AbsolutePathName, True, False) ' *** vapoursynth fails with unicode input file *** [ filename, Overwrite[, Unicode]])
 		If CF_VPY_object is Nothing  Then ' Something went wrong with creating the file
 			If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - Nothing object returned from fso.CreateTextFile with VPY file """ & CF_VPY_AbsolutePathName & """... Aborting ...")
@@ -3429,7 +3429,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'
 	' ++++ START Run the ffmpeg command
 	ff_timerStart = Timer
-	vrdtvs_status = vrdtvs_delete_a_file (CF_TARGET_AbsolutePathName, False)
+	vrdtvs_status = vrdtvs_delete_a_file(CF_TARGET_AbsolutePathName, True)
 	'???????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????
 	'???????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????
 	' GRRRRRRRRRRRRRRRRRRRR ...
@@ -3442,8 +3442,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	ff_logfile = vrdtvs_gimme_a_temporary_absolute_filename ("ffmpeg-command-output-" & vrdtvs_run_datetime) & ".log"
 	ff_batfile = vrdtvs_gimme_a_temporary_absolute_filename ("ffmpeg-command-" & vrdtvs_run_datetime) & ".BAT"
 	ff_cmd_string_for_bat = ff_cmd_string & " >""" & ff_logfile & """ 2>&1" ' redirect both stdout and stderr from ffmpeg to a file
-	vrdtvs_status = vrdtvs_delete_a_file (ff_logfile, False)		' Delete the .bat file to be created with the ffmpeg command
-	vrdtvs_status = vrdtvs_delete_a_file (ff_batfile, False)		' Delete the .bat file to be created with the ffmpeg command
+	vrdtvs_status = vrdtvs_delete_a_file(ff_logfile, True)		' Delete the .bat file to be created with the ffmpeg command
+	vrdtvs_status = vrdtvs_delete_a_file(ff_batfile, True)		' Delete the .bat file to be created with the ffmpeg command
 	set ff_tmp_object = fso.CreateTextFile(ff_batfile, True, False) ' *** vapoursynth fails with unicode input file *** [ filename, Overwrite[, Unicode]])
 	ff_tmp_object.WriteLine("@ECHO ON")
 	ff_tmp_object.WriteLine("@setlocal ENABLEDELAYEDEXPANSION")
@@ -3512,9 +3512,9 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_VPY_AbsolutePathName & """")
 	CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_QSF_AbsolutePathName & """")
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
-	vrdtvs_status = vrdtvs_delete_a_file (CF_DGI_AbsolutePathName, False)
-	vrdtvs_status = vrdtvs_delete_a_file (CF_VPY_AbsolutePathName, False)
-	vrdtvs_status = vrdtvs_delete_a_file (CF_QSF_AbsolutePathName, False)
+	vrdtvs_status = vrdtvs_delete_a_file(CF_DGI_AbsolutePathName, True)
+	vrdtvs_status = vrdtvs_delete_a_file(CF_VPY_AbsolutePathName, True)
+	vrdtvs_status = vrdtvs_delete_a_file(CF_QSF_AbsolutePathName, True)
 	If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 		WScript.StdOut.WriteLine("VRDTVS DEV: vrdtvs_DEVELOPMENT_NO_ACTIONS: DEV: vrdtvs_Convert_File NOT moving file to DONE folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_done_TS_Folder & """")
 	Else
