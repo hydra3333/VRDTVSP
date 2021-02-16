@@ -3414,7 +3414,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		Set CF_VPY_object = Nothing
 		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - Created VPY file """ & CF_VPY_AbsolutePathName & """ NOTE: used deinterlace=" & vrdtvs_final_dg_deinterlace & ", use_top_field=" & vrdtvs_final_dg_tff & " for """ & V_ScanType & """/""" & V_ScanOrder & """ """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
 		CF_object_saved_ffmpeg_commands.WriteLine("ECHO ---------------------------- 2>&1")
-		CF_object_saved_ffmpeg_commands.WriteLine("ECHO TYPE ""!_VPY_file!"" 2>&1")
+		CF_object_saved_ffmpeg_commands.WriteLine("TYPE ""!_VPY_file!"" 2>&1")
 		CF_object_saved_ffmpeg_commands.WriteLine("ECHO ---------------------------- 2>&1")
 		' display the content of .VPY file
 		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - Content of VPY file """ & CF_VPY_AbsolutePathName & """ Below :")
