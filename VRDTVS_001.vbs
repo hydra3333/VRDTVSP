@@ -3152,6 +3152,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		If Instr(1,Ucase(fso.GetBaseName(CF_QSF_AbsolutePathName)), Ucase("Crows"), vbTextCompare) > 0 Then Footy_found = True
 	End If		
 	If Footy_found Then ' bump up the bitrates due o double framerate deinterlacing
+		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - FOOTY detected ... setting extended Footy_FF_V_* bitates for double-framerate conversion.")
 		vrdtvs_final_dg_deinterlace = 2	' set for double framerate deinterlace
 		Footy_FF_V_Target_BitRate = FF_V_Target_BitRate * 1.75
 		Footy_FF_V_Target_Minimum_BitRate = Footy_FF_V_Target_BitRate * 0.20
