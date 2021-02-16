@@ -2105,7 +2105,7 @@ Function vrdtvs_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 	Dim C_exe_status
 	Dim C_tmp, c_status
 	'
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder STARTED " & vrdtvs_current_datetime_string() & "======================================================================================================================================================")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder STARTED " & vrdtvs_current_datetime_string() & " ======================================================================================================================================================")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder:                C_source_TS_Folder=""" & C_source_TS_Folder & """")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder:                  C_done_TS_Folder=""" & C_done_TS_Folder & """")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder:          C_destination_mp4_Folder=""" & C_destination_mp4_Folder & """")
@@ -2241,7 +2241,7 @@ Function vrdtvs_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 	'
 	vrdtvs_status = C_object_saved_ffmpeg_commands.Close
 	Set C_object_saved_ffmpeg_commands = Nothing
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder FINISHED " & vrdtvs_current_datetime_string() & "======================================================================================================================================================")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder FINISHED " & vrdtvs_current_datetime_string() & " ======================================================================================================================================================")
 	vrdtvs_Convert_files_in_a_folder = 0 ' return success
 End Function
 '
@@ -2437,8 +2437,12 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Dim vpy_denoise
 	Dim vpy_dsharpen
 	'
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File STARTED " & vrdtvs_current_datetime_string() & "======================================================================================================================================================")
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File STARTED " & vrdtvs_current_datetime_string() & "======================================================================================================================================================")
+	WScript.StdOut.WriteLine(" ")
+	WScript.StdOut.WriteLine(" ")
+	WScript.StdOut.WriteLine(" ")
+	WScript.StdOut.WriteLine(" ")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File STARTED " & vrdtvs_current_datetime_string() & " ======================================================================================================================================================")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File STARTED " & vrdtvs_current_datetime_string() & " ======================================================================================================================================================")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File:           CF_FILE_AbsolutePathName=""" & CF_FILE_AbsolutePathName & """")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File:                CF_source_TS_Folder=""" & CF_source_TS_Folder & """")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File:                  CF_done_TS_Folder=""" & CF_done_TS_Folder & """")
@@ -3522,8 +3526,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File moved file to DONE folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_done_TS_Folder & """")
 	End If
 	vrdtvs_Convert_File = 0				
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File FINISHED " & vrdtvs_current_datetime_string() & "======================================================================================================================================================")
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File FINISHED " & vrdtvs_current_datetime_string() & "======================================================================================================================================================")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File FINISHED " & vrdtvs_current_datetime_string() & " ======================================================================================================================================================")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File FINISHED " & vrdtvs_current_datetime_string() & " ======================================================================================================================================================")
 End Function
 '
 Function vrdtvs_writeline_for_vpy (vpy_filename_object, bat_filename_object, a_vpy_statement, prepend_string, append_string)
