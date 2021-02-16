@@ -2283,7 +2283,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Dim CF_DGI_AbsolutePathName,    CF_DGI_ParentFolderName,    CF_DGI_BaseName,    CF_DGI_Ext
 	Dim CF_DGIlog_AbsolutePathName, CF_DGIlog_ParentFolderName, CF_DGIlog_BaseName, CF_DGIlog_Ext
 	'
-	Dim vrdtvs_IsAVC, vrdtvs_IsMPEG2, vrdtvs_IsProgressive, vrdtvs_IsInterlaced
+	Dim vrdtvs_IsAVC, vrdtvs_IsMPEG2, vrdtvs_IsProgressive, vrdtvs_IsInterlaced, Q_vrdtvs_IsProgressive, Q_vrdtvs_IsInterlaced
 	Dim ff_cmd_string
 	'
 	Dim CF_QSF_logfile, CF_QSF_logfile_object, CF_QSF_logfile_line, CF_QSF_logfile_string, CF_QSF_string_array
@@ -2469,6 +2469,26 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	End If
 	If V_ScanType = "MBAFF" Then
 		V_ScanType = "Interlaced"
+	End If
+	If Ucase(V_ScanType) = Ucase("Interlaced") Then
+		vrdtvs_IsProgressive = False
+		vrdtvs_IsInterlaced = True
+	Else If Ucase(V_ScanType) = Ucase("Progressive") Then
+		vrdtvs_IsProgressive = True
+		vrdtvs_IsInterlaced = False
+	Else
+		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - DO NOT KNOW IF SOURCE IS INTERLACED OR PROGRESSIVE """ & CF_FILE_AbsolutePathName & """ """ & V_Codec_legacy & """ V_ScanType=""" & V_ScanType """ ... Ignoring file ...")
+		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - DO NOT KNOW IF SOURCE IS INTERLACED OR PROGRESSIVE """ & CF_FILE_AbsolutePathName & """ """ & V_Codec_legacy & """ V_ScanType=""" & V_ScanType """ ... Ignoring file ...")
+		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
+			Wscript.Echo "Error 17 = cannot perform the requested operation"
+			On Error goto 0
+			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+		Else
+			'?????????? move input file to FAILED folder ?????????? and then ignore it
+			Wscript.Echo "Error 17 = cannot perform the requested operation"
+			On Error goto 0
+			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+		End If
 	End If
 	If V_ScanOrder = "" Then
 		V_ScanOrder = "TFF" ' Default to Top Field First
@@ -2719,6 +2739,40 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	End If
 	If Q_V_ScanType = "MBAFF" Then
 		Q_V_ScanType = "Interlaced"
+	End If
+	If Ucase(Q_V_ScanType) = Ucase("Interlaced") Then
+		q_vrdtvs_IsProgressive = False
+		q_vrdtvs_IsInterlaced = True
+	Else If Ucase(V_SQ_V_ScanTypecanType) = Ucase("Progressive") Then
+		q_vrdtvs_IsProgressive = True
+		q_vrdtvs_IsInterlaced = False
+	Else
+		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - DO NOT KNOW IF QSF IS INTERLACED OR PROGRESSIVE """ & CF_QSF_AbsolutePathName & """ """ & Q_V_Codec_legacy & """ V_ScanType=""" & Q_V_ScanType """ ... Ignoring file ...")
+		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - DO NOT KNOW IF QSF IS INTERLACED OR PROGRESSIVE """ & CF_FILE_AbsolutePathName & """ """ & Q_V_Codec_legacy & """ Q_V_ScanType=""" & Q_V_ScanType """ ... Ignoring file ...")
+		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
+			Wscript.Echo "Error 17 = cannot perform the requested operation"
+			On Error goto 0
+			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+		Else
+			'?????????? move input file to FAILED folder ?????????? and then ignore it
+			Wscript.Echo "Error 17 = cannot perform the requested operation"
+			On Error goto 0
+			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+		End If
+	End If
+	If (vrdtvs_IsProgressive <> q_vrdtvs_IsProgressive) OR (vrdtvs_IsInterlaced <> q_vrdtvs_IsInterlaced) Then
+		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - UNEQUAL SOURCE AND QSF INTERLACED/PROGRESSIVE V_ScanType=""" & V_ScanType """ Q_V_ScanType=""" & Q_V_ScanType """ ... Ignoring file ...")
+		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - UNEQUAL SOURCE AND QSF INTERLACED/PROGRESSIVE V_ScanType=""" & V_ScanType """ Q_V_ScanType=""" & Q_V_ScanType """ ... Ignoring file ...")
+		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
+			Wscript.Echo "Error 17 = cannot perform the requested operation"
+			On Error goto 0
+			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+		Else
+			'?????????? move input file to FAILED folder ?????????? and then ignore it
+			Wscript.Echo "Error 17 = cannot perform the requested operation"
+			On Error goto 0
+			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+		End If
 	End If
 	If Q_V_ScanOrder = "" Then
 		Q_V_ScanOrder = "TFF" ' Default to Top Field First
