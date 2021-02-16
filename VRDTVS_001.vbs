@@ -3390,6 +3390,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "#import havsfunc as haf		# this relies on the .py residing at the VS folder root level - see run_vsrepo.bat", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "core.std.LoadPlugin(r'" & vs_root & "\DGIndex\DGDecodeNV.dll') # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "core.avs.LoadPlugin(r'" & vs_root & "\DGIndex\DGDecodeNV.dll') # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "# NOTE: deinterlace=" & vrdtvs_final_dg_deinterlace & ", use_top_field=" & vrdtvs_final_dg_tff & " for """ & V_ScanType & """/""" & V_ScanOrder & """ """ & V_Codec_legacy & """/""" & A_Codec_legacy & """", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "video = core.dgdecodenv.DGSource(r'" & CF_DGI_AbsolutePathName & "', deinterlace=" & vrdtvs_final_dg_deinterlace & ", use_top_field=" & vrdtvs_final_dg_tff & ", use_pf=False)", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "# DGDecNV changes -", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "# 2020.10.21 Added new parameters cstrength and cblend to independently control the chroma denoising.", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
@@ -3405,7 +3406,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "video.set_output()", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = CF_VPY_object.Close
 		Set CF_VPY_object = Nothing
-		Wscript.Echo "Created VPY file """ & CF_VPY_AbsolutePathName & """"
+		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - Created VPY file """ & CF_VPY_AbsolutePathName & """ NOTE: used deinterlace=" & vrdtvs_final_dg_deinterlace & ", use_top_field=" & vrdtvs_final_dg_tff & " for """ & V_ScanType & """/""" & V_ScanOrder & """ """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
 		CF_object_saved_ffmpeg_commands.WriteLine("ECHO ---------------------------- 2>&1")
 		CF_object_saved_ffmpeg_commands.WriteLine("ECHO TYPE ""!_VPY_file!"" 2>&1")
 		CF_object_saved_ffmpeg_commands.WriteLine("ECHO ---------------------------- 2>&1")
