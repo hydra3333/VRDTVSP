@@ -2547,6 +2547,12 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Else
 		A_Audio_Delay_ms_legacy = 0 - A_Video_Delay_ms_legacy
 	End If
+	If A_Video_Delay_ms = "" Then
+		A_Video_Delay_ms = 0
+		A_Audio_Delay_ms = 0
+	Else
+		A_Audio_Delay_ms = 0 - A_Video_Delay_ms
+	End If
 	If V_ScanType = "" Then
 		V_ScanType = "Progressive" ' Default to Progressive
 	End If
@@ -2574,12 +2580,6 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	End If
 	If V_ScanOrder = "" Then
 		V_ScanOrder = "TFF" ' Default to Top Field First
-	End If
-	If A_Video_Delay_ms = "" Then
-		A_Video_Delay_ms = 0
-		A_Audio_Delay_ms = 0
-	Else
-		A_Audio_Delay_ms = 0 - A_Video_Delay_ms
 	End If
 	If vrdtvs_DEBUG Then
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File adjusted SOURCE media characteristics below:") 
@@ -2689,7 +2689,6 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	CF_object_saved_ffmpeg_commands.WriteLine("REM  A_Audio_Delay_ms_legacy=""" & A_Audio_Delay_ms_legacy & """")
 	CF_object_saved_ffmpeg_commands.WriteLine("REM  A_CodecID=""" & A_CodecID & """") 
 	CF_object_saved_ffmpeg_commands.WriteLine("REM  A_CodecID_String=""" & A_CodecID_String & """") 
-	CF_object_saved_ffmpeg_commands.WriteLine("REM  A_Video_Delay_ms=""" & A_Video_Delay_ms & """") 
 	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_CodecID_FF=""" & V_CodecID_FF & """") 
 	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_CodecID_String_FF=""" & V_CodecID_String_FF & """") 
 	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_Width_FF=""" & V_Width_FF & """") 
@@ -2829,6 +2828,12 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Else
 		Q_A_Audio_Delay_ms_legacy = 0 - Q_A_Video_Delay_ms_legacy
 	End If
+	If Q_A_Video_Delay_ms = "" Then
+		Q_A_Video_Delay_ms = 0
+		Q_A_Audio_Delay_ms = 0
+	Else
+		Q_A_Audio_Delay_ms = 0 - Q_A_Video_Delay_ms
+	End If
 	If Q_V_ScanType = "" Then
 		Q_V_ScanType = "Progressive" ' Default to Progressive
 	End If
@@ -2869,12 +2874,6 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	End If
 	If Q_V_ScanOrder = "" Then
 		Q_V_ScanOrder = "TFF" ' Default to Top Field First
-	End If
-	If Q_A_Video_Delay_ms = "" Then
-		Q_A_Video_Delay_ms = 0
-		Q_A_Audio_Delay_ms = 0
-	Else
-		Q_A_Audio_Delay_ms = 0 - Q_A_Video_Delay_ms
 	End If
 	'
 	' Choose the most likely video bitrate of the SOURCE file from amongst the various options. 
