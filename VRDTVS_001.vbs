@@ -139,7 +139,7 @@ Dim vrd_path_for_adscan_vbs
 Dim vrd_profile_name_for_qsf_mpeg2
 Dim vrd_profile_name_for_qsf_avc
 Dim vrd_profile_name_for_qsf
-Dim vrd_profile_name_for_adscan ??????????
+Dim vrd_profile_name_for_adscan
 Dim vrd_extension_mpeg2
 Dim vrd_extension_avc
 Dim vrd_extension
@@ -2019,6 +2019,12 @@ Function vrdtvs_Move_Date_to_End_of_String(theOriginalString)
     Loop
 	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
 	theNewString = Replace(theNewString, "..", ".", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "-.", ".", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, ".-", ".", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "_.", ".", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "._", ".", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "_-", ".", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "-_", ".", 1, -1, vbTextCompare)
 	timerEnd_MDES = Timer
     'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Move_Date_to_End_of_String: exiting with return value   """ & theNewString & """ having Loop Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(timerStart_MDES, timerEnd_MDES))
 	vrdtvs_Move_Date_to_End_of_String = theNewString
