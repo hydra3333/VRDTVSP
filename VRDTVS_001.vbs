@@ -2727,7 +2727,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string)
 	Else
 		CF_QSF_Ext = CF_FILE_Ext ' NOT "vrd_extension" CF_FILE_AbsolutePathName
-		CF_QSF_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_QSF_ParentFolderName,CF_QSF_BaseName & ".VRDTVS.NON-QSF." & CF_QSF_Ext & ??????))		
+		CF_QSF_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_QSF_ParentFolderName,CF_QSF_BaseName & ".VRDTVS.NON-QSF." & CF_QSF_Ext))		
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: Instead-of-QSF: Copying """ & CF_FILE_AbsolutePathName & """ to """ & CF_QSF_AbsolutePathName & """")
 		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: Instead-of-QSF for """ & CF_FILE_AbsolutePathName & """ ... " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
 		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: Copying: """ & CF_FILE_AbsolutePathName & """ to """ & CF_QSF_AbsolutePathName & """")
