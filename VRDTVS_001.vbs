@@ -3329,10 +3329,10 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			vrdtvs_create_VPY = False ' this is a NO-OP
 			vpy_denoise = ""								' flag no denoising for progressive AVC
 			vpy_dsharpen = ""								' flag no sharpening for progressive AVC
-			' probesize 60 Mb, analyzeduration 60 seconds 2021.02.17
+			' probesize 120 Mb, analyzeduration 120 seconds 2021.02.17
 			ff_cmd_string =	"""" & vrdtvs_ffmpegexe64 & """ " &_
 							"-hide_banner -v verbose -nostats " &_
-							"-probesize 60M -analyzeduration 60M " &_
+							"-probesize 120M -analyzeduration 120M " &_
 							"-i """ & CF_QSF_AbsolutePathName & """ " &_
 							"-c:v copy " &_
 							"-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
@@ -3350,11 +3350,11 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		ElseIf vrdtvs_IsMPEG2 Then 'Ucase(Q_V_Codec_legacy) = Ucase("MPEG2-2V")
 			vpy_denoise  = "strength=0.06, cstrength=0.06"	' flag denoising  for progressive mpeg2
 			vpy_dsharpen = "strength=0.3"					' flag sharpening for progressive mpeg2
-			' probesize 60 Mb, analyzeduration 60 seconds 2021.02.17
+			' probesize 120 Mb, analyzeduration 120 seconds 2021.02.17
 			ff_cmd_string =	"""" & vrdtvs_ffmpegexe64 & """ " &_
 							"-hide_banner -v verbose -nostats " &_
 							"-f vapoursynth -i """ & CF_VPY_AbsolutePathName & """ " &_
-							"-probesize 60M -analyzeduration 60M " &_
+							"-probesize 120M -analyzeduration 120M " &_
 							"-i """ & CF_QSF_AbsolutePathName & """ " &_
 							"-map 0:v:0 -map 1:a:0 " &_
 							"-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
@@ -3382,11 +3382,11 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		if vrdtvs_IsAVC Then
 			vpy_denoise = ""								' flag no denoising for interlaced AVC
 			vpy_dsharpen = "strength=0.2"					' flag sharpening   for interlaced AVC
-			' probesize 60 Mb, analyzeduration 60 seconds 2021.02.17
+			' probesize 120 Mb, analyzeduration 120 seconds 2021.02.17
 			ff_cmd_string =	"""" & vrdtvs_ffmpegexe64 & """ " &_
 							"-hide_banner -v verbose -nostats " &_
 							"-f vapoursynth -i """ & CF_VPY_AbsolutePathName & """ " &_
-							"-probesize 60M -analyzeduration 60M " &_
+							"-probesize 120M -analyzeduration 120M " &_
 							"-i """ & CF_QSF_AbsolutePathName & """ " &_
 							"-map 0:v:0 -map 1:a:0 " &_
 							"-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
@@ -3403,11 +3403,11 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
 							" -y """ & CF_TARGET_AbsolutePathName & """"
 			If Footy_found Then	' Must be AVC Interlaced Footy to pass this test, USE DIFFERENT SETTINGS since we deinterlace with double framerate
-				' probesize 60 Mb, analyzeduration 60 seconds 2021.02.17
+				' probesize 120 Mb, analyzeduration 120 seconds 2021.02.17
 				ff_cmd_string =	"""" & vrdtvs_ffmpegexe64 & """ " &_
 								"-hide_banner -v verbose -nostats " &_
 								"-f vapoursynth -i """ & CF_VPY_AbsolutePathName & """ " &_
-								"-probesize 60M -analyzeduration 60M " &_
+								"-probesize 120M -analyzeduration 120M " &_
 								"-i """ & CF_QSF_AbsolutePathName & """ " &_
 								"-map 0:v:0 -map 1:a:0 " &_
 								"-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
@@ -3430,11 +3430,11 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		ElseIf vrdtvs_IsMPEG2 Then
 			vpy_denoise = "strength=0.06, cstrength=0.06"	' flag denoising  for interlaced mpeg2
 			vpy_dsharpen = "strength=0.3"					' flag sharpening for interlaced mpeg2
-			' probesize 60 Mb, analyzeduration 60 seconds 2021.02.17
+			' probesize 120 Mb, analyzeduration 120 seconds 2021.02.17
 			ff_cmd_string =	"""" & vrdtvs_ffmpegexe64 & """ " &_
 							"-hide_banner -v verbose -nostats " &_
 							"-f vapoursynth -i """ & CF_VPY_AbsolutePathName & """ " &_
-							"-probesize 60M -analyzeduration 60M " &_
+							"-probesize 120M -analyzeduration 120M " &_
 							"-i """ & CF_QSF_AbsolutePathName & """ " &_
 							"-map 0:v:0 -map 1:a:0 " &_
 							"-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
