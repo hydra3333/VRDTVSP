@@ -25,7 +25,8 @@ Option explicit
 '/temp_path:"D:\VRDTVS-SCRATCH\" ^
 '/vrd_version_for_qsf:6 ^
 '/vrd_version_for_adscan:5 ^
-'/do_adscan:True
+'/do_qsf:False
+'/do_adscan:false
 '
 ' ... use /capture_Folder:"" to prevent the moving of files from a capture folder, eg when testing
 ' ... note
@@ -150,6 +151,7 @@ Dim vrd_extension_avc
 Dim vrd_extension
 Dim vrd_logfile_wildcard_QSF
 Dim vrd_logfile_wildcard_ADSCAN
+Dim vrd_do_qsf
 Dim vrd_do_adscan
 '
 Const const_vrd5_path = "C:\Program Files (x86)\VideoReDoTVSuite5"
@@ -170,7 +172,8 @@ vrd6_logfile_wildcard =  fso.GetAbsolutePathName(HDTV_root & "\") & "\VideoReDo6
 '
 vrd_version_for_qsf = 6
 vrd_version_for_adscan = 5
-vrd_do_adscan = True
+vrd_do_qsf = False
+vrd_do_adscan = False
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Setup Global Default Paths, resolving them to Absolute paths
@@ -215,7 +218,8 @@ vrdtvs_temp_path = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("tem
 '
 vrd_version_for_qsf = vrdtvs_get_commandline_parameter("vrd_version_for_qsf",vrd_version_for_qsf)                                                   ' /vrd_version_for_qsf:6
 vrd_version_for_adscan = vrdtvs_get_commandline_parameter("vrd_version_for_adscan",vrd_version_for_adscan)                                          ' /vrd_version_for_adscan:5
-vrd_do_adscan = vrdtvs_get_commandline_parameter("do_adscan",vrd_do_adscan)                      		                    						' /do_adscan:True
+vrd_do_qsf = vrdtvs_get_commandline_parameter("do_qsf",vrd_do_qsf) 			                     		                    						' /do_qsf:False
+vrd_do_adscan = vrdtvs_get_commandline_parameter("do_adscan",vrd_do_adscan)                      		                    						' /do_adscan:False
 
 If vrd_version_for_qsf = 5 Then '*** QSF
     vrd_path_for_qsf_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd5_path,"vp.vbs"))
@@ -267,6 +271,7 @@ WScript.StdOut.WriteLine("VRDTVS NOTE: final                vrd_extension_mpeg2=
 WScript.StdOut.WriteLine("VRDTVS NOTE: final                  vrd_extension_avc=""" & vrd_extension_avc & """")
 WScript.StdOut.WriteLine("VRDTVS NOTE: final             vrd_version_for_adscan=" & vrd_version_for_adscan)
 WScript.StdOut.WriteLine("VRDTVS NOTE: final            vrd_path_for_adscan_vbs=""" & vrd_path_for_adscan_vbs & """")
+WScript.StdOut.WriteLine("VRDTVS NOTE: final                         vrd_do_qsf=" & vrd_do_qsf)
 WScript.StdOut.WriteLine("VRDTVS NOTE: final                      vrd_do_adscan=" & vrd_do_adscan)
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
@@ -390,7 +395,8 @@ vrdtvs_status = vrdtvs_Convert_files_in_a_folder(	vrdtvs_source_TS_Folder, _
 													vrdtvs_failed_conversion_TS_Folder, _
 													vrdtvs_temp_path, _
 													vrdtvs_saved_ffmpeg_commands_filename, _
-													vrd_do_adscan ) ' True means do an Adscan
+													vrd_do_qsf, _
+													vrd_do_adscan )
 If vrdtvs_status <> 0 Then ' Something bad went wrong (invididual conversion failures just result in moving the source file to the Failed folder)
 	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_Convert_files_in_a_folder ... Aborting ...")
 	WScript.StdOut.WriteLine("VRDTVS ERROR  VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_Convert_files_in_a_folder ... Aborting ...")
@@ -2095,7 +2101,8 @@ Function vrdtvs_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 											byVal	C_failed_conversion_TS_Folder, _
 											byVal	C_temp_path, _
 											byVal	C_saved_ffmpeg_commands_filename, _
-											byVal	C_do_an_Adcsan ) ' vrd_do_adscan
+											byVal	C_do_qsf, _
+											byVal	C_do_Adcsan )
 	' Loop and convert .TS .mp4 .mpg Source files in a folder into acceptable avc/aac .mp4 Destination files 
     ' Parameters: see below
 	' NOTES: 
@@ -2126,7 +2133,8 @@ Function vrdtvs_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder:     C_failed_conversion_TS_Folder=""" & C_failed_conversion_TS_Folder & """")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder:                       C_temp_path=""" & C_temp_path & """")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder:  C_saved_ffmpeg_commands_filename=""" & C_saved_ffmpeg_commands_filename & """")
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder:                    C_do_an_Adcsan=""" & C_do_an_Adcsan & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder:                          C_do_qsf=""" & C_do_qsf & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder:                       C_do_Adcsan=""" & C_do_Adcsan & """")
 	'
 	' force absolute PathNnames
 	C_source_TS_Folder = fso.GetAbsolutePathName(C_source_TS_Folder & "\")
@@ -2161,7 +2169,8 @@ Function vrdtvs_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder           ""vrd_version_for_adscan=" & vrd_version_for_adscan & """")
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder          ""vrd_path_for_adscan_vbs=" & vrd_path_for_adscan_vbs & """")
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder ""C_saved_ffmpeg_commands_filename=" & C_saved_ffmpeg_commands_filename & """")
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder                   ""C_do_an_Adcsan=" & C_do_an_Adcsan & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder                         ""C_do_qsf=" & C_do_qsf & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder                      ""C_do_Adcsan=" & C_do_Adcsan & """")
 	End If
 	'
 	' delete the saved FFMPEG COMMANDS file silently 
@@ -2217,7 +2226,8 @@ Function vrdtvs_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 	C_object_saved_ffmpeg_commands.WriteLine("Set ""vrd_path_for_adscan_vbs=" & vrd_path_for_adscan_vbs & """")
 	C_object_saved_ffmpeg_commands.WriteLine("REM")
 	C_object_saved_ffmpeg_commands.WriteLine("Set ""C_saved_ffmpeg_commands_filename=" & C_saved_ffmpeg_commands_filename & """")
-	C_object_saved_ffmpeg_commands.WriteLine("Set ""C_do_an_Adcsan=" & C_do_an_Adcsan & """")
+	C_object_saved_ffmpeg_commands.WriteLine("Set ""C_do_qsf=" & C_do_qsf & """")
+	C_object_saved_ffmpeg_commands.WriteLine("Set ""C_do_Adcsan=" & C_do_Adcsan & """")
 	C_object_saved_ffmpeg_commands.WriteLine("REM")
 	C_object_saved_ffmpeg_commands.WriteLine("REM NO FILES WILL BE MOVED between folders ")
 	C_object_saved_ffmpeg_commands.WriteLine("REM the SOURCE      .TS and .mp4 and .mpg media files MUST already exist in folder: """ & C_source_TS_Folder & """")
@@ -2249,7 +2259,8 @@ Function vrdtvs_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 														C_failed_conversion_TS_Folder, _
 														C_temp_path, _
 														C_saved_ffmpeg_commands_filename, _
-														C_do_an_Adcsan )
+														C_do_qsf, _
+														C_do_Adcsan )
 			Case Else	' extension not recognised, do nothing
 			End Select 
 		End If
@@ -2344,7 +2355,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 								byVal 	CF_failed_conversion_TS_Folder, _
 								byVal 	CF_temp_path, _
 								byVal 	CF_saved_ffmpeg_commands_filename, _
-								byVal 	CF_do_an_Adcsan )
+								byVal 	CF_do_qsf, _
+								byVal 	CF_do_Adcsan )
 	'Dim CF_FILE_AbsolutePathName
 	Dim                             CF_FILE_ParentFolderName,   CF_FILE_BaseName,   CF_FILE_Ext
 	Dim CF_QSF_AbsolutePathName,    CF_QSF_ParentFolderName,    CF_QSF_BaseName,    CF_QSF_Ext
@@ -2464,7 +2476,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File:     CF_failed_conversion_TS_Folder=""" & CF_failed_conversion_TS_Folder & """")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File:                       CF_temp_path=""" & CF_temp_path & """")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File:  CF_saved_ffmpeg_commands_filename=""" & CF_saved_ffmpeg_commands_filename & """")
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File:                    CF_do_an_Adcsan=""" & CF_do_an_Adcsan & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File:                          CF_do_qsf=""" & CF_do_qsf & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File:                       CF_do_Adcsan=""" & CF_do_Adcsan & """")
 	'
 	If NOT fso.FileExists(CF_FILE_AbsolutePathName) Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - SUPPOSEDLY VALID SOURCE FILE NOT FOUND """ & CF_FILE_AbsolutePathName & """... Aborting ...")
@@ -2651,7 +2664,9 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	CF_BPRJ_Ext = "bprj"		' always .bprj
 	CF_BPRJ_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_BPRJ_ParentFolderName,CF_BPRJ_BaseName & "." & CF_BPRJ_Ext))
 	'
-	' START ======================================================  Do the QSF ======================================================
+	' START ======================================================  Do the QSF ... IF FLAGGED TO DO DO ======================================================
+	' If doing a QSF, do it
+	' If NOT doing a QSF, just copy the SOURCE  file (usually .ts), file over to the QSF file whilst retaining most of the QSF functionality
 	' ++++ START Run the QSF command
 	ff_timerStart = Timer
 	vrdtvs_status = vrdtvs_delete_a_file(CF_QSF_AbsolutePathName, True) ' True=silently delete it
@@ -2703,10 +2718,37 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_QSF_AbsolutePathName & """")
 	CF_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string) ' write the QSF String to be executed
 	' do the actual QSF command (delete the QSF file first)
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: Doing QSF for """ & CF_FILE_AbsolutePathName & """ ... " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: QSF command: " & CF_exe_cmd_string)
 	vrdtvs_status = vrdtvs_delete_a_file(CF_QSF_AbsolutePathName, True) ' True=silently delete it
-	CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string)
+	'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	' Here is where we actually do the QSF or just copy the SOURCE file and pretend it is a .QSF'd file
+	If 	CF_do_qsf Then
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: Doing QSF for """ & CF_FILE_AbsolutePathName & """ ... " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: QSF command: " & CF_exe_cmd_string)
+			CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string)
+	Else
+		CF_QSF_Ext = CF_FILE_Ext ' NOT "vrd_extension" CF_FILE_AbsolutePathName
+		CF_QSF_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_QSF_ParentFolderName,CF_QSF_BaseName & ".VRDTVS.NON-QSF." & CF_QSF_Ext & ??????))		
+		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: Instead-of-QSF: Copying """ & CF_FILE_AbsolutePathName & """ to """ & CF_QSF_AbsolutePathName & """")
+		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: Instead-of-QSF for """ & CF_FILE_AbsolutePathName & """ ... " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
+		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: Copying: """ & CF_FILE_AbsolutePathName & """ to """ & CF_QSF_AbsolutePathName & """")
+		On Error Resume Next
+		fso.CopyFile CF_FILE_AbsolutePathName, CF_QSF_AbsolutePathName, True ' copy file with overwrite
+		vrdrvs_Err_Code = Err.Number
+		vrdrvs_Err_Description = Err.Description
+		On Error Goto 0
+		'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: Insomnia: File Copy returned error code: " & vrdrvs_Err_Code & " Descrption: " & vrdrvs_Err_Description)
+		If vrdrvs_Err_Code <> 0 Then
+    		Err.Clear
+    		WScript.StdOut.WriteLine("VRDTVS Insomnia: ERROR - Error " & vrdrvs_Err_Code & " Copying: """ & CF_FILE_AbsolutePathName & """ to """ & CF_QSF_AbsolutePathName & """ ... Aborting ...")
+    		WScript.StdOut.WriteLine("VRDTVS Insomnia: ERROR - " & vrdrvs_Err_Description)
+    		' Err.Raise 17 ' Error 17 = cannot perform the requested operation
+			Wscript.Echo "Error 17 = cannot perform the requested operation"
+			On Error goto 0
+			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+		End If
+		CF_exe_status = 0
+	End If
+	'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	If CF_exe_status <> 0 OR NOT fso.FileExists(CF_QSF_AbsolutePathName) Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - Error - Failed to QSF """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Failed to QSF """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
@@ -3555,7 +3597,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	' ++++ END Run the ffmpeg command
 	'
 	' after ffmpeg, do an ADSCAN over the TARGET file and save the .bprj in the target folder as an "associated .bprj" which will be picked up by auto-bprj-processing during bulk file renames :)
-	If CF_do_an_Adcsan Then
+	If CF_do_Adcsan Then
 		' ++++ START Run the ADSCAN command
 		ff_timerStart = Timer
 		vrdtvs_status = vrdtvs_delete_a_file(vrd_logfile_wildcard_ADSCAN, True) ' True=silently delete it	' is a wildcard, in fso.DeleteFile the filespec can contain wildcard characters in the last path component
