@@ -2741,8 +2741,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: Insomnia: File Copy returned error code: " & vrdrvs_Err_Code & " Descrption: " & vrdrvs_Err_Description)
 		If vrdrvs_Err_Code <> 0 Then
     		Err.Clear
-    		WScript.StdOut.WriteLine("VRDTVS Insomnia: ERROR - Error " & vrdrvs_Err_Code & " Copying: """ & CF_FILE_AbsolutePathName & """ to """ & CF_QSF_AbsolutePathName & """ ... Aborting ...")
-    		WScript.StdOut.WriteLine("VRDTVS Insomnia: ERROR - " & vrdrvs_Err_Description)
+    		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ERROR - Error " & vrdrvs_Err_Code & " Copying: """ & CF_FILE_AbsolutePathName & """ to """ & CF_QSF_AbsolutePathName & """ ... Aborting ...")
+    		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ERROR - " & vrdrvs_Err_Description)
     		' Err.Raise 17 ' Error 17 = cannot perform the requested operation
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
 			On Error goto 0
