@@ -19,7 +19,7 @@ Option explicit
 '/failed_Folder:"G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVS-Failed-Conversion\" ^
 '/temp_path:"D:\VRDTVS-SCRATCH\" ^
 '/vrd_version_for_qsf:6 ^
-'/vrd_version_for_adscan:6 ^
+'/vrd_version_for_adscan:5 ^
 '/do_adscan:True
 '
 ' ... use /capture_Folder:"" to prevent the moving of files from a capture folder, eg when testing
@@ -139,6 +139,7 @@ Dim vrd_path_for_adscan_vbs
 Dim vrd_profile_name_for_qsf_mpeg2
 Dim vrd_profile_name_for_qsf_avc
 Dim vrd_profile_name_for_qsf
+Dim vrd_profile_name_for_adscan ??????????
 Dim vrd_extension_mpeg2
 Dim vrd_extension_avc
 Dim vrd_extension
@@ -163,7 +164,7 @@ Dim vrd6_logfile_wildcard
 vrd6_logfile_wildcard =  fso.GetAbsolutePathName(HDTV_root & "\") & "\VideoReDo6_*.Log"
 '
 vrd_version_for_qsf = 6
-vrd_version_for_adscan = 6
+vrd_version_for_adscan = 5
 vrd_do_adscan = True
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
@@ -208,8 +209,8 @@ vrdtvs_failed_conversion_TS_Folder = fso.GetAbsolutePathName(vrdtvs_get_commandl
 vrdtvs_temp_path = fso.GetAbsolutePathName(vrdtvs_get_commandline_parameter("temp_path",vrdtvs_temp_path))                                          ' /temp_path:"D:\VRDTVS-SCRATCH\"
 '
 vrd_version_for_qsf = vrdtvs_get_commandline_parameter("vrd_version_for_qsf",vrd_version_for_qsf)                                                   ' /vrd_version_for_qsf:6
-vrd_version_for_adscan = vrdtvs_get_commandline_parameter("vrd_version_for_adscan",vrd_version_for_adscan)                                          ' /vrd_version_for_adscan:6
-vrd_do_adscan = vrdtvs_get_commandline_parameter("do_adscan",vrd_do_adscan)                      		                    			' /do_adscan:True
+vrd_version_for_adscan = vrdtvs_get_commandline_parameter("vrd_version_for_adscan",vrd_version_for_adscan)                                          ' /vrd_version_for_adscan:5
+vrd_do_adscan = vrdtvs_get_commandline_parameter("do_adscan",vrd_do_adscan)                      		                    						' /do_adscan:True
 
 If vrd_version_for_qsf = 5 Then '*** QSF
     vrd_path_for_qsf_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd5_path,"vp.vbs"))
@@ -2019,7 +2020,7 @@ Function vrdtvs_Move_Date_to_End_of_String(theOriginalString)
 	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
 	theNewString = Replace(theNewString, "..", ".", 1, -1, vbTextCompare)
 	timerEnd_MDES = Timer
-    'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Move_Date_to_End_of_String: exiting with return value   """ & theNewString & """ having Loop ELapsed Time " & vrdtvs_Calculate_ElapsedTime_string(timerStart_MDES, timerEnd_MDES))
+    'If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Move_Date_to_End_of_String: exiting with return value   """ & theNewString & """ having Loop Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(timerStart_MDES, timerEnd_MDES))
 	vrdtvs_Move_Date_to_End_of_String = theNewString
 End Function
 '
@@ -2638,7 +2639,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	CF_BPRJ_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_BPRJ_ParentFolderName,CF_BPRJ_BaseName & "." & CF_BPRJ_Ext))
 	'
 	' START ======================================================  Do the QSF ======================================================
-	'
+	' ++++ START Run the QSF command
+	ff_timerStart = Timer
 	vrdtvs_status = vrdtvs_delete_a_file(CF_QSF_AbsolutePathName, True) ' True=silently delete it
 	vrdtvs_status = vrdtvs_delete_a_file(vrd_logfile_wildcard_QSF, True) ' True=silently delete it 	' is a wildcard, in fso.DeleteFile the filespec can contain wildcard characters in the last path component
 	vrdtvs_status = vrdtvs_delete_a_file(vrd_logfile_wildcard_ADSCAN, True) ' True=silently delete it	' is a wildcard, in fso.DeleteFile the filespec can contain wildcard characters in the last path component
@@ -2705,6 +2707,9 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		vrdtvs_Convert_File = -1
 		Exit Function
 	End If
+	ff_timerEnd = Timer
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - QSF command completed with Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(ff_timerStart, ff_timerEnd))
+	' ++++ END Run the QSF command
 	' End ======================================================  Do the QSF ======================================================
 	'
 	' Copy the QSF log so we can search it for a bitrate value
@@ -3186,7 +3191,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	End If
 	'
 	' START ======================================================  Do the DGIndexNV ======================================================
-	'
+	' ++++ START Run the DGIndexNV command
+	ff_timerStart = Timer
 	If vrdtvs_IsProgressive AND vrdtvs_IsAVC Then ' not required for Progressive-AVC where we just copy streams ' Ucase(V_ScanType) = Ucase("Progressive") AND Q_V_Codec_legacy <> "AVC"
 		CF_object_saved_ffmpeg_commands.WriteLine("REM")
 		CF_object_saved_ffmpeg_commands.WriteLine("REM DGIndexNV is NOT performed for Progressive-AVC where we just copy streams")
@@ -3236,11 +3242,12 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		End If
 		vrdtvs_status = vrdtvs_delete_a_file (CF_DGIlog_AbsolutePathName, False)	' Delete the DGIlog file created by DGIndexNV
 	End If
-
+	ff_timerEnd = Timer
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - DGIndexNV command completed with Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(ff_timerStart, ff_timerEnd))
+	' ++++ END Run the DGIndexNV command
 	' END  ======================================================  Do the DGIndexNV ======================================================
 	'
 	' START  ======================================================  Create the .VPY ======================================================
-	'
 	vrdtvs_create_VPY = True
 	vpy_denoise  = ""
 	vpy_dsharpen = ""
@@ -3519,8 +3526,53 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	vrdtvs_status = vrdtvs_delete_a_file(ff_logfile, True)		' Delete the .bat file to be created with the ffmpeg command
 	vrdtvs_status = vrdtvs_delete_a_file(ff_batfile, True)		' Delete the .bat file to be created with the ffmpeg command
 	ff_timerEnd = Timer
-    WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ffmpeg command completed with ELapsed Time " & vrdtvs_Calculate_ElapsedTime_string(ff_timerStart, ff_timerEnd))
+    WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ffmpeg command completed with Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(ff_timerStart, ff_timerEnd))
 	' ++++ END Run the ffmpeg command
+	'
+	' after ffmpeg, do an ADSCAN over the TARGET file and save the .bprj in the target folder as an "associated .bprj" which will be picked up by auto-bprj-processing during bulk file renames :)
+	If CF_do_an_Adcsan Then
+		' ++++ START Run the ADSCAN command
+		ff_timerStart = Timer
+		vrdtvs_status = vrdtvs_delete_a_file(vrd_logfile_wildcard_ADSCAN, True) ' True=silently delete it	' is a wildcard, in fso.DeleteFile the filespec can contain wildcard characters in the last path component
+		CF_exe_cmd_string = "cscript //Nologo """ & vrd_path_for_adscan_vbs & """ """ & CF_TARGET_AbsolutePathName & """  """ & CF_BPRJ_AbsolutePathName & """ /q"
+		If vrdtvs_DEBUG Then 
+			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File """ & CF_TARGET_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ do ADSCAN with CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
+		End If
+		' save ADSCAN command
+		CF_object_saved_ffmpeg_commands.WriteLine("REM")
+		CF_object_saved_ffmpeg_commands.WriteLine("REM Do the ADSCAN for """ & CF_TARGET_AbsolutePathName & """ ... ")
+		CF_object_saved_ffmpeg_commands.WriteLine("REM")
+		CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_BPRJ_AbsolutePathName & """")
+		CF_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string) ' write the ADSCAN String to be executed
+		CF_object_saved_ffmpeg_commands.WriteLine("REM")
+		' do the actual ADCSAN command (delete the BPRJ file first)
+		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ******************** Start of run ADSCAN """ & CF_exe_cmd_string & """ :")
+		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: Doing ADSCAN for """ & CF_TARGET_AbsolutePathName & """ ... ")
+		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ADSCAN command: " & CF_exe_cmd_string)
+		vrdtvs_status = vrdtvs_delete_a_file(CF_BPRJ_AbsolutePathName, True) ' True=silently delete it
+		CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string)
+		If CF_exe_status <> 0 OR NOT fso.FileExists(CF_BPRJ_AbsolutePathName) Then
+			If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - Error - Failed to ADSCAN """ & CF_TARGET_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
+			WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Failed to ADSCAN """ & CF_TARGET_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
+			If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
+				Wscript.Echo "Error 17 = cannot perform the requested operation"
+				On Error goto 0
+				WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+			Else
+				Wscript.Echo "Error 17 = cannot perform the requested operation"
+				On Error goto 0
+				WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+			End If
+			vrdtvs_Convert_File = -1
+			Exit Function
+		End If
+		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ******************** End of run ADSCAN """ & CF_exe_cmd_string & """ ")
+		ff_timerEnd = Timer
+		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ADSCAN command completed with Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(ff_timerStart, ff_timerEnd))
+		' ++++ END Run the ffmpeg command
+	End If
+	'
+
 	'???????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????
 	'???????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????
 	'
