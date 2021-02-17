@@ -2965,7 +2965,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File A_CodecID_legacy=""" & A_CodecID_legacy & """") 
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File A_Format_legacy=""" & A_Format_legacy & """") 
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File A_Video_Delay_ms=""" & A_Video_Delay_ms & """") 
-		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File A_Video_Delay_ms_legacy=""" & A_Video_Delay_ms_legacy & """")  ???????????????
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File A_Video_Delay_ms_legacy=""" & A_Video_Delay_ms_legacy & """")
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File A_Audio_Delay_ms=""" & A_Audio_Delay_ms & """")
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File A_Audio_Delay_ms_legacy=""" & A_Audio_Delay_ms_legacy & """")
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File A_CodecID=""" & A_CodecID & """") 
