@@ -2467,8 +2467,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'
 	WScript.StdOut.WriteLine(" ")
 	WScript.StdOut.WriteLine(" ")
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File STARTED " & vrdtvs_current_datetime_string() & " ======================================================================================================================================================")
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File STARTED " & vrdtvs_current_datetime_string() & " ======================================================================================================================================================")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: STARTED " & vrdtvs_current_datetime_string() & " ======================================================================================================================================================")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: STARTED " & vrdtvs_current_datetime_string() & " ======================================================================================================================================================")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File:           CF_FILE_AbsolutePathName=""" & CF_FILE_AbsolutePathName & """")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File:                CF_source_TS_Folder=""" & CF_source_TS_Folder & """")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File:                  CF_done_TS_Folder=""" & CF_done_TS_Folder & """")
@@ -2627,11 +2627,11 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_BitRate_Maximum_FF=""" & V_BitRate_Maximum_FF & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File adjusted SOURCE media characteristics above") 
 	End If
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ======================================================================================================================================================")
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File End Examining of SOURCE """ & CF_FILE_AbsolutePathName & """")
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File SOURCE file: V_Codec_legacy: """ & V_Codec_legacy & """ V_ScanType: """ & V_ScanType & """ V_ScanOrder: """ & V_ScanOrder & """ " & V_Width & "x" & V_Height & " dar=" & V_DisplayAspectRatio_String_slash & " sar=" & V_PixelAspectRatio & " A_Codec_legacy: " & A_Codec_legacy & " A_Audio_Delay_ms: " & A_Audio_Delay_ms & " A_Audio_Delay_ms_legacy: " & A_Audio_Delay_ms_legacy & " A_Video_Delay_ms: " &  A_Video_Delay_ms & " A_Video_Delay_ms_legacy: " &  A_Video_Delay_ms_legacy)
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File End Exmaining of SOURCE """ & CF_FILE_AbsolutePathName & """")
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ======================================================================================================================================================")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ======================================================================================================================================================")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: End Examining of SOURCE """ & CF_FILE_AbsolutePathName & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: SOURCE file: V_Codec_legacy: """ & V_Codec_legacy & """ V_ScanType: """ & V_ScanType & """ V_ScanOrder: """ & V_ScanOrder & """ " & V_Width & "x" & V_Height & " dar=" & V_DisplayAspectRatio_String_slash & " sar=" & V_PixelAspectRatio & " A_Codec_legacy: " & A_Codec_legacy & " A_Audio_Delay_ms: " & A_Audio_Delay_ms & " A_Audio_Delay_ms_legacy: " & A_Audio_Delay_ms_legacy & " A_Video_Delay_ms: " &  A_Video_Delay_ms & " A_Video_Delay_ms_legacy: " &  A_Video_Delay_ms_legacy)
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: End Exmaining of SOURCE """ & CF_FILE_AbsolutePathName & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ======================================================================================================================================================")
 	'
 	' Now that we know the Video Codec and have determined that proper QSF File extension to use, set things up
 	CF_QSF_ParentFolderName = CF_temp_path
@@ -2771,7 +2771,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		Exit Function
 	End If
 	ff_timerEnd = Timer
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - QSF command completed with Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(ff_timerStart, ff_timerEnd))
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - QSF command completed with Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(ff_timerStart, ff_timerEnd))
 	' ++++ END Run the QSF command
 	' End ======================================================  Do the QSF ======================================================
 	'
@@ -2983,13 +2983,13 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_INCOMING_BITRATE=""" & V_INCOMING_BITRATE & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File adjusted QSF media characteristics above") 
 	End If
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ======================================================================================================================================================")
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File End QSF of """ & CF_FILE_AbsolutePathName & """ into """ & CF_QSF_AbsolutePathName & """")
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File output QSF file: Q_V_Codec_legacy: """ & Q_V_Codec_legacy & """ Q_V_ScanType: """ & Q_V_ScanType & """ Q_V_ScanOrder: """ & Q_V_ScanOrder & """ " & Q_V_Width & "x" & Q_V_Height & " dar=" & Q_V_DisplayAspectRatio_String_slash & " sar=" & Q_V_PixelAspectRatio & " Q_A_Codec_legacy: " & Q_A_Codec_legacy & " Q_A_Audio_Delay_ms: " & Q_A_Audio_Delay_ms & " Q_A_Audio_Delay_ms_legacy: " & Q_A_Audio_Delay_ms_legacy & " Q_A_Video_Delay_ms: " &  Q_A_Video_Delay_ms & " Q_A_Video_Delay_ms_legacy: " &  Q_A_Video_Delay_ms_legacy)
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File End QSF of """ & CF_FILE_AbsolutePathName & """ into """ & CF_QSF_AbsolutePathName & """")
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ======================================================================================================================================================")
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File V_INCOMING_BITRATE: Using """ & CF_FILE_AbsolutePathName & """ and """ & CF_QSF_AbsolutePathName & """ The V_INCOMING_BITRATE=""" & V_INCOMING_BITRATE & """")
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ======================================================================================================================================================")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ======================================================================================================================================================")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: End QSF of """ & CF_FILE_AbsolutePathName & """ into """ & CF_QSF_AbsolutePathName & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: output QSF file: Q_V_Codec_legacy: """ & Q_V_Codec_legacy & """ Q_V_ScanType: """ & Q_V_ScanType & """ Q_V_ScanOrder: """ & Q_V_ScanOrder & """ " & Q_V_Width & "x" & Q_V_Height & " dar=" & Q_V_DisplayAspectRatio_String_slash & " sar=" & Q_V_PixelAspectRatio & " Q_A_Codec_legacy: " & Q_A_Codec_legacy & " Q_A_Audio_Delay_ms: " & Q_A_Audio_Delay_ms & " Q_A_Audio_Delay_ms_legacy: " & Q_A_Audio_Delay_ms_legacy & " Q_A_Video_Delay_ms: " &  Q_A_Video_Delay_ms & " Q_A_Video_Delay_ms_legacy: " &  Q_A_Video_Delay_ms_legacy)
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: End QSF of """ & CF_FILE_AbsolutePathName & """ into """ & CF_QSF_AbsolutePathName & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ======================================================================================================================================================")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: V_INCOMING_BITRATE: Using """ & CF_FILE_AbsolutePathName & """ and """ & CF_QSF_AbsolutePathName & """ The V_INCOMING_BITRATE=""" & V_INCOMING_BITRATE & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ======================================================================================================================================================")
 	'
 	' Cross-Check SOURCE ScanType and ScanOrder with QSF ScanType and ScanOrder and bail if not the same
 	If Ucase(V_ScanType) <> Ucase(Q_V_ScanType) Then
@@ -3230,7 +3230,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		If Instr(1,Ucase(fso.GetBaseName(CF_QSF_AbsolutePathName)), Ucase("Crows"), vbTextCompare) > 0 Then Footy_found = True
 	End If		
 	If Footy_found Then ' bump up the bitrates due o double framerate deinterlacing
-		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - FOOTY detected ... setting extended Footy_FF_V_* bitates for double-framerate conversion.")
+		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - FOOTY detected ... setting extended Footy_FF_V_* bitates for double-framerate conversion.")
 		vrdtvs_final_dg_deinterlace = 2	' set for double framerate deinterlace
 		Footy_FF_V_Target_BitRate = FF_V_Target_BitRate * 1.75
 		Footy_FF_V_Target_Minimum_BitRate = Footy_FF_V_Target_BitRate * 0.20
@@ -3316,7 +3316,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		vrdtvs_status = vrdtvs_delete_a_file (CF_DGIlog_AbsolutePathName, False)	' Delete the DGIlog file created by DGIndexNV
 	End If
 	ff_timerEnd = Timer
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - DGIndexNV command completed with Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(ff_timerStart, ff_timerEnd))
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - DGIndexNV command completed with Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(ff_timerStart, ff_timerEnd))
 	' ++++ END Run the DGIndexNV command
 	' END  ======================================================  Do the DGIndexNV ======================================================
 	'
@@ -3492,12 +3492,12 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		CF_status = vrdtvs_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "video.set_output()", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = CF_VPY_object.Close
 		Set CF_VPY_object = Nothing
-		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - Created VPY file """ & CF_VPY_AbsolutePathName & """ NOTE: used deinterlace=" & vrdtvs_final_dg_deinterlace & ", use_top_field=" & vrdtvs_final_dg_tff & " for """ & V_ScanType & """/""" & V_ScanOrder & """ """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
+		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - Created VPY file """ & CF_VPY_AbsolutePathName & """ NOTE: used deinterlace=" & vrdtvs_final_dg_deinterlace & ", use_top_field=" & vrdtvs_final_dg_tff & " for """ & V_ScanType & """/""" & V_ScanOrder & """ """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
 		CF_object_saved_ffmpeg_commands.WriteLine("ECHO ---------------------------- 2>&1")
 		CF_object_saved_ffmpeg_commands.WriteLine("TYPE ""!_VPY_file!"" 2>&1")
 		CF_object_saved_ffmpeg_commands.WriteLine("ECHO ---------------------------- 2>&1")
 		' display the content of .VPY file
-		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - Content of VPY file """ & CF_VPY_AbsolutePathName & """ Below :")
+		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - Content of VPY file """ & CF_VPY_AbsolutePathName & """ Below :")
 		Set CF_VPY_object = fso.OpenTextFile(CF_VPY_AbsolutePathName, ForReading)
 		Do Until CF_VPY_object.AtEndOfStream
 			CF_VPY_string = CF_VPY_object.ReadLine
@@ -3505,13 +3505,13 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		Loop			
 		CF_status = CF_VPY_object.Close
 		Set CF_VPY_object = Nothing
-		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - Content of VPY file """ & CF_VPY_AbsolutePathName & """ Above.")
+		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - Content of VPY file """ & CF_VPY_AbsolutePathName & """ Above.")
 	Else ' Else is previously flagged as not creating a VPY since incoming stream is Progressive/AVC
 	End If
 	'
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	If Footy_found Then
-		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - Footy Found, using Footy double-framerate deinterlacing and bitrate settings")
+		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - Footy Found, using Footy double-framerate deinterlacing and bitrate settings")
 		CF_object_saved_ffmpeg_commands.WriteLine("REM Footy Found, using Footy double-framerate deinterlacing and bitrate settings")
 		CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	End If
@@ -3553,7 +3553,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	ff_tmp_object.close
 	set ff_tmp_object = Nothing
 	' let's dump the ffmpeg .BAT file
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ******************** START Content of FFMPEG .BAT file """ & ff_batfile & """ Below:")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - ******************** START Content of FFMPEG .BAT file """ & ff_batfile & """ Below:")
 	Set ff_tmp_object = fso.OpenTextFile(ff_batfile, ForReading)
 	Do Until ff_tmp_object.AtEndOfStream
 		ff_tmp_string = ff_tmp_object.ReadLine
@@ -3561,13 +3561,13 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Loop			
 	CF_status = ff_tmp_object.Close
 	Set ff_tmp_object = Nothing
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ******************** END Content of FFMPEG .BAT file """ & ff_batfile & """ Above.")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - ******************** END Content of FFMPEG .BAT file """ & ff_batfile & """ Above.")
 	' Now .Run the .bat
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ******************** About to .Run FFMPEG .BAT file """ & ff_batfile & """ :")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - ******************** About to .Run FFMPEG .BAT file """ & ff_batfile & """ :")
 	ff_run_errorlevel = wso.Run("CMD /C """ & ff_batfile & """", 7, True) '(strCommand, [intWindowStyle], [bWaitOnReturn]) ' https://ss64.com/vb/run.html
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ******************** .Run FFMPEG .BAT file """ & ff_batfile & """ Exit status :" & ff_run_errorlevel)
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - ******************** .Run FFMPEG .BAT file """ & ff_batfile & """ Exit status :" & ff_run_errorlevel)
 	' let's dump the resulting ffmpeg log
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ******************** START Content of FFMPEG LOG file """ & ff_logfile & """ Below:")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - ******************** START Content of FFMPEG LOG file """ & ff_logfile & """ Below:")
 	Set ff_tmp_object = fso.OpenTextFile(ff_logfile, ForReading)
 	Do Until ff_tmp_object.AtEndOfStream
 		ff_tmp_string = ff_tmp_object.ReadLine
@@ -3575,8 +3575,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Loop			
 	CF_status = ff_tmp_object.Close
 	Set ff_tmp_object = Nothing
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ******************** END Content of FFMPEG LOG file """ & ff_logfile & """ Above.")
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ******************** RETURNED ff_run_errorlevel=" & ff_run_errorlevel)
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - ******************** END Content of FFMPEG LOG file """ & ff_logfile & """ Above.")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - ******************** RETURNED ff_run_errorlevel=" & ff_run_errorlevel)
 	CF_exe_status = ff_run_errorlevel
 	If (CF_exe_status <> 0) OR (NOT fso.FileExists(CF_TARGET_AbsolutePathName)) Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - FFMPEG Error - CF_exe_status=""" & CF_exe_status & """ with ff_cmd_string=""" & ff_cmd_string)
@@ -3585,11 +3585,11 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			WScript.StdOut.WriteLine("VRDTVS DEV: vrdtvs_DEVELOPMENT_NO_ACTIONS: DEV: vrdtvs_Convert_File NOT moving file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 		Else
 			vrdtvs_status = vrdtvs_move_files_to_folder(CF_FILE_AbsolutePathName, CF_failed_conversion_TS_Folder)
-			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
-			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
-			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
-			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
-			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 		End If
 		On Error goto 0
 		'WScript.Quit 17 ' Error 17 = cannot perform the requested operation
@@ -3599,7 +3599,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	vrdtvs_status = vrdtvs_delete_a_file(ff_logfile, True)		' Delete the .bat file to be created with the ffmpeg command
 	vrdtvs_status = vrdtvs_delete_a_file(ff_batfile, True)		' Delete the .bat file to be created with the ffmpeg command
 	ff_timerEnd = Timer
-    WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ffmpeg command completed with Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(ff_timerStart, ff_timerEnd))
+    WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - ffmpeg command completed with Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(ff_timerStart, ff_timerEnd))
 	' ++++ END Run the ffmpeg command
 	'
 	' after ffmpeg, do an ADSCAN over the TARGET file and save the .bprj in the target folder as an "associated .bprj" which will be picked up by auto-bprj-processing during bulk file renames :)
@@ -3619,7 +3619,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		CF_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string) ' write the ADSCAN String to be executed
 		CF_object_saved_ffmpeg_commands.WriteLine("REM")
 		' do the actual ADCSAN command (delete the BPRJ file first)
-		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ******************** Start of run ADSCAN """ & CF_exe_cmd_string & """ :")
+		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - ******************** Start of run ADSCAN """ & CF_exe_cmd_string & """ :")
 		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: Doing ADSCAN for """ & CF_TARGET_AbsolutePathName & """ ... ")
 		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ADSCAN command: " & CF_exe_cmd_string)
 		vrdtvs_status = vrdtvs_delete_a_file(CF_BPRJ_AbsolutePathName, True) ' True=silently delete it
@@ -3639,9 +3639,9 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			vrdtvs_Convert_File = -1
 			Exit Function
 		End If
-		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ******************** End of run ADSCAN """ & CF_exe_cmd_string & """ ")
+		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - ******************** End of run ADSCAN """ & CF_exe_cmd_string & """ ")
 		ff_timerEnd = Timer
-		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File - ADSCAN command completed with Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(ff_timerStart, ff_timerEnd))
+		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - ADSCAN command completed with Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(ff_timerStart, ff_timerEnd))
 		' ++++ END Run the ffmpeg command
 	End If
 	'
@@ -3662,11 +3662,11 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS DEV: vrdtvs_DEVELOPMENT_NO_ACTIONS: DEV: vrdtvs_Convert_File NOT moving file to DONE folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_done_TS_Folder & """")
 	Else
 		vrdtvs_status = vrdtvs_move_files_to_folder(CF_FILE_AbsolutePathName, CF_done_TS_Folder)
-		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File moved file to DONE folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_done_TS_Folder & """")
+		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: moved file to DONE folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_done_TS_Folder & """")
 	End If
 	vrdtvs_Convert_File = 0				
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File FINISHED " & vrdtvs_current_datetime_string() & " ======================================================================================================================================================")
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File FINISHED " & vrdtvs_current_datetime_string() & " ======================================================================================================================================================")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: FINISHED " & vrdtvs_current_datetime_string() & " ======================================================================================================================================================")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: FINISHED " & vrdtvs_current_datetime_string() & " ======================================================================================================================================================")
 End Function
 '
 Function vrdtvs_writeline_for_vpy (vpy_filename_object, bat_filename_object, a_vpy_statement, prepend_string, append_string)
