@@ -3337,7 +3337,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-c:v copy " &_
 							"-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
 							"-movflags +faststart+write_colr " &_
-							"-af ""adelay=delays=""" & A_Audio_Delay_ms & "ms:all=1""" &_
+							"-af ""adelay=delays=""" & A_Audio_Delay_ms & "ms:all=1"""
 							' removed this line, since ffmpeg throws an error due to "-c:v copy" and this together: "-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
 							' removed this line since ffmpeg throws an error "-profile:v high -level 5.2 -movflags +faststart+write_colr " &_
 			If Ucase(A_Codec_legacy) = Ucase("AAC LC") Then
