@@ -16,4 +16,6 @@ cscript //nologo "E:\GIT-REPOSITORIES\VRDTVSP\VRDTVS_001.vbs" ^
 /vrd_version_for_adscan:5 ^
 /do_adscan:True >> .\0-TEST-RUN-VRDTSV_001-BATCH.log 2>&1
 
-exit %ERRORLEVEL%
+
+SET EL=%ERRORLEVEL%
+exit %EL%
