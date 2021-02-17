@@ -3337,7 +3337,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-c:v copy " &_
 							"-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
 							"-movflags +faststart+write_colr " &_
-							"-af ""adelay=delays=""" & A_Audio_Delay_ms & "ms:all=1"""
+							"-af ""adelay=delays=" & A_Audio_Delay_ms & "ms:all=1"""
 							' removed this line, since ffmpeg throws an error due to "-c:v copy" and this together: "-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
 							' removed this line since ffmpeg throws an error "-profile:v high -level 5.2 -movflags +faststart+write_colr " &_
 			If Ucase(A_Codec_legacy) = Ucase("AAC LC") Then
@@ -3369,7 +3369,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-maxrate:v " & FF_V_Target_Maximum_BitRate & " " &_
 							"-bufsize " & FF_V_Target_BufSize & " " &_
 							"-profile:v high -level 5.2 -movflags +faststart+write_colr " &_
-							"-af ""adelay=delays=""" & A_Audio_Delay_ms & "ms:all=1""" &_
+							"-af ""adelay=delays=" & A_Audio_Delay_ms & "ms:all=1""" &_
 							"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
 							" -y """ & CF_TARGET_AbsolutePathName & """"
 			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ========== Created ffmpeg_cmd_string, hopefully Progressive/MPEG2 vs file: " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
@@ -3402,7 +3402,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-maxrate:v " & FF_V_Target_Maximum_BitRate & " " &_
 							"-bufsize " & FF_V_Target_BufSize & " " &_
 							"-profile:v high -level 5.2 -movflags +faststart+write_colr " &_
-							"-af ""adelay=delays=""" & A_Audio_Delay_ms & "ms:all=1""" &_
+							"-af ""adelay=delays=" & A_Audio_Delay_ms & "ms:all=1""" &_
 							"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
 							" -y """ & CF_TARGET_AbsolutePathName & """"
 			If Footy_found Then	' Must be AVC Interlaced Footy to pass this test, USE DIFFERENT SETTINGS since we deinterlace with double framerate
@@ -3424,7 +3424,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 								"-maxrate:v " & Footy_FF_V_Target_Maximum_BitRate & " " &_
 								"-bufsize " & Footy_FF_V_Target_BufSize & " " &_
 								"-profile:v high -level 5.2 -movflags +faststart+write_colr " &_
-								"-af ""adelay=delays=""" & A_Audio_Delay_ms & "ms:all=1""" &_
+								"-af ""adelay=delays=" & A_Audio_Delay_ms & "ms:all=1""" &_
 								"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
 								" -y """ & CF_TARGET_AbsolutePathName & """"
 				WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ========== FOOTY detected, hopefully Interlaced/AVC vs file: " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
@@ -3452,7 +3452,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-maxrate:v " & FF_V_Target_Maximum_BitRate & " " &_
 							"-bufsize " & FF_V_Target_BufSize & " " &_
 							"-profile:v high -level 5.2 -movflags +faststart+write_colr " &_
-							"-af ""adelay=delays=""" & A_Audio_Delay_ms & "ms:all=1""" &_
+							"-af ""adelay=delays=" & A_Audio_Delay_ms & "ms:all=1""" &_
 							"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
 							" -y """ & CF_TARGET_AbsolutePathName & """"
 			' Leave MPEG2 Interlaced Footy alone, as if it were a normal video file ... no code for MPEG2 Interlaced Footy in here
