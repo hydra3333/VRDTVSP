@@ -2983,8 +2983,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Dim Q_V_FrameRate_Den
 	Dim Q_V_FrameRate_Original_Num
 	Dim Q_V_FrameRate_Original_Den
-	Dim Q_Frame_Rate_FF
-	Dim Q_Avg_Frame_Rate_FF
+	Dim Q_V_Frame_Rate_FF
+	Dim Q_V_Avg_Frame_Rate_FF
 	Q_V_FrameRate_Mode = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Mode", CF_QSF_AbsolutePathName, "")
 	Q_V_FrameRate_Mode_String = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Mode/String", CF_QSF_AbsolutePathName, "")
 	Q_V_FrameRate_Mode_Original = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Mode_Original", CF_QSF_AbsolutePathName, "")
