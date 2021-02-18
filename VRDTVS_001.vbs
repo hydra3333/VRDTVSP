@@ -2561,6 +2561,44 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	A_CodecID							= vrdtvs_get_mediainfo_parameter("Audio", "CodecID", CF_FILE_AbsolutePathName, "")
 	A_CodecID_String					= vrdtvs_get_mediainfo_parameter("Audio", "CodecID/String", CF_FILE_AbsolutePathName, "")
 	A_Video_Delay_ms					= vrdtvs_get_mediainfo_parameter("Audio", "Video_Delay", CF_FILE_AbsolutePathName, "")
+	Dim V_FrameRate_Mode
+	Dim V_FrameRate_Mode_String
+	Dim V_FrameRate_Mode_Original
+	Dim V_FrameRate_Mode_Original_String
+	Dim V_FrameRate
+	Dim V_FrameRate_String
+	Dim V_FrameRate_Minimum
+	Dim V_FrameRate_Minimum_String
+	Dim V_FrameRate_Nominal
+	Dim V_FrameRate_Nominal_String
+	Dim V_FrameRate_Maximum
+	Dim V_FrameRate_Maximum_String
+	Dim V_FrameRate_Original
+	Dim V_FrameRate_Original_String
+	Dim V_FrameRate_Num
+	Dim V_FrameRate_Den
+	Dim V_FrameRate_Original_Num
+	Dim V_FrameRate_Original_Den
+	Dim V_Frame_Rate_FF
+	Dim V_Avg_Frame_Rate_FF
+	V_FrameRate_Mode = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Mode", CF_FILE_AbsolutePathName, "")
+	V_FrameRate_Mode_String = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Mode/String", CF_FILE_AbsolutePathName, "")
+	V_FrameRate_Mode_Original = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Mode_Original", CF_FILE_AbsolutePathName, "")
+	V_FrameRate_Mode_Original_String = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Mode_Original/String", CF_FILE_AbsolutePathName, "")
+	V_FrameRate = vrdtvs_get_mediainfo_parameter("Video", "FrameRate", CF_FILE_AbsolutePathName, "")
+	V_FrameRate_String = vrdtvs_get_mediainfo_parameter("Video", "FrameRate/String", CF_FILE_AbsolutePathName, "")
+	V_FrameRate_Minimum = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Minimum", CF_FILE_AbsolutePathName, "")
+	V_FrameRate_Minimum_String = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Minimum/String", CF_FILE_AbsolutePathName, "")
+	V_FrameRate_Nominal = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Nominal", CF_FILE_AbsolutePathName, "")
+	V_FrameRate_Nominal_String = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Nominal/String", CF_FILE_AbsolutePathName, "")
+	V_FrameRate_Maximum = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Maximum", CF_FILE_AbsolutePathName, "")
+	V_FrameRate_Maximum_String = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Maximum/String", CF_FILE_AbsolutePathName, "")
+	V_FrameRate_Original = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Original", CF_FILE_AbsolutePathName, "")
+	V_FrameRate_Original_String = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Original/String", CF_FILE_AbsolutePathName, "")
+	V_FrameRate_Num = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Num", CF_FILE_AbsolutePathName, "")
+	V_FrameRate_Den = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Den", CF_FILE_AbsolutePathName, "")
+	V_FrameRate_Original_Num = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Original_Num", CF_FILE_AbsolutePathName, "")
+	V_FrameRate_Original_Den = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Original_Den", CF_FILE_AbsolutePathName, "")
 	' Obtain SOURCE media file characteristics via ffprobe 
 	V_CodecID_FF						= vrdtvs_get_ffprobe_video_stream_parameter("codec_name", CF_FILE_AbsolutePathName)  
 	V_CodecID_String_FF					= vrdtvs_get_ffprobe_video_stream_parameter("codec_tag_string", CF_FILE_AbsolutePathName)  
@@ -2568,7 +2606,9 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	V_Height_FF							= vrdtvs_get_ffprobe_video_stream_parameter("height", CF_FILE_AbsolutePathName)  
 	V_Duration_s_FF						= vrdtvs_get_ffprobe_video_stream_parameter("duration", CF_FILE_AbsolutePathName)  
 	V_BitRate_FF						= vrdtvs_get_ffprobe_video_stream_parameter("bit_rate", CF_FILE_AbsolutePathName)  
-	V_BitRate_Maximum_FF				= vrdtvs_get_ffprobe_video_stream_parameter("max_bit_rate", CF_FILE_AbsolutePathName)  
+	V_BitRate_Maximum_FF				= vrdtvs_get_ffprobe_video_stream_parameter("max_bit_rate", CF_FILE_AbsolutePathName)
+	V_Frame_Rate_FF						= vrdtvs_get_ffprobe_video_stream_parameter("r_frame_rate", CF_FILE_AbsolutePathName)
+	V_Avg_Frame_Rate_FF					= vrdtvs_get_ffprobe_video_stream_parameter("avg_frame_rate", CF_FILE_AbsolutePathName)
 	' Fix up the mediainfo parameters retrieved
 	V_DisplayAspectRatio_String_slash	= Replace(V_DisplayAspectRatio_String,":","/",1,-1,vbTextCompare)  ' Replace(string,find,replacewith[,start[,count[,compare]]])
 	If Ucase(V_Codec_legacy) = Ucase("MPEG-2V") Then
@@ -2667,6 +2707,26 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_Duration_s_FF=""" & V_Duration_s_FF & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_BitRate_FF=""" & V_BitRate_FF & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_BitRate_Maximum_FF=""" & V_BitRate_Maximum_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_FrameRate_Mode=""" & V_FrameRate_Mode & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_FrameRate_Mode_String=""" & V_FrameRate_Mode_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_FrameRate_Mode_Original=""" & V_FrameRate_Mode_Original & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_FrameRate_Mode_Original_String=""" & V_FrameRate_Mode_Original_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_FrameRate=""" & V_FrameRate & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_FrameRate_String=""" & V_FrameRate_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_FrameRate_Minimum=""" & V_FrameRate_Minimum & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_FrameRate_Minimum_String=""" & V_FrameRate_Minimum_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_FrameRate_Nominal=""" & V_FrameRate_Nominal & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_FrameRate_Nominal_String=""" & V_FrameRate_Nominal_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_FrameRate_Maximum=""" & V_FrameRate_Maximum & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_FrameRate_Maximum_String=""" & V_FrameRate_Maximum_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_FrameRate_Original=""" & V_FrameRate_Original & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_FrameRate_Original_String=""" & V_FrameRate_Original_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_FrameRate_Num=""" & V_FrameRate_Num & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_FrameRate_Den=""" & V_FrameRate_Den & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_FrameRate_Original_Num=""" & V_FrameRate_Original_Num & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_FrameRate_Original_Den=""" & V_FrameRate_Original_Den & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_Frame_Rate_FF=""" & V_Frame_Rate_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_Avg_Frame_Rate_FF=""" & V_Avg_Frame_Rate_FF & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File adjusted SOURCE media characteristics above") 
 	End If
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ======================================================================================================================================================")
@@ -2753,6 +2813,26 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_Duration_s_FF=""" & V_Duration_s_FF & """") 
 	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_BitRate_FF=""" & V_BitRate_FF & """") 
 	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_BitRate_Maximum_FF=""" & V_BitRate_Maximum_FF & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_FrameRate_Mode=""" & V_FrameRate_Mode & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_FrameRate_Mode_String=""" & V_FrameRate_Mode_String & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_FrameRate_Mode_Original=""" & V_FrameRate_Mode_Original & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_FrameRate_Mode_Original_String=""" & V_FrameRate_Mode_Original_String & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_FrameRate=""" & V_FrameRate & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_FrameRate_String=""" & V_FrameRate_String & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_FrameRate_Minimum=""" & V_FrameRate_Minimum & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_FrameRate_Minimum_String=""" & V_FrameRate_Minimum_String & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_FrameRate_Nominal=""" & V_FrameRate_Nominal & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_FrameRate_Nominal_String=""" & V_FrameRate_Nominal_String & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_FrameRate_Maximum=""" & V_FrameRate_Maximum & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_FrameRate_Maximum_String=""" & V_FrameRate_Maximum_String & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_FrameRate_Original=""" & V_FrameRate_Original & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_FrameRate_Original_String=""" & V_FrameRate_Original_String & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_FrameRate_Num=""" & V_FrameRate_Num & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_FrameRate_Den=""" & V_FrameRate_Den & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_FrameRate_Original_Num=""" & V_FrameRate_Original_Num & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_FrameRate_Original_Den=""" & V_FrameRate_Original_Den & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_Frame_Rate_FF=""" & V_Frame_Rate_FF & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_Avg_Frame_Rate_FF=""" & V_Avg_Frame_Rate_FF & """") 
 	CF_object_saved_ffmpeg_commands.WriteLine("REM  adjusted SOURCE media characteristics above") 
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	CF_object_saved_ffmpeg_commands.WriteLine("REM Do the QSF for """ & CF_FILE_AbsolutePathName & """ ... " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
@@ -2885,6 +2965,44 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Q_A_CodecID							= vrdtvs_get_mediainfo_parameter("Audio", "CodecID", CF_QSF_AbsolutePathName, "")
 	Q_A_CodecID_String					= vrdtvs_get_mediainfo_parameter("Audio", "CodecID/String", CF_QSF_AbsolutePathName, "")
 	Q_A_Video_Delay_ms					= vrdtvs_get_mediainfo_parameter("Audio", "Video_Delay", CF_QSF_AbsolutePathName, "")
+	Dim Q_V_FrameRate_Mode
+	Dim Q_V_FrameRate_Mode_String
+	Dim Q_V_FrameRate_Mode_Original
+	Dim Q_V_FrameRate_Mode_Original_String
+	Dim Q_V_FrameRate
+	Dim Q_V_FrameRate_String
+	Dim Q_V_FrameRate_Minimum
+	Dim Q_V_FrameRate_Minimum_String
+	Dim Q_V_FrameRate_Nominal
+	Dim Q_V_FrameRate_Nominal_String
+	Dim Q_V_FrameRate_Maximum
+	Dim Q_V_FrameRate_Maximum_String
+	Dim Q_V_FrameRate_Original
+	Dim Q_V_FrameRate_Original_String
+	Dim Q_V_FrameRate_Num
+	Dim Q_V_FrameRate_Den
+	Dim Q_V_FrameRate_Original_Num
+	Dim Q_V_FrameRate_Original_Den
+	Dim Q_Frame_Rate_FF
+	Dim Q_Avg_Frame_Rate_FF
+	Q_V_FrameRate_Mode = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Mode", CF_QSF_AbsolutePathName, "")
+	Q_V_FrameRate_Mode_String = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Mode/String", CF_QSF_AbsolutePathName, "")
+	Q_V_FrameRate_Mode_Original = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Mode_Original", CF_QSF_AbsolutePathName, "")
+	Q_V_FrameRate_Mode_Original_String = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Mode_Original/String", CF_QSF_AbsolutePathName, "")
+	Q_V_FrameRate = vrdtvs_get_mediainfo_parameter("Video", "FrameRate", CF_QSF_AbsolutePathName, "")
+	Q_V_FrameRate_String = vrdtvs_get_mediainfo_parameter("Video", "FrameRate/String", CF_QSF_AbsolutePathName, "")
+	Q_V_FrameRate_Minimum = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Minimum", CF_QSF_AbsolutePathName, "")
+	Q_V_FrameRate_Minimum_String = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Minimum/String", CF_QSF_AbsolutePathName, "")
+	Q_V_FrameRate_Nominal = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Nominal", CF_QSF_AbsolutePathName, "")
+	Q_V_FrameRate_Nominal_String = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Nominal/String", CF_QSF_AbsolutePathName, "")
+	Q_V_FrameRate_Maximum = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Maximum", CF_QSF_AbsolutePathName, "")
+	Q_V_FrameRate_Maximum_String = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Maximum/String", CF_QSF_AbsolutePathName, "")
+	Q_V_FrameRate_Original = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Original", CF_QSF_AbsolutePathName, "")
+	Q_V_FrameRate_Original_String = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Original/String", CF_QSF_AbsolutePathName, "")
+	Q_V_FrameRate_Num = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Num", CF_QSF_AbsolutePathName, "")
+	Q_V_FrameRate_Den = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Den", CF_QSF_AbsolutePathName, "")
+	Q_V_FrameRate_Original_Num = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Original_Num", CF_QSF_AbsolutePathName, "")
+	Q_V_FrameRate_Original_Den = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Original_Den", CF_QSF_AbsolutePathName, "")
 	' Obtain QSF file characteristics via ffprobe 
 	Q_V_CodecID_FF						= vrdtvs_get_ffprobe_video_stream_parameter("codec_name", CF_QSF_AbsolutePathName)  
 	Q_V_CodecID_String_FF				= vrdtvs_get_ffprobe_video_stream_parameter("codec_tag_string", CF_QSF_AbsolutePathName)  
@@ -2893,6 +3011,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Q_V_Duration_s_FF					= vrdtvs_get_ffprobe_video_stream_parameter("duration", CF_QSF_AbsolutePathName)  
 	Q_V_BitRate_FF						= vrdtvs_get_ffprobe_video_stream_parameter("bit_rate", CF_QSF_AbsolutePathName)  
 	Q_V_BitRate_Maximum_FF				= vrdtvs_get_ffprobe_video_stream_parameter("max_bit_rate", CF_QSF_AbsolutePathName)
+	Q_V_Frame_Rate_FF					= vrdtvs_get_ffprobe_video_stream_parameter("r_frame_rate", CF_QSF_AbsolutePathName)
+	Q_V_Avg_Frame_Rate_FF				= vrdtvs_get_ffprobe_video_stream_parameter("avg_frame_rate", CF_QSF_AbsolutePathName)
 	' Fix up the QSF mediainfo parameters retrieved
 	Q_V_DisplayAspectRatio_String_slash	= Replace(Q_V_DisplayAspectRatio_String,":","/",1,-1,vbTextCompare)  ' Replace(string,find,replacewith[,start[,count[,compare]]])
 	'
@@ -3020,6 +3140,26 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_Duration_s_FF=""" & Q_V_Duration_s_FF & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_BitRate_FF=""" & Q_V_BitRate_FF & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_BitRate_Maximum_FF=""" & Q_V_BitRate_Maximum_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_FrameRate_Mode=""" & Q_V_FrameRate_Mode & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_FrameRate_Mode_String=""" & Q_V_FrameRate_Mode_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_FrameRate_Mode_Original=""" & Q_V_FrameRate_Mode_Original & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_FrameRate_Mode_Original_String=""" & Q_V_FrameRate_Mode_Original_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_FrameRate=""" & Q_V_FrameRate & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_FrameRate_String=""" & Q_V_FrameRate_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_FrameRate_Minimum=""" & Q_V_FrameRate_Minimum & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_FrameRate_Minimum_String=""" & Q_V_FrameRate_Minimum_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_FrameRate_Nominal=""" & Q_V_FrameRate_Nominal & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_FrameRate_Nominal_String=""" & Q_V_FrameRate_Nominal_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_FrameRate_Maximum=""" & Q_V_FrameRate_Maximum & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_FrameRate_Maximum_String=""" & Q_V_FrameRate_Maximum_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_FrameRate_Original=""" & Q_V_FrameRate_Original & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_FrameRate_Original_String=""" & Q_V_FrameRate_Original_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_FrameRate_Num=""" & Q_V_FrameRate_Num & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_FrameRate_Den=""" & Q_V_FrameRate_Den & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_FrameRate_Original_Num=""" & Q_V_FrameRate_Original_Num & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_FrameRate_Original_Den=""" & Q_V_FrameRate_Original_Den & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_Frame_Rate_FF=""" & Q_V_Frame_Rate_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_Avg_Frame_Rate_FF=""" & Q_V_Avg_Frame_Rate_FF & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_INCOMING_BITRATE_MEDIAINFO=""" & V_INCOMING_BITRATE_MEDIAINFO & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_INCOMING_BITRATE_FFPROBE=""" & V_INCOMING_BITRATE_FFPROBE & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_INCOMING_BITRATE_QSF_LOG=""" & V_INCOMING_BITRATE_QSF_LOG & """") 
@@ -3098,6 +3238,26 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_Duration_s_FF=""" & Q_V_Duration_s_FF & """") 
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_BitRate_FF=""" & Q_V_BitRate_FF & """") 
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_BitRate_Maximum_FF=""" & Q_V_BitRate_Maximum_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_FrameRate_Mode=""" & Q_V_FrameRate_Mode & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_FrameRate_Mode_String=""" & Q_V_FrameRate_Mode_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_FrameRate_Mode_Original=""" & Q_V_FrameRate_Mode_Original & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_FrameRate_Mode_Original_String=""" & Q_V_FrameRate_Mode_Original_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_FrameRate=""" & Q_V_FrameRate & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_FrameRate_String=""" & Q_V_FrameRate_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_FrameRate_Minimum=""" & Q_V_FrameRate_Minimum & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_FrameRate_Minimum_String=""" & Q_V_FrameRate_Minimum_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_FrameRate_Nominal=""" & Q_V_FrameRate_Nominal & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_FrameRate_Nominal_String=""" & Q_V_FrameRate_Nominal_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_FrameRate_Maximum=""" & Q_V_FrameRate_Maximum & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_FrameRate_Maximum_String=""" & Q_V_FrameRate_Maximum_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_FrameRate_Original=""" & Q_V_FrameRate_Original & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_FrameRate_Original_String=""" & Q_V_FrameRate_Original_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_FrameRate_Num=""" & Q_V_FrameRate_Num & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_FrameRate_Den=""" & Q_V_FrameRate_Den & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_FrameRate_Original_Num=""" & Q_V_FrameRate_Original_Num & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_FrameRate_Original_Den=""" & Q_V_FrameRate_Original_Den & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_Frame_Rate_FF=""" & Q_V_Frame_Rate_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_Avg_Frame_Rate_FF=""" & Q_V_Avg_Frame_Rate_FF & """") 
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_INCOMING_BITRATE_MEDIAINFO=""" & V_INCOMING_BITRATE_MEDIAINFO & """") 
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_INCOMING_BITRATE_FFPROBE=""" & V_INCOMING_BITRATE_FFPROBE & """") 
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_INCOMING_BITRATE_QSF_LOG=""" & V_INCOMING_BITRATE_QSF_LOG & """") 
@@ -3173,6 +3333,22 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_Duration_s_FF=""" & Q_V_Duration_s_FF & """") 
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_BitRate_FF=""" & Q_V_BitRate_FF & """") 
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_BitRate_Maximum_FF=""" & Q_V_BitRate_Maximum_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_FrameRate=""" & Q_V_FrameRate & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_FrameRate_String=""" & Q_V_FrameRate_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_FrameRate_Minimum=""" & Q_V_FrameRate_Minimum & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_FrameRate_Minimum_String=""" & Q_V_FrameRate_Minimum_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_FrameRate_Nominal=""" & Q_V_FrameRate_Nominal & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_FrameRate_Nominal_String=""" & Q_V_FrameRate_Nominal_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_FrameRate_Maximum=""" & Q_V_FrameRate_Maximum & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_FrameRate_Maximum_String=""" & Q_V_FrameRate_Maximum_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_FrameRate_Original=""" & Q_V_FrameRate_Original & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_FrameRate_Original_String=""" & Q_V_FrameRate_Original_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_FrameRate_Num=""" & Q_V_FrameRate_Num & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_FrameRate_Den=""" & Q_V_FrameRate_Den & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_FrameRate_Original_Num=""" & Q_V_FrameRate_Original_Num & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_FrameRate_Original_Den=""" & Q_V_FrameRate_Original_Den & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_Frame_Rate_FF=""" & Q_V_Frame_Rate_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_Avg_Frame_Rate_FF=""" & Q_V_Avg_Frame_Rate_FF & """") 
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_INCOMING_BITRATE_MEDIAINFO=""" & V_INCOMING_BITRATE_MEDIAINFO & """") 
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_INCOMING_BITRATE_FFPROBE=""" & V_INCOMING_BITRATE_FFPROBE & """") 
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_INCOMING_BITRATE_QSF_LOG=""" & V_INCOMING_BITRATE_QSF_LOG & """") 
@@ -3686,6 +3862,44 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	T_A_CodecID							= vrdtvs_get_mediainfo_parameter("Audio", "CodecID", CF_TARGET_AbsolutePathName, "")
 	T_A_CodecID_String					= vrdtvs_get_mediainfo_parameter("Audio", "CodecID/String", CF_TARGET_AbsolutePathName, "")
 	T_A_Video_Delay_ms					= vrdtvs_get_mediainfo_parameter("Audio", "Video_Delay", CF_TARGET_AbsolutePathName, "")
+	Dim T_V_FrameRate_Mode
+	Dim T_V_FrameRate_Mode_String
+	Dim T_V_FrameRate_Mode_Original
+	Dim T_V_FrameRate_Mode_Original_String
+	Dim T_V_FrameRate
+	Dim T_V_FrameRate_String
+	Dim T_V_FrameRate_Minimum
+	Dim T_V_FrameRate_Minimum_String
+	Dim T_V_FrameRate_Nominal
+	Dim T_V_FrameRate_Nominal_String
+	Dim T_V_FrameRate_Maximum
+	Dim T_V_FrameRate_Maximum_String
+	Dim T_V_FrameRate_Original
+	Dim T_V_FrameRate_Original_String
+	Dim T_V_FrameRate_Num
+	Dim T_V_FrameRate_Den
+	Dim T_V_FrameRate_Original_Num
+	Dim T_V_FrameRate_Original_Den
+	Dim T_V_Frame_Rate_FF
+	Dim T_V_Avg_Frame_Rate_FF
+	T_V_FrameRate_Mode = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Mode", CF_TARGET_AbsolutePathName, "")
+	T_V_FrameRate_Mode_String = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Mode/String", CF_TARGET_AbsolutePathName, "")
+	T_V_FrameRate_Mode_Original = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Mode_Original", CF_TARGET_AbsolutePathName, "")
+	T_V_FrameRate_Mode_Original_String = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Mode_Original/String", CF_TARGET_AbsolutePathName, "")
+	T_V_FrameRate = vrdtvs_get_mediainfo_parameter("Video", "FrameRate", CF_TARGET_AbsolutePathName, "")
+	T_V_FrameRate_String = vrdtvs_get_mediainfo_parameter("Video", "FrameRate/String", CF_TARGET_AbsolutePathName, "")
+	T_V_FrameRate_Minimum = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Minimum", CF_TARGET_AbsolutePathName, "")
+	T_V_FrameRate_Minimum_String = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Minimum/String", CF_TARGET_AbsolutePathName, "")
+	T_V_FrameRate_Nominal = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Nominal", CF_TARGET_AbsolutePathName, "")
+	T_V_FrameRate_Nominal_String = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Nominal/String", CF_TARGET_AbsolutePathName, "")
+	T_V_FrameRate_Maximum = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Maximum", CF_TARGET_AbsolutePathName, "")
+	T_V_FrameRate_Maximum_String = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Maximum/String", CF_TARGET_AbsolutePathName, "")
+	T_V_FrameRate_Original = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Original", CF_TARGET_AbsolutePathName, "")
+	T_V_FrameRate_Original_String = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Original/String", CF_TARGET_AbsolutePathName, "")
+	T_V_FrameRate_Num = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Num", CF_TARGET_AbsolutePathName, "")
+	T_V_FrameRate_Den = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Den", CF_TARGET_AbsolutePathName, "")
+	T_V_FrameRate_Original_Num = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Original_Num", CF_TARGET_AbsolutePathName, "")
+	T_V_FrameRate_Original_Den = vrdtvs_get_mediainfo_parameter("Video", "FrameRate_Original_Den", CF_TARGET_AbsolutePathName, "")
 	' Obtain TARGET file characteristics via ffprobe 
 	T_V_CodecID_FF						= vrdtvs_get_ffprobe_video_stream_parameter("codec_name", CF_TARGET_AbsolutePathName)  
 	T_V_CodecID_String_FF				= vrdtvs_get_ffprobe_video_stream_parameter("codec_tag_string", CF_TARGET_AbsolutePathName)  
@@ -3694,6 +3908,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	T_V_Duration_s_FF					= vrdtvs_get_ffprobe_video_stream_parameter("duration", CF_TARGET_AbsolutePathName)  
 	T_V_BitRate_FF						= vrdtvs_get_ffprobe_video_stream_parameter("bit_rate", CF_TARGET_AbsolutePathName)  
 	T_V_BitRate_Maximum_FF				= vrdtvs_get_ffprobe_video_stream_parameter("max_bit_rate", CF_TARGET_AbsolutePathName)
+	T_V_Frame_Rate_FF					= vrdtvs_get_ffprobe_video_stream_parameter("r_frame_rate", CF_TARGET_AbsolutePathName)
+	T_V_Avg_Frame_Rate_FF				= vrdtvs_get_ffprobe_video_stream_parameter("avg_frame_rate", CF_TARGET_AbsolutePathName)
 	' Fix up the TARGET mediainfo parameters retrieved
 	T_V_DisplayAspectRatio_String_slash	= Replace(T_V_DisplayAspectRatio_String,":","/",1,-1,vbTextCompare)  ' Replace(string,find,replacewith[,start[,count[,compare]]])
 	'
@@ -3781,6 +3997,26 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_Duration_s_FF=""" & T_V_Duration_s_FF & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_BitRate_FF=""" & T_V_BitRate_FF & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_BitRate_Maximum_FF=""" & T_V_BitRate_Maximum_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_FrameRate_Mode=""" & T_V_FrameRate_Mode & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_FrameRate_Mode_String=""" & T_V_FrameRate_Mode_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_FrameRate_Mode_Original=""" & T_V_FrameRate_Mode_Original & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_FrameRate_Mode_Original_String=""" & T_V_FrameRate_Mode_Original_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_FrameRate=""" & T_V_FrameRate & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_FrameRate_String=""" & T_V_FrameRate_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_FrameRate_Minimum=""" & T_V_FrameRate_Minimum & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_FrameRate_Minimum_String=""" & T_V_FrameRate_Minimum_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_FrameRate_Nominal=""" & T_V_FrameRate_Nominal & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_FrameRate_Nominal_String=""" & T_V_FrameRate_Nominal_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_FrameRate_Maximum=""" & T_V_FrameRate_Maximum & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_FrameRate_Maximum_String=""" & T_V_FrameRate_Maximum_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_FrameRate_Original=""" & T_V_FrameRate_Original & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_FrameRate_Original_String=""" & T_V_FrameRate_Original_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_FrameRate_Num=""" & T_V_FrameRate_Num & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_FrameRate_Den=""" & T_V_FrameRate_Den & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_FrameRate_Original_Num=""" & T_V_FrameRate_Original_Num & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_FrameRate_Original_Den=""" & T_V_FrameRate_Original_Den & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_Frame_Rate_FF=""" & T_V_Frame_Rate_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_Avg_Frame_Rate_FF=""" & T_V_Avg_Frame_Rate_FF & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_INCOMING_BITRATE_MEDIAINFO=""" & V_INCOMING_BITRATE_MEDIAINFO & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_INCOMING_BITRATE_FFPROBE=""" & V_INCOMING_BITRATE_FFPROBE & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_INCOMING_BITRATE_QSF_LOG=""" & V_INCOMING_BITRATE_QSF_LOG & """") 
