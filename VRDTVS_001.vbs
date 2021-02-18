@@ -2448,6 +2448,35 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Dim Q_A_Audio_Delay_ms
 	Dim Q_A_Audio_Delay_ms_legacy
 	'
+	Dim T_V_Codec_legacy
+	Dim T_V_Format_legacy
+	Dim T_V_DisplayAspectRatio_String
+	Dim T_V_PixelAspectRatio
+	Dim T_V_ScanType
+	Dim T_V_ScanOrder
+	Dim T_V_Width
+	Dim T_V_Height
+	Dim T_V_BitRate
+	Dim T_V_BitRate_Minimum
+	Dim T_V_BitRate_Maximum
+	Dim T_A_Codec_legacy
+	Dim T_A_CodecID_legacy
+	Dim T_A_Format_legacy
+	Dim T_A_Video_Delay_ms_legacy
+	Dim T_A_CodecID
+	Dim T_A_CodecID_String
+	Dim T_A_Video_Delay_ms
+	Dim T_V_CodecID_FF
+	Dim T_V_CodecID_String_FF
+	Dim T_V_Width_FF
+	Dim T_V_Height_FF
+	Dim T_V_Duration_s_FF
+	Dim T_V_BitRate_FF
+	Dim T_V_BitRate_Maximum_FF
+	Dim T_V_DisplayAspectRatio_String_slash
+	Dim T_A_Audio_Delay_ms
+	Dim T_A_Audio_Delay_ms_legacy
+	'
 	Dim Q_ACTUAL_QSF_LOG_BITRATE
 	Dim V_INCOMING_BITRATE
 	Dim V_INCOMING_BITRATE_MEDIAINFO
@@ -3174,16 +3203,16 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	If vrdtvs_IsAVC Then ' Ucase(Q_V_Codec_legacy) = Ucase("AVC")
 		REM CALCULATE H.264 TARGET BITRATES FROM THE INCOMING BITRATE
 		REM ffmpeg nvenc typically seems to undershoot the target bitrate, so bump it up.
-		FF_V_Target_BitRate = V_INCOMING_BITRATE * 1.05			' + 5%
-		FF_V_Target_Minimum_BitRate = V_INCOMING_BITRATE * 0.20	' 20%
-		FF_V_Target_Maximum_BitRate = FF_V_Target_BitRate * 2	' double
-		FF_V_Target_BufSize = FF_V_Target_BitRate * 2			' double
+		FF_V_Target_BitRate = ROUND(V_INCOMING_BITRATE * 1.05)			' + 5%
+		FF_V_Target_Minimum_BitRate = ROUND(V_INCOMING_BITRATE * 0.20)	' 20%
+		FF_V_Target_Maximum_BitRate = ROUND(FF_V_Target_BitRate * 2)	' double
+		FF_V_Target_BufSize = ROUND(FF_V_Target_BitRate * 2)			' double
 	Else ' by  the time it gets here it must be MPEG2 flagged as vrdtvs_IsMPEG2
 		REM is MPEG2 input, so GUESS at reasonable H.264 TARGET BITRATE
 		FF_V_Target_BitRate = 2000000
 		FF_V_Target_Minimum_BitRate = 100000
-		FF_V_Target_Maximum_BitRate = FF_V_Target_BitRate * 2
-		FF_V_Target_BufSize = FF_V_Target_BitRate * 2
+		FF_V_Target_Maximum_BitRate = ROUND(FF_V_Target_BitRate * 2)
+		FF_V_Target_BufSize = ROUND(FF_V_Target_BitRate * 2)
 	End If
 	'
 	' NOTE:	After testing, it has been found that ffprobe can mis-report bitrates in the QSF'd file by about double.
@@ -3246,16 +3275,16 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	If Footy_found Then ' bump up the bitrates due o double framerate deinterlacing
 		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - FOOTY detected ... setting extended Footy_FF_V_* bitates for double-framerate conversion.")
 		vrdtvs_final_dg_deinterlace = 2	' set for double framerate deinterlace
-		Footy_FF_V_Target_BitRate = FF_V_Target_BitRate * 1.75
-		Footy_FF_V_Target_Minimum_BitRate = Footy_FF_V_Target_BitRate * 0.20
-		Footy_FF_V_Target_Maximum_BitRate = Footy_FF_V_Target_BitRate * 2
-		Footy_FF_V_Target_BufSize = Footy_FF_V_Target_BitRate * 2
+		Footy_FF_V_Target_BitRate = ROUND(FF_V_Target_BitRate * 1.75)
+		Footy_FF_V_Target_Minimum_BitRate = ROUND(Footy_FF_V_Target_BitRate * 0.20)
+		Footy_FF_V_Target_Maximum_BitRate = ROUND(Footy_FF_V_Target_BitRate * 2)
+		Footy_FF_V_Target_BufSize = ROUND(Footy_FF_V_Target_BitRate * 2)
 	Else ' default them back to non-footy settngs
 		vrdtvs_final_dg_deinterlace = 1	' set for normal single framerate deinterlace
-		Footy_FF_V_Target_BitRate = FF_V_Target_BitRate
-		Footy_FF_V_Target_Minimum_BitRate = FF_V_Target_Minimum_BitRate
-		Footy_FF_V_Target_Maximum_BitRate = FF_V_Target_Maximum_BitRate
-		Footy_FF_V_Target_BufSize = FF_V_Target_BufSize
+		Footy_FF_V_Target_BitRate = ROUND(FF_V_Target_BitRate)
+		Footy_FF_V_Target_Minimum_BitRate = ROUND(FF_V_Target_Minimum_BitRate)
+		Footy_FF_V_Target_Maximum_BitRate = ROUND(FF_V_Target_Maximum_BitRate)
+		Footy_FF_V_Target_BufSize = ROUND(FF_V_Target_BufSize)
 	End If
 	If vrdtvs_DEBUG Then 
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - CF_QSF_AbsolutePathName              =""" & CF_QSF_AbsolutePathName & """")
@@ -3378,7 +3407,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-map 0:v:0 -map 1:a:0 " &_
 							"-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
 							"-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
-							"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 12 " &_
+							"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 25 " &_
 							vrdtvs_final_RTX2060super_extra_flags & " " &_
 							"-rc:v vbr " &_
 							"-cq:v 0" & " " &_
@@ -3411,7 +3440,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-map 0:v:0 -map 1:a:0 " &_
 							"-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
 							"-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
-							"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 12 " &_
+							"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 25 " &_
 							vrdtvs_final_RTX2060super_extra_flags & " " &_
 							"-rc:v vbr " &_
 							vrdtvs_final_cq_options & " " &_
@@ -3433,7 +3462,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 								"-map 0:v:0 -map 1:a:0 " &_
 								"-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
 								"-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
-								"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 25 " &_
+								"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 50 " &_
 								vrdtvs_final_RTX2060super_extra_flags & " " &_
 								"-rc:v vbr " &_
 								vrdtvs_final_cq_options & " " &_
@@ -3461,7 +3490,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-map 0:v:0 -map 1:a:0 " &_
 							"-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
 							"-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
-							"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 12 " &_
+							"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 25 " &_
 							vrdtvs_final_RTX2060super_extra_flags & " " &_
 							"-rc:v vbr " &_
 							vrdtvs_final_cq_options & " " &_
@@ -3638,6 +3667,133 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	ff_timerEnd = Timer
     WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - ffmpeg command completed with Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(ff_timerStart, ff_timerEnd))
 	' ++++ END Run the ffmpeg command
+	' Obtain TARGET file characteristics via mediainfo 
+	T_V_Codec_legacy					= vrdtvs_get_mediainfo_parameter("Video", "Codec", CF_TARGET_AbsolutePathName, "--Legacy") 
+	T_V_Format_legacy					= vrdtvs_get_mediainfo_parameter("Video", "Format", CF_TARGET_AbsolutePathName, "--Legacy") 
+	T_V_DisplayAspectRatio_String		= vrdtvs_get_mediainfo_parameter("Video", "DisplayAspectRatio/String", CF_TARGET_AbsolutePathName, "")
+	T_V_PixelAspectRatio				= vrdtvs_get_mediainfo_parameter("Video", "PixelAspectRatio", CF_TARGET_AbsolutePathName, "")
+	T_V_ScanType						= vrdtvs_get_mediainfo_parameter("Video", "ScanType", CF_TARGET_AbsolutePathName, "")
+	T_V_ScanOrder 						= vrdtvs_get_mediainfo_parameter("Video", "ScanOrder", CF_TARGET_AbsolutePathName, "")
+	T_V_Width							= vrdtvs_get_mediainfo_parameter("Video", "Width", CF_TARGET_AbsolutePathName, "")
+	T_V_Height							= vrdtvs_get_mediainfo_parameter("Video", "Height", CF_TARGET_AbsolutePathName, "")
+	T_V_BitRate							= vrdtvs_get_mediainfo_parameter("Video", "BitRate", CF_TARGET_AbsolutePathName, "")
+	T_V_BitRate_Minimum					= vrdtvs_get_mediainfo_parameter("Video", "BitRate_Minimum", CF_TARGET_AbsolutePathName, "")
+	T_V_BitRate_Maximum					= vrdtvs_get_mediainfo_parameter("Video", "BitRate_Maximum", CF_TARGET_AbsolutePathName, "")
+	T_A_Codec_legacy					= vrdtvs_get_mediainfo_parameter("Audio", "Codec", CF_TARGET_AbsolutePathName, "--Legacy")
+	T_A_CodecID_legacy					= vrdtvs_get_mediainfo_parameter("Audio", "CodecID", CF_TARGET_AbsolutePathName, "--Legacy") 
+	T_A_Format_legacy					= vrdtvs_get_mediainfo_parameter("Audio", "Format", CF_TARGET_AbsolutePathName, "--Legacy") 
+	T_A_Video_Delay_ms_legacy			= vrdtvs_get_mediainfo_parameter("Audio", "Video_Delay", CF_TARGET_AbsolutePathName, "--Legacy") 
+	T_A_CodecID							= vrdtvs_get_mediainfo_parameter("Audio", "CodecID", CF_TARGET_AbsolutePathName, "")
+	T_A_CodecID_String					= vrdtvs_get_mediainfo_parameter("Audio", "CodecID/String", CF_TARGET_AbsolutePathName, "")
+	T_A_Video_Delay_ms					= vrdtvs_get_mediainfo_parameter("Audio", "Video_Delay", CF_TARGET_AbsolutePathName, "")
+	' Obtain TARGET file characteristics via ffprobe 
+	T_V_CodecID_FF						= vrdtvs_get_ffprobe_video_stream_parameter("codec_name", CF_TARGET_AbsolutePathName)  
+	T_V_CodecID_String_FF				= vrdtvs_get_ffprobe_video_stream_parameter("codec_tag_string", CF_TARGET_AbsolutePathName)  
+	T_V_Width_FF						= vrdtvs_get_ffprobe_video_stream_parameter("width", CF_TARGET_AbsolutePathName)  
+	T_V_Height_FF						= vrdtvs_get_ffprobe_video_stream_parameter("height", CF_TARGET_AbsolutePathName)  
+	T_V_Duration_s_FF					= vrdtvs_get_ffprobe_video_stream_parameter("duration", CF_TARGET_AbsolutePathName)  
+	T_V_BitRate_FF						= vrdtvs_get_ffprobe_video_stream_parameter("bit_rate", CF_TARGET_AbsolutePathName)  
+	T_V_BitRate_Maximum_FF				= vrdtvs_get_ffprobe_video_stream_parameter("max_bit_rate", CF_TARGET_AbsolutePathName)
+	' Fix up the TARGET mediainfo parameters retrieved
+	T_V_DisplayAspectRatio_String_slash	= Replace(T_V_DisplayAspectRatio_String,":","/",1,-1,vbTextCompare)  ' Replace(string,find,replacewith[,start[,count[,compare]]])
+	'
+	If T_A_Video_Delay_ms_legacy = "" Then
+		T_A_Video_Delay_ms_legacy = 0
+		T_A_Audio_Delay_ms_legacy = 0
+	Else
+		T_A_Audio_Delay_ms_legacy = 0 - T_A_Video_Delay_ms_legacy
+	End If
+	If T_A_Video_Delay_ms = "" Then
+		T_A_Video_Delay_ms = 0
+		T_A_Audio_Delay_ms = 0
+	Else
+		T_A_Audio_Delay_ms = 0 - T_A_Video_Delay_ms
+	End If
+	If T_V_ScanType = "" Then
+		T_V_ScanType = "Progressive" ' Default to Progressive
+	End If
+	If T_V_ScanType = "MBAFF" Then
+		T_V_ScanType = "Interlaced"
+	End If
+	If Ucase(T_V_ScanType) = Ucase("Interlaced") Then
+		T_vrdtvs_IsProgressive = False
+		T_vrdtvs_IsInterlaced = True
+	ElseIf Ucase(T_V_ScanType) = Ucase("Progressive") Then
+		T_vrdtvs_IsProgressive = True
+		T_vrdtvs_IsInterlaced = False
+	Else
+		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - DO NOT KNOW IF TARGET IS INTERLACED OR PROGRESSIVE """ & CF_TARGET_AbsolutePathName & """ T_V_Codec_legacy=""" & T_V_Codec_legacy & """ V_ScanType=""" & T_V_ScanType & """ ... Ignoring file ...")
+		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - DO NOT KNOW IF TARGET IS INTERLACED OR PROGRESSIVE """ & CF_TARGET_AbsolutePathName & """ T_V_Codec_legacy=""" & T_V_Codec_legacy & """ T_V_ScanType=""" & T_V_ScanType & """ ... Ignoring file ...")
+		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
+			Wscript.Echo "Error 17 = cannot perform the requested operation"
+			On Error goto 0
+			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+		Else
+			Wscript.Echo "Error 17 = cannot perform the requested operation"
+			On Error goto 0
+			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+		End If
+	End If
+	If (vrdtvs_IsProgressive <> T_vrdtvs_IsProgressive) OR (vrdtvs_IsInterlaced <> T_vrdtvs_IsInterlaced) Then
+		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - UNEQUAL SOURCE AND TARGET INTERLACED/PROGRESSIVE V_ScanType=""" & V_ScanType & """ T_V_ScanType=""" & T_V_ScanType &  """ ... Ignoring file ...")
+		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - UNEQUAL SOURCE AND TARGET INTERLACED/PROGRESSIVE V_ScanType=""" & V_ScanType & """ T_V_ScanType=""" & T_V_ScanType & """ ... Ignoring file ...")
+		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
+			Wscript.Echo "Error 17 = cannot perform the requested operation"
+			On Error goto 0
+			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+		Else
+			Wscript.Echo "Error 17 = cannot perform the requested operation"
+			On Error goto 0
+			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+		End If
+	End If
+	If T_V_ScanOrder = "" Then
+		T_V_ScanOrder = "TFF" ' Default to Top Field First
+	End If
+	If vrdtvs_DEBUG Then
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File adjusted TARGET media characteristics below:") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_Codec_legacy=""" & T_V_Codec_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_Format_legacy=""" & T_V_Format_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_DisplayAspectRatio_String_slash=""" & T_V_DisplayAspectRatio_String_slash & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_PixelAspectRatio=""" & T_V_PixelAspectRatio & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_ScanType=""" & T_V_ScanType & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_ScanOrder=""" & T_V_ScanOrder & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_vrdtvs_IsProgressive=""" & T_vrdtvs_IsProgressive & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_vrdtvs_IsInterlaced=""" & T_vrdtvs_IsInterlaced & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_Width=""" & T_V_Width & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_Height=""" & T_V_Height & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_BitRate=""" & T_V_BitRate & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_BitRate_Minimum=""" & T_V_BitRate_Minimum & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_BitRate_Maximum=""" & T_V_BitRate_Maximum & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_A_Codec_legacy=""" & T_A_Codec_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_A_CodecID_legacy=""" & T_A_CodecID_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_A_Format_legacy=""" & T_A_Format_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_A_Video_Delay_ms=""" & T_A_Video_Delay_ms & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_A_Video_Delay_ms_legacy=""" & T_A_Video_Delay_ms_legacy & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_A_Audio_Delay_ms=""" & T_A_Audio_Delay_ms & """")
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_A_Audio_Delay_ms_legacy=""" & T_A_Audio_Delay_ms_legacy & """")
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_A_CodecID=""" & T_A_CodecID & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_A_CodecID_String=""" & T_A_CodecID_String & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_CodecID_FF=""" & T_V_CodecID_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_CodecID_String_FF=""" & T_V_CodecID_String_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_Width_FF=""" & T_V_Width_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_Height_FF=""" & T_V_Height_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_Duration_s_FF=""" & T_V_Duration_s_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_BitRate_FF=""" & T_V_BitRate_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_BitRate_Maximum_FF=""" & T_V_BitRate_Maximum_FF & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_INCOMING_BITRATE_MEDIAINFO=""" & V_INCOMING_BITRATE_MEDIAINFO & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_INCOMING_BITRATE_FFPROBE=""" & V_INCOMING_BITRATE_FFPROBE & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_INCOMING_BITRATE_QSF_LOG=""" & V_INCOMING_BITRATE_QSF_LOG & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_INCOMING_BITRATE=""" & V_INCOMING_BITRATE & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File adjusted TARGET media characteristics above") 
+	End If
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ======================================================================================================================================================")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: End FFMPEG of """ & CF_FILE_AbsolutePathName & """ into """ & CF_TARGET_AbsolutePathName & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: output TARGET file: T_V_Codec_legacy: """ & T_V_Codec_legacy & """ T_V_ScanType: """ & T_V_ScanType & """ T_V_ScanOrder: """ & T_V_ScanOrder & """ " & T_V_Width & "x" & T_V_Height & " dar=" & T_V_DisplayAspectRatio_String_slash & " sar=" & T_V_PixelAspectRatio & " T_A_Codec_legacy: " & T_A_Codec_legacy & " T_A_Audio_Delay_ms: " & T_A_Audio_Delay_ms & " T_A_Audio_Delay_ms_legacy: " & T_A_Audio_Delay_ms_legacy & " T_A_Video_Delay_ms: " &  T_A_Video_Delay_ms & " T_A_Video_Delay_ms_legacy: " &  T_A_Video_Delay_ms_legacy)
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: End FFMPEG of """ & CF_FILE_AbsolutePathName & """ into """ & CF_TARGET_AbsolutePathName & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ======================================================================================================================================================")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: V_INCOMING_BITRATE: Using """ & CF_FILE_AbsolutePathName & """ and """ & CF_TARGET_AbsolutePathName & """ The V_INCOMING_BITRATE=""" & V_INCOMING_BITRATE & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ======================================================================================================================================================")
 	'
 	' after ffmpeg, do an ADSCAN over the TARGET file and save the .bprj in the target folder as an "associated .bprj" which will be picked up by auto-bprj-processing during bulk file renames :)
 	If CF_do_Adscan Then
