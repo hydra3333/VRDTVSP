@@ -2578,6 +2578,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	V_Frame_Rate_FF						= vrdtvs_get_ffprobe_video_stream_parameter("r_frame_rate", CF_FILE_AbsolutePathName)
 	V_Avg_Frame_Rate_FF					= vrdtvs_get_ffprobe_video_stream_parameter("avg_frame_rate", CF_FILE_AbsolutePathName)
 	' Fix up the mediainfo parameters retrieved
+	V_FrameRate = ROUND(V_FrameRate)
 	V_DisplayAspectRatio_String_slash	= Replace(V_DisplayAspectRatio_String,":","/",1,-1,vbTextCompare)  ' Replace(string,find,replacewith[,start[,count[,compare]]])
 	If Ucase(V_Codec_legacy) = Ucase("MPEG-2V") Then
 		vrdtvs_IsAVC = False
@@ -2683,7 +2684,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	End If
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ======================================================================================================================================================")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: End Examining of SOURCE """ & CF_FILE_AbsolutePathName & """")
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: SOURCE file: V_Codec_legacy: """ & V_Codec_legacy & """ V_ScanType: """ & V_ScanType & """ V_ScanOrder: """ & V_ScanOrder & """ " & V_Width & "x" & V_Height & " dar=" & V_DisplayAspectRatio_String_slash & " sar=" & V_PixelAspectRatio & " A_Codec_legacy: " & A_Codec_legacy & " A_Audio_Delay_ms: " & A_Audio_Delay_ms & " A_Audio_Delay_ms_legacy: " & A_Audio_Delay_ms_legacy & " A_Video_Delay_ms: " &  A_Video_Delay_ms & " A_Video_Delay_ms_legacy: " &  A_Video_Delay_ms_legacy)
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: SOURCE file: " & " V_FrameRate:" & V_FrameRate & " (V_Frame_Rate_FF=" & V_Frame_Rate_FF & ") V_Codec_legacy: """ & V_Codec_legacy & """ V_ScanType: """ & V_ScanType & """ V_ScanOrder: """ & V_ScanOrder & """ " & V_Width & "x" & V_Height & " dar=" & V_DisplayAspectRatio_String_slash & " sar=" & V_PixelAspectRatio & " A_Codec_legacy: " & A_Codec_legacy & " A_Audio_Delay_ms: " & A_Audio_Delay_ms & " A_Audio_Delay_ms_legacy: " & A_Audio_Delay_ms_legacy & " A_Video_Delay_ms: " &  A_Video_Delay_ms & " A_Video_Delay_ms_legacy: " &  A_Video_Delay_ms_legacy)
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: End Exmaining of SOURCE """ & CF_FILE_AbsolutePathName & """")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ======================================================================================================================================================")
 	'
@@ -2918,6 +2919,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Q_V_Frame_Rate_FF					= vrdtvs_get_ffprobe_video_stream_parameter("r_frame_rate", CF_QSF_AbsolutePathName)
 	Q_V_Avg_Frame_Rate_FF				= vrdtvs_get_ffprobe_video_stream_parameter("avg_frame_rate", CF_QSF_AbsolutePathName)
 	' Fix up the QSF mediainfo parameters retrieved
+	Q_V_FrameRate = ROUND(Q_V_FrameRate)
 	Q_V_DisplayAspectRatio_String_slash	= Replace(Q_V_DisplayAspectRatio_String,":","/",1,-1,vbTextCompare)  ' Replace(string,find,replacewith[,start[,count[,compare]]])
 	'
 	If vrdtvs_IsMPEG2 Then ' (Ucase(Q_V_Codec_legacy) = Ucase("MPEG-2V") 
@@ -3056,7 +3058,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	End If
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ======================================================================================================================================================")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: End QSF of """ & CF_FILE_AbsolutePathName & """ into """ & CF_QSF_AbsolutePathName & """")
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: output QSF file: Q_V_Codec_legacy: """ & Q_V_Codec_legacy & """ Q_V_ScanType: """ & Q_V_ScanType & """ Q_V_ScanOrder: """ & Q_V_ScanOrder & """ " & Q_V_Width & "x" & Q_V_Height & " dar=" & Q_V_DisplayAspectRatio_String_slash & " sar=" & Q_V_PixelAspectRatio & " Q_A_Codec_legacy: " & Q_A_Codec_legacy & " Q_A_Audio_Delay_ms: " & Q_A_Audio_Delay_ms & " Q_A_Audio_Delay_ms_legacy: " & Q_A_Audio_Delay_ms_legacy & " Q_A_Video_Delay_ms: " &  Q_A_Video_Delay_ms & " Q_A_Video_Delay_ms_legacy: " &  Q_A_Video_Delay_ms_legacy)
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: output QSF file: " & " V_FrameRate:" & V_FrameRate & " (V_Frame_Rate_FF=" & V_Frame_Rate_FF & ") Q_V_Codec_legacy: """ & Q_V_Codec_legacy & """ Q_V_ScanType: """ & Q_V_ScanType & """ Q_V_ScanOrder: """ & Q_V_ScanOrder & """ " & Q_V_Width & "x" & Q_V_Height & " dar=" & Q_V_DisplayAspectRatio_String_slash & " sar=" & Q_V_PixelAspectRatio & " Q_A_Codec_legacy: " & Q_A_Codec_legacy & " Q_A_Audio_Delay_ms: " & Q_A_Audio_Delay_ms & " Q_A_Audio_Delay_ms_legacy: " & Q_A_Audio_Delay_ms_legacy & " Q_A_Video_Delay_ms: " &  Q_A_Video_Delay_ms & " Q_A_Video_Delay_ms_legacy: " &  Q_A_Video_Delay_ms_legacy)
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: End QSF of """ & CF_FILE_AbsolutePathName & """ into """ & CF_QSF_AbsolutePathName & """")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ======================================================================================================================================================")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: V_INCOMING_BITRATE: Using """ & CF_FILE_AbsolutePathName & """ and """ & CF_QSF_AbsolutePathName & """ The V_INCOMING_BITRATE=""" & V_INCOMING_BITRATE & """")
@@ -3739,6 +3741,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	T_V_Frame_Rate_FF					= vrdtvs_get_ffprobe_video_stream_parameter("r_frame_rate", CF_TARGET_AbsolutePathName)
 	T_V_Avg_Frame_Rate_FF				= vrdtvs_get_ffprobe_video_stream_parameter("avg_frame_rate", CF_TARGET_AbsolutePathName)
 	' Fix up the TARGET mediainfo parameters retrieved
+	T_V_FrameRate = ROUND(T_V_FrameRate)
 	T_V_DisplayAspectRatio_String_slash	= Replace(T_V_DisplayAspectRatio_String,":","/",1,-1,vbTextCompare)  ' Replace(string,find,replacewith[,start[,count[,compare]]])
 	'
 	If T_A_Video_Delay_ms_legacy = "" Then
@@ -3837,7 +3840,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	End If
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ======================================================================================================================================================")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: End FFMPEG of """ & CF_FILE_AbsolutePathName & """ into """ & CF_TARGET_AbsolutePathName & """")
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: output TARGET file: T_V_Codec_legacy: """ & T_V_Codec_legacy & """ T_V_ScanType: """ & T_V_ScanType & """ T_V_ScanOrder: """ & T_V_ScanOrder & """ " & T_V_Width & "x" & T_V_Height & " dar=" & T_V_DisplayAspectRatio_String_slash & " sar=" & T_V_PixelAspectRatio & " T_A_Codec_legacy: " & T_A_Codec_legacy & " T_A_Audio_Delay_ms: " & T_A_Audio_Delay_ms & " T_A_Audio_Delay_ms_legacy: " & T_A_Audio_Delay_ms_legacy & " T_A_Video_Delay_ms: " &  T_A_Video_Delay_ms & " T_A_Video_Delay_ms_legacy: " &  T_A_Video_Delay_ms_legacy)
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: output TARGET file: " & " V_FrameRate:" & V_FrameRate & " (V_Frame_Rate_FF=" & V_Frame_Rate_FF & ") T_V_Codec_legacy: """ & T_V_Codec_legacy & """ T_V_ScanType: """ & T_V_ScanType & """ T_V_ScanOrder: """ & T_V_ScanOrder & """ " & T_V_Width & "x" & T_V_Height & " dar=" & T_V_DisplayAspectRatio_String_slash & " sar=" & T_V_PixelAspectRatio & " T_A_Codec_legacy: " & T_A_Codec_legacy & " T_A_Audio_Delay_ms: " & T_A_Audio_Delay_ms & " T_A_Audio_Delay_ms_legacy: " & T_A_Audio_Delay_ms_legacy & " T_A_Video_Delay_ms: " &  T_A_Video_Delay_ms & " T_A_Video_Delay_ms_legacy: " &  T_A_Video_Delay_ms_legacy)
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: End FFMPEG of """ & CF_FILE_AbsolutePathName & """ into """ & CF_TARGET_AbsolutePathName & """")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ======================================================================================================================================================")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: V_INCOMING_BITRATE: Using """ & CF_FILE_AbsolutePathName & """ and """ & CF_TARGET_AbsolutePathName & """ The V_INCOMING_BITRATE=""" & V_INCOMING_BITRATE & """")
