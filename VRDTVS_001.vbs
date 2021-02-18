@@ -806,8 +806,7 @@ Function vrdtvs_get_ffprobe_video_stream_parameter (byVal ffp_Parameter, byVal f
     ' Note \r\n is Windows new-line, which is for the case of multiple audio streams, 
     '      it outputs a result for each stream on a new line, the first stream being the first entry,
     '      and the first audio stream should be the one we need. 
-    '      read the first line.
-    '      see if -probesize 5000M  makes any difference
+    '      read only the first line.
     ' Parameters:
     '   ffp_Parameter       name of parameter to fetch eg "duration"
     '   ffp_MediaFilename   fully qualified (Absolute) filename of the media file to query
@@ -3424,7 +3423,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							af_audio_delay_filter &_
 							"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
 							" -y """ & CF_TARGET_AbsolutePathName & """"
-			If Footy_found Then	' Must be AVC Interlaced Footy to pass this test, USE DIFFERENT SETTINGS since we deinterlace with double framerate (and use -g 50)
+			If Footy_found Then	' Must be AVC Interlaced Footy to pass this test, USE DIFFERENT SETTINGS since we deinterlace with double framerate (and use -g 25)
 				' probesize 120 Mb, analyzeduration 120 seconds 2021.02.17
 				ff_cmd_string =	"""" & vrdtvs_ffmpegexe64 & """ " &_
 								"-hide_banner -v verbose -nostats " &_
