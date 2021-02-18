@@ -2377,7 +2377,10 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Dim CF_DGI_AbsolutePathName,    CF_DGI_ParentFolderName,    CF_DGI_BaseName,    CF_DGI_Ext
 	Dim CF_DGIlog_AbsolutePathName, CF_DGIlog_ParentFolderName, CF_DGIlog_BaseName, CF_DGIlog_Ext
 	'
-	Dim vrdtvs_IsAVC, vrdtvs_IsMPEG2, vrdtvs_IsProgressive, vrdtvs_IsInterlaced, Q_vrdtvs_IsProgressive, Q_vrdtvs_IsInterlaced
+	Dim V_vrdtvs_IsAVC,     V_vrdtvs_IsMPEG2,   V_vrdtvs_IsProgressive,   V_vrdtvs_IsInterlaced
+	Dim Q_V_vrdtvs_IsAVC, Q_V_vrdtvs_IsMPEG2, Q_V_vrdtvs_IsProgressive, Q_V_vrdtvs_IsInterlaced
+	Dim T_V_vrdtvs_IsAVC, T_V_vrdtvs_IsMPEG2, T_V_vrdtvs_IsProgressive, T_V_vrdtvs_IsInterlaced
+	'
 	Dim ff_cmd_string, ff_tmp_object, ff_tmp_string, ff_logfile, ff_batfile, ff_cmd_string_for_bat, ff_run_errorlevel
 	'
 	Dim CF_QSF_logfile, CF_QSF_logfile_object, CF_QSF_logfile_line, CF_QSF_logfile_string, CF_QSF_string_array
@@ -2531,10 +2534,10 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: Entered vrdtvs_Convert_File with VALID SOURCE FILE """ & CF_FILE_AbsolutePathName & """")
 	End If
 	'
-	vrdtvs_IsAVC = False
-	vrdtvs_IsMPEG2 = False
-	vrdtvs_IsProgressive = False
-	vrdtvs_IsInterlaced = False
+	V_vrdtvs_IsAVC = False
+	V_vrdtvs_IsMPEG2 = False
+	V_vrdtvs_IsProgressive = False
+	V_vrdtvs_IsInterlaced = False
 	'
 	CF_temp_path = fso.GetAbsolutePathName(CF_temp_path & "\")
 	CF_FILE_AbsolutePathName = fso.GetAbsolutePathName(CF_FILE_AbsolutePathName) ' ENSURE AN ABSOLUTE
@@ -2580,14 +2583,15 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	' Fix up the mediainfo parameters retrieved
 	V_FrameRate = ROUND(V_FrameRate)
 	V_DisplayAspectRatio_String_slash	= Replace(V_DisplayAspectRatio_String,":","/",1,-1,vbTextCompare)  ' Replace(string,find,replacewith[,start[,count[,compare]]])
+	'
 	If Ucase(V_Codec_legacy) = Ucase("MPEG-2V") Then
-		vrdtvs_IsAVC = False
-		vrdtvs_IsMPEG2 = True
+		V_vrdtvs_IsAVC = False
+		V_vrdtvs_IsMPEG2 = True
 		vrd_extension = vrd_extension_mpeg2
 		vrd_profile_name_for_qsf = vrd_profile_name_for_qsf_mpeg2
 	ElseIf Ucase(V_Codec_legacy) = Ucase("AVC") Then
-		vrdtvs_IsAVC = True
-		vrdtvs_IsMPEG2 = False
+		V_vrdtvs_IsAVC = True
+		V_vrdtvs_IsMPEG2 = False
 		vrd_extension = vrd_extension_avc
 		vrd_profile_name_for_qsf = vrd_profile_name_for_qsf_avc
 	Else
@@ -2624,11 +2628,11 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		V_ScanType = "Interlaced"
 	End If
 	If Ucase(V_ScanType) = Ucase("Interlaced") Then
-		vrdtvs_IsProgressive = False
-		vrdtvs_IsInterlaced = True
+		V_vrdtvs_IsProgressive = False
+		V_vrdtvs_IsInterlaced = True
 	ElseIf Ucase(V_ScanType) = Ucase("Progressive") Then
-		vrdtvs_IsProgressive = True
-		vrdtvs_IsInterlaced = False
+		V_vrdtvs_IsProgressive = True
+		V_vrdtvs_IsInterlaced = False
 	Else
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - DO NOT KNOW IF SOURCE IS INTERLACED OR PROGRESSIVE """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ V_ScanType=""" & V_ScanType & """ ... Ignoring file ...")
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - DO NOT KNOW IF SOURCE IS INTERLACED OR PROGRESSIVE """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ V_ScanType=""" & V_ScanType & """ ... Ignoring file ...")
@@ -2653,8 +2657,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_PixelAspectRatio=""" & V_PixelAspectRatio & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_ScanType=""" & V_ScanType & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_ScanOrder=""" & V_ScanOrder & """")
-		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File vrdtvs_IsProgressive=""" & q_vrdtvs_IsProgressive & """") 
-		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File vrdtvs_IsInterlaced=""" & q_vrdtvs_IsInterlaced & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_vrdtvs_IsProgressive=""" & V_vrdtvs_IsProgressive & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_vrdtvs_IsInterlaced=""" & V_vrdtvs_IsInterlaced & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_Width=""" & V_Width & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_Height=""" & V_Height & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File V_BitRate=""" & V_BitRate & """") 
@@ -2743,8 +2747,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_PixelAspectRatio=""" & V_PixelAspectRatio & """") 
 	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_ScanType=""" & V_ScanType & """") 
 	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_ScanOrder=""" & V_ScanOrder & """") 
-	CF_object_saved_ffmpeg_commands.WriteLine("REM  vrdtvs_Convert_File q_vrdtvs_IsProgressive=""" & q_vrdtvs_IsProgressive & """") 
-	CF_object_saved_ffmpeg_commands.WriteLine("REM  vrdtvs_Convert_File q_vrdtvs_IsInterlaced=""" & q_vrdtvs_IsInterlaced & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_vrdtvs_IsProgressive=""" & V_vrdtvs_IsProgressive & """") 
+	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_vrdtvs_IsInterlaced=""" & V_vrdtvs_IsInterlaced & """") 
 	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_Width=""" & V_Width & """") 
 	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_Height=""" & V_Height & """") 
 	CF_object_saved_ffmpeg_commands.WriteLine("REM  V_BitRate=""" & V_BitRate & """") 
@@ -2922,8 +2926,16 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Q_V_FrameRate = ROUND(Q_V_FrameRate)
 	Q_V_DisplayAspectRatio_String_slash	= Replace(Q_V_DisplayAspectRatio_String,":","/",1,-1,vbTextCompare)  ' Replace(string,find,replacewith[,start[,count[,compare]]])
 	'
-	If vrdtvs_IsMPEG2 Then ' (Ucase(Q_V_Codec_legacy) = Ucase("MPEG-2V") 
-	ElseIf vrdtvs_IsAVC Then ' (Ucase(Q_V_Codec_legacy) = Ucase("AVC") 
+	If Ucase(Q_V_Codec_legacy) = Ucase("MPEG-2V") Then
+		Q_V_vrdtvs_IsAVC = False
+		Q_V_vrdtvs_IsMPEG2 = True
+		'vrd_extension = vrd_extension_mpeg2
+		'vrd_profile_name_for_qsf = vrd_profile_name_for_qsf_mpeg2
+	ElseIf Ucase(Q_V_Codec_legacy) = Ucase("AVC") Then
+		Q_V_vrdtvs_IsAVC = True
+		Q_V_vrdtvs_IsMPEG2 = False
+		'vrd_extension = vrd_extension_avc
+		'vrd_profile_name_for_qsf = vrd_profile_name_for_qsf_avc
 	Else
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - Unrecognised Q_V_Codec_legacy video codec """ & CF_QSF_AbsolutePathName & """ Q_V_Codec_legacy=""" & Q_V_Codec_legacy & """ ... Ignoring file ...")
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Unrecognised Q_V_Codec_legacy video codec """ & CF_QSF_AbsolutePathName & """ Q_V_Codec_legacy=""" & Q_V_Codec_legacy & """ ... Ignoring file ...")
@@ -2958,11 +2970,11 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		Q_V_ScanType = "Interlaced"
 	End If
 	If Ucase(Q_V_ScanType) = Ucase("Interlaced") Then
-		q_vrdtvs_IsProgressive = False
-		q_vrdtvs_IsInterlaced = True
+		Q_V_vrdtvs_IsProgressive = False
+		Q_V_vrdtvs_IsInterlaced = True
 	ElseIf Ucase(Q_V_ScanType) = Ucase("Progressive") Then
-		q_vrdtvs_IsProgressive = True
-		q_vrdtvs_IsInterlaced = False
+		Q_V_vrdtvs_IsProgressive = True
+		Q_V_vrdtvs_IsInterlaced = False
 	Else
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - DO NOT KNOW IF QSF IS INTERLACED OR PROGRESSIVE """ & CF_QSF_AbsolutePathName & """ Q_V_Codec_legacy=""" & Q_V_Codec_legacy & """ V_ScanType=""" & Q_V_ScanType & """ ... Ignoring file ...")
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - DO NOT KNOW IF QSF IS INTERLACED OR PROGRESSIVE """ & CF_QSF_AbsolutePathName & """ Q_V_Codec_legacy=""" & Q_V_Codec_legacy & """ Q_V_ScanType=""" & Q_V_ScanType & """ ... Ignoring file ...")
@@ -2976,7 +2988,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 	End If
-	If (vrdtvs_IsProgressive <> q_vrdtvs_IsProgressive) OR (vrdtvs_IsInterlaced <> q_vrdtvs_IsInterlaced) Then
+	If (V_vrdtvs_IsProgressive <> Q_V_vrdtvs_IsProgressive) OR (V_vrdtvs_IsInterlaced <> Q_V_vrdtvs_IsInterlaced) Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - UNEQUAL SOURCE AND QSF INTERLACED/PROGRESSIVE V_ScanType=""" & V_ScanType & """ Q_V_ScanType=""" & Q_V_ScanType &  """ ... Ignoring file ...")
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - UNEQUAL SOURCE AND QSF INTERLACED/PROGRESSIVE V_ScanType=""" & V_ScanType & """ Q_V_ScanType=""" & Q_V_ScanType & """ ... Ignoring file ...")
 		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
@@ -3023,8 +3035,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_PixelAspectRatio=""" & Q_V_PixelAspectRatio & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_ScanType=""" & Q_V_ScanType & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_ScanOrder=""" & Q_V_ScanOrder & """") 
-		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File q_vrdtvs_IsProgressive=""" & q_vrdtvs_IsProgressive & """") 
-		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File q_vrdtvs_IsInterlaced=""" & q_vrdtvs_IsInterlaced & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_vrdtvs_IsProgressive=""" & Q_V_vrdtvs_IsProgressive & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_vrdtvs_IsInterlaced=""" & Q_V_vrdtvs_IsInterlaced & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_Width=""" & Q_V_Width & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_Height=""" & Q_V_Height & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File Q_V_BitRate=""" & Q_V_BitRate & """") 
@@ -3075,8 +3087,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_PixelAspectRatio=""" & V_PixelAspectRatio & """") 
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_ScanType=""" & V_ScanType & """") 
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_ScanOrder=""" & V_ScanOrder & """") 
-		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File vrdtvs_IsProgressive=""" & vrdtvs_IsProgressive & """") 
-		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File vrdtvs_IsInterlaced=""" & vrdtvs_IsInterlaced & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_vrdtvs_IsProgressive=""" & V_vrdtvs_IsProgressive & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_vrdtvs_IsInterlaced=""" & V_vrdtvs_IsInterlaced & """") 
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_Width=""" & V_Width & """") 
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_Height=""" & V_Height & """") 
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File V_BitRate=""" & V_BitRate & """") 
@@ -3105,8 +3117,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_PixelAspectRatio=""" & Q_V_PixelAspectRatio & """") 
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_ScanType=""" & Q_V_ScanType & """") 
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_ScanOrder=""" & Q_V_ScanOrder & """") 
-		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File q_vrdtvs_IsProgressive=""" & q_vrdtvs_IsProgressive & """") 
-		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File q_vrdtvs_IsInterlaced=""" & q_vrdtvs_IsInterlaced & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_vrdtvs_IsProgressive=""" & Q_V_vrdtvs_IsProgressive & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_vrdtvs_IsInterlaced=""" & Q_V_vrdtvs_IsInterlaced & """") 
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_Width=""" & Q_V_Width & """") 
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_Height=""" & Q_V_Height & """") 
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvs_Convert_File Q_V_BitRate=""" & Q_V_BitRate & """") 
@@ -3238,14 +3250,14 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'
 	' Calculate the target minimum_bitrate, target_bitrate, maximum_bitrate, buffer size
 	' Note that the only reliable variable obtained from the QSF file is Q_V_BitRate
-	If vrdtvs_IsAVC Then ' Ucase(Q_V_Codec_legacy) = Ucase("AVC")
+	If V_vrdtvs_IsAVC Then ' Ucase(Q_V_Codec_legacy) = Ucase("AVC")
 		REM CALCULATE H.264 TARGET BITRATES FROM THE INCOMING BITRATE
 		REM ffmpeg nvenc typically seems to undershoot the target bitrate, so bump it up.
 		FF_V_Target_BitRate = ROUND(V_INCOMING_BITRATE * 1.05)			' + 5%
 		FF_V_Target_Minimum_BitRate = ROUND(V_INCOMING_BITRATE * 0.20)	' 20%
 		FF_V_Target_Maximum_BitRate = ROUND(FF_V_Target_BitRate * 2)	' double
 		FF_V_Target_BufSize = ROUND(FF_V_Target_BitRate * 2)			' double
-	Else ' by  the time it gets here it must be MPEG2 flagged as vrdtvs_IsMPEG2
+	Else ' by  the time it gets here it must be MPEG2 flagged as V_vrdtvs_IsMPEG2
 		REM is MPEG2 input, so GUESS at reasonable H.264 TARGET BITRATE
 		FF_V_Target_BitRate = 2000000
 		FF_V_Target_Minimum_BitRate = 100000
@@ -3271,7 +3283,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	' So ...
 	' If we detect such a case, change to CQ24 instead of CQ0 and leave the 
 	' specified bitrate unchanged ... which "should" fix it up.
-	If vrdtvs_IsAVC Then ' Ucase(Q_V_Codec_legacy) = Ucase("AVC") 
+	If V_vrdtvs_IsAVC Then ' Ucase(Q_V_Codec_legacy) = Ucase("AVC") 
 		'ECHO Example table of values and actions
 		'ECHO	MI		FF		INCOMING	ACTION
 		'ECHO	0		0		5Mb			set to CQ 0
@@ -3347,7 +3359,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	' START ======================================================  Do the DGIndexNV ======================================================
 	' ++++ START Run the DGIndexNV command
 	ff_timerStart = Timer
-	If vrdtvs_IsProgressive AND vrdtvs_IsAVC Then ' not required for Progressive-AVC where we just copy streams ' Ucase(V_ScanType) = Ucase("Progressive") AND Q_V_Codec_legacy <> "AVC"
+	If V_vrdtvs_IsProgressive AND V_vrdtvs_IsAVC Then ' not required for Progressive-AVC where we just copy streams ' Ucase(V_ScanType) = Ucase("Progressive") AND Q_V_Codec_legacy <> "AVC"
 		CF_object_saved_ffmpeg_commands.WriteLine("REM")
 		CF_object_saved_ffmpeg_commands.WriteLine("REM DGIndexNV is NOT performed for Progressive-AVC where we just copy streams")
 		CF_object_saved_ffmpeg_commands.WriteLine("REM")
@@ -3410,8 +3422,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Else
 		af_audio_delay_filter = " "
 	End If
-	If vrdtvs_IsProgressive Then ' Ucase(V_ScanType) = Ucase("Progressive")
-		If vrdtvs_IsAVC Then ' Ucase(Q_V_Codec_legacy) = Ucase("AVC") 
+	If V_vrdtvs_IsProgressive Then ' Ucase(V_ScanType) = Ucase("Progressive")
+		If V_vrdtvs_IsAVC Then ' Ucase(Q_V_Codec_legacy) = Ucase("AVC") 
 			vrdtvs_create_VPY = False ' this is a NO-OP
 			vpy_denoise = ""								' flag no denoising for progressive AVC
 			vpy_dsharpen = ""								' flag no sharpening for progressive AVC
@@ -3433,7 +3445,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			ff_cmd_string =	ff_cmd_string & " -y """ & CF_TARGET_AbsolutePathName & """"
 							WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ========== Created ffmpeg_cmd_string, hopefully Progressive/AVC vs file: " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
 			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ========== Created ffmpeg_cmd_string <" & ff_cmd_string & ">")
-		ElseIf vrdtvs_IsMPEG2 Then 'Ucase(Q_V_Codec_legacy) = Ucase("MPEG2-2V")
+		ElseIf V_vrdtvs_IsMPEG2 Then 'Ucase(Q_V_Codec_legacy) = Ucase("MPEG2-2V")
 			vpy_denoise  = "strength=0.06, cstrength=0.06"	' flag denoising  for progressive mpeg2
 			vpy_dsharpen = "strength=0.3"					' flag sharpening for progressive mpeg2
 			' probesize 120 Mb, analyzeduration 120 seconds 2021.02.17
@@ -3465,8 +3477,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			On Error goto 0
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
-	ElseIf vrdtvs_IsInterlaced Then
-		if vrdtvs_IsAVC Then
+	ElseIf V_vrdtvs_IsInterlaced Then
+		if V_vrdtvs_IsAVC Then
 			vpy_denoise = ""								' flag no denoising for interlaced AVC
 			vpy_dsharpen = "strength=0.2"					' flag sharpening   for interlaced AVC
 			' probesize 120 Mb, analyzeduration 120 seconds 2021.02.17
@@ -3516,7 +3528,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			End If
 			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ========== Created ffmpeg_cmd_string, hopefully Interlaced/AVC vs file: " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
 			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ========== Created ffmpeg_cmd_string <" & ff_cmd_string & ">")
-		ElseIf vrdtvs_IsMPEG2 Then
+		ElseIf V_vrdtvs_IsMPEG2 Then
 			vpy_denoise = "strength=0.06, cstrength=0.06"	' flag denoising  for interlaced mpeg2
 			vpy_dsharpen = "strength=0.3"					' flag sharpening for interlaced mpeg2
 			' probesize 120 Mb, analyzeduration 120 seconds 2021.02.17
@@ -3551,7 +3563,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		End If
 	Else
 		'??????????????print diagnostics and exit since not Progressive nor Interlaced ...
-		Wscript.Echo "Unable to create ff_cmd_string as flag is neither Interlaced nor Progressive .. vrdtvs_IsInterlaced=" & vrdtvs_IsInterlaced & " Progressive=" & vrdtvs_IsProgressive
+		Wscript.Echo "Unable to create ff_cmd_string as flag is neither Interlaced nor Progressive .. V_vrdtvs_IsInterlaced=" & V_vrdtvs_IsInterlaced & " Progressive=" & V_vrdtvs_IsProgressive
 		Wscript.Echo "Error 17 = cannot perform the requested operation"
 		On Error goto 0
 		WScript.Quit 17 ' Error 17 = cannot perform the requested operation
@@ -3744,6 +3756,31 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	T_V_FrameRate = ROUND(T_V_FrameRate)
 	T_V_DisplayAspectRatio_String_slash	= Replace(T_V_DisplayAspectRatio_String,":","/",1,-1,vbTextCompare)  ' Replace(string,find,replacewith[,start[,count[,compare]]])
 	'
+	If Ucase(T_V_Codec_legacy) = Ucase("MPEG-2V") Then
+		T_V_vrdtvs_IsAVC = False
+		T_V_vrdtvs_IsMPEG2 = True
+		'vrd_extension = vrd_extension_mpeg2
+		'vrd_profile_name_for_qsf = vrd_profile_name_for_qsf_mpeg2
+	ElseIf Ucase(T_V_Codec_legacy) = Ucase("AVC") Then
+		T_V_vrdtvs_IsAVC = True
+		T_V_vrdtvs_IsMPEG2 = False
+		'vrd_extension = vrd_extension_avc
+		'vrd_profile_name_for_qsf = vrd_profile_name_for_qsf_avc
+	Else
+		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - Unrecognised T_V_Codec_legacy video codec """ & CF_TARGET_AbsolutePathName & """ T_V_Codec_legacy=""" & T_V_Codec_legacy & """ ... Ignoring file ...")
+		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Unrecognised T_V_Codec_legacy video codec """ & CF_TARGET_AbsolutePathName & """ T_V_Codec_legacy=""" & T_V_Codec_legacy & """ ... Ignoring file ...")
+		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
+			Wscript.Echo "Error 17 = cannot perform the requested operation"
+			On Error goto 0
+			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+		Else
+			Wscript.Echo "Error 17 = cannot perform the requested operation"
+			On Error goto 0
+			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+		End If
+		vrdtvs_Convert_File = -1
+		Exit Function
+	End If
 	If T_A_Video_Delay_ms_legacy = "" Then
 		T_A_Video_Delay_ms_legacy = 0
 		T_A_Audio_Delay_ms_legacy = 0
@@ -3763,11 +3800,11 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		T_V_ScanType = "Interlaced"
 	End If
 	If Ucase(T_V_ScanType) = Ucase("Interlaced") Then
-		T_vrdtvs_IsProgressive = False
-		T_vrdtvs_IsInterlaced = True
+		T_V_vrdtvs_IsProgressive = False
+		T_V_vrdtvs_IsInterlaced = True
 	ElseIf Ucase(T_V_ScanType) = Ucase("Progressive") Then
-		T_vrdtvs_IsProgressive = True
-		T_vrdtvs_IsInterlaced = False
+		T_V_vrdtvs_IsProgressive = True
+		T_V_vrdtvs_IsInterlaced = False
 	Else
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - DO NOT KNOW IF TARGET IS INTERLACED OR PROGRESSIVE """ & CF_TARGET_AbsolutePathName & """ T_V_Codec_legacy=""" & T_V_Codec_legacy & """ V_ScanType=""" & T_V_ScanType & """ ... Ignoring file ...")
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - DO NOT KNOW IF TARGET IS INTERLACED OR PROGRESSIVE """ & CF_TARGET_AbsolutePathName & """ T_V_Codec_legacy=""" & T_V_Codec_legacy & """ T_V_ScanType=""" & T_V_ScanType & """ ... Ignoring file ...")
@@ -3781,7 +3818,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 	End If
-	If (vrdtvs_IsProgressive <> T_vrdtvs_IsProgressive) OR (vrdtvs_IsInterlaced <> T_vrdtvs_IsInterlaced) Then
+	If (V_vrdtvs_IsProgressive <> T_V_vrdtvs_IsProgressive) OR (V_vrdtvs_IsInterlaced <> T_V_vrdtvs_IsInterlaced) Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - UNEQUAL SOURCE AND TARGET INTERLACED/PROGRESSIVE V_ScanType=""" & V_ScanType & """ T_V_ScanType=""" & T_V_ScanType &  """ ... Ignoring file ...")
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - UNEQUAL SOURCE AND TARGET INTERLACED/PROGRESSIVE V_ScanType=""" & V_ScanType & """ T_V_ScanType=""" & T_V_ScanType & """ ... Ignoring file ...")
 		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
@@ -3805,8 +3842,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_PixelAspectRatio=""" & T_V_PixelAspectRatio & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_ScanType=""" & T_V_ScanType & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_ScanOrder=""" & T_V_ScanOrder & """") 
-		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_vrdtvs_IsProgressive=""" & T_vrdtvs_IsProgressive & """") 
-		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_vrdtvs_IsInterlaced=""" & T_vrdtvs_IsInterlaced & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_vrdtvs_IsProgressive=""" & T_V_vrdtvs_IsProgressive & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_vrdtvs_IsInterlaced=""" & T_V_vrdtvs_IsInterlaced & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_Width=""" & T_V_Width & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_Height=""" & T_V_Height & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File T_V_BitRate=""" & T_V_BitRate & """") 
