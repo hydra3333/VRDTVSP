@@ -26,6 +26,7 @@ Option explicit
 '/vrd_version_for_adscan:5 ^
 '/do_qsf:False
 '/do_adscan:false
+'/do_audio_delay:false
 '
 ' ... use /capture_Folder:"" to prevent the moving of files from a capture folder, eg when testing
 ' ... note
@@ -152,6 +153,7 @@ Dim vrd_logfile_wildcard_QSF
 Dim vrd_logfile_wildcard_ADSCAN
 Dim vrd_do_qsf
 Dim vrd_do_adscan
+Dim vrd_do_audio_delay
 '
 Const const_vrd5_path = "C:\Program Files (x86)\VideoReDoTVSuite5"
 Const const_vrd5_profile_mpeg2 = "zzz-MPEG2ps"
@@ -173,6 +175,7 @@ vrd_version_for_qsf = 6
 vrd_version_for_adscan = 5
 vrd_do_qsf = False
 vrd_do_adscan = False
+vrd_do_audio_delay = False
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Setup Global Default Paths, resolving them to Absolute paths
@@ -219,6 +222,7 @@ vrd_version_for_qsf = vrdtvs_get_commandline_parameter("vrd_version_for_qsf",vrd
 vrd_version_for_adscan = vrdtvs_get_commandline_parameter("vrd_version_for_adscan",vrd_version_for_adscan)                                          ' /vrd_version_for_adscan:5
 vrd_do_qsf = vrdtvs_get_commandline_parameter("do_qsf",vrd_do_qsf) 			                     		                    						' /do_qsf:False
 vrd_do_adscan = vrdtvs_get_commandline_parameter("do_adscan",vrd_do_adscan)                      		                    						' /do_adscan:False
+vrd_do_audio_delay = vrdtvs_get_commandline_parameter("do_audio_delay",vrd_do_audio_delay)                      		                    		' /do_audio_delay:False
 
 If vrd_version_for_qsf = 5 Then '*** QSF
     vrd_path_for_qsf_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd5_path,"vp.vbs"))
@@ -272,6 +276,8 @@ WScript.StdOut.WriteLine("VRDTVS NOTE: final             vrd_version_for_adscan=
 WScript.StdOut.WriteLine("VRDTVS NOTE: final            vrd_path_for_adscan_vbs=""" & vrd_path_for_adscan_vbs & """")
 WScript.StdOut.WriteLine("VRDTVS NOTE: final                         vrd_do_qsf=" & vrd_do_qsf)
 WScript.StdOut.WriteLine("VRDTVS NOTE: final                      vrd_do_adscan=" & vrd_do_adscan)
+WScript.StdOut.WriteLine("VRDTVS NOTE: final                 vrd_do_audio_delay=" & vrd_do_audio_delay)
+vrd_do_audio_delay
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Create the working folders if they do not already exist
@@ -395,7 +401,8 @@ vrdtvs_status = vrdtvs_Convert_files_in_a_folder(	vrdtvs_source_TS_Folder, _
 													vrdtvs_temp_path, _
 													vrdtvs_saved_ffmpeg_commands_filename, _
 													vrd_do_qsf, _
-													vrd_do_adscan )
+													vrd_do_adscan, _
+													vrd_do_audio_delay )
 If vrdtvs_status <> 0 Then ' Something bad went wrong (invididual conversion failures just result in moving the source file to the Failed folder)
 	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_Convert_files_in_a_folder ... Aborting ...")
 	WScript.StdOut.WriteLine("VRDTVS ERROR  VRDTVS ERROR - Error " & vrdtvs_status & " from vrdtvs_Convert_files_in_a_folder ... Aborting ...")
@@ -2101,7 +2108,8 @@ Function vrdtvs_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 											byVal	C_temp_path, _
 											byVal	C_saved_ffmpeg_commands_filename, _
 											byVal	C_do_qsf, _
-											byVal	C_do_Adcsan )
+											byVal	C_do_Adscan, _
+											byVal	C_do_audio_delay )
 	' Loop and convert .TS .mp4 .mpg Source files in a folder into acceptable avc/aac .mp4 Destination files 
     ' Parameters: see below
 	' NOTES: 
@@ -2133,7 +2141,9 @@ Function vrdtvs_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder:                       C_temp_path=""" & C_temp_path & """")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder:  C_saved_ffmpeg_commands_filename=""" & C_saved_ffmpeg_commands_filename & """")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder:                          C_do_qsf=""" & C_do_qsf & """")
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder:                       C_do_Adcsan=""" & C_do_Adcsan & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder:                       C_do_Adscan=""" & C_do_Adscan & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_files_in_a_folder:               C_do_do_audio_delay=""" & C_do_audio_delay & """")
+
 	'
 	' force absolute PathNnames
 	C_source_TS_Folder = fso.GetAbsolutePathName(C_source_TS_Folder & "\")
@@ -2169,7 +2179,8 @@ Function vrdtvs_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder          ""vrd_path_for_adscan_vbs=" & vrd_path_for_adscan_vbs & """")
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder ""C_saved_ffmpeg_commands_filename=" & C_saved_ffmpeg_commands_filename & """")
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder                         ""C_do_qsf=" & C_do_qsf & """")
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder                      ""C_do_Adcsan=" & C_do_Adcsan & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder                      ""C_do_Adscan=" & C_do_Adscan & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_files_in_a_folder                 ""C_do_audio_delay=" & C_do_audio_delay & """")
 	End If
 	'
 	' delete the saved FFMPEG COMMANDS file silently 
@@ -2226,7 +2237,8 @@ Function vrdtvs_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 	C_object_saved_ffmpeg_commands.WriteLine("REM")
 	C_object_saved_ffmpeg_commands.WriteLine("Set ""C_saved_ffmpeg_commands_filename=" & C_saved_ffmpeg_commands_filename & """")
 	C_object_saved_ffmpeg_commands.WriteLine("Set ""C_do_qsf=" & C_do_qsf & """")
-	C_object_saved_ffmpeg_commands.WriteLine("Set ""C_do_Adcsan=" & C_do_Adcsan & """")
+	C_object_saved_ffmpeg_commands.WriteLine("Set ""C_do_Adscan=" & C_do_Adscan & """")
+	C_object_saved_ffmpeg_commands.WriteLine("Set ""C_do_audio_delay=" & C_do_audio_delay & """")
 	C_object_saved_ffmpeg_commands.WriteLine("REM")
 	C_object_saved_ffmpeg_commands.WriteLine("REM NO FILES WILL BE MOVED between folders ")
 	C_object_saved_ffmpeg_commands.WriteLine("REM the SOURCE      .TS and .mp4 and .mpg media files MUST already exist in folder: """ & C_source_TS_Folder & """")
@@ -2259,7 +2271,8 @@ Function vrdtvs_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 														C_temp_path, _
 														C_saved_ffmpeg_commands_filename, _
 														C_do_qsf, _
-														C_do_Adcsan )
+														C_do_Adscan, _
+														C_do_audio_delay )
 			Case Else	' extension not recognised, do nothing
 			End Select 
 		End If
@@ -2355,7 +2368,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 								byVal 	CF_temp_path, _
 								byVal 	CF_saved_ffmpeg_commands_filename, _
 								byVal 	CF_do_qsf, _
-								byVal 	CF_do_Adcsan )
+								byVal 	CF_do_Adscan,
+								byVal	CF_do_audio_delay )
 	'Dim CF_FILE_AbsolutePathName
 	Dim                             CF_FILE_ParentFolderName,   CF_FILE_BaseName,   CF_FILE_Ext
 	Dim CF_QSF_AbsolutePathName,    CF_QSF_ParentFolderName,    CF_QSF_BaseName,    CF_QSF_Ext
@@ -2463,6 +2477,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Dim vrdtvs_create_VPY
 	Dim vpy_denoise
 	Dim vpy_dsharpen
+	Dim af_audio_delay_filter
 	'
 	WScript.StdOut.WriteLine(" ")
 	WScript.StdOut.WriteLine(" ")
@@ -2476,7 +2491,9 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File:                       CF_temp_path=""" & CF_temp_path & """")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File:  CF_saved_ffmpeg_commands_filename=""" & CF_saved_ffmpeg_commands_filename & """")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File:                          CF_do_qsf=""" & CF_do_qsf & """")
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File:                       CF_do_Adcsan=""" & CF_do_Adcsan & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File:                       CF_do_Adscan=""" & CF_do_Adscan & """")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File:                  CF_do_audio_delay=""" & CF_do_audio_delay & """")
+	C_do_audio_delay
 	'
 	If NOT fso.FileExists(CF_FILE_AbsolutePathName) Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - SUPPOSEDLY VALID SOURCE FILE NOT FOUND """ & CF_FILE_AbsolutePathName & """... Aborting ...")
@@ -3324,6 +3341,11 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	vrdtvs_create_VPY = True
 	vpy_denoise  = ""
 	vpy_dsharpen = ""
+	If CF_do_audio_delay Then
+		af_audio_delay_filter = "-af ""adelay=delays=" & A_Audio_Delay_ms & "ms:all=1"" "
+	Else
+		af_audio_delay_filter = " "
+	End If
 	If vrdtvs_IsProgressive Then ' Ucase(V_ScanType) = Ucase("Progressive")
 		If vrdtvs_IsAVC Then ' Ucase(Q_V_Codec_legacy) = Ucase("AVC") 
 			vrdtvs_create_VPY = False ' this is a NO-OP
@@ -3359,7 +3381,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-map 0:v:0 -map 1:a:0 " &_
 							"-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
 							"-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
-							"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 25 " &_
+							"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 12 " &_
 							vrdtvs_final_RTX2060super_extra_flags & " " &_
 							"-rc:v vbr " &_
 							"-cq:v 0" & " " &_
@@ -3368,7 +3390,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-maxrate:v " & FF_V_Target_Maximum_BitRate & " " &_
 							"-bufsize " & FF_V_Target_BufSize & " " &_
 							"-profile:v high -level 5.2 -movflags +faststart+write_colr " &_
-							"-af ""adelay=delays=" & A_Audio_Delay_ms & "ms:all=1"" " &_
+							af_audio_delay_filter &_
 							"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
 							" -y """ & CF_TARGET_AbsolutePathName & """"
 			WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ========== Created ffmpeg_cmd_string, hopefully Progressive/MPEG2 vs file: " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
@@ -3392,7 +3414,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-map 0:v:0 -map 1:a:0 " &_
 							"-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
 							"-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
-							"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 25 " &_
+							"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 12 " &_
 							vrdtvs_final_RTX2060super_extra_flags & " " &_
 							"-rc:v vbr " &_
 							vrdtvs_final_cq_options & " " &_
@@ -3401,7 +3423,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-maxrate:v " & FF_V_Target_Maximum_BitRate & " " &_
 							"-bufsize " & FF_V_Target_BufSize & " " &_
 							"-profile:v high -level 5.2 -movflags +faststart+write_colr " &_
-							"-af ""adelay=delays=" & A_Audio_Delay_ms & "ms:all=1"" " &_
+							af_audio_delay_filter &_
 							"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
 							" -y """ & CF_TARGET_AbsolutePathName & """"
 			If Footy_found Then	' Must be AVC Interlaced Footy to pass this test, USE DIFFERENT SETTINGS since we deinterlace with double framerate (and use -g 50)
@@ -3414,7 +3436,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 								"-map 0:v:0 -map 1:a:0 " &_
 								"-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
 								"-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
-								"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 50 " &_
+								"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 25 " &_
 								vrdtvs_final_RTX2060super_extra_flags & " " &_
 								"-rc:v vbr " &_
 								vrdtvs_final_cq_options & " " &_
@@ -3423,7 +3445,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 								"-maxrate:v " & Footy_FF_V_Target_Maximum_BitRate & " " &_
 								"-bufsize " & Footy_FF_V_Target_BufSize & " " &_
 								"-profile:v high -level 5.2 -movflags +faststart+write_colr " &_
-								"-af ""adelay=delays=" & A_Audio_Delay_ms & "ms:all=1"" " &_
+								af_audio_delay_filter &_
 								"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
 								" -y """ & CF_TARGET_AbsolutePathName & """"
 				WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ========== FOOTY detected, hopefully Interlaced/AVC vs file: " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
@@ -3442,7 +3464,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-map 0:v:0 -map 1:a:0 " &_
 							"-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
 							"-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
-							"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 25 " &_
+							"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 12 " &_
 							vrdtvs_final_RTX2060super_extra_flags & " " &_
 							"-rc:v vbr " &_
 							vrdtvs_final_cq_options & " " &_
@@ -3451,7 +3473,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-maxrate:v " & FF_V_Target_Maximum_BitRate & " " &_
 							"-bufsize " & FF_V_Target_BufSize & " " &_
 							"-profile:v high -level 5.2 -movflags +faststart+write_colr " &_
-							"-af ""adelay=delays=" & A_Audio_Delay_ms & "ms:all=1"" " &_
+							af_audio_delay_filter &_
 							"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
 							" -y """ & CF_TARGET_AbsolutePathName & """"
 			' Leave MPEG2 Interlaced Footy alone, as if it were a normal video file ... no code for MPEG2 Interlaced Footy in here
@@ -3621,7 +3643,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	' ++++ END Run the ffmpeg command
 	'
 	' after ffmpeg, do an ADSCAN over the TARGET file and save the .bprj in the target folder as an "associated .bprj" which will be picked up by auto-bprj-processing during bulk file renames :)
-	If CF_do_Adcsan Then
+	If CF_do_Adscan Then
 		' ++++ START Run the ADSCAN command
 		ff_timerStart = Timer
 		vrdtvs_status = vrdtvs_delete_a_file(vrd_logfile_wildcard_ADSCAN, True) ' True=silently delete it	' is a wildcard, in fso.DeleteFile the filespec can contain wildcard characters in the last path component
