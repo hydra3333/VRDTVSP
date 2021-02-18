@@ -2,7 +2,6 @@
 '''''		-af "adelay=delays=64ms:all=1"
 '''''		-itsoffset 384ms JUST BEFORE INPUT FILE
 
-
 Option explicit
 '
 ' VRDTVS - automatically parse, convert video/audio from TVSchedulerPro TV recordings, 
@@ -3360,7 +3359,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-map 0:v:0 -map 1:a:0 " &_
 							"-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
 							"-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
-							"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres " &_
+							"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 25 " &_
 							vrdtvs_final_RTX2060super_extra_flags & " " &_
 							"-rc:v vbr " &_
 							"-cq:v 0" & " " &_
@@ -3393,7 +3392,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-map 0:v:0 -map 1:a:0 " &_
 							"-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
 							"-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
-							"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres " &_
+							"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 25 " &_
 							vrdtvs_final_RTX2060super_extra_flags & " " &_
 							"-rc:v vbr " &_
 							vrdtvs_final_cq_options & " " &_
@@ -3405,7 +3404,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-af ""adelay=delays=" & A_Audio_Delay_ms & "ms:all=1"" " &_
 							"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
 							" -y """ & CF_TARGET_AbsolutePathName & """"
-			If Footy_found Then	' Must be AVC Interlaced Footy to pass this test, USE DIFFERENT SETTINGS since we deinterlace with double framerate
+			If Footy_found Then	' Must be AVC Interlaced Footy to pass this test, USE DIFFERENT SETTINGS since we deinterlace with double framerate (and use -g 50)
 				' probesize 120 Mb, analyzeduration 120 seconds 2021.02.17
 				ff_cmd_string =	"""" & vrdtvs_ffmpegexe64 & """ " &_
 								"-hide_banner -v verbose -nostats " &_
@@ -3415,7 +3414,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 								"-map 0:v:0 -map 1:a:0 " &_
 								"-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
 								"-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
-								"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres " &_
+								"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 50 " &_
 								vrdtvs_final_RTX2060super_extra_flags & " " &_
 								"-rc:v vbr " &_
 								vrdtvs_final_cq_options & " " &_
@@ -3443,7 +3442,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-map 0:v:0 -map 1:a:0 " &_
 							"-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
 							"-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
-							"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres " &_
+							"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 25 " &_
 							vrdtvs_final_RTX2060super_extra_flags & " " &_
 							"-rc:v vbr " &_
 							vrdtvs_final_cq_options & " " &_
@@ -3557,6 +3556,10 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	ff_tmp_object.WriteLine("@setlocal ENABLEDELAYEDEXPANSION")
 	ff_tmp_object.WriteLine("@setlocal enableextensions")
 	ff_tmp_object.WriteLine("DEL /F """ & ff_logfile & """")
+	ff_tmp_object.WriteLine("ECHO """ & vrdtvs_ffmpegexe64 & """ -hide_banner -v verbose -init_hw_device list >>""" & ff_logfile & """ 2>&1")
+	ff_tmp_object.WriteLine("""" & vrdtvs_ffmpegexe64 & """ -hide_banner -v verbose -init_hw_device list >>""" & ff_logfile & """ 2>&1")
+	ff_tmp_object.WriteLine("ECHO """ & vrdtvs_ffmpegexe64 & """ -hide_banner -v verbose -hide_banner -h encoder=hevc_nvenc >>""" & ff_logfile & """ 2>&1")
+	ff_tmp_object.WriteLine("""" & vrdtvs_ffmpegexe64 & """ -hide_banner -v verbose -hide_banner -h encoder=hevc_nvenc >>""" & ff_logfile & """ 2>&1")
 	ff_tmp_object.WriteLine("ECHO !DATE! !TIME! FFMPEG STARTED *************************************************************************** >>""" & ff_logfile & """ 2>&1")
 	ff_tmp_object.WriteLine("ECHO !DATE! !TIME! FFMPEG STARTED *************************************************************************** >>""" & ff_logfile & """ 2>&1")
 	ff_tmp_object.WriteLine(ff_cmd_string_for_bat)
