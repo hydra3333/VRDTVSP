@@ -2715,29 +2715,29 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	CF_object_saved_ffmpeg_commands.WriteLine("REM Do the QSF for """ & CF_FILE_AbsolutePathName & """ ... " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
-	' do the actual QSF command (delete the QSF file first)
 	'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	' Here is where we actually do the QSF or just copy the SOURCE file and pretend it is a .QSF'd file
 	' NOTE: we actually to the QSF (so we can determine the Bitrate form the QSF logfile) then delete the QSF file and replace it with a copy of the source file
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: Doing QSF for """ & CF_FILE_AbsolutePathName & """ ... " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: QSF command: " & CF_exe_cmd_string)
-	CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_QSF_AbsolutePathName & """")
-	CF_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string) ' write the QSF String to be executed
-	vrdtvs_status = vrdtvs_delete_a_file(CF_QSF_AbsolutePathName, True) ' True=silently delete it
-	CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string)
 	If CF_do_qsf Then
+		' do the actual QSF command (delete the QSF file first)
+		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: Doing QSF for """ & CF_FILE_AbsolutePathName & """ ... " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
+		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: QSF command: " & CF_exe_cmd_string)
+		CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_QSF_AbsolutePathName & """")
 		CF_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string) ' write the QSF String to be executed, only if we're doing a QSF
-	Else ' proceed with creating the "pretend" QSF file
 		vrdtvs_status = vrdtvs_delete_a_file(CF_QSF_AbsolutePathName, True) ' True=silently delete it
+		CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string)
+	Else ' proceed with creating the "pretend" QSF file
 		CF_QSF_Ext = CF_FILE_Ext ' NOT "vrd_extension" CF_FILE_AbsolutePathName
 		CF_QSF_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_QSF_ParentFolderName,CF_QSF_BaseName & ".VRDTVS.NON-QSF." & CF_QSF_Ext))		
 		CF_exe_cmd_string = "COPY /Y /V /Z /B """ & CF_FILE_AbsolutePathName & """ """ & CF_QSF_AbsolutePathName & """"
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ----- Instead-of-QSF: Copying """ & CF_FILE_AbsolutePathName & """ to """ & CF_QSF_AbsolutePathName & """ with: " & CF_exe_cmd_string)
 		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ----- Instead-of-QSF for """ & CF_FILE_AbsolutePathName & """ ... " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
 		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ----- Copying: """ & CF_FILE_AbsolutePathName & """ to """ & CF_QSF_AbsolutePathName & """ with: " & CF_exe_cmd_string)
+		CF_object_saved_ffmpeg_commands.WriteLine("REM Instead-of-QSF, copying: " & CF_exe_cmd_string)
 		CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_QSF_AbsolutePathName & """")
 		CF_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string) ' write the pretend QSF String to be executed
 		On Error Resume Next
+		vrdtvs_status = vrdtvs_delete_a_file(CF_QSF_AbsolutePathName, True) ' True=silently delete it
 		fso.CopyFile CF_FILE_AbsolutePathName, CF_QSF_AbsolutePathName, True ' copy file with overwrite
 		vrdrvs_Err_Code = Err.Number
 		vrdrvs_Err_Description = Err.Description
@@ -2775,51 +2775,54 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	' ++++ END Run the QSF command
 	' End ======================================================  Do the QSF ======================================================
 	'
-	' Copy the QSF log so we can search it for a bitrate value
-	CF_QSF_logfile =  CF_QSF_AbsolutePathName & ".log"
-	vrdtvs_status = vrdtvs_delete_a_file(CF_QSF_logfile, True) ' True=silently delete it
-	CF_exe_cmd_string = "CMD /C COPY /Y """ & vrd_logfile_wildcard_QSF & """ """ & CF_QSF_logfile & """ 2>&1"
-	If vrdtvs_DEBUG Then 
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ copy log with CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
-	End If
-	CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string)
-	If CF_exe_status <> 0 OR NOT fso.FileExists(CF_QSF_AbsolutePathName) Then
-		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - Error - Failed to copy QSF log """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
-		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Failed to copy QSF log """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
-		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
-			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			On Error goto 0
-			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
-		Else
-			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			On Error goto 0
-			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+	' Copy the QSF log and then search it for a bitrate value
+	If CF_do_qsf Then
+		CF_QSF_logfile =  CF_QSF_AbsolutePathName & ".log"
+		vrdtvs_status = vrdtvs_delete_a_file(CF_QSF_logfile, True) ' True=silently delete it
+		CF_exe_cmd_string = "CMD /C COPY /Y """ & vrd_logfile_wildcard_QSF & """ """ & CF_QSF_logfile & """ 2>&1"
+		If vrdtvs_DEBUG Then 
+			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ copy log with CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
 		End If
-		vrdtvs_Convert_File = -1
-		Exit Function
-	End If
-	'
-	' Search the QSF logfile for the "Actual Video Bitrate"
-	Set CF_QSF_logfile_object = fso.OpenTextFile(CF_QSF_logfile, ForReading)
-	Const CF_Search_for_this_for_bitrate_in_QSF_logfile = "Actual Video Bitrate: " ' the trailing space is important
-	Q_ACTUAL_QSF_LOG_BITRATE = 0
-	Do Until CF_QSF_logfile_object.AtEndOfStream
-		CF_QSF_logfile_line = CF_QSF_logfile_object.ReadLine
-		CF_tmp = instr(1,CF_QSF_logfile_line, CF_Search_for_this_for_bitrate_in_QSF_logfile, vbTextCompare)
-		If CF_tmp > 0 Then ' InStr([start, ]string1, string2[, compare])
-			' OK, the line looks like "Actual Video Bitrate: 3.74 Mbps"
-			CF_QSF_logfile_string = Mid(CF_QSF_logfile_line,(CF_tmp+len(CF_Search_for_this_for_bitrate_in_QSF_logfile)))	' Mid(string, start[, length]))
-			CF_QSF_string_array = Split(CF_QSF_logfile_string," ",2,vbTextCompare) 				' Split(expression[,delimiter[,count[,compare]]])
-			CF_QSF_logfile_string = Replace(CF_QSF_string_array(0)," ","",1,-1,vbTextCompare)	' Replace(string,find,replacewith[,start[,count[,compare]]]) 'Always assume units is Mbps ...
-			If IsNumeric(CF_QSF_logfile_string) Then ' assume it's a decimal Mbps, convert it to 
-				Q_ACTUAL_QSF_LOG_BITRATE = CDbl(CF_QSF_logfile_string) * 1000000  ' expand the decimal number into a full integer number of Mbps
+		CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string)
+		If CF_exe_status <> 0 OR NOT fso.FileExists(CF_QSF_AbsolutePathName) Then
+			If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - Error - Failed to copy QSF log """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
+			WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Failed to copy QSF log """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
+			If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
+				Wscript.Echo "Error 17 = cannot perform the requested operation"
+				On Error goto 0
+				WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+			Else
+				Wscript.Echo "Error 17 = cannot perform the requested operation"
+				On Error goto 0
+				WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 			End If
-			Exit Do ' exits the READLINES Do loop at the first detection of the constant
+			vrdtvs_Convert_File = -1
+			Exit Function
 		End If
-	Loop
-	CF_QSF_logfile_object.Close
-	Set CF_QSF_logfile_object = Nothing
-	vrdtvs_status = vrdtvs_delete_a_file(CF_QSF_logfile, True) ' True=silently delete the QSF logfile
+		' Search the QSF logfile for the "Actual Video Bitrate"
+		Set CF_QSF_logfile_object = fso.OpenTextFile(CF_QSF_logfile, ForReading)
+		Const CF_Search_for_this_for_bitrate_in_QSF_logfile = "Actual Video Bitrate: " ' the trailing space is important
+		Q_ACTUAL_QSF_LOG_BITRATE = 0
+		Do Until CF_QSF_logfile_object.AtEndOfStream
+			CF_QSF_logfile_line = CF_QSF_logfile_object.ReadLine
+			CF_tmp = instr(1,CF_QSF_logfile_line, CF_Search_for_this_for_bitrate_in_QSF_logfile, vbTextCompare)
+			If CF_tmp > 0 Then ' InStr([start, ]string1, string2[, compare])
+				' OK, the line looks like "Actual Video Bitrate: 3.74 Mbps"
+				CF_QSF_logfile_string = Mid(CF_QSF_logfile_line,(CF_tmp+len(CF_Search_for_this_for_bitrate_in_QSF_logfile)))	' Mid(string, start[, length]))
+				CF_QSF_string_array = Split(CF_QSF_logfile_string," ",2,vbTextCompare) 				' Split(expression[,delimiter[,count[,compare]]])
+				CF_QSF_logfile_string = Replace(CF_QSF_string_array(0)," ","",1,-1,vbTextCompare)	' Replace(string,find,replacewith[,start[,count[,compare]]]) 'Always assume units is Mbps ...
+				If IsNumeric(CF_QSF_logfile_string) Then ' assume it's a decimal Mbps, convert it to 
+					Q_ACTUAL_QSF_LOG_BITRATE = CDbl(CF_QSF_logfile_string) * 1000000  ' expand the decimal number into a full integer number of Mbps
+				End If
+				Exit Do ' exits the READLINES Do loop at the first detection of the constant
+			End If
+		Loop
+		CF_QSF_logfile_object.Close
+		Set CF_QSF_logfile_object = Nothing
+		vrdtvs_status = vrdtvs_delete_a_file(CF_QSF_logfile, True) ' True=silently delete the QSF logfile
+	Else
+		Q_ACTUAL_QSF_LOG_BITRATE = V_BitRate ' here it is the value used it NOT doing a QSF (use the mediainfo value)
+	End If
 	'
 	' Obtain QSF file characteristics via mediainfo 
 	Q_V_Codec_legacy					= vrdtvs_get_mediainfo_parameter("Video", "Codec", CF_QSF_AbsolutePathName, "--Legacy") 
@@ -2840,8 +2843,6 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Q_A_CodecID							= vrdtvs_get_mediainfo_parameter("Audio", "CodecID", CF_QSF_AbsolutePathName, "")
 	Q_A_CodecID_String					= vrdtvs_get_mediainfo_parameter("Audio", "CodecID/String", CF_QSF_AbsolutePathName, "")
 	Q_A_Video_Delay_ms					= vrdtvs_get_mediainfo_parameter("Audio", "Video_Delay", CF_QSF_AbsolutePathName, "")
-	Q_V_BitRate_FF						= vrdtvs_get_ffprobe_video_stream_parameter("bit_rate",CF_QSF_AbsolutePathName)  
-	Q_V_BitRate_Maximum_FF				= vrdtvs_get_ffprobe_video_stream_parameter("max_bit_rate", CF_QSF_AbsolutePathName)  
 	' Obtain QSF file characteristics via ffprobe 
 	Q_V_CodecID_FF						= vrdtvs_get_ffprobe_video_stream_parameter("codec_name", CF_QSF_AbsolutePathName)  
 	Q_V_CodecID_String_FF				= vrdtvs_get_ffprobe_video_stream_parameter("codec_tag_string", CF_QSF_AbsolutePathName)  
@@ -2937,7 +2938,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'REM Check if supposed numbers are NUMERIC.
 	If IsNumeric(Q_V_BitRate) Then 				V_INCOMING_BITRATE_MEDIAINFO = Q_V_BitRate
 	If IsNumeric(Q_V_BitRate_FF) Then 			V_INCOMING_BITRATE_FFPROBE = Q_V_BitRate_FF
-	If IsNumeric(Q_ACTUAL_QSF_LOG_BITRATE) Then	V_INCOMING_BITRATE_MEDIAINFO = Q_ACTUAL_QSF_LOG_BITRATE
+	If IsNumeric(Q_ACTUAL_QSF_LOG_BITRATE) Then	V_INCOMING_BITRATE_QSF_LOG = Q_ACTUAL_QSF_LOG_BITRATE
 	'USE the ffprobe bitrate value, sometimes it mis-reports as a much larger bitrate value but it seems to be correct.
 	IF V_INCOMING_BITRATE_FFPROBE   > V_INCOMING_BITRATE Then V_INCOMING_BITRATE = V_INCOMING_BITRATE_FFPROBE
 	IF V_INCOMING_BITRATE_MEDIAINFO > V_INCOMING_BITRATE Then V_INCOMING_BITRATE = V_INCOMING_BITRATE_MEDIAINFO
