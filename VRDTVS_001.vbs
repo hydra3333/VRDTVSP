@@ -277,7 +277,6 @@ WScript.StdOut.WriteLine("VRDTVS NOTE: final            vrd_path_for_adscan_vbs=
 WScript.StdOut.WriteLine("VRDTVS NOTE: final                         vrd_do_qsf=" & vrd_do_qsf)
 WScript.StdOut.WriteLine("VRDTVS NOTE: final                      vrd_do_adscan=" & vrd_do_adscan)
 WScript.StdOut.WriteLine("VRDTVS NOTE: final                 vrd_do_audio_delay=" & vrd_do_audio_delay)
-vrd_do_audio_delay
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Create the working folders if they do not already exist
@@ -2368,7 +2367,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 								byVal 	CF_temp_path, _
 								byVal 	CF_saved_ffmpeg_commands_filename, _
 								byVal 	CF_do_qsf, _
-								byVal 	CF_do_Adscan,
+								byVal 	CF_do_Adscan, _
 								byVal	CF_do_audio_delay )
 	'Dim CF_FILE_AbsolutePathName
 	Dim                             CF_FILE_ParentFolderName,   CF_FILE_BaseName,   CF_FILE_Ext
@@ -2493,7 +2492,6 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File:                          CF_do_qsf=""" & CF_do_qsf & """")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File:                       CF_do_Adscan=""" & CF_do_Adscan & """")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File:                  CF_do_audio_delay=""" & CF_do_audio_delay & """")
-	C_do_audio_delay
 	'
 	If NOT fso.FileExists(CF_FILE_AbsolutePathName) Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - SUPPOSEDLY VALID SOURCE FILE NOT FOUND """ & CF_FILE_AbsolutePathName & """... Aborting ...")
