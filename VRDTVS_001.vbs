@@ -2988,6 +2988,9 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 	End If
+	If Q_V_ScanOrder = "" Then
+		Q_V_ScanOrder = "TFF" ' Default to Top Field First
+	End If
 	If (V_IsProgressive <> Q_V_IsProgressive) OR (V_IsInterlaced <> Q_V_IsInterlaced) Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - UNEQUAL SOURCE AND QSF INTERLACED/PROGRESSIVE V_ScanType=""" & V_ScanType & """ Q_V_ScanType=""" & Q_V_ScanType &  """ ... Ignoring file ...")
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - UNEQUAL SOURCE AND QSF INTERLACED/PROGRESSIVE V_ScanType=""" & V_ScanType & """ Q_V_ScanType=""" & Q_V_ScanType & """ ... Ignoring file ...")
@@ -3000,9 +3003,6 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			On Error goto 0
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
-	End If
-	If Q_V_ScanOrder = "" Then
-		Q_V_ScanOrder = "TFF" ' Default to Top Field First
 	End If
 	'
 	' Choose the most likely video bitrate of the SOURCE file from amongst the various options. 
@@ -3818,9 +3818,25 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 	End If
-	If (V_IsProgressive <> T_V_IsProgressive) OR (V_IsInterlaced <> T_V_IsInterlaced) Then
-		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - UNEQUAL SOURCE AND TARGET INTERLACED/PROGRESSIVE V_ScanType=""" & V_ScanType & """ T_V_ScanType=""" & T_V_ScanType &  """ ... Ignoring file ...")
-		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - UNEQUAL SOURCE AND TARGET INTERLACED/PROGRESSIVE V_ScanType=""" & V_ScanType & """ T_V_ScanType=""" & T_V_ScanType & """ ... Ignoring file ...")
+	'If (V_IsProgressive <> T_V_IsProgressive) OR (V_IsInterlaced <> T_V_IsInterlaced) Then
+	'	If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - UNEQUAL SOURCE AND TARGET INTERLACED/PROGRESSIVE V_ScanType=""" & V_ScanType & """ T_V_ScanType=""" & T_V_ScanType &  """ ... Ignoring file ...")
+	'	WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - UNEQUAL SOURCE AND TARGET INTERLACED/PROGRESSIVE V_ScanType=""" & V_ScanType & """ T_V_ScanType=""" & T_V_ScanType & """ ... Ignoring file ...")
+	'	If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
+	'		Wscript.Echo "Error 17 = cannot perform the requested operation"
+	'		On Error goto 0
+	'		WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+	'	Else
+	'		Wscript.Echo "Error 17 = cannot perform the requested operation"
+	'		On Error goto 0
+	'		WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+	'	End If
+	'End If
+	If T_V_ScanOrder = "" Then
+		T_V_ScanOrder = "TFF" ' Default to Top Field First
+	End If
+	If NOT T_V_IsProgressive Then 'by now the Target MUST be progressive
+		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: VRDTVS ERROR vrdtvs_Convert_File - Error - TARGET SHOULD BE PROGRESSIVE BUT IS NOT - V_ScanType=""" & V_ScanType & """ T_V_ScanType=""" & T_V_ScanType &  """ ... Ignoring file ...")
+		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - TARGET SHOULD BE PROGRESSIVE BUT IS NOT - V_ScanType=""" & V_ScanType & """ T_V_ScanType=""" & T_V_ScanType & """ ... Ignoring file ...")
 		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
 			On Error goto 0
@@ -3830,9 +3846,6 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			On Error goto 0
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
-	End If
-	If T_V_ScanOrder = "" Then
-		T_V_ScanOrder = "TFF" ' Default to Top Field First
 	End If
 	If vrdtvs_DEBUG Then
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvs_Convert_File adjusted TARGET media characteristics below:") 
