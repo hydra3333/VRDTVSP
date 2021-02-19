@@ -174,7 +174,7 @@ Const const_vrd6_extension_avc = "mp4"
 Dim vrd6_logfile_wildcard
 vrd6_logfile_wildcard =  fso.GetAbsolutePathName(HDTV_root & "\") & "\VideoReDo6_*.Log"
 '
-vrd_version_for_qsf = 6
+vrd_version_for_qsf = 5
 vrd_version_for_adscan = 5
 vrd_do_qsf = False
 vrd_do_adscan = False
