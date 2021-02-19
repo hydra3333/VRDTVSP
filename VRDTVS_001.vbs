@@ -2837,10 +2837,15 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - QSF command completed with Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(ff_timerStart, ff_timerEnd))
 	' ++++ END Run the QSF command
 	' ++++ START do a mediainfo of the SOURCE and of the QSF so we can compare them !!! (DGIndex got the FPS wrong)
+	CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_FILE_AbsolutePathName & """<NUL"
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ----------------------------------- doing mediainfo on SOURCE """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """ -----------------------------------")
-	CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_FILE_AbsolutePathName & """"
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
-	CF_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string)
+	vrdtvs_tmp = CF_exe_cmd_string
+	vrdtvs_tmp = Replace(vrdtvs_tmp, "(", "^(", 1, -1, vbTextCompare)
+	vrdtvs_tmp = Replace(vrdtvs_tmp, ")", "^)", 1, -1, vbTextCompare)
+	vrdtvs_tmp = Replace(vrdtvs_tmp, "<", "^<", 1, -1, vbTextCompare)
+	vrdtvs_tmp = Replace(vrdtvs_tmp, ">", "^>", 1, -1, vbTextCompare)
+	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvs_tmp)
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string)
 	If CF_exe_status <> 0 OR NOT fso.FileExists(CF_FILE_AbsolutePathName) Then
@@ -2858,10 +2863,15 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		vrdtvs_Convert_File = -1
 		Exit Function
 	End If
+	CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_QSF_AbsolutePathName & """<NUL"
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ----------------------------------- doing mediainfo on QSF """ & CF_QSF_AbsolutePathName & """ Q_V_Codec_legacy=""" & Q_V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """ -----------------------------------")
-	CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_QSF_AbsolutePathName & """"
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
-	CF_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string)
+	vrdtvs_tmp = CF_exe_cmd_string
+	vrdtvs_tmp = Replace(vrdtvs_tmp, "(", "^(", 1, -1, vbTextCompare)
+	vrdtvs_tmp = Replace(vrdtvs_tmp, ")", "^)", 1, -1, vbTextCompare)
+	vrdtvs_tmp = Replace(vrdtvs_tmp, "<", "^<", 1, -1, vbTextCompare)
+	vrdtvs_tmp = Replace(vrdtvs_tmp, ">", "^>", 1, -1, vbTextCompare)
+	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvs_tmp)
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string)
 	If CF_exe_status <> 0 OR NOT fso.FileExists(CF_QSF_AbsolutePathName) Then
@@ -3942,10 +3952,15 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ======================================================================================================================================================")
 '
 	' ++++ START do a mediainfo of the TARGET file
+	CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_TARGET_AbsolutePathName & """<NUL"
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ----------------------------------- doing mediainfo on TARGET """ & CF_TARGET_AbsolutePathName & """ T_V_Codec_legacy=""" & T_V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """ -----------------------------------")
-	CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_TARGET_AbsolutePathName & """"
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
-	CF_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string)
+	vrdtvs_tmp = CF_exe_cmd_string
+	vrdtvs_tmp = Replace(vrdtvs_tmp, "(", "^(", 1, -1, vbTextCompare)
+	vrdtvs_tmp = Replace(vrdtvs_tmp, ")", "^)", 1, -1, vbTextCompare)
+	vrdtvs_tmp = Replace(vrdtvs_tmp, "<", "^<", 1, -1, vbTextCompare)
+	vrdtvs_tmp = Replace(vrdtvs_tmp, ">", "^>", 1, -1, vbTextCompare)
+	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvs_tmp)
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string)
 	If CF_exe_status <> 0 OR NOT fso.FileExists(CF_TARGET_AbsolutePathName) Then
