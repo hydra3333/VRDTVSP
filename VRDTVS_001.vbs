@@ -296,6 +296,7 @@ WScript.StdOut.WriteLine("VRDTVS NOTE: final            vrd_path_for_adscan_vbs=
 WScript.StdOut.WriteLine("VRDTVS NOTE: final                         vrd_do_qsf=" & vrd_do_qsf)
 WScript.StdOut.WriteLine("VRDTVS NOTE: final                      vrd_do_adscan=" & vrd_do_adscan)
 WScript.StdOut.WriteLine("VRDTVS NOTE: final                 vrd_do_audio_delay=" & vrd_do_audio_delay)
+WScript.StdOut.WriteLine("VRDTVS NOTE: final                 vrd_show_mediainfo=" & vrd_show_mediainfo)
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Create the working folders if they do not already exist
