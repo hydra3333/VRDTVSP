@@ -4058,7 +4058,7 @@ Function vrdtvs_Exec_in_a_DOS_BAT_file (byVal eiadbf_cmd_string_array, ByVal eia
 	'
 	eiadbf_filename = vrdtvs_gimme_a_temporary_absolute_filename ("vrdtvs_Exec_in_a_DOS_BAT_file-" & vrdtvs_run_datetime) & ".BAT"
 	eiadbf_logfilename = vrdtvs_gimme_a_temporary_absolute_filename ("vrdtvs_Exec_in_a_DOS_BAT_file-" & vrdtvs_run_datetime) & ".log"
-	eiadbf_status = vrdtvs_delete_a_file(eiadbf_filename, True)
+	eiadbf_status = vrdtvs_delete_a_file(eiadbf_batfilename, True)
 	eiadbf_status = vrdtvs_delete_a_file(eiadbf_logfilename, True)
 	eiadbf_lbound = LBOUND(eiadbf_cmd_string_array)
 	eiadbf_ubound = UBOUND(eiadbf_cmd_string_array)
@@ -4069,12 +4069,12 @@ Function vrdtvs_Exec_in_a_DOS_BAT_file (byVal eiadbf_cmd_string_array, ByVal eia
 	eiadbf_batfilename_object.WriteLine("DEL /F """ & eiadbf_logfilename & """")
 	eiadbf_batfilename_object.WriteLine("ECHO !DATE! !TIME! STARTED *************************************************************************** >>""" & ff_logfile & """ 2>&1")
 	for i = eiadbf_lbound to eiadbf_ubound STEP 1
-		eiadbf_batfilename_object.WriteLine("ECHO !DATE !TIME! ------------------------" & " >>""" & eiadbf_logfilename & """ 2>&1" ' redirect both stdout and stderr to the logfile
-		eiadbf_batfilename_object.WriteLine("ECHO " & eiadbf_cmd_string_array(i) & " >>""" & eiadbf_logfilename & """ 2>&1" ' redirect both stdout and stderr to the logfile
-		eiadbf_batfilename_object.WriteLine(eiadbf_cmd_string_array(i) & " >>""" & eiadbf_logfilename & """ 2>&1" ' redirect both stdout and stderr to the logfile
-		eiadbf_batfilename_object.WriteLine("Set EL=%ERRORLEVEL%" & " >>""" & eiadbf_logfilename & """ 2>&1" ' redirect both stdout and stderr to the logfile
-		eiadbf_batfilename_object.WriteLine("ECHO that returned Errorlevel=%EL%" & " >>""" & eiadbf_logfilename & """ 2>&1" ' redirect both stdout and stderr to the logfile
-		eiadbf_batfilename_object.WriteLine("ECHO !DATE !TIME! ------------------------" & " >>""" & eiadbf_logfilename & """ 2>&1" ' redirect both stdout and stderr to the logfile
+		eiadbf_batfilename_object.WriteLine("ECHO !DATE !TIME! ------------------------" & " >>""" & eiadbf_logfilename & """ 2>&1")	' redirect both stdout and stderr to the logfile
+		eiadbf_batfilename_object.WriteLine("ECHO " & eiadbf_cmd_string_array(i) & " >>""" & eiadbf_logfilename & """ 2>&1")			' redirect both stdout and stderr to the logfile
+		eiadbf_batfilename_object.WriteLine(eiadbf_cmd_string_array(i) & " >>""" & eiadbf_logfilename & """ 2>&1")						' redirect both stdout and stderr to the logfile
+		eiadbf_batfilename_object.WriteLine("Set EL=%ERRORLEVEL%" & " >>""" & eiadbf_logfilename & """ 2>&1")							' redirect both stdout and stderr to the logfile
+		eiadbf_batfilename_object.WriteLine("ECHO that returned Errorlevel=%EL%" & " >>""" & eiadbf_logfilename & """ 2>&1")			' redirect both stdout and stderr to the logfile
+		eiadbf_batfilename_object.WriteLine("ECHO !DATE !TIME! ------------------------" & " >>""" & eiadbf_logfilename & """ 2>&1")	' redirect both stdout and stderr to the logfile
 		eiadbf_batfilename_object.WriteLine("EXIT %EL%")
 	Next
 	eiadbf_batfilename_object.close
@@ -4108,7 +4108,7 @@ Function vrdtvs_Exec_in_a_DOS_BAT_file (byVal eiadbf_cmd_string_array, ByVal eia
 		Set eiadbf_logfilename_object = Nothing
 		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Exec_in_a_DOS_BAT_file: ********** END Content of """ & eiadbf_logfilename & """ Above.")
 	End If
-	eiadbf_status = vrdtvs_delete_a_file(eiadbf_filename, True)
+	eiadbf_status = vrdtvs_delete_a_file(eiadbf_batfilename, True)
 	eiadbf_status = vrdtvs_delete_a_file(eiadbf_logfilename, True)
 	vrdtvs_Exec_in_a_DOS_BAT_file = eiadbf_errorlevel
 End Function
