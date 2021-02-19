@@ -2848,7 +2848,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1))
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	CF_exe_status = vrdtvs_Exec_in_a_DOS_BAT_file (vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log
-	Eease vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array
+	Erase vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array
 	' ++++ END do a mediainfo of the SOURCE so we can compare them !!! (DGIndex got the FPS wrong)
 	' ++++ START do a mediainfo of the QSF so we can compare them !!! (DGIndex got the FPS wrong)
 	CF_QSF_AbsolutePathName
@@ -2861,7 +2861,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1))
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	CF_exe_status = vrdtvs_Exec_in_a_DOS_BAT_file (vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log
-	Eease vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array
+	Erase vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array
 	' ++++ END do a mediainfo of the QSF so we can compare them !!! (DGIndex got the FPS wrong)
 	' End ======================================================  Do the QSF ======================================================
 	'
