@@ -2693,35 +2693,35 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ======================================================================================================================================================")
 	'
 	' Now that we know the Video Codec and have determined that proper QSF File extension to use, set things up
-	CF_QSF_ParentFolderName = CF_temp_path
-	CF_QSF_BaseName = CF_FILE_BaseName
-	CF_QSF_Ext = vrd_extension ' set above based on incoming codec
-	CF_QSF_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_QSF_ParentFolderName,CF_QSF_BaseName & ".VRDTVS.QSF." & CF_QSF_Ext))
-	'
 	CF_TARGET_ParentFolderName = CF_destination_mp4_Folder
 	CF_TARGET_BaseName = CF_FILE_BaseName
 	CF_TARGET_Ext = "mp4"		' always .mp4
 	CF_TARGET_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_TARGET_ParentFolderName,CF_TARGET_BaseName & "." & CF_TARGET_Ext))
 	'
+	CF_BPRJ_ParentFolderName = CF_destination_mp4_Folder
+	CF_BPRJ_BaseName = CF_TARGET_BaseName
+	CF_BPRJ_Ext = "bprj"		' always .bprj
+	CF_BPRJ_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_BPRJ_ParentFolderName,CF_BPRJ_BaseName & "." & CF_BPRJ_Ext))
+	'
+	CF_QSF_ParentFolderName = CF_temp_path
+	CF_QSF_BaseName = CF_FILE_BaseName & ".QSF"
+	CF_QSF_Ext = vrd_extension ' set above based on incoming codec
+	CF_QSF_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_QSF_ParentFolderName,CF_QSF_BaseName & "." & CF_QSF_Ext))
+	'
 	CF_VPY_ParentFolderName = CF_temp_path
-	CF_VPY_BaseName = CF_FILE_BaseName
+	CF_VPY_BaseName = CF_QSF_BaseName
 	CF_VPY_Ext = "vpy"			' always .vpy
 	CF_VPY_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_VPY_ParentFolderName,CF_VPY_BaseName & "." & CF_VPY_Ext))
 	'
 	CF_DGI_ParentFolderName = CF_temp_path
-	CF_DGI_BaseName = CF_FILE_BaseName
+	CF_DGI_BaseName = CF_QSF_BaseName
 	CF_DGI_Ext = "dgi"			' always .dgi
-	CF_DGI_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_DGI_ParentFolderName,CF_QSF_BaseName & "." & CF_DGI_Ext))
+	CF_DGI_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_DGI_ParentFolderName,CF_DGI_BaseName & "." & CF_DGI_Ext))
 	'
 	CF_DGIlog_ParentFolderName = CF_temp_path
-	CF_DGIlog_BaseName = CF_FILE_BaseName
+	CF_DGIlog_BaseName = CF_QSF_BaseName
 	CF_DGIlog_Ext = "log"			' always .log
-	CF_DGIlog_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_DGI_ParentFolderName,CF_QSF_BaseName & "." & CF_DGIlog_Ext))
-	'
-	CF_BPRJ_ParentFolderName = CF_destination_mp4_Folder
-	CF_BPRJ_BaseName = CF_FILE_BaseName
-	CF_BPRJ_Ext = "bprj"		' always .bprj
-	CF_BPRJ_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_BPRJ_ParentFolderName,CF_BPRJ_BaseName & "." & CF_BPRJ_Ext))
+	CF_DGIlog_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_DGI_ParentFolderName,CF_DGIlog_BaseName & "." & CF_DGIlog_Ext))
 	'
 	' START ======================================================  Do the QSF ... IF FLAGGED TO DO DO ======================================================
 	' If doing a QSF, do it
@@ -2791,7 +2791,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string)
 	Else ' proceed with creating the "pretend" QSF file
 		CF_QSF_Ext = CF_FILE_Ext ' NOT "vrd_extension" CF_FILE_AbsolutePathName
-		CF_QSF_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_QSF_ParentFolderName,CF_QSF_BaseName & ".VRDTVS.NON-QSF." & CF_QSF_Ext))		
+		CF_QSF_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_QSF_ParentFolderName, CF_QSF_BaseName & CF_QSF_Ext))		
 		CF_exe_cmd_string = "COPY /Y /V /Z /B """ & CF_FILE_AbsolutePathName & """ """ & CF_QSF_AbsolutePathName & """"
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ----- Instead-of-QSF: Copying """ & CF_FILE_AbsolutePathName & """ to """ & CF_QSF_AbsolutePathName & """ with: " & CF_exe_cmd_string)
 		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ----- Instead-of-QSF for """ & CF_FILE_AbsolutePathName & """ ... " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
