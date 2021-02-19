@@ -3368,7 +3368,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		End If
 	Else
 		CF_object_saved_ffmpeg_commands.WriteLine("REM")
-		CF_object_saved_ffmpeg_commands.WriteLine("REM DGIndexNV is ONLY *not* performed for Progressive/AVC combination video")
+		CF_object_saved_ffmpeg_commands.WriteLine("REM DGIndexNV is ONLY *not* performed for the Progressive/AVC combination video")
 		CF_object_saved_ffmpeg_commands.WriteLine("REM")
 		If vrdtvs_DEBUG Then 
 			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - DGIndexNV is performed for NON-Progressive OR NON-AVC video")
