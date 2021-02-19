@@ -2838,11 +2838,15 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	' ++++ END Run the QSF command
 	'
 	' ++++ START do a mediainfo of the SOURCE so we can compare them !!! (DGIndex got the FPS wrong)
-	'CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_FILE_AbsolutePathName & """ "
-	CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy ""--Inform=Video;%FrameRate%\r\n"" """ & CF_FILE_AbsolutePathName & """ "
+	CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_FILE_AbsolutePathName & """ "
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
-	vrdtvs_tmp = Replace(CF_exe_cmd_string, "%", "%%", 1, -1, vbTextCompare)
-	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvs_tmp) ' just for the mediainfo command run from within in a .BAT file
+	CF_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string)
+	CF_object_saved_ffmpeg_commands.WriteLine("REM")
+	'CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy ""--Inform=Video;%FrameRate%\r\n"" """ & CF_FILE_AbsolutePathName & """ "
+	CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_FILE_AbsolutePathName & """ "
+	CF_object_saved_ffmpeg_commands.WriteLine("REM")
+	vrdtvs_tmp = Replace(CF_exe_cmd_string, "%", "%%", 1, -1, vbTextCompare) ' just for the mediainfo command run from within in a .BAT file
+	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvs_tmp) 
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ----------------------------------- doing mediainfo on SOURCE """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """ -----------------------------------")
     set CF_exe_object = wso.Exec(CF_exe_cmd_string)
@@ -2874,8 +2878,12 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
     Set CF_exe_object = Nothing
 	' ++++ END do a mediainfo of the SOURCE so we can compare them !!! (DGIndex got the FPS wrong)
 	' ++++ START do a mediainfo of the QSF so we can compare them !!! (DGIndex got the FPS wrong)
-	'CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_FILE_AbsolutePathName & """ "
-	CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy ""--Inform=Video;%FrameRate%\r\n"" """ & CF_QSF_AbsolutePathName & """ "
+	CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_FILE_AbsolutePathName & """ "
+	CF_object_saved_ffmpeg_commands.WriteLine("REM")
+	CF_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string)
+	CF_object_saved_ffmpeg_commands.WriteLine("REM")
+	'CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy ""--Inform=Video;%FrameRate%\r\n"" """ & CF_QSF_AbsolutePathName & """ "
+	CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_QSF_AbsolutePathName & """ "
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	vrdtvs_tmp = Replace(CF_exe_cmd_string, "%", "%%", 1, -1, vbTextCompare)
 	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvs_tmp) ' just for the mediainfo command run from within in a .BAT file
@@ -3971,8 +3979,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ======================================================================================================================================================")
 '
 	' ++++ START do a mediainfo of the TARGET so we can compare them !!! (DGIndex got the FPS wrong)
-	'CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_FILE_AbsolutePathName & """ "
-	CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy ""--Inform=Video;%FrameRate%\r\n"" """ & CF_TARGET_AbsolutePathName & """ "
+	'CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy ""--Inform=Video;%FrameRate%\r\n"" """ & CF_TARGET_AbsolutePathName & """ "
+	CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_QSF_AbsolutePathName & """ "
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	vrdtvs_tmp = Replace(CF_exe_cmd_string, "%", "%%", 1, -1, vbTextCompare)
 	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvs_tmp) ' just for the mediainfo command run from within in a .BAT file
