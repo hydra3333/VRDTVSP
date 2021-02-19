@@ -3976,7 +3976,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	End If
 	ReDim vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1) ' base 0, so the dimension is always 1 less than the number of commands
 	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(0) = vrdtvs_REM & """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_TARGET_AbsolutePathName & """"
-	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1) = vrdtvs_REM """" & vrdtvs_mediainfoexe64 & """ --Legacy ""--Inform=Video;%FrameRate%\r\n"" """ & CF_TARGET_AbsolutePathName & """"
+	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1) = vrdtvs_REM & """" & vrdtvs_mediainfoexe64 & """ --Legacy ""--Inform=Video;%FrameRate%\r\n"" """ & CF_TARGET_AbsolutePathName & """"
 	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1) = Replace(vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1), "%", "%%", 1, -1, vbTextCompare) ' just for the mediainfo command run from WITHIN in a .BAT file
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(0))
