@@ -3945,7 +3945,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1))
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	CF_exe_status = vrdtvs_Exec_in_a_DOS_BAT_file (vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log
-	Eease vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array
+	Erase vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array
 	' ++++ END do a mediainfo of the TARGET so we can compare them !!! (DGIndex got the FPS wrong)
 	'
 	'------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -4071,13 +4071,13 @@ Function vrdtvs_Exec_in_a_DOS_BAT_file (byVal eiadbf_cmd_string_array, ByVal eia
 	eiadbf_batfilename_object.WriteLine("Set EL=0")
 	eiadbf_batfilename_object.WriteLine("ECHO !DATE! !TIME! STARTED *************************************************************************** >>""" & eiadbf_logfilename & """ 2>&1")
 	for i = eiadbf_lbound to eiadbf_ubound STEP 1
-		eiadbf_batfilename_object.WriteLine("ECHO !DATE !TIME! ------------------------" & " >>""" & eiadbf_logfilename & """ 2>&1")	' redirect both stdout and stderr to the logfile
+		eiadbf_batfilename_object.WriteLine("ECHO !DATE! !TIME! ------------------------" & " >>""" & eiadbf_logfilename & """ 2>&1")	' redirect both stdout and stderr to the logfile
 		eiadbf_batfilename_object.WriteLine("ECHO " & eiadbf_cmd_string_array(i) & " >>""" & eiadbf_logfilename & """ 2>&1")			' redirect both stdout and stderr to the logfile
 		eiadbf_batfilename_object.WriteLine(eiadbf_cmd_string_array(i) & " >>""" & eiadbf_logfilename & """ 2>&1")						' redirect both stdout and stderr to the logfile
 		eiadbf_batfilename_object.WriteLine("Set EL=%ERRORLEVEL%" & " >>""" & eiadbf_logfilename & """ 2>&1")							' redirect both stdout and stderr to the logfile
-		eiadbf_batfilename_object.WriteLine("ECHO that returned Errorlevel=%EL%" & " >>""" & eiadbf_logfilename & """ 2>&1")			' redirect both stdout and stderr to the logfile
-		eiadbf_batfilename_object.WriteLine("ECHO !DATE !TIME! ------------------------" & " >>""" & eiadbf_logfilename & """ 2>&1")	' redirect both stdout and stderr to the logfile
+		'eiadbf_batfilename_object.WriteLine("ECHO that returned Errorlevel=%EL%" & " >>""" & eiadbf_logfilename & """ 2>&1")			' redirect both stdout and stderr to the logfile
 	Next
+	eiadbf_batfilename_object.WriteLine("ECHO !DATE! !TIME! ------------------------" & " >>""" & eiadbf_logfilename & """ 2>&1")	' redirect both stdout and stderr to the logfile
 	eiadbf_batfilename_object.WriteLine("ECHO !DATE! !TIME! FINISHED *************************************************************************** >>""" & eiadbf_logfilename & """ 2>&1")
 	eiadbf_batfilename_object.WriteLine("EXIT %EL%")
 	eiadbf_batfilename_object.close
