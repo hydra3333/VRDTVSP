@@ -2510,7 +2510,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Dim vrdtvs_create_VPY
 	Dim vpy_denoise
 	Dim vpy_dsharpen
-	Dim af_audio_delay_filter
+	Dim af_audio_delay_filter, it_video_delay
 	'
 	WScript.StdOut.WriteLine(" ")
 	WScript.StdOut.WriteLine(" ")
@@ -3452,10 +3452,20 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	vrdtvs_create_VPY = True
 	vpy_denoise  = ""
 	vpy_dsharpen = ""
+	af_audio_delay_filter = " "
+	it_video_delay = " "
+	
 	If CF_do_audio_delay Then
-		af_audio_delay_filter = "-af ""adelay=delays=" & Q_A_Audio_Delay_ms & "ms:all=1"" "
-	Else
-		af_audio_delay_filter = " "
+		If Q_A_Audio_Delay_ms > 0 Then	' video before audio
+			af_audio_delay_filter = "-af ""adelay=delays=" & Q_A_Audio_Delay_ms & "ms:all=1"" "
+			it_video_delay = " "
+		ElseIf Q_A_Audio_Delay_ms < 0 Then	' audio before video
+			af_audio_delay_filter = " "
+			it_video_delay = " -itsoffset " & Q_A_Video_Delay_ms & "ms "	' JUST BEFORE VIDEO INPUT FILE
+		Else	' 0ms delays
+			af_audio_delay_filter = " "
+			it_video_delay = " "
+		End If
 	End If
 	If V_IsProgressive Then ' Ucase(V_ScanType) = Ucase("Progressive")
 		If V_IsAVC Then ' Ucase(Q_V_Codec_legacy) = Ucase("AVC") 
@@ -3488,6 +3498,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-hide_banner -v verbose -nostats " &_
 							"-f vapoursynth -i """ & CF_VPY_AbsolutePathName & """ " &_
 							"-probesize 120M -analyzeduration 120M " &_
+							it_video_delay &_
 							"-i """ & CF_QSF_AbsolutePathName & """ " &_
 							"-map 0:v:0 -map 1:a:0 " &_
 							"-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
@@ -3521,6 +3532,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-hide_banner -v verbose -nostats " &_
 							"-f vapoursynth -i """ & CF_VPY_AbsolutePathName & """ " &_
 							"-probesize 120M -analyzeduration 120M " &_
+							it_video_delay &_
 							"-i """ & CF_QSF_AbsolutePathName & """ " &_
 							"-map 0:v:0 -map 1:a:0 " &_
 							"-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
@@ -3543,6 +3555,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 								"-hide_banner -v verbose -nostats " &_
 								"-f vapoursynth -i """ & CF_VPY_AbsolutePathName & """ " &_
 								"-probesize 120M -analyzeduration 120M " &_
+								it_video_delay &_
 								"-i """ & CF_QSF_AbsolutePathName & """ " &_
 								"-map 0:v:0 -map 1:a:0 " &_
 								"-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
@@ -3571,6 +3584,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 							"-hide_banner -v verbose -nostats " &_
 							"-f vapoursynth -i """ & CF_VPY_AbsolutePathName & """ " &_
 							"-probesize 120M -analyzeduration 120M " &_
+							it_video_delay &_
 							"-i """ & CF_QSF_AbsolutePathName & """ " &_
 							"-map 0:v:0 -map 1:a:0 " &_
 							"-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
@@ -3692,8 +3706,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'ff_tmp_object.WriteLine("DEL /F """ & ff_logfile & """")
 	'ff_tmp_object.WriteLine("ECHO """ & vrdtvs_ffmpegexe64 & """ -hide_banner -v verbose -init_hw_device list >>""" & ff_logfile & """ 2>&1")
 	'ff_tmp_object.WriteLine("""" & vrdtvs_ffmpegexe64 & """ -hide_banner -v verbose -init_hw_device list >>""" & ff_logfile & """ 2>&1")
-	'ff_tmp_object.WriteLine("ECHO """ & vrdtvs_ffmpegexe64 & """ -hide_banner -v verbose -hide_banner -h encoder=hevc_nvenc >>""" & ff_logfile & """ 2>&1")
-	'ff_tmp_object.WriteLine("""" & vrdtvs_ffmpegexe64 & """ -hide_banner -v verbose -hide_banner -h encoder=hevc_nvenc >>""" & ff_logfile & """ 2>&1")
+	'ff_tmp_object.WriteLine("ECHO """ & vrdtvs_ffmpegexe64 & """ -hide_banner -v verbose  -h encoder=hevc_nvenc >>""" & ff_logfile & """ 2>&1")
+	'ff_tmp_object.WriteLine("""" & vrdtvs_ffmpegexe64 & """ -hide_banner -v verbose -h encoder=hevc_nvenc >>""" & ff_logfile & """ 2>&1")
 	'ff_tmp_object.WriteLine("ECHO !DATE! !TIME! FFMPEG STARTED *************************************************************************** >>""" & ff_logfile & """ 2>&1")
 	'ff_tmp_object.WriteLine("ECHO !DATE! !TIME! FFMPEG STARTED *************************************************************************** >>""" & ff_logfile & """ 2>&1")
 	'ff_tmp_object.WriteLine(ff_cmd_string_for_bat)
