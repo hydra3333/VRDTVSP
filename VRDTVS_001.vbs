@@ -2836,60 +2836,77 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	ff_timerEnd = Timer
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - QSF command completed with Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(ff_timerStart, ff_timerEnd))
 	' ++++ END Run the QSF command
-	' ++++ START do a mediainfo of the SOURCE and of the QSF so we can compare them !!! (DGIndex got the FPS wrong)
-	CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_FILE_AbsolutePathName & """<NUL"
+	'
+	' ++++ START do a mediainfo of the SOURCE so we can compare them !!! (DGIndex got the FPS wrong)
+	'CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_FILE_AbsolutePathName & """ "
+	CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy ""--Inform=-Legacy --Inform=Video;%FrameRate%\r\n"" """ & CF_FILE_AbsolutePathName & """ "
+	CF_object_saved_ffmpeg_commands.WriteLine("REM")
+	vrdtvs_tmp = Replace(CF_exe_cmd_string, "%", "%%", 1, -1, vbTextCompare)
+	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvs_tmp) ' just for the mediainfo command run from within in a .BAT file
+	CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ----------------------------------- doing mediainfo on SOURCE """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """ -----------------------------------")
+    set CF_exe_object = wso.Exec(CF_exe_cmd_string)
+    Do While CF_exe_object.Status = 0 '0 is running and 1 is ending
+        Wscript.Sleep 100
+    Loop
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File mediainfo START of StdErr: " )
+    Do Until CF_exe_object.StdErr.AtEndOfStream
+		CF_tmp = CF_exe_object.StdErr.ReadLine()
+        WScript.StdOut.WriteLine(CF_tmp)
+    Loop
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File mediainfo END of StdErr.")
+    CF_exe_status = mi_exe.ExitCode
+    If CF_exe_status <> 0 then
+        WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_Convert_File ABORTING with mediainfo Exec command: " & CF_exe_cmd_string)
+        WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_Convert_File ABORTING with mediainfo  Exit Status: " & CF_exe_status)
+        ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
+		Wscript.Echo "Error 17 = cannot perform the requested operation"
+		On Error goto 0
+		WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+    End If
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File mediainfo START of StdOut: ")
+    Do Until CF_exe_object.StdOut.AtEndOfStream ' we need to read only one line though
+		CF_tmp = CF_exe_object.StdOut.ReadLine()
+        WScript.StdOut.WriteLine(CF_tmp)
+    Loop
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File END of mediainfo StdOut.")
+    Set CF_exe_object = Nothing
+	' ++++ END do a mediainfo of the SOURCE so we can compare them !!! (DGIndex got the FPS wrong)
+	' ++++ START do a mediainfo of the QSF so we can compare them !!! (DGIndex got the FPS wrong)
+	'CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_FILE_AbsolutePathName & """ "
+	CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy ""--Inform=-Legacy --Inform=Video;%FrameRate%\r\n"" """ & CF_QSF_AbsolutePathName & """ "
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
-	vrdtvs_tmp = CF_exe_cmd_string
-	'vrdtvs_tmp = Replace(vrdtvs_tmp, "(", "^(", 1, -1, vbTextCompare)
-	'vrdtvs_tmp = Replace(vrdtvs_tmp, ")", "^)", 1, -1, vbTextCompare)
-	'vrdtvs_tmp = Replace(vrdtvs_tmp, "<", "^<", 1, -1, vbTextCompare)
-	'vrdtvs_tmp = Replace(vrdtvs_tmp, ">", "^>", 1, -1, vbTextCompare)
-	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvs_tmp)
+	vrdtvs_tmp = Replace(CF_exe_cmd_string, "%", "%%", 1, -1, vbTextCompare)
+	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvs_tmp) ' just for the mediainfo command run from within in a .BAT file
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
-	CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string)
-	If CF_exe_status <> 0 OR NOT fso.FileExists(CF_FILE_AbsolutePathName) Then
-		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - Error - Failed to do mediainfo on SOURCE """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
-		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Failed to do mediainfo on SOURCE """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
-		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
-			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			On Error goto 0
-			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
-		Else
-			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			On Error goto 0
-			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
-		End If
-		vrdtvs_Convert_File = -1
-		Exit Function
-	End If
-	CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_QSF_AbsolutePathName & """<NUL"
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ----------------------------------- doing mediainfo on QSF """ & CF_QSF_AbsolutePathName & """ Q_V_Codec_legacy=""" & Q_V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """ -----------------------------------")
-	CF_object_saved_ffmpeg_commands.WriteLine("REM")
-	vrdtvs_tmp = CF_exe_cmd_string
-	'vrdtvs_tmp = Replace(vrdtvs_tmp, "(", "^(", 1, -1, vbTextCompare)
-	'vrdtvs_tmp = Replace(vrdtvs_tmp, ")", "^)", 1, -1, vbTextCompare)
-	'vrdtvs_tmp = Replace(vrdtvs_tmp, "<", "^<", 1, -1, vbTextCompare)
-	'vrdtvs_tmp = Replace(vrdtvs_tmp, ">", "^>", 1, -1, vbTextCompare)
-	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvs_tmp)
-	CF_object_saved_ffmpeg_commands.WriteLine("REM")
-	CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string)
-	If CF_exe_status <> 0 OR NOT fso.FileExists(CF_QSF_AbsolutePathName) Then
-		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - Error - Failed to do mediainfo on QSF """ & CF_QSF_AbsolutePathName & """ Q_V_Codec_legacy=""" & Q_V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
-		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Failed to do mediainfo on SOURCE """ & CF_QSF_AbsolutePathName & """ Q_V_Codec_legacy=""" & Q_V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
-		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
-			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			On Error goto 0
-			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
-		Else
-			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			On Error goto 0
-			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
-		End If
-		vrdtvs_Convert_File = -1
-		Exit Function
-	End If
-	' ++++ END do a mediainfo of the SOURCE file and of the QSF file so that we can compare them !!! (DGIndex got the FPS wrong)
+    set CF_exe_object = wso.Exec(CF_exe_cmd_string)
+    Do While CF_exe_object.Status = 0 '0 is running and 1 is ending
+        Wscript.Sleep 100
+    Loop
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File mediainfo START of StdErr: " )
+    Do Until CF_exe_object.StdErr.AtEndOfStream
+		CF_tmp = CF_exe_object.StdErr.ReadLine()
+        WScript.StdOut.WriteLine(CF_tmp)
+    Loop
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File mediainfo END of StdErr.")
+    CF_exe_status = mi_exe.ExitCode
+    If CF_exe_status <> 0 then
+        WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_Convert_File ABORTING with mediainfo Exec command: " & CF_exe_cmd_string)
+        WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_Convert_File ABORTING with mediainfo  Exit Status: " & CF_exe_status)
+        ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
+		Wscript.Echo "Error 17 = cannot perform the requested operation"
+		On Error goto 0
+		WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+    End If
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File mediainfo START of StdOut: ")
+    Do Until CF_exe_object.StdOut.AtEndOfStream ' we need to read only one line though
+		CF_tmp = CF_exe_object.StdOut.ReadLine()
+        WScript.StdOut.WriteLine(CF_tmp)
+    Loop
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File END of mediainfo StdOut.")
+    Set CF_exe_object = Nothing
+	' ++++ END do a mediainfo of the QSF so we can compare them !!! (DGIndex got the FPS wrong)
 	' End ======================================================  Do the QSF ======================================================
 	'
 	' Copy the QSF log and then search it for a bitrate value
@@ -3951,34 +3968,41 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: V_INCOMING_BITRATE: Using """ & CF_FILE_AbsolutePathName & """ and """ & CF_TARGET_AbsolutePathName & """ The V_INCOMING_BITRATE=""" & V_INCOMING_BITRATE & """")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ======================================================================================================================================================")
 '
-	' ++++ START do a mediainfo of the TARGET file
-	CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_TARGET_AbsolutePathName & """<NUL"
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ----------------------------------- doing mediainfo on TARGET """ & CF_TARGET_AbsolutePathName & """ T_V_Codec_legacy=""" & T_V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """ -----------------------------------")
+	' ++++ START do a mediainfo of the TARGET so we can compare them !!! (DGIndex got the FPS wrong)
+	'CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_FILE_AbsolutePathName & """ "
+	CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy ""--Inform=-Legacy --Inform=Video;%FrameRate%\r\n"" """ & CF_TARGET_AbsolutePathName & """ "
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
-	vrdtvs_tmp = CF_exe_cmd_string
-	'vrdtvs_tmp = Replace(vrdtvs_tmp, "(", "^(", 1, -1, vbTextCompare)
-	'vrdtvs_tmp = Replace(vrdtvs_tmp, ")", "^)", 1, -1, vbTextCompare)
-	'vrdtvs_tmp = Replace(vrdtvs_tmp, "<", "^<", 1, -1, vbTextCompare)
-	'vrdtvs_tmp = Replace(vrdtvs_tmp, ">", "^>", 1, -1, vbTextCompare)
-	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvs_tmp)
+	vrdtvs_tmp = Replace(CF_exe_cmd_string, "%", "%%", 1, -1, vbTextCompare)
+	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvs_tmp) ' just for the mediainfo command run from within in a .BAT file
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
-	CF_exe_status = vrdtvs_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string)
-	If CF_exe_status <> 0 OR NOT fso.FileExists(CF_TARGET_AbsolutePathName) Then
-		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - Error - Failed to do mediainfo on TARGET """ & CF_TARGET_AbsolutePathName & """ T_V_Codec_legacy=""" & T_V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
-		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - Error - Failed to do mediainfo on TARGET """ & CF_TARGET_AbsolutePathName & """ T_V_Codec_legacy=""" & T_V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
-		If vrdtvs_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
-			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			On Error goto 0
-			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
-		Else
-			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			On Error goto 0
-			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
-		End If
-		vrdtvs_Convert_File = -1
-		Exit Function
-	End If
-	' ++++ END do a mediainfo of the TARGET file
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ----------------------------------- doing mediainfo on QSF """ & CF_TARGET_AbsolutePathName & """ T_V_Codec_legacy=""" & T_V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """ -----------------------------------")
+    set CF_exe_object = wso.Exec(CF_exe_cmd_string)
+    Do While CF_exe_object.Status = 0 '0 is running and 1 is ending
+        Wscript.Sleep 100
+    Loop
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File mediainfo START of StdErr: " )
+    Do Until CF_exe_object.StdErr.AtEndOfStream
+		CF_tmp = CF_exe_object.StdErr.ReadLine()
+        WScript.StdOut.WriteLine(CF_tmp)
+    Loop
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File mediainfo END of StdErr.")
+    CF_exe_status = mi_exe.ExitCode
+    If CF_exe_status <> 0 then
+        WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_Convert_File ABORTING with mediainfo Exec command: " & CF_exe_cmd_string)
+        WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_Convert_File ABORTING with mediainfo  Exit Status: " & CF_exe_status)
+        ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
+		Wscript.Echo "Error 17 = cannot perform the requested operation"
+		On Error goto 0
+		WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+    End If
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File mediainfo START of StdOut: ")
+    Do Until CF_exe_object.StdOut.AtEndOfStream ' we need to read only one line though
+		CF_tmp = CF_exe_object.StdOut.ReadLine()
+        WScript.StdOut.WriteLine(CF_tmp)
+    Loop
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File END of mediainfo StdOut.")
+    Set CF_exe_object = Nothing
+	' ++++ END do a mediainfo of the TARGET so we can compare them !!! (DGIndex got the FPS wrong)
 	'
 	' after ffmpeg, do an ADSCAN over the TARGET file and save the .bprj in the target folder as an "associated .bprj" which will be picked up by auto-bprj-processing during bulk file renames :)
 	If CF_do_Adscan Then
