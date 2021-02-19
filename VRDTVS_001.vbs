@@ -2868,7 +2868,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
     Do Until CF_exe_object.StdOut.AtEndOfStream ' we need to read only one line though
 		CF_tmp = CF_exe_object.StdOut.ReadLine()
         WScript.StdOut.WriteLine(CF_tmp)
-		Exit Do ' we need to read only THE FIRST line so exit loop immediately after doing that
+		'Exit Do ' we need to read only THE FIRST line so exit loop immediately after doing that
     Loop
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File END of mediainfo StdOut.")
     Set CF_exe_object = Nothing
@@ -3977,7 +3977,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	vrdtvs_tmp = Replace(CF_exe_cmd_string, "%", "%%", 1, -1, vbTextCompare)
 	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvs_tmp) ' just for the mediainfo command run from within in a .BAT file
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ----------------------------------- doing mediainfo on QSF """ & CF_TARGET_AbsolutePathName & """ T_V_Codec_legacy=""" & T_V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """ -----------------------------------")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ----------------------------------- doing mediainfo on TARGET """ & CF_TARGET_AbsolutePathName & """ T_V_Codec_legacy=""" & T_V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """ -----------------------------------")
     set CF_exe_object = wso.Exec(CF_exe_cmd_string)
     Do While CF_exe_object.Status = 0 '0 is running and 1 is ending
         Wscript.Sleep 100
