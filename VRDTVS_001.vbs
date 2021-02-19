@@ -223,6 +223,14 @@ vrd_do_qsf = vrdtvs_get_commandline_parameter("do_qsf",vrd_do_qsf) 			          
 vrd_do_adscan = vrdtvs_get_commandline_parameter("do_adscan",vrd_do_adscan)                      		                    						' /do_adscan:False
 vrd_do_audio_delay = vrdtvs_get_commandline_parameter("do_audio_delay",vrd_do_audio_delay)                      		                    		' /do_audio_delay:False
 
+' ***************************************************************************************************************************
+If vrd_version_for_qsf <> 5 Then '*** QSF
+	WScript.StdOut.WriteLine("VRDTVS WARNING ******************************************************************************************************************************")
+	WScript.StdOut.WriteLine("VRDTVS WARNING version vrd_version_for_qsf=" & vrd_version_for_qsf & " does not work with DGIndexNV - auto REVERTING to vrd_version_for_qsf=5")
+	WScript.StdOut.WriteLine("VRDTVS WARNING ******************************************************************************************************************************")
+	vrd_version_for_qsf = 5
+End If
+' ***************************************************************************************************************************
 If vrd_version_for_qsf = 5 Then '*** QSF
     vrd_path_for_qsf_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd5_path,"vp.vbs"))
     vrd_profile_name_for_qsf_mpeg2 = const_vrd5_profile_mpeg2
@@ -242,6 +250,14 @@ Else
     On Error goto 0
 	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
+' ***************************************************************************************************************************
+If vrd_version_for_adscan <> 5 Then '*** QSF
+	WScript.StdOut.WriteLine("VRDTVS WARNING ************************************************************************************************************************")
+	WScript.StdOut.WriteLine("VRDTVS WARNING version vrd_version_for_adscan=" & vrd_version_for_adscan & " does not work - auto REVERTING to vrd_version_for_adscan=5")
+	WScript.StdOut.WriteLine("VRDTVS WARNING ************************************************************************************************************************")
+	vrd_version_for_adscan = 5
+End If
+' ***************************************************************************************************************************
 If vrd_version_for_adscan = 5 Then '*** AdScan
     vrd_path_for_adscan_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd5_path,"AdScan.vbs"))
 	vrd_logfile_wildcard_ADSCAN = vrd5_logfile_wildcard
