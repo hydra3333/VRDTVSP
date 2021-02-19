@@ -1,7 +1,3 @@
-'''''	??? add testing of processing audio/video delay - 0 and positive and negative - for the large-number delays
-'''''		-af "adelay=delays=64ms:all=1"
-'''''		-itsoffset 384ms JUST BEFORE INPUT FILE
-
 Option explicit
 '
 ' VRDTVS - automatically parse, convert video/audio from TVSchedulerPro TV recordings, 
