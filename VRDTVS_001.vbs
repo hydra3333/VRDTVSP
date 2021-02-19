@@ -4086,7 +4086,7 @@ Function vrdtvs_Exec_in_a_DOS_BAT_file (byVal eiadbf_cmd_string_array, ByVal eia
 		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Exec_in_a_DOS_BAT_file: ********** START Content of """ & eiadbf_batfilename & """ Below:")
 		Set eiadbf_batfilename_object = fso.OpenTextFile(eiadbf_batfilename, ForReading) ' ForReading is global
 		Do Until eiadbf_batfilename_object.AtEndOfStream
-			eiadbf_tmp = ff_tmp_object.ReadLine
+			eiadbf_tmp = eiadbf_batfilename_object.ReadLine
 			WScript.StdOut.WriteLine(eiadbf_tmp)
 		Loop			
 		eiadbf_status = eiadbf_batfilename_object.Close
@@ -4103,7 +4103,7 @@ Function vrdtvs_Exec_in_a_DOS_BAT_file (byVal eiadbf_cmd_string_array, ByVal eia
 		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Exec_in_a_DOS_BAT_file: ********** START Content of """ & eiadbf_logfilename & """ Below:")
 		Set eiadbf_logfilename_object = fso.OpenTextFile(eiadbf_logfilename, ForReading) ' ForReading is global
 		Do Until eiadbf_logfilename_object.AtEndOfStream
-			eiadbf_tmp = ff_tmp_object.ReadLine
+			eiadbf_tmp = eiadbf_logfilename_object.ReadLine
 			WScript.StdOut.WriteLine(eiadbf_tmp)
 		Loop			
 		eiadbf_status = eiadbf_logfilename_object.Close
