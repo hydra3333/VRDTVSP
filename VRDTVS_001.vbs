@@ -93,7 +93,7 @@ vrdtvs_DEVELOPMENT_NO_ACTIONS = True
 '
 ' Create a bunch of scratch variables
 '
-Dim vrdtvs_tmp, vrdtvs_status, vrdtvs_exit_code, vrdrvs_Err_Code, vrdrvs_Err_Description, vrdtvs_cmd, vrdtvs_exe_obj ' a few working variables, for common use
+Dim vrdtvs_tmp, vrdtvs_REM, vrdtvs_status, vrdtvs_exit_code, vrdrvs_Err_Code, vrdrvs_Err_Description, vrdtvs_cmd, vrdtvs_exe_obj ' a few working variables, for common use
 Dim vrdtvs_temp_powershell_filename, vrdtvs_temp_powershell_cmd, vrdtvs_temp_powershell_exe
 Dim vrdtvs_saved_ffmpeg_commands_filename, vrdtvs_saved_ffmpeg_commands_object
 Dim scratch_local_timerStart, scratch_local_timerEnd
@@ -2838,6 +2838,11 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'
 	' ++++ START do a mediainfo of the SOURCE so we can compare them !!! (DGIndex got the FPS wrong)
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ---------- doing mediainfo on SOURCE """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ ----------")
+	If vrdtvs_DEBUG Then
+		vrdtvs_REM = ""
+	Else
+		vrdtvs_REM = "REM "
+	End If
 	ReDim vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1) ' base 0, so the dimension is always 1 less than the number of commands
 	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(0) = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_FILE_AbsolutePathName & """"
 	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1) = """" & vrdtvs_mediainfoexe64 & """ --Legacy ""--Inform=Video;%FrameRate%\r\n"" """ & CF_FILE_AbsolutePathName & """"
@@ -2851,9 +2856,14 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	' ++++ END do a mediainfo of the SOURCE so we can compare them !!! (DGIndex got the FPS wrong)
 	' ++++ START do a mediainfo of the QSF so we can compare them !!! (DGIndex got the FPS wrong)
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ---------- doing mediainfo on QSF """ & CF_QSF_AbsolutePathName & """ Q_V_Codec_legacy=""" & Q_V_Codec_legacy & """ ----------")
+	If vrdtvs_DEBUG Then
+		vrdtvs_REM = ""
+	Else
+		vrdtvs_REM = "REM "
+	End If
 	ReDim vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1) ' base 0, so the dimension is always 1 less than the number of commands
-	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(0) = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_QSF_AbsolutePathName & """"
-	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1) = """" & vrdtvs_mediainfoexe64 & """ --Legacy ""--Inform=Video;%FrameRate%\r\n"" """ & CF_QSF_AbsolutePathName & """"
+	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(0) = vrdtvs_REM & """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_QSF_AbsolutePathName & """"
+	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1) = vrdtvs_REM & """" & vrdtvs_mediainfoexe64 & """ --Legacy ""--Inform=Video;%FrameRate%\r\n"" """ & CF_QSF_AbsolutePathName & """"
 	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1) = Replace(vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1), "%", "%%", 1, -1, vbTextCompare) ' just for the mediainfo command run from WITHIN in a .BAT file
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(0))
@@ -3948,9 +3958,14 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 '
 	' ++++ START do a mediainfo of the TARGET so we can compare them !!! (DGIndex got the FPS wrong)
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ---------- doing mediainfo on TARGET """ & CF_TARGET_AbsolutePathName & """ T_V_Codec_legacy=""" & T_V_Codec_legacy & """ ----------")
+	If vrdtvs_DEBUG Then
+		vrdtvs_REM = ""
+	Else
+		vrdtvs_REM = "REM "
+	End If
 	ReDim vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1) ' base 0, so the dimension is always 1 less than the number of commands
-	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(0) = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_TARGET_AbsolutePathName & """"
-	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1) = """" & vrdtvs_mediainfoexe64 & """ --Legacy ""--Inform=Video;%FrameRate%\r\n"" """ & CF_TARGET_AbsolutePathName & """"
+	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(0) = vrdtvs_REM & """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_TARGET_AbsolutePathName & """"
+	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1) = vrdtvs_REM """" & vrdtvs_mediainfoexe64 & """ --Legacy ""--Inform=Video;%FrameRate%\r\n"" """ & CF_TARGET_AbsolutePathName & """"
 	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1) = Replace(vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1), "%", "%%", 1, -1, vbTextCompare) ' just for the mediainfo command run from WITHIN in a .BAT file
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(0))
