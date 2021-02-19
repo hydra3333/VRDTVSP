@@ -4056,7 +4056,7 @@ Function vrdtvs_Exec_in_a_DOS_BAT_file (byVal eiadbf_cmd_string_array, ByVal eia
 	Dim eiadbf_object
 	Dim i, eiadbf_status, eiadbf_tmp, eiadbf_errorlevel
 	'
-	eiadbf_filename = vrdtvs_gimme_a_temporary_absolute_filename ("vrdtvs_Exec_in_a_DOS_BAT_file-" & vrdtvs_run_datetime) & ".BAT"
+	eiadbf_batfilename = vrdtvs_gimme_a_temporary_absolute_filename ("vrdtvs_Exec_in_a_DOS_BAT_file-" & vrdtvs_run_datetime) & ".BAT"
 	eiadbf_logfilename = vrdtvs_gimme_a_temporary_absolute_filename ("vrdtvs_Exec_in_a_DOS_BAT_file-" & vrdtvs_run_datetime) & ".log"
 	eiadbf_status = vrdtvs_delete_a_file(eiadbf_batfilename, True)
 	eiadbf_status = vrdtvs_delete_a_file(eiadbf_logfilename, True)
