@@ -2839,6 +2839,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	' ++++ END Run the QSF command
 	'
 	' ++++ START do a mediainfo of the SOURCE so we can compare them !!! (DGIndex got the FPS wrong)
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ---------- doing mediainfo on SOURCE """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ ----------")
 	ReDim vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1) ' base 0, so the dimension is always 1 less than the number of commands
 	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(0) = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_FILE_AbsolutePathName & """"
 	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1) = """" & vrdtvs_mediainfoexe64 & """ --Legacy ""--Inform=Video;%FrameRate%\r\n"" """ & CF_FILE_AbsolutePathName & """"
@@ -2851,7 +2852,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Erase vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array
 	' ++++ END do a mediainfo of the SOURCE so we can compare them !!! (DGIndex got the FPS wrong)
 	' ++++ START do a mediainfo of the QSF so we can compare them !!! (DGIndex got the FPS wrong)
-	CF_QSF_AbsolutePathName
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ---------- doing mediainfo on QSF """ & CF_QSF_AbsolutePathName & """ Q_V_Codec_legacy=""" & Q_V_Codec_legacy & """ ----------")
 	ReDim vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1) ' base 0, so the dimension is always 1 less than the number of commands
 	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(0) = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_QSF_AbsolutePathName & """"
 	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1) = """" & vrdtvs_mediainfoexe64 & """ --Legacy ""--Inform=Video;%FrameRate%\r\n"" """ & CF_QSF_AbsolutePathName & """"
@@ -3934,7 +3935,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ======================================================================================================================================================")
 '
 	' ++++ START do a mediainfo of the TARGET so we can compare them !!! (DGIndex got the FPS wrong)
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ----------------------------------- doing mediainfo on TARGET """ & CF_TARGET_AbsolutePathName & """ T_V_Codec_legacy=""" & T_V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """ -----------------------------------")
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ---------- doing mediainfo on TARGET """ & CF_TARGET_AbsolutePathName & """ T_V_Codec_legacy=""" & T_V_Codec_legacy & """ ----------")
 	ReDim vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1) ' base 0, so the dimension is always 1 less than the number of commands
 	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(0) = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_TARGET_AbsolutePathName & """"
 	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1) = """" & vrdtvs_mediainfoexe64 & """ --Legacy ""--Inform=Video;%FrameRate%\r\n"" """ & CF_TARGET_AbsolutePathName & """"
