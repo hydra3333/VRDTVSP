@@ -2839,84 +2839,29 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	' ++++ END Run the QSF command
 	'
 	' ++++ START do a mediainfo of the SOURCE so we can compare them !!! (DGIndex got the FPS wrong)
-	CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_FILE_AbsolutePathName & """ "
+	ReDim vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1) ' base 0, so the dimension is always 1 less than the number of commands
+	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(0) = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_FILE_AbsolutePathName & """"
+	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1) = """" & vrdtvs_mediainfoexe64 & """ --Legacy ""--Inform=Video;%FrameRate%\r\n"" """ & CF_FILE_AbsolutePathName & """"
+	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1) = Replace(vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1), "%", "%%", 1, -1, vbTextCompare) ' just for the mediainfo command run from WITHIN in a .BAT file
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
-	CF_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string)
+	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(0))
+	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1))
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
-	CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy ""--Inform=Video;%FrameRate%\r\n"" """ & CF_FILE_AbsolutePathName & """ "
-	'CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_FILE_AbsolutePathName & """ "
-	CF_object_saved_ffmpeg_commands.WriteLine("REM")
-	vrdtvs_tmp = Replace(CF_exe_cmd_string, "%", "%%", 1, -1, vbTextCompare) ' just for the mediainfo command run from within in a .BAT file
-	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvs_tmp) 
-	CF_object_saved_ffmpeg_commands.WriteLine("REM")
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ----------------------------------- doing mediainfo on SOURCE """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """ -----------------------------------")
-    set CF_exe_object = wso.Exec(CF_exe_cmd_string)
-    Do While CF_exe_object.Status = 0 '0 is running and 1 is ending
-        Wscript.Sleep 100
-    Loop
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File mediainfo START of StdErr: " )
-    Do Until CF_exe_object.StdErr.AtEndOfStream
-		CF_tmp = CF_exe_object.StdErr.ReadLine()
-        WScript.StdOut.WriteLine(CF_tmp)
-    Loop
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File mediainfo END of StdErr.")
-    CF_exe_status = CF_exe_object.ExitCode
-    If CF_exe_status <> 0 then
-        WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_Convert_File ABORTING with mediainfo Exec command: " & CF_exe_cmd_string)
-        WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_Convert_File ABORTING with mediainfo  Exit Status: " & CF_exe_status)
-        ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
-		Wscript.Echo "Error 17 = cannot perform the requested operation"
-		On Error goto 0
-		WScript.Quit 17 ' Error 17 = cannot perform the requested operation
-    End If
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File mediainfo START of StdOut: ")
-    Do Until CF_exe_object.StdOut.AtEndOfStream ' we need to read only one line though
-		CF_tmp = CF_exe_object.StdOut.ReadLine()
-        WScript.StdOut.WriteLine(CF_tmp)
-		'Exit Do ' we need to read only THE FIRST line so exit loop immediately after doing that
-    Loop
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File END of mediainfo StdOut.")
-    Set CF_exe_object = Nothing
+	CF_exe_status = vrdtvs_Exec_in_a_DOS_BAT_file (vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log
+	Eease vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array
 	' ++++ END do a mediainfo of the SOURCE so we can compare them !!! (DGIndex got the FPS wrong)
 	' ++++ START do a mediainfo of the QSF so we can compare them !!! (DGIndex got the FPS wrong)
-	CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_QSF_AbsolutePathName & """ "
+	CF_QSF_AbsolutePathName
+	ReDim vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1) ' base 0, so the dimension is always 1 less than the number of commands
+	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(0) = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_QSF_AbsolutePathName & """"
+	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1) = """" & vrdtvs_mediainfoexe64 & """ --Legacy ""--Inform=Video;%FrameRate%\r\n"" """ & CF_QSF_AbsolutePathName & """"
+	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1) = Replace(vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1), "%", "%%", 1, -1, vbTextCompare) ' just for the mediainfo command run from WITHIN in a .BAT file
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
-	CF_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string)
+	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(0))
+	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1))
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
-	CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy ""--Inform=Video;%FrameRate%\r\n"" """ & CF_QSF_AbsolutePathName & """ "
-	'CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_QSF_AbsolutePathName & """ "
-	CF_object_saved_ffmpeg_commands.WriteLine("REM")
-	vrdtvs_tmp = Replace(CF_exe_cmd_string, "%", "%%", 1, -1, vbTextCompare)
-	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvs_tmp) ' just for the mediainfo command run from within in a .BAT file
-	CF_object_saved_ffmpeg_commands.WriteLine("REM")
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ----------------------------------- doing mediainfo on QSF """ & CF_QSF_AbsolutePathName & """ Q_V_Codec_legacy=""" & Q_V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """ -----------------------------------")
-    set CF_exe_object = wso.Exec(CF_exe_cmd_string)
-    Do While CF_exe_object.Status = 0 '0 is running and 1 is ending
-        Wscript.Sleep 100
-    Loop
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File mediainfo START of StdErr: " )
-    Do Until CF_exe_object.StdErr.AtEndOfStream
-		CF_tmp = CF_exe_object.StdErr.ReadLine()
-        WScript.StdOut.WriteLine(CF_tmp)
-    Loop
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File mediainfo END of StdErr.")
-    CF_exe_status = CF_exe_object.ExitCode
-    If CF_exe_status <> 0 then
-        WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_Convert_File ABORTING with mediainfo Exec command: " & CF_exe_cmd_string)
-        WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_Convert_File ABORTING with mediainfo  Exit Status: " & CF_exe_status)
-        ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
-		Wscript.Echo "Error 17 = cannot perform the requested operation"
-		On Error goto 0
-		WScript.Quit 17 ' Error 17 = cannot perform the requested operation
-    End If
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File mediainfo START of StdOut: ")
-    Do Until CF_exe_object.StdOut.AtEndOfStream ' we need to read only one line though
-		CF_tmp = CF_exe_object.StdOut.ReadLine()
-        WScript.StdOut.WriteLine(CF_tmp)
-		Exit Do ' we need to read only THE FIRST line so exit loop immediately after doing that
-    Loop
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File END of mediainfo StdOut.")
-    Set CF_exe_object = Nothing
+	CF_exe_status = vrdtvs_Exec_in_a_DOS_BAT_file (vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log
+	Eease vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array
 	' ++++ END do a mediainfo of the QSF so we can compare them !!! (DGIndex got the FPS wrong)
 	' End ======================================================  Do the QSF ======================================================
 	'
@@ -3989,46 +3934,20 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: ======================================================================================================================================================")
 '
 	' ++++ START do a mediainfo of the TARGET so we can compare them !!! (DGIndex got the FPS wrong)
-	CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_TARGET_AbsolutePathName & """ "
-	CF_object_saved_ffmpeg_commands.WriteLine("REM")
-	CF_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string)
-	CF_object_saved_ffmpeg_commands.WriteLine("REM")
-	CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy ""--Inform=Video;%FrameRate%\r\n"" """ & CF_TARGET_AbsolutePathName & """ "
-	'CF_exe_cmd_string = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_TARGET_AbsolutePathName & """ "
-	CF_object_saved_ffmpeg_commands.WriteLine("REM")
-	vrdtvs_tmp = Replace(CF_exe_cmd_string, "%", "%%", 1, -1, vbTextCompare)
-	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvs_tmp) ' just for the mediainfo command run from within in a .BAT file
-	CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File ----------------------------------- doing mediainfo on TARGET """ & CF_TARGET_AbsolutePathName & """ T_V_Codec_legacy=""" & T_V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """ -----------------------------------")
-    set CF_exe_object = wso.Exec(CF_exe_cmd_string)
-    Do While CF_exe_object.Status = 0 '0 is running and 1 is ending
-        Wscript.Sleep 100
-    Loop
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File mediainfo START of StdErr: " )
-    Do Until CF_exe_object.StdErr.AtEndOfStream
-		CF_tmp = CF_exe_object.StdErr.ReadLine()
-        WScript.StdOut.WriteLine(CF_tmp)
-    Loop
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File mediainfo END of StdErr.")
-    CF_exe_status = CF_exe_object.ExitCode
-    If CF_exe_status <> 0 then
-        WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_Convert_File ABORTING with mediainfo Exec command: " & CF_exe_cmd_string)
-        WScript.StdOut.WriteLine("VRDTVS ERROR: vrdtvs_Convert_File ABORTING with mediainfo  Exit Status: " & CF_exe_status)
-        ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
-		Wscript.Echo "Error 17 = cannot perform the requested operation"
-		On Error goto 0
-		WScript.Quit 17 ' Error 17 = cannot perform the requested operation
-    End If
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File mediainfo START of StdOut: ")
-    Do Until CF_exe_object.StdOut.AtEndOfStream ' we need to read only one line though
-		CF_tmp = CF_exe_object.StdOut.ReadLine()
-        WScript.StdOut.WriteLine(CF_tmp)
-		Exit Do ' we need to read only THE FIRST line so exit loop immediately after doing that
-    Loop
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File END of mediainfo StdOut.")
-    Set CF_exe_object = Nothing
+	ReDim vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1) ' base 0, so the dimension is always 1 less than the number of commands
+	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(0) = """" & vrdtvs_mediainfoexe64 & """ --Legacy """ & CF_TARGET_AbsolutePathName & """"
+	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1) = """" & vrdtvs_mediainfoexe64 & """ --Legacy ""--Inform=Video;%FrameRate%\r\n"" """ & CF_TARGET_AbsolutePathName & """"
+	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1) = Replace(vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1), "%", "%%", 1, -1, vbTextCompare) ' just for the mediainfo command run from WITHIN in a .BAT file
+	CF_object_saved_ffmpeg_commands.WriteLine("REM")
+	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(0))
+	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1))
+	CF_object_saved_ffmpeg_commands.WriteLine("REM")
+	CF_exe_status = vrdtvs_Exec_in_a_DOS_BAT_file (vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log
+	Eease vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array
 	' ++++ END do a mediainfo of the TARGET so we can compare them !!! (DGIndex got the FPS wrong)
 	'
+	'------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	' after ffmpeg, do an ADSCAN over the TARGET file and save the .bprj in the target folder as an "associated .bprj" which will be picked up by auto-bprj-processing during bulk file renames :)
 	If CF_do_Adscan Then
 		' ++++ START Run the ADSCAN command
