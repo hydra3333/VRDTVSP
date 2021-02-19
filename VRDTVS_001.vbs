@@ -123,6 +123,7 @@ Dim vrdtvs_mp4boxexex64
 Dim vrdtvs_mediainfoexe64
 Dim vrdtvs_ffprobeexe64
 Dim vrdtvs_ffmpegexe64
+Dim vrdtvs_ffmpegexe64_OpenCL
 Dim vrdtvs_dgindexNVexe64
 Dim vrdtvs_Insomniaexe64
 Dim vrdtvs_Insomnia64_tmp_filename, vrdtvs_Insomnia64_ProcessID
@@ -133,6 +134,7 @@ vrdtvs_mp4boxexex64 = fso.GetAbsolutePathName(fso.BuildPath("C:\SOFTWARE\ffmpeg\
 vrdtvs_mediainfoexe64 = fso.GetAbsolutePathName(fso.BuildPath("C:\SOFTWARE\MediaInfo\","MediaInfo.exe"))
 vrdtvs_ffprobeexe64 = fso.GetAbsolutePathName(fso.BuildPath(vs_root,"ffprobe.exe"))
 vrdtvs_ffmpegexe64 = fso.GetAbsolutePathName(fso.BuildPath(vs_root,"ffmpeg.exe"))
+vrdtvs_ffmpegexe64_OpenCL = fso.GetAbsolutePathName(fso.BuildPath(vs_root,"ffmpeg_OpenCL.exe"))
 vrdtvs_dgindexNVexe64 = fso.GetAbsolutePathName(fso.BuildPath(vs_root,"DGIndex\DGIndexNV.exe"))
 vrdtvs_Insomniaexe64 = fso.GetAbsolutePathName("C:\SOFTWARE\Insomnia\64-bit\Insomnia.exe")
 '
