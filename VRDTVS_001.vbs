@@ -101,6 +101,7 @@ Dim vrdtvs_tmp, vrdtvs_status, vrdtvs_exit_code, vrdrvs_Err_Code, vrdrvs_Err_Des
 Dim vrdtvs_temp_powershell_filename, vrdtvs_temp_powershell_cmd, vrdtvs_temp_powershell_exe
 Dim vrdtvs_saved_ffmpeg_commands_filename, vrdtvs_saved_ffmpeg_commands_object
 Dim scratch_local_timerStart, scratch_local_timerEnd
+Dim vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array()	' then eg ReDim Dim vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(5) for 6 commands, 0..5), Use "Erase vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array" when finished
 Set vrdtvs_temp_powershell_exe = Nothing
 Set vrdtvs_saved_ffmpeg_commands_object = Nothing
 '
@@ -3726,56 +3727,65 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'	stick the command in a .bat file with message redirection to a log file
 	'	and then synchronously Run the .bat file
 	'	then examine the returned errorlevel and the logfile
-	ff_logfile = vrdtvs_gimme_a_temporary_absolute_filename ("ffmpeg-command-output-" & vrdtvs_run_datetime) & ".log"
-	ff_batfile = vrdtvs_gimme_a_temporary_absolute_filename ("ffmpeg-command-" & vrdtvs_run_datetime) & ".BAT"
-	ff_cmd_string_for_bat = ff_cmd_string & " >""" & ff_logfile & """ 2>&1" ' redirect both stdout and stderr from ffmpeg to a file
-	vrdtvs_status = vrdtvs_delete_a_file(ff_logfile, True)		' Delete the .bat file to be created with the ffmpeg command
-	vrdtvs_status = vrdtvs_delete_a_file(ff_batfile, True)		' Delete the .bat file to be created with the ffmpeg command
-	set ff_tmp_object = fso.CreateTextFile(ff_batfile, True, False) ' *** vapoursynth fails with unicode input file *** [ filename, Overwrite[, Unicode]])
-	ff_tmp_object.WriteLine("@ECHO ON")
-	ff_tmp_object.WriteLine("@setlocal ENABLEDELAYEDEXPANSION")
-	ff_tmp_object.WriteLine("@setlocal enableextensions")
-	ff_tmp_object.WriteLine("DEL /F """ & ff_logfile & """")
-	ff_tmp_object.WriteLine("ECHO """ & vrdtvs_ffmpegexe64 & """ -hide_banner -v verbose -init_hw_device list >>""" & ff_logfile & """ 2>&1")
-	ff_tmp_object.WriteLine("""" & vrdtvs_ffmpegexe64 & """ -hide_banner -v verbose -init_hw_device list >>""" & ff_logfile & """ 2>&1")
-	ff_tmp_object.WriteLine("ECHO """ & vrdtvs_ffmpegexe64 & """ -hide_banner -v verbose -hide_banner -h encoder=hevc_nvenc >>""" & ff_logfile & """ 2>&1")
-	ff_tmp_object.WriteLine("""" & vrdtvs_ffmpegexe64 & """ -hide_banner -v verbose -hide_banner -h encoder=hevc_nvenc >>""" & ff_logfile & """ 2>&1")
-	ff_tmp_object.WriteLine("ECHO !DATE! !TIME! FFMPEG STARTED *************************************************************************** >>""" & ff_logfile & """ 2>&1")
-	ff_tmp_object.WriteLine("ECHO !DATE! !TIME! FFMPEG STARTED *************************************************************************** >>""" & ff_logfile & """ 2>&1")
-	ff_tmp_object.WriteLine(ff_cmd_string_for_bat)
-	ff_tmp_object.WriteLine("Set EL=%ERRORLEVEL%")
-	ff_tmp_object.WriteLine("ECHO The ffmpeg.exe returned Errorlevel = %EL% >>""" & ff_logfile & """ 2>&1")
-	ff_tmp_object.WriteLine("ECHO !DATE! !TIME! FFMPEG FINISHED *************************************************************************** >>""" & ff_logfile & """ 2>&1")
-	ff_tmp_object.WriteLine("ECHO !DATE! !TIME! FFMPEG FINISHED *************************************************************************** >>""" & ff_logfile & """ 2>&1")
-	ff_tmp_object.WriteLine("EXIT %EL%")
-	ff_tmp_object.close
-	set ff_tmp_object = Nothing
-	' let's dump the ffmpeg .BAT file
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - ******************** START Content of FFMPEG .BAT file """ & ff_batfile & """ Below:")
-	Set ff_tmp_object = fso.OpenTextFile(ff_batfile, ForReading)
-	Do Until ff_tmp_object.AtEndOfStream
-		ff_tmp_string = ff_tmp_object.ReadLine
-		WScript.StdOut.WriteLine(ff_tmp_string)
-	Loop			
-	CF_status = ff_tmp_object.Close
-	Set ff_tmp_object = Nothing
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - ******************** END Content of FFMPEG .BAT file """ & ff_batfile & """ Above.")
-	' Now .Run the .bat
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - ******************** About to .Run FFMPEG .BAT file """ & ff_batfile & """ :")
-	ff_run_errorlevel = wso.Run("CMD /C """ & ff_batfile & """", 7, True) '(strCommand, [intWindowStyle], [bWaitOnReturn]) ' https://ss64.com/vb/run.html
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - ******************** .Run FFMPEG .BAT file """ & ff_batfile & """ Exit status :" & ff_run_errorlevel)
-	' let's dump the resulting ffmpeg log
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - ******************** START Content of FFMPEG LOG file """ & ff_logfile & """ Below:")
-	Set ff_tmp_object = fso.OpenTextFile(ff_logfile, ForReading)
-	Do Until ff_tmp_object.AtEndOfStream
-		ff_tmp_string = ff_tmp_object.ReadLine
-		WScript.StdOut.WriteLine(ff_tmp_string)
-	Loop			
-	CF_status = ff_tmp_object.Close
-	Set ff_tmp_object = Nothing
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - ******************** END Content of FFMPEG LOG file """ & ff_logfile & """ Above.")
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - ******************** RETURNED ff_run_errorlevel=" & ff_run_errorlevel)
-	CF_exe_status = ff_run_errorlevel
+	'
+	'ff_logfile = vrdtvs_gimme_a_temporary_absolute_filename ("ffmpeg-command-output-" & vrdtvs_run_datetime) & ".log"
+	'ff_batfile = vrdtvs_gimme_a_temporary_absolute_filename ("ffmpeg-command-" & vrdtvs_run_datetime) & ".BAT"
+	'ff_cmd_string_for_bat = ff_cmd_string & " >""" & ff_logfile & """ 2>&1" ' redirect both stdout and stderr from ffmpeg to a file
+	'vrdtvs_status = vrdtvs_delete_a_file(ff_logfile, True)		' Delete the .bat file to be created with the ffmpeg command
+	'vrdtvs_status = vrdtvs_delete_a_file(ff_batfile, True)		' Delete the .bat file to be created with the ffmpeg command
+	'set ff_tmp_object = fso.CreateTextFile(ff_batfile, True, False) ' *** vapoursynth fails with unicode input file *** [ filename, Overwrite[, Unicode]])
+	'ff_tmp_object.WriteLine("@ECHO ON")
+	'ff_tmp_object.WriteLine("@setlocal ENABLEDELAYEDEXPANSION")
+	'ff_tmp_object.WriteLine("@setlocal enableextensions")
+	'ff_tmp_object.WriteLine("DEL /F """ & ff_logfile & """")
+	'ff_tmp_object.WriteLine("ECHO """ & vrdtvs_ffmpegexe64 & """ -hide_banner -v verbose -init_hw_device list >>""" & ff_logfile & """ 2>&1")
+	'ff_tmp_object.WriteLine("""" & vrdtvs_ffmpegexe64 & """ -hide_banner -v verbose -init_hw_device list >>""" & ff_logfile & """ 2>&1")
+	'ff_tmp_object.WriteLine("ECHO """ & vrdtvs_ffmpegexe64 & """ -hide_banner -v verbose -hide_banner -h encoder=hevc_nvenc >>""" & ff_logfile & """ 2>&1")
+	'ff_tmp_object.WriteLine("""" & vrdtvs_ffmpegexe64 & """ -hide_banner -v verbose -hide_banner -h encoder=hevc_nvenc >>""" & ff_logfile & """ 2>&1")
+	'ff_tmp_object.WriteLine("ECHO !DATE! !TIME! FFMPEG STARTED *************************************************************************** >>""" & ff_logfile & """ 2>&1")
+	'ff_tmp_object.WriteLine("ECHO !DATE! !TIME! FFMPEG STARTED *************************************************************************** >>""" & ff_logfile & """ 2>&1")
+	'ff_tmp_object.WriteLine(ff_cmd_string_for_bat)
+	'ff_tmp_object.WriteLine("Set EL=%ERRORLEVEL%")
+	'ff_tmp_object.WriteLine("ECHO The ffmpeg.exe returned Errorlevel = %EL% >>""" & ff_logfile & """ 2>&1")
+	'ff_tmp_object.WriteLine("ECHO !DATE! !TIME! FFMPEG FINISHED *************************************************************************** >>""" & ff_logfile & """ 2>&1")
+	'ff_tmp_object.WriteLine("ECHO !DATE! !TIME! FFMPEG FINISHED *************************************************************************** >>""" & ff_logfile & """ 2>&1")
+	'ff_tmp_object.WriteLine("EXIT %EL%")
+	'ff_tmp_object.close
+	'set ff_tmp_object = Nothing
+	'' let's dump the ffmpeg .BAT file
+	'WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - ******************** START Content of FFMPEG .BAT file """ & ff_batfile & """ Below:")
+	'Set ff_tmp_object = fso.OpenTextFile(ff_batfile, ForReading)
+	'Do Until ff_tmp_object.AtEndOfStream
+	'	ff_tmp_string = ff_tmp_object.ReadLine
+	'	WScript.StdOut.WriteLine(ff_tmp_string)
+	'Loop			
+	'CF_status = ff_tmp_object.Close
+	'Set ff_tmp_object = Nothing
+	'WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - ******************** END Content of FFMPEG .BAT file """ & ff_batfile & """ Above.")
+	'' Now .Run the .bat
+	'WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - ******************** About to .Run FFMPEG .BAT file """ & ff_batfile & """ :")
+	'ff_run_errorlevel = wso.Run("CMD /C """ & ff_batfile & """", 7, True) '(strCommand, [intWindowStyle], [bWaitOnReturn]) ' https://ss64.com/vb/run.html
+	'WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - ******************** .Run FFMPEG .BAT file """ & ff_batfile & """ Exit status :" & ff_run_errorlevel)
+	'' let's dump the resulting ffmpeg log
+	'WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - ******************** START Content of FFMPEG LOG file """ & ff_logfile & """ Below:")
+	'Set ff_tmp_object = fso.OpenTextFile(ff_logfile, ForReading)
+	'Do Until ff_tmp_object.AtEndOfStream
+	'	ff_tmp_string = ff_tmp_object.ReadLine
+	'	WScript.StdOut.WriteLine(ff_tmp_string)
+	'Loop			
+	'CF_status = ff_tmp_object.Close
+	'Set ff_tmp_object = Nothing
+	'WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - ******************** END Content of FFMPEG LOG file """ & ff_logfile & """ Above.")
+	'WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - ******************** RETURNED ff_run_errorlevel=" & ff_run_errorlevel)
+	'CF_exe_status = ff_run_errorlevel
+	'
+	ReDim vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(3) ' base 0, so the dimension is always 1 less than the number of commands
+	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(0) = "DEL /F """ & CF_TARGET_AbsolutePathName & """"
+	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1) = """" & vrdtvs_ffmpegexe64 & """ -hide_banner -v verbose -init_hw_device list"
+	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(2) = """" & vrdtvs_ffmpegexe64 & """ -hide_banner -v verbose -hide_banner -h encoder=hevc_nvenc"
+	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(3) = ff_cmd_string
+	CF_exe_status = vrdtvs_Exec_in_a_DOS_BAT_file (vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log
+	Eease vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array
 	If (CF_exe_status <> 0) OR (NOT fso.FileExists(CF_TARGET_AbsolutePathName)) Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - FFMPEG Error - CF_exe_status=""" & CF_exe_status & """ with ff_cmd_string=""" & ff_cmd_string)
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - FFMPEG Error - CF_exe_status=""" & CF_exe_status & """ with ff_cmd_string=""" & ff_cmd_string)
@@ -4109,4 +4119,77 @@ Function vrdtvs_writeline_for_vpy (vpy_filename_object, bat_filename_object, a_v
 	End If
 	bat_filename_object.WriteLine(escaped_vpy_statement)
 	vrdtvs_writeline_for_vpy = 0
+End Function
+'
+
+Function vrdtvs_Exec_in_a_DOS_BAT_file (byVal eiadbf_cmd_string_array, ByVal eiadbf_print_batfile, ByVal eiadbf_print_logfile)
+	' Run commands in a DOS .BAT file - use for badly behaved programs like mediainfo and ffmpeg where they never exit properly.
+	' Parameters:
+	'	eiadbf_cmd		an array of commandstrings to be executed, the exit status is taken from the last one in the array
+	'						eg dim x(5) will yield lbound=0, ubound=5
+	'	eiadbf_print_batfile	True or False
+	'	eiadbf_print_logfile	True or False
+	'
+	Dim eiadbf_batfilename, eiadbf_batfilename_object
+	Dim eiadbf_logfilename, eiadbf_logfilename_object
+	Dim eiadbf_cmd_string_for_bat
+	Dim eiadbf_lbound, eiadbf_ubound
+	Dim eiadbf_object
+	Dim i, eiadbf_status, eiadbf_tmp, eiadbf_errorlevel
+	'
+	eiadbf_filename = vrdtvs_gimme_a_temporary_absolute_filename ("vrdtvs_Exec_in_a_DOS_BAT_file-" & vrdtvs_run_datetime) & ".BAT"
+	eiadbf_logfilename = vrdtvs_gimme_a_temporary_absolute_filename ("vrdtvs_Exec_in_a_DOS_BAT_file-" & vrdtvs_run_datetime) & ".log"
+	eiadbf_status = vrdtvs_delete_a_file(eiadbf_filename, True)
+	eiadbf_status = vrdtvs_delete_a_file(eiadbf_logfilename, True)
+	eiadbf_lbound = LBOUND(eiadbf_cmd_string_array)
+	eiadbf_ubound = UBOUND(eiadbf_cmd_string_array)
+	set eiadbf_batfilename_object = fso.CreateTextFile(eiadbf_batfilename, True, False) ' no unicode please, some things bail with that
+	eiadbf_batfilename_object.WriteLine("@ECHO ON")
+	eiadbf_batfilename_object.WriteLine("@setlocal ENABLEDELAYEDEXPANSION")
+	eiadbf_batfilename_object.WriteLine("@setlocal enableextensions")
+	eiadbf_batfilename_object.WriteLine("DEL /F """ & eiadbf_logfilename & """")
+	eiadbf_batfilename_object.WriteLine("ECHO !DATE! !TIME! STARTED *************************************************************************** >>""" & ff_logfile & """ 2>&1")
+	for i = eiadbf_lbound to eiadbf_ubound STEP 1
+		eiadbf_batfilename_object.WriteLine("ECHO !DATE !TIME! ------------------------" & " >>""" & eiadbf_logfilename & """ 2>&1" ' redirect both stdout and stderr to the logfile
+		eiadbf_batfilename_object.WriteLine("ECHO " & eiadbf_cmd_string_array(i) & " >>""" & eiadbf_logfilename & """ 2>&1" ' redirect both stdout and stderr to the logfile
+		eiadbf_batfilename_object.WriteLine(eiadbf_cmd_string_array(i) & " >>""" & eiadbf_logfilename & """ 2>&1" ' redirect both stdout and stderr to the logfile
+		eiadbf_batfilename_object.WriteLine("Set EL=%ERRORLEVEL%" & " >>""" & eiadbf_logfilename & """ 2>&1" ' redirect both stdout and stderr to the logfile
+		eiadbf_batfilename_object.WriteLine("ECHO that returned Errorlevel=%EL%" & " >>""" & eiadbf_logfilename & """ 2>&1" ' redirect both stdout and stderr to the logfile
+		eiadbf_batfilename_object.WriteLine("ECHO !DATE !TIME! ------------------------" & " >>""" & eiadbf_logfilename & """ 2>&1" ' redirect both stdout and stderr to the logfile
+		eiadbf_batfilename_object.WriteLine("EXIT %EL%")
+	Next
+	eiadbf_batfilename_object.close
+	set eiadbf_batfilename_object = Nothing
+	'
+	If eiadbf_print_batfile Then
+		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Exec_in_a_DOS_BAT_file: ********** START Content of """ & eiadbf_batfilename & """ Below:")
+		Set eiadbf_batfilename_object = fso.OpenTextFile(eiadbf_batfilename, ForReading) ' ForReading is global
+		Do Until eiadbf_batfilename_object.AtEndOfStream
+			eiadbf_tmp = ff_tmp_object.ReadLine
+			WScript.StdOut.WriteLine(eiadbf_tmp)
+		Loop			
+		eiadbf_status = eiadbf_batfilename_object.Close
+		Set eiadbf_batfilename_object = Nothing
+		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Exec_in_a_DOS_BAT_file: ********** END Content of """ & eiadbf_batfilename & """ Above.")
+	End If
+	'
+	' Now .Run the .bat
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Exec_in_a_DOS_BAT_file: - ********** Start .Run """ & eiadbf_batfilename & """ :")
+	eiadbf_errorlevel = wso.Run("CMD /C """ & eiadbf_batfilename & """", 7, True) '(strCommand, [intWindowStyle], [bWaitOnReturn]) ' https://ss64.com/vb/run.html
+	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Exec_in_a_DOS_BAT_file:  - ********** End .Run """ & eiadbf_batfilename & """ : Final Exit status :" & eiadbf_errorlevel)
+	'
+	If eiadbf_print_logfile Then
+		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Exec_in_a_DOS_BAT_file: ********** START Content of """ & eiadbf_logfilename & """ Below:")
+		Set eiadbf_logfilename_object = fso.OpenTextFile(eiadbf_logfilename, ForReading) ' ForReading is global
+		Do Until eiadbf_logfilename_object.AtEndOfStream
+			eiadbf_tmp = ff_tmp_object.ReadLine
+			WScript.StdOut.WriteLine(eiadbf_tmp)
+		Loop			
+		eiadbf_status = eiadbf_logfilename_object.Close
+		Set eiadbf_logfilename_object = Nothing
+		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Exec_in_a_DOS_BAT_file: ********** END Content of """ & eiadbf_logfilename & """ Above.")
+	End If
+	eiadbf_status = vrdtvs_delete_a_file(eiadbf_filename, True)
+	eiadbf_status = vrdtvs_delete_a_file(eiadbf_logfilename, True)
+	vrdtvs_Exec_in_a_DOS_BAT_file = eiadbf_errorlevel
 End Function
