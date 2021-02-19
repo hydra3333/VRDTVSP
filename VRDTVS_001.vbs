@@ -3441,7 +3441,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File about to delete DG autolog " & CF_DGIlog_AbsolutePathName)
 		End If
 		CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_DGIlog_AbsolutePathName & """")
-		vrdtvs_status = vrdtvs_delete_a_file (CF_DGIlog_AbsolutePathName, False)	' Delete the DGIlog file created by DGIndexNV
+		vrdtvs_status = vrdtvs_delete_a_file (CF_DGIlog_AbsolutePathName, True)	' Delete the DGIlog file created by DGIndexNV
 	End If
 	ff_timerEnd = Timer
 	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - DGIndexNV command completed with Elapsed Time " & vrdtvs_Calculate_ElapsedTime_string(ff_timerStart, ff_timerEnd))
@@ -3453,7 +3453,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	vpy_denoise  = ""
 	vpy_dsharpen = ""
 	If CF_do_audio_delay Then
-		af_audio_delay_filter = "-af ""adelay=delays=" & A_Audio_Delay_ms & "ms:all=1"" "
+		af_audio_delay_filter = "-af ""adelay=delays=" & Q_A_Audio_Delay_ms & "ms:all=1"" "
 	Else
 		af_audio_delay_filter = " "
 	End If
