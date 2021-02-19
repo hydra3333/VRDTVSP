@@ -4041,7 +4041,6 @@ Function vrdtvs_writeline_for_vpy (vpy_filename_object, bat_filename_object, a_v
 	vrdtvs_writeline_for_vpy = 0
 End Function
 '
-
 Function vrdtvs_Exec_in_a_DOS_BAT_file (byVal eiadbf_cmd_string_array, ByVal eiadbf_print_batfile, ByVal eiadbf_print_logfile)
 	' Run commands in a DOS .BAT file - use for badly behaved programs like mediainfo and ffmpeg where they never exit properly.
 	' Parameters:
@@ -4055,7 +4054,8 @@ Function vrdtvs_Exec_in_a_DOS_BAT_file (byVal eiadbf_cmd_string_array, ByVal eia
 	Dim eiadbf_cmd_string_for_bat
 	Dim eiadbf_lbound, eiadbf_ubound
 	Dim eiadbf_object
-	Dim i, eiadbf_status, eiadbf_tmp, eiadbf_errorlevel
+	Dim i, c
+	Dim eiadbf_status, eiadbf_tmp, eiadbf_errorlevel
 	'
 	eiadbf_batfilename = vrdtvs_gimme_a_temporary_absolute_filename ("vrdtvs_Exec_in_a_DOS_BAT_file-" & vrdtvs_run_datetime) & ".BAT"
 	eiadbf_logfilename = vrdtvs_gimme_a_temporary_absolute_filename ("vrdtvs_Exec_in_a_DOS_BAT_file-" & vrdtvs_run_datetime) & ".log"
@@ -4084,7 +4084,6 @@ Function vrdtvs_Exec_in_a_DOS_BAT_file (byVal eiadbf_cmd_string_array, ByVal eia
 	set eiadbf_batfilename_object = Nothing
 	'
 	If eiadbf_print_batfile Then
-		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Exec_in_a_DOS_BAT_file: ********** START Content of """ & eiadbf_batfilename & """ Below:")
 		Set eiadbf_batfilename_object = fso.OpenTextFile(eiadbf_batfilename, ForReading) ' ForReading is global
 		Do Until eiadbf_batfilename_object.AtEndOfStream
 			eiadbf_tmp = eiadbf_batfilename_object.ReadLine
@@ -4096,9 +4095,9 @@ Function vrdtvs_Exec_in_a_DOS_BAT_file (byVal eiadbf_cmd_string_array, ByVal eia
 	End If
 	'
 	' Now .Run the .bat
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Exec_in_a_DOS_BAT_file: - ********** Start .Run """ & eiadbf_batfilename & """ :")
+	'WScript.StdOut.WriteLine("VRDTVS vrdtvs_Exec_in_a_DOS_BAT_file: - ********** Start .Run """ & eiadbf_batfilename & """ :")
 	eiadbf_errorlevel = wso.Run("CMD /C """ & eiadbf_batfilename & """", 7, True) '(strCommand, [intWindowStyle], [bWaitOnReturn]) ' https://ss64.com/vb/run.html
-	WScript.StdOut.WriteLine("VRDTVS vrdtvs_Exec_in_a_DOS_BAT_file:  - ********** End .Run """ & eiadbf_batfilename & """ : Final Exit status :" & eiadbf_errorlevel)
+	'WScript.StdOut.WriteLine("VRDTVS vrdtvs_Exec_in_a_DOS_BAT_file:  - ********** End .Run """ & eiadbf_batfilename & """ : Final Exit status :" & eiadbf_errorlevel)
 	'
 	If eiadbf_print_logfile Then
 		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Exec_in_a_DOS_BAT_file: ********** START Content of """ & eiadbf_logfilename & """ Below:")
