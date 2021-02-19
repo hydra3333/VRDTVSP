@@ -3785,7 +3785,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(2) = """" & vrdtvs_ffmpegexe64 & """ -hide_banner -v verbose -hide_banner -h encoder=hevc_nvenc"
 	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(3) = ff_cmd_string
 	CF_exe_status = vrdtvs_Exec_in_a_DOS_BAT_file (vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log
-	Eease vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array
+	Erase vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array
 	If (CF_exe_status <> 0) OR (NOT fso.FileExists(CF_TARGET_AbsolutePathName)) Then
 		If vrdtvs_DEBUG Then WScript.StdOut.WriteLine("VRDTVS DEBUG: ERROR vrdtvs_Convert_File - FFMPEG Error - CF_exe_status=""" & CF_exe_status & """ with ff_cmd_string=""" & ff_cmd_string)
 		WScript.StdOut.WriteLine("VRDTVS ERROR vrdtvs_Convert_File - FFMPEG Error - CF_exe_status=""" & CF_exe_status & """ with ff_cmd_string=""" & ff_cmd_string)
