@@ -640,7 +640,8 @@ Function vrdtvsp_delete_a_file (filename_to_delete, do_it_silently)
     vrdtvsp_delete_a_file = daf_Err_number
 End Function
 '
-Function vrdtvsp_move_files_to_folder (mf_source_path_wildcard, mv_destination_folder) ' this uses DOS "CMD /C MOVE /Y ..."
+Function vrdtvsp_move_files_to_folder (mf_source_path_wildcard, mv_destination_folder)
+	' deliberately no code for saving commands to move files
     ' rely on global variable "fso"
     ' Parameters:
     '   mf_source_path_wildcard     
@@ -648,14 +649,6 @@ Function vrdtvsp_move_files_to_folder (mf_source_path_wildcard, mv_destination_f
     ' Call like this:
     '       result = vrdtvsp_move_files_to_folder("G:\SOME_SOURCE_PATH\*.MPG", "G:\SOME_DESTINATION_PATH\")
     '            which does a DOS command something like MOVE /Y "G:\SOME_SOURCE_PATH\*.MPG" "G:\SOME_DESTINATION_PATH\" 
-    ' Examples of some useful functions:
-        ' an_AbsolutePath = fso.GetAbsolutePathName(fso.BuildPath("C:\SOFTWARE\ffmpeg\0-homebuilt-x64\","MP4Box.exe"))
-        ' theParentFolderName = fso.GetParentFolderName(an_AbsolutePath) ' the drive and folder name of the file without any trailing "\"
-        ' theBaseName = fso.GetBaseName(an_AbsolutePath)
-        ' theExtName = fso.GetExtensionName(an_AbsolutePath) ' does not include  the "."
-        ' theFileName = fso.GetFileName(an_AbsolutePath) ' includes filename and "." and extension
-        ' theDriveName = fso.GetDriveName(an_AbsolutePath) ' includes driver letter and ":"
-        ' theParentFolderName = fso.GetParentFolderName(an_AbsolutePath) 
     Dim mf_exe, mf_cmd, mf_status, mf_tmp
     Dim mf_source_AbsolutePath, mf_destination_AbsolutePath
     'If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_move_files_to_folder: """ & mf_source_path_wildcard & """" & " to """ &  mv_destination_folder & """")
@@ -668,28 +661,40 @@ Function vrdtvsp_move_files_to_folder (mf_source_path_wildcard, mv_destination_f
        ' WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_move_files_to_folder      mf_source_AbsolutePath=""" & mf_source_AbsolutePath & """")
         'WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_move_files_to_folder mf_destination_AbsolutePath=""" & mf_destination_AbsolutePath & """")
     End If
-    ' Ugh, a DOS MOVE requires CMD /C  to work !! 
-    mf_cmd = "CMD /C MOVE /Y """ & mf_source_AbsolutePath & """ """ & mf_destination_AbsolutePath & """ 2>&1"
-	If vrdtvsp_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
-		mf_cmd = "REM " & mf_cmd ' do not move anything 
-	End If
-	WScript.StdOut.WriteLine("vrdtvsp_move_files_to_folder Exec command: " & mf_cmd)
-    set mf_exe = wso.Exec(mf_cmd)
-    Do While mf_exe.Status = 0 '0 is running and 1 is ending
-         Wscript.Sleep 100
-    Loop
-    Do Until mf_exe.StdOut.AtEndOfStream
-        mf_tmp = mf_exe.StdOut.ReadLine()
-        WScript.StdOut.WriteLine("vrdtvsp_move_files_to_folder StdOut: " & mf_tmp)
-    Loop
-    Do Until mf_exe.StdErr.AtEndOfStream
-        mf_tmp = mf_exe.StdErr.ReadLine()
-        WScript.StdOut.WriteLine("vrdtvsp_move_files_to_folder StdErr: " & mf_tmp)
-    Loop
-    mf_status = mf_exe.ExitCode
-    WScript.StdOut.WriteLine("vrdtvsp_move_files_to_folder Exit Status: " & mf_status)
-    Set mf_exe = Nothing
+	'
+	' THE OLD WAY OF DOING IT
+	'
+	' Ugh, a DOS MOVE requires CMD /C  to work !! 
+    'mf_cmd = "CMD /C MOVE /Y """ & mf_source_AbsolutePath & """ """ & mf_destination_AbsolutePath & """ 2>&1"
+	'If vrdtvsp_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
+	'	mf_cmd = "REM " & mf_cmd ' do not move anything 
+	'End If
+	'WScript.StdOut.WriteLine("vrdtvsp_move_files_to_folder Exec command: " & mf_cmd)
+    'set mf_exe = wso.Exec(mf_cmd)
+    'Do While mf_exe.Status = 0 '0 is running and 1 is ending
+    '     Wscript.Sleep 100
+    'Loop
+    'Do Until mf_exe.StdOut.AtEndOfStream
+    '    mf_tmp = mf_exe.StdOut.ReadLine()
+    '    WScript.StdOut.WriteLine("vrdtvsp_move_files_to_folder StdOut: " & mf_tmp)
+    'Loop
+    'Do Until mf_exe.StdErr.AtEndOfStream
+    '    mf_tmp = mf_exe.StdErr.ReadLine()
+    '    WScript.StdOut.WriteLine("vrdtvsp_move_files_to_folder StdErr: " & mf_tmp)
+    'Loop
+    'mf_status = mf_exe.ExitCode
+    'WScript.StdOut.WriteLine("vrdtvsp_move_files_to_folder Exit Status: " & mf_status)
+    'Set mf_exe = Nothing
     'If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_move_files_to_folder exiting with status=""" & mf_status & """")
+	'
+	' THE NEW WAY OF DOING IT
+	'
+	mf_cmd = "MOVE /Y """ & mf_source_AbsolutePath & """ """ & mf_destination_AbsolutePath & """"
+	ReDim vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(0) ' base 0, so the dimension is always 1 less than the number of commands
+	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(0) = mf_cmd
+	' deliberately no code for saving commands to move files
+	mf_status = vrdtvsp_Exec_in_a_DOS_BAT_file(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log
+	Erase vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array
     vrdtvsp_move_files_to_folder = mf_status
 End Function
 '
@@ -2891,7 +2896,7 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1))
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	If vrdtvsp_DEBUG OR vrdtvsp_show_mediainfo Then
-		CF_exe_status = vrdtvsp_Exec_in_a_DOS_BAT_file (vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log
+		CF_exe_status = vrdtvsp_Exec_in_a_DOS_BAT_file(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log
 	End If
 	Erase vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array
 	' ++++ END do a mediainfo of the SOURCE so we can compare them !!! (DGIndex got the FPS wrong)
@@ -2911,7 +2916,7 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1))
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	If vrdtvsp_DEBUG OR vrdtvsp_show_mediainfo Then
-		CF_exe_status = vrdtvsp_Exec_in_a_DOS_BAT_file (vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log
+		CF_exe_status = vrdtvsp_Exec_in_a_DOS_BAT_file(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log
 	End If
 	Erase vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array
 	' ++++ END do a mediainfo of the QSF so we can compare them !!! (DGIndex got the FPS wrong)
@@ -3801,7 +3806,7 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1) = "REM """ & vrdtvsp_ffmpegexe64 & """ -hide_banner -v verbose -init_hw_device list"
 	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(2) = "REM """ & vrdtvsp_ffmpegexe64 & """ -hide_banner -v verbose -hide_banner -h encoder=hevc_nvenc"
 	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(3) = ff_cmd_string
-	CF_exe_status = vrdtvsp_Exec_in_a_DOS_BAT_file (vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log
+	CF_exe_status = vrdtvsp_Exec_in_a_DOS_BAT_file(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log
 	Erase vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array
 	If (CF_exe_status <> 0) OR (NOT fso.FileExists(CF_TARGET_AbsolutePathName)) Then
 		If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: ERROR vrdtvsp_Convert_File - FFMPEG Error - CF_exe_status=""" & CF_exe_status & """ with ff_cmd_string=""" & ff_cmd_string)
@@ -4023,7 +4028,7 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1))
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	If vrdtvsp_DEBUG OR vrdtvsp_show_mediainfo Then
-		CF_exe_status = vrdtvsp_Exec_in_a_DOS_BAT_file (vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log
+		CF_exe_status = vrdtvsp_Exec_in_a_DOS_BAT_file(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log
 	End If
 	Erase vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array
 	' ++++ END do a mediainfo of the TARGET so we can compare them !!! (DGIndex got the FPS wrong)
@@ -4060,7 +4065,7 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		ReDim vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1) ' base 0, so the dimension is always 1 less than the number of commands
 		vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(0) = "DEL /F """ & CF_BPRJ_AbsolutePathName & """"
 		vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1) = CF_exe_cmd_string
-		CF_exe_status = vrdtvsp_Exec_in_a_DOS_BAT_file (vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log - the safer way of doing it
+		CF_exe_status = vrdtvsp_Exec_in_a_DOS_BAT_file(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log - the safer way of doing it
 		Erase vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array
 		WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string() & " ====================================================================================================================================================================")
 		WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string() & " ====================================================================================================================================================================")
