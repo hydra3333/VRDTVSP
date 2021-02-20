@@ -3441,28 +3441,28 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'	Footy_FF_V_Target_BufSize = ROUND(FF_V_Target_BufSize)
 	End If
 	If vrdtvs_DEBUG Then 
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - CF_QSF_AbsolutePathName              =""" & CF_QSF_AbsolutePathName & """")
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Q_V_Codec_legacy                     =""" & Q_V_Codec_legacy & """")
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - V_ScanType                           =""" & V_ScanType & """")
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - V_ScanOrder                          =""" & V_ScanOrder & """")
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - vrdtvs_final_RTX2060super_extra_flags=""" & vrdtvs_final_RTX2060super_extra_flags & """")
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - vrdtvs_final_dg_tff                  =""" & vrdtvs_final_dg_tff & """")
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - vrdtvs_final_dg_deinterlace          =""" & vrdtvs_final_dg_deinterlace & """")
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_found                          =""" & Footy_found & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - CF_QSF_AbsolutePathName               =""" & CF_QSF_AbsolutePathName & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Q_V_Codec_legacy                      =""" & Q_V_Codec_legacy & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - V_ScanType                            =""" & V_ScanType & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - V_ScanOrder                           =""" & V_ScanOrder & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - vrdtvs_final_RTX2060super_extra_flags =""" & vrdtvs_final_RTX2060super_extra_flags & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - vrdtvs_final_dg_tff                   =""" & vrdtvs_final_dg_tff & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - vrdtvs_final_dg_deinterlace           =""" & vrdtvs_final_dg_deinterlace & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - vrdtvs_final_cq_options               =""" & vrdtvs_final_cq_options & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_found                           =""" & Footy_found & """")
 		If Footy_found Then
-			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy found, should be using the Footy parameters below.")
+			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy found, should be using the Footy parameters below and deinterlace=2 above.")
 		Else
-			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy NOT found, should NOT be using the Footy parameters below.")
+			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy NOT found, be using the non-Footy parameters as below and deinterlace=1 above.")
 		End If
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_FF_V_Target_BitRate            =""" & Footy_FF_V_Target_BitRate & """")
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_FF_V_Target_Minimum_BitRate    =""" & Footy_FF_V_Target_Minimum_BitRate & """")
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_FF_V_Target_Maximum_BitRate    =""" & Footy_FF_V_Target_Maximum_BitRate & """")
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_FF_V_Target_BufSize            =""" & Footy_FF_V_Target_BufSize & """")
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - FINAL vrdtvs_final_cq_options        =""" & vrdtvs_final_cq_options & """")
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - FINAL FF_V_Target_BitRate            =""" & FF_V_Target_BitRate & """")
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - FINAL FF_V_Target_Minimum_BitRate    =""" & FF_V_Target_Minimum_BitRate & """")
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - FINAL FF_V_Target_Maximum_BitRate    =""" & FF_V_Target_Maximum_BitRate & """")
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - FINAL FF_V_Target_BufSize            =""" & FF_V_Target_BufSize & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_FF_V_Target_BitRate             =""" & Footy_FF_V_Target_BitRate & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_FF_V_Target_Minimum_BitRate     =""" & Footy_FF_V_Target_Minimum_BitRate & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_FF_V_Target_Maximum_BitRate     =""" & Footy_FF_V_Target_Maximum_BitRate & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_FF_V_Target_BufSize             =""" & Footy_FF_V_Target_BufSize & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - non-Footy FF_V_Target_BitRate         =""" & FF_V_Target_BitRate & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - non-Footy FF_V_Target_Minimum_BitRate =""" & FF_V_Target_Minimum_BitRate & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - non-Footy FF_V_Target_Maximum_BitRate =""" & FF_V_Target_Maximum_BitRate & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - non-Footy FF_V_Target_BufSize         =""" & FF_V_Target_BufSize & """")
 	End If
 	'
 	' START ======================================================  Do the DGIndexNV ======================================================
