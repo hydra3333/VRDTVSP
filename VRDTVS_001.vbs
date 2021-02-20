@@ -3336,8 +3336,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		FF_V_Target_BufSize = ROUND(FF_V_Target_BitRate * 2)			' double
 	Else ' by  the time it gets here it must be MPEG2 flagged as V_IsMPEG2
 		REM is MPEG2 input, so GUESS at reasonable H.264 TARGET BITRATE
-		FF_V_Target_BitRate = 2000000
-		FF_V_Target_Minimum_BitRate = 100000
+		FF_V_Target_BitRate = ROUND(2000000)
+		FF_V_Target_Minimum_BitRate = ROUND(100000)
 		FF_V_Target_Maximum_BitRate = ROUND(FF_V_Target_BitRate * 2)
 		FF_V_Target_BufSize = ROUND(FF_V_Target_BitRate * 2)
 	End If
@@ -3351,6 +3351,13 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	x_cq24 = "-cq:v 24 -qmin 16 -qmax 48"
 	vrdtvs_final_cq_options = x_cq0 ' default to cq0
 	PROPOSED_x_cq_options = vrdtvs_final_cq_options
+	If vrdtvs_DEBUG Then 
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - INITIAL vrdtvs_final_cq_options      =""" & vrdtvs_final_cq_options & """ for " & Q_V_Codec_legacy)
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - INITIAL FF_V_Target_BitRate          =""" & FF_V_Target_BitRate & """ for " & Q_V_Codec_legacy)
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - INITIAL FF_V_Target_Minimum_BitRate  =""" & FF_V_Target_Minimum_BitRate & """ for " & Q_V_Codec_legacy)
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - INITIAL FF_V_Target_Maximum_BitRate  =""" & FF_V_Target_Maximum_BitRate & """ for " & Q_V_Codec_legacy)
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - INITIAL FF_V_Target_BufSize          =""" & FF_V_Target_BufSize & """ for " & Q_V_Codec_legacy)
+	End If
 	'
 	' FOR AVC INPUT FILES ONLY, calculate the CQ to use (default to CQ0)
 	' There are special cases where Mediainfo detects a lower bitrate than FFPROBE
@@ -3394,10 +3401,23 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	If Ucase(V_ScanType) = Ucase("Progressive") Then ' 
 		vrdtvs_final_dg_deinterlace = 0	' no deinterlace for progressive files
 	Else ' only check FOOTY for interlaced files
-		If Instr(1,Ucase(fso.GetBaseName(CF_QSF_AbsolutePathName)), Ucase("AFL"), vbTextCompare) > 0 Then Footy_found = True
-		If Instr(1,Ucase(fso.GetBaseName(CF_QSF_AbsolutePathName)), Ucase("SANFL"), vbTextCompare) > 0 Then Footy_found = True
-		If Instr(1,Ucase(fso.GetBaseName(CF_QSF_AbsolutePathName)), Ucase("Adelaide Crows"), vbTextCompare) > 0 Then Footy_found = True
-		If Instr(1,Ucase(fso.GetBaseName(CF_QSF_AbsolutePathName)), Ucase("Crows"), vbTextCompare) > 0 Then Footy_found = True
+		If Instr(1,Ucase(fso.GetBaseName(CF_QSF_AbsolutePathName)), Ucase("AFL"), vbTextCompare) > 0 Then 
+			Footy_found = True
+			If vrdtvs_DEBUG Then 
+			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_found: ""AFL"" found in filename.")
+		End If
+		If Instr(1,Ucase(fso.GetBaseName(CF_QSF_AbsolutePathName)), Ucase("SANFL"), vbTextCompare) > 0 Then
+			Footy_found = True
+			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_found: ""SANFL"" found in filename.")
+		End If
+		If Instr(1,Ucase(fso.GetBaseName(CF_QSF_AbsolutePathName)), Ucase("Adelaide Crows"), vbTextCompare) > 0 Then
+			Footy_found = True
+			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_found: ""Adelaide Crows"" found in filename.")
+		End If
+		If Instr(1,Ucase(fso.GetBaseName(CF_QSF_AbsolutePathName)), Ucase("Crows"), vbTextCompare) > 0 Then
+			Footy_found = True
+			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_found: ""Crows"" found in filename.")
+		End If
 	End If		
 	If Footy_found Then ' bump up the bitrates due o double framerate deinterlacing
 		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - FOOTY detected ... setting extended Footy_FF_V_* bitates for double-framerate conversion.")
@@ -3422,15 +3442,19 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - vrdtvs_final_dg_tff                  =""" & vrdtvs_final_dg_tff & """")
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - vrdtvs_final_dg_deinterlace          =""" & vrdtvs_final_dg_deinterlace & """")
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_found                          =""" & Footy_found & """")
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_FF_V_Target_BitRate            =""" & Footy_FF_V_Target_BitRate & """")
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_FF_V_Target_Minimum_BitRate    =""" & Footy_FF_V_Target_Minimum_BitRate & """")
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_FF_V_Target_Maximum_BitRate    =""" & Footy_FF_V_Target_Maximum_BitRate & """")
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_FF_V_Target_BufSize            =""" & Footy_FF_V_Target_BufSize & """")
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - vrdtvs_final_cq_options              =""" & vrdtvs_final_cq_options & """")
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - FF_V_Target_BitRate                  =""" & FF_V_Target_BitRate & """")
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - FF_V_Target_Minimum_BitRate          =""" & FF_V_Target_Minimum_BitRate & """")
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - FF_V_Target_Maximum_BitRate          =""" & FF_V_Target_Maximum_BitRate & """")
-		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - FF_V_Target_BufSize                  =""" & FF_V_Target_BufSize & """")
+		If Footy_found Then
+			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_FF_V_Target_BitRate            =""" & Footy_FF_V_Target_BitRate & """")
+			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_FF_V_Target_Minimum_BitRate    =""" & Footy_FF_V_Target_Minimum_BitRate & """")
+			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_FF_V_Target_Maximum_BitRate    =""" & Footy_FF_V_Target_Maximum_BitRate & """")
+			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_FF_V_Target_BufSize            =""" & Footy_FF_V_Target_BufSize & """")
+		Else
+			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy not found, not showing Footy parameters.")
+		End If
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - FINAL vrdtvs_final_cq_options        =""" & vrdtvs_final_cq_options & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - FINAL FF_V_Target_BitRate            =""" & FF_V_Target_BitRate & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - FINAL FF_V_Target_Minimum_BitRate    =""" & FF_V_Target_Minimum_BitRate & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - FINAL FF_V_Target_Maximum_BitRate    =""" & FF_V_Target_Maximum_BitRate & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - FINAL FF_V_Target_BufSize            =""" & FF_V_Target_BufSize & """")
 	End If
 	'
 	' START ======================================================  Do the DGIndexNV ======================================================
