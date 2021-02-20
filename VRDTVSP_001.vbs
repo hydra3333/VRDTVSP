@@ -556,7 +556,8 @@ Function vrdtvsp_get_commandline_parameter(gcp_argument_name, gcp_default_value)
     '       x = vrdtvsp_get_commandline_parameter("source_TS_Folder", "G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\")
     '       x = vrdtvsp_get_commandline_parameter("True_or_False", False)
     ' NOTE: if the commandline parameter is a path or something, it is NOT checked or Absoluted by this function
-    Dim gcp_argument_count, gcp_NamedArgs, gcp_Return_Value
+    Dim gcp_argument_count, gcp_NamedArgs, gcp_Return_Value, gcp_defaulted_or_set
+	gcp_defaulted_or_set = "dafaulted"
     gcp_argument_count = WScript.Arguments.Count
     gcp_Return_Value = gcp_default_value ' default to return the default_value
     'If vrdtvsp_DEBUG Then 
@@ -576,11 +577,12 @@ Function vrdtvsp_get_commandline_parameter(gcp_argument_name, gcp_default_value)
                 gcp_Return_Value = False   ' if required, convert to boolean False
                 'If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_get_commandline_parameter converted to boolean False gcp_Return_Value=" & gcp_Return_Value)
             End If
+			gcp_defaulted_or_set = "set"
         End If
         Set gcp_NamedArgs = Nothing
     End If
-    WScript.StdOut.WriteLine("VRDTVSP NOTE: vrdtvsp_get_commandline_parameter set: " & gcp_argument_name & "=""" & gcp_Return_Value & """")
-    If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_get_commandline_parameter : " & gcp_argument_name & "=""" & gcp_Return_Value & """")
+	WScript.StdOut.WriteLine("VRDTVSP NOTE: vrdtvsp_get_commandline_parameter " & gcp_defaulted_or_set & ": " & gcp_argument_name & "=""" & gcp_Return_Value & """")
+    If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_get_commandline_parameter " & gcp_defaulted_or_set & ": " & gcp_argument_name & "=""" & gcp_Return_Value & """")
     vrdtvsp_get_commandline_parameter = gcp_Return_Value
 End Function
 '
