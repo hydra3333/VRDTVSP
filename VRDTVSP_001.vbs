@@ -166,8 +166,8 @@ Dim vrd5_logfile_wildcard
 vrd5_logfile_wildcard =  fso.GetAbsolutePathName(HDTV_root & "\") & "\VideoReDo-5_*.Log"
 '
 Const const_vrd6_path =  "C:\Program Files (x86)\VideoReDoTVSuite6"
-Const const_vrd6_profile_mpeg2 = "VRDTVSP-for-QSF-MPEG2"
-Const const_vrd6_profile_avc = "VRDTVSP-for-QSF-H264"
+Const const_vrd6_profile_mpeg2 = "VRDTVS-for-QSF-MPEG2_VRD6"
+Const const_vrd6_profile_avc = "VRDTVS-for-QSF-H264_VRD6"
 Const const_vrd6_extension_mpeg2 = "mpg"
 Const const_vrd6_extension_avc = "mp4"
 Dim vrd6_logfile_wildcard
