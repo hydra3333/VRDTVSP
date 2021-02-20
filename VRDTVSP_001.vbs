@@ -379,7 +379,7 @@ If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Insomnia: Exec Ex
 ' Move .ts .mp4 .mpg .brpj files from the Source Folder to the source folder sincethat is where we process from
 '
 If vrdtvsp_CAPTURE_TS_Folder <> "" Then
-	WScript.StdOut.WriteLine("VRDTVSP Moving SOURCE files from CAPTURE folder """ & vrdtvsp_CAPTURE_TS_Folder & " to SOURCE folder """ & vrdtvsp_source_TS_Folder & """...")
+	WScript.StdOut.WriteLine("VRDTVSP Moving SOURCE files from CAPTURE_TS folder """ & vrdtvsp_CAPTURE_TS_Folder & """ to SOURCE_TS folder """ & vrdtvsp_source_TS_Folder & """ ...")
     vrdtvsp_status = vrdtvsp_move_files_to_folder(vrdtvsp_CAPTURE_TS_Folder & "\*.ts", vrdtvsp_source_TS_Folder & "\")    ' ignore any status
     vrdtvsp_status = vrdtvsp_move_files_to_folder(vrdtvsp_CAPTURE_TS_Folder & "\*.mp4", vrdtvsp_source_TS_Folder & "\")   ' ignore any status
     vrdtvsp_status = vrdtvsp_move_files_to_folder(vrdtvsp_CAPTURE_TS_Folder & "\*.mpg", vrdtvsp_source_TS_Folder & "\")   ' ignore any status
