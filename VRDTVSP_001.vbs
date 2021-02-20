@@ -115,7 +115,7 @@ Set objFolder = Nothing
 ' Setup Global exe file paths, resolving them to Absolute paths
 '
 Dim HDTV_root
-Dim vs_root
+Dim vapoursynth_root
 Dim vrdtvsp_mp4boxexex64
 Dim vrdtvsp_mediainfoexe64
 Dim vrdtvsp_ffprobeexe64
@@ -126,13 +126,13 @@ Dim vrdtvsp_Insomniaexe64
 Dim vrdtvsp_Insomnia64_tmp_filename, vrdtvsp_Insomnia64_ProcessID
 '
 HDTV_root = fso.GetAbsolutePathName("G:\HDTV\") ' where my VideoReDo application logs are
-vs_root = fso.GetAbsolutePathName("C:\SOFTWARE\Vapoursynth-x64\")
+vapoursynth_root = fso.GetAbsolutePathName("C:\SOFTWARE\Vapoursynth-x64\")
 vrdtvsp_mp4boxexex64 = fso.GetAbsolutePathName(fso.BuildPath("C:\SOFTWARE\ffmpeg\0-homebuilt-x64\","MP4Box.exe"))
 vrdtvsp_mediainfoexe64 = fso.GetAbsolutePathName(fso.BuildPath("C:\SOFTWARE\MediaInfo\","MediaInfo.exe"))
-vrdtvsp_ffprobeexe64 = fso.GetAbsolutePathName(fso.BuildPath(vs_root,"ffprobe.exe"))
-vrdtvsp_ffmpegexe64 = fso.GetAbsolutePathName(fso.BuildPath(vs_root,"ffmpeg.exe"))
-vrdtvsp_ffmpegexe64_OpenCL = fso.GetAbsolutePathName(fso.BuildPath(vs_root,"ffmpeg_OpenCL.exe"))
-vrdtvsp_dgindexNVexe64 = fso.GetAbsolutePathName(fso.BuildPath(vs_root,"DGIndex\DGIndexNV.exe"))
+vrdtvsp_ffprobeexe64 = fso.GetAbsolutePathName(fso.BuildPath(vapoursynth_root,"ffprobe.exe"))
+vrdtvsp_ffmpegexe64 = fso.GetAbsolutePathName(fso.BuildPath(vapoursynth_root,"ffmpeg.exe"))
+vrdtvsp_ffmpegexe64_OpenCL = fso.GetAbsolutePathName(fso.BuildPath(vapoursynth_root,"ffmpeg_OpenCL.exe"))
+vrdtvsp_dgindexNVexe64 = fso.GetAbsolutePathName(fso.BuildPath(vapoursynth_root,"DGIndex\DGIndexNV.exe"))
 vrdtvsp_Insomniaexe64 = fso.GetAbsolutePathName("C:\SOFTWARE\Insomnia\64-bit\Insomnia.exe")
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
@@ -2175,7 +2175,7 @@ Function vrdtvsp_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder - Entered with parameters: ")
 		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder Saved ffmpeg commands: """ & C_saved_ffmpeg_commands_filename & """")
 		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder Created on " & vrdtvsp_current_datetime_string)
-		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder                          ""vs_root=" & vs_root & """")
+		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder                  ""vapoursynth_root=" & vapoursynth_root & """")
 		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder              ""vrdtvsp_mp4boxexex64=" & vrdtvsp_mp4boxexex64 & """")
 		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder            ""vrdtvsp_mediainfoexe64=" & vrdtvsp_mediainfoexe64 & """")
 		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder              ""vrdtvsp_ffprobeexe64=" & vrdtvsp_ffprobeexe64 & """")
@@ -2229,7 +2229,7 @@ Function vrdtvsp_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 	C_object_saved_ffmpeg_commands.WriteLine("REM Saved ffmpeg commands: """ & C_saved_ffmpeg_commands_filename & """")
 	C_object_saved_ffmpeg_commands.WriteLine("REM Created " & vrdtvsp_current_datetime_string)
 	C_object_saved_ffmpeg_commands.WriteLine("REM")
-	C_object_saved_ffmpeg_commands.WriteLine("Set ""vs_root=" & vs_root & """")
+	C_object_saved_ffmpeg_commands.WriteLine("Set ""vapoursynth_root=" & vapoursynth_root & """")
 	C_object_saved_ffmpeg_commands.WriteLine("Set ""vrdtvsp_mp4boxexex64=" & vrdtvsp_mp4boxexex64 & """")
 	C_object_saved_ffmpeg_commands.WriteLine("Set ""vrdtvsp_mediainfoexe64=" & vrdtvsp_mediainfoexe64 & """")
 	C_object_saved_ffmpeg_commands.WriteLine("Set ""vrdtvsp_ffprobeexe64=" & vrdtvsp_ffprobeexe64 & """")
@@ -3725,8 +3725,8 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "#import functool", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "#import mvsfunc as mvs			# this relies on the .py residing at the VS folder root level - see run_vsrepo.bat", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "#import havsfunc as haf		# this relies on the .py residing at the VS folder root level - see run_vsrepo.bat", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "core.std.LoadPlugin(r'" & vs_root & "\DGIndex\DGDecodeNV.dll') # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "core.avs.LoadPlugin(r'" & vs_root & "\DGIndex\DGDecodeNV.dll') # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "core.std.LoadPlugin(r'" & vapoursynth_root & "\DGIndex\DGDecodeNV.dll') # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "core.avs.LoadPlugin(r'" & vapoursynth_root & "\DGIndex\DGDecodeNV.dll') # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "# NOTE: deinterlace=" & vrdtvsp_final_dg_deinterlace & ", use_top_field=" & vrdtvsp_final_dg_tff & " for """ & V_ScanType & """/""" & V_ScanOrder & """ """ & V_Codec_legacy & """/""" & A_Codec_legacy & """", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "video = core.dgdecodenv.DGSource(r'" & CF_DGI_AbsolutePathName & "', deinterlace=" & vrdtvsp_final_dg_deinterlace & ", use_top_field=" & vrdtvsp_final_dg_tff & ", use_pf=False)", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "# DGDecNV changes -", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
