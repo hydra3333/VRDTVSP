@@ -3426,6 +3426,7 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			End If
 		End If
 	End If		
+	vrdtvs_final_dg_deinterlace = 1	' set for normal single framerate deinterlace BY DEFAULT (I mucked it up a few versions ago)
 	If Footy_found Then ' bump up the bitrates due o double framerate deinterlacing
 		WScript.StdOut.WriteLine("VRDTVS vrdtvs_Convert_File: - FOOTY detected ... setting extended Footy_FF_V_* bitates for double-framerate conversion.")
 		vrdtvs_final_dg_deinterlace = 2	' set for double framerate deinterlace
@@ -3433,8 +3434,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		Footy_FF_V_Target_Minimum_BitRate = ROUND(Footy_FF_V_Target_BitRate * 0.20)
 		Footy_FF_V_Target_Maximum_BitRate = ROUND(Footy_FF_V_Target_BitRate * 2)
 		Footy_FF_V_Target_BufSize = ROUND(Footy_FF_V_Target_BitRate * 2)
-	'Else ' default them back to non-footy settngs
-	'	vrdtvs_final_dg_deinterlace = 1	' set for normal single framerate deinterlace
+	Else ' default them back to non-footy settngs
+		vrdtvs_final_dg_deinterlace = 1	' set for normal single framerate deinterlace
 	'	Footy_FF_V_Target_BitRate = ROUND(FF_V_Target_BitRate)
 	'	Footy_FF_V_Target_Minimum_BitRate = ROUND(FF_V_Target_Minimum_BitRate)
 	'	Footy_FF_V_Target_Maximum_BitRate = ROUND(FF_V_Target_Maximum_BitRate)
