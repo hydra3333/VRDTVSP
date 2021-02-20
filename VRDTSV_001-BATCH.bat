@@ -23,6 +23,7 @@ REM -- Header ------------------------------------------------------------------
 REM
 REM ---------Setup Folders --------- (ensure trailing backslash exists)
 SET vrdtvs_HDTV=G:\HDTV\
+SET vrdtvs_vbs_script=!vrdtvs_HDTV!\VRDTVS_001.vbs
 SET capture_TS_Folder=!vrdtvs_HDTV!
 SET source_TS_Folder=!vrdtvs_HDTV!\000-TO-BE-PROCESSED\
 SET done_TS_Folder=!source_TS_Folder!VRDTVS-done\
@@ -34,6 +35,9 @@ REM
 REM --------- resolve any relative paths into absolute paths --------- 
 REM --------- ensure NO spaces between brackets and end of SET statement --------- 
 REM this also puts a trailing "\" on the end
+REM ECHO !DATE! !TIME! before vrdtvs_vbs_script="%vrdtvs_vbs_script%"
+FOR /F %%i IN ("%vrdtvs_vbs_script%") DO (SET vrdtvs_vbs_script=%%~fi)
+REM ECHO !DATE! !TIME! after vrdtvs_vbs_script="%vrdtvs_vbs_script%"
 REM ECHO !DATE! !TIME! before vrdtvs_HDTV="%vrdtvs_HDTV%"
 FOR /F %%i IN ("%vrdtvs_HDTV%") DO (SET vrdtvs_HDTV=%%~fi)
 REM ECHO !DATE! !TIME! after vrdtvs_HDTV="%vrdtvs_HDTV%"
@@ -82,7 +86,7 @@ MD "!done_TS_Folder!" >NUL 2>&1
 MD "!destination_mp4_Folder!" >NUL  2>&1
 MD "!failed_conversion_TS_Folder!" >NUL  2>&1
 MD "!scratch_Folder!" >NUL 2>&1 
-SET vrdtvs_CMD=cscript //nologo "E:\GIT-REPOSITORIES\VRDTVSP\VRDTVS_001.vbs" ^
+SET vrdtvs_CMD=cscript //nologo "!vrdtvs_vbs_script!" ^
 /DEBUG:False ^
 /DEV:False ^
 /capture_Folder:"!capture_TS_Folder!" ^
@@ -98,6 +102,8 @@ SET vrdtvs_CMD=cscript //nologo "E:\GIT-REPOSITORIES\VRDTVSP\VRDTVS_001.vbs" ^
 /do_audio_delay:True ^
 /show_mediainfo:False
 REM
+ECHO !DATE! !TIME! ===================== >> "!vrdtvs_LOG!" 2>&1
+ECHO !vrdtvs_CMD! >> "!vrdtvs_LOG!" 2>&1
 ECHO !DATE! !TIME! ===================== >> "!vrdtvs_LOG!" 2>&1
 !vrdtvs_CMD! >> "!vrdtvs_LOG!" 2>&1
 SET EL=%ERRORLEVEL% >> "!vrdtvs_LOG!" 2>&1

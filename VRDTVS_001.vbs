@@ -3759,8 +3759,8 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'
 	ReDim vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(3) ' base 0, so the dimension is always 1 less than the number of commands
 	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(0) = "DEL /F """ & CF_TARGET_AbsolutePathName & """"
-	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1) = """" & vrdtvs_ffmpegexe64 & """ -hide_banner -v verbose -init_hw_device list"
-	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(2) = """" & vrdtvs_ffmpegexe64 & """ -hide_banner -v verbose -hide_banner -h encoder=hevc_nvenc"
+	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(1) = "REM """ & vrdtvs_ffmpegexe64 & """ -hide_banner -v verbose -init_hw_device list"
+	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(2) = "REM """ & vrdtvs_ffmpegexe64 & """ -hide_banner -v verbose -hide_banner -h encoder=hevc_nvenc"
 	vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array(3) = ff_cmd_string
 	CF_exe_status = vrdtvs_Exec_in_a_DOS_BAT_file (vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log
 	Erase vrdtvs_Exec_in_a_DOS_BAT_file_cmd_array
