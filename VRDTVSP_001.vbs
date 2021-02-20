@@ -221,12 +221,12 @@ vrdtvsp_destination_mp4_Folder = fso.GetAbsolutePathName(vrdtvsp_get_commandline
 vrdtvsp_failed_conversion_TS_Folder = fso.GetAbsolutePathName(vrdtvsp_get_commandline_parameter("failed_Folder",vrdtvsp_failed_conversion_TS_Folder))  ' /failed_Folder:""
 vrdtvsp_temp_path = fso.GetAbsolutePathName(vrdtvsp_get_commandline_parameter("temp_path",vrdtvsp_temp_path))                                          ' /temp_path:"D:\VRDTVSP-SCRATCH\"
 '
-vrdtvsp_version_for_qsf = vrdtvsp_get_commandline_parameter("vrdtvsp_version_for_qsf",vrdtvsp_version_for_qsf)                                                   ' /vrdtvsp_version_for_qsf:5
-vrdtvsp_version_for_adscan = vrdtvsp_get_commandline_parameter("vrdtvsp_version_for_adscan",vrdtvsp_version_for_adscan)                                          ' /vrdtvsp_version_for_adscan:5
-vrdtvsp_do_qsf = vrdtvsp_get_commandline_parameter("do_qsf",vrdtvsp_do_qsf) 			                     		                    						' /do_qsf:False
-vrdtvsp_do_adscan = vrdtvsp_get_commandline_parameter("do_adscan",vrdtvsp_do_adscan)                      		                    						' /do_adscan:False
-vrdtvsp_do_audio_delay = vrdtvsp_get_commandline_parameter("do_audio_delay",vrdtvsp_do_audio_delay)                      		                    		' /do_audio_delay:False
-vrdtvsp_show_mediainfo = vrdtvsp_get_commandline_parameter("show_mediainfo",vrdtvsp_show_mediainfo)                      		                    		' /show_mediainfo:False
+vrdtvsp_version_for_qsf = vrdtvsp_get_commandline_parameter("vrdtvsp_version_for_qsf",vrdtvsp_version_for_qsf)                                        	' /vrdtvsp_version_for_qsf:6
+vrdtvsp_version_for_adscan = vrdtvsp_get_commandline_parameter("vrdtvsp_version_for_adscan",vrdtvsp_version_for_adscan)                                 ' /vrdtvsp_version_for_adscan:6
+vrdtvsp_do_qsf = vrdtvsp_get_commandline_parameter("do_qsf",vrdtvsp_do_qsf) 			                     		                    				' /do_qsf:False
+vrdtvsp_do_adscan = vrdtvsp_get_commandline_parameter("do_adscan",vrdtvsp_do_adscan)                      		                    					' /do_adscan:False
+vrdtvsp_do_audio_delay = vrdtvsp_get_commandline_parameter("do_audio_delay",vrdtvsp_do_audio_delay)                      		                    	' /do_audio_delay:False
+vrdtvsp_show_mediainfo = vrdtvsp_get_commandline_parameter("show_mediainfo",vrdtvsp_show_mediainfo)                      		                    	' /show_mediainfo:False
 
 ' ***************************************************************************************************************************
 'If vrdtvsp_version_for_qsf <> 5 Then '*** QSF
@@ -291,18 +291,18 @@ WScript.StdOut.WriteLine("VRDTVSP NOTE: final              vrdtvsp_done_TS_Folde
 WScript.StdOut.WriteLine("VRDTVSP NOTE: final      vrdtvsp_destination_mp4_Folder=""" & vrdtvsp_destination_mp4_Folder & """")
 WScript.StdOut.WriteLine("VRDTVSP NOTE: final vrdtvsp_failed_conversion_TS_Folder=""" & vrdtvsp_failed_conversion_TS_Folder & """")
 WScript.StdOut.WriteLine("VRDTVSP NOTE: final                   vrdtvsp_temp_path=""" & vrdtvsp_temp_path & """")
-WScript.StdOut.WriteLine("VRDTVSP NOTE: final                vrdtvsp_version_for_qsf=" & vrdtvsp_version_for_qsf)
-WScript.StdOut.WriteLine("VRDTVSP NOTE: final               vrdtvsp_path_for_qsf_vbs=""" & vrdtvsp_path_for_qsf_vbs & """")
-WScript.StdOut.WriteLine("VRDTVSP NOTE: final     vrdtvsp_profile_name_for_qsf_mpeg2=""" & vrdtvsp_profile_name_for_qsf_mpeg2 & """")
-WScript.StdOut.WriteLine("VRDTVSP NOTE: final       vrdtvsp_profile_name_for_qsf_avc=""" & vrdtvsp_profile_name_for_qsf_avc & """")
-WScript.StdOut.WriteLine("VRDTVSP NOTE: final                vrdtvsp_extension_mpeg2=""" & vrdtvsp_extension_mpeg2 & """")
-WScript.StdOut.WriteLine("VRDTVSP NOTE: final                  vrdtvsp_extension_avc=""" & vrdtvsp_extension_avc & """")
-WScript.StdOut.WriteLine("VRDTVSP NOTE: final             vrdtvsp_version_for_adscan=" & vrdtvsp_version_for_adscan)
-WScript.StdOut.WriteLine("VRDTVSP NOTE: final            vrdtvsp_path_for_adscan_vbs=""" & vrdtvsp_path_for_adscan_vbs & """")
-WScript.StdOut.WriteLine("VRDTVSP NOTE: final                         vrdtvsp_do_qsf=" & vrdtvsp_do_qsf)
-WScript.StdOut.WriteLine("VRDTVSP NOTE: final                      vrdtvsp_do_adscan=" & vrdtvsp_do_adscan)
-WScript.StdOut.WriteLine("VRDTVSP NOTE: final                 vrdtvsp_do_audio_delay=" & vrdtvsp_do_audio_delay)
-WScript.StdOut.WriteLine("VRDTVSP NOTE: final                 vrdtvsp_show_mediainfo=" & vrdtvsp_show_mediainfo)
+WScript.StdOut.WriteLine("VRDTVSP NOTE: final             vrdtvsp_version_for_qsf=" & vrdtvsp_version_for_qsf)
+WScript.StdOut.WriteLine("VRDTVSP NOTE: final            vrdtvsp_path_for_qsf_vbs=""" & vrdtvsp_path_for_qsf_vbs & """")
+WScript.StdOut.WriteLine("VRDTVSP NOTE: final  vrdtvsp_profile_name_for_qsf_mpeg2=""" & vrdtvsp_profile_name_for_qsf_mpeg2 & """")
+WScript.StdOut.WriteLine("VRDTVSP NOTE: final    vrdtvsp_profile_name_for_qsf_avc=""" & vrdtvsp_profile_name_for_qsf_avc & """")
+WScript.StdOut.WriteLine("VRDTVSP NOTE: final             vrdtvsp_extension_mpeg2=""" & vrdtvsp_extension_mpeg2 & """")
+WScript.StdOut.WriteLine("VRDTVSP NOTE: final               vrdtvsp_extension_avc=""" & vrdtvsp_extension_avc & """")
+WScript.StdOut.WriteLine("VRDTVSP NOTE: final          vrdtvsp_version_for_adscan=" & vrdtvsp_version_for_adscan)
+WScript.StdOut.WriteLine("VRDTVSP NOTE: final         vrdtvsp_path_for_adscan_vbs=""" & vrdtvsp_path_for_adscan_vbs & """")
+WScript.StdOut.WriteLine("VRDTVSP NOTE: final                      vrdtvsp_do_qsf=" & vrdtvsp_do_qsf)
+WScript.StdOut.WriteLine("VRDTVSP NOTE: final                   vrdtvsp_do_adscan=" & vrdtvsp_do_adscan)
+WScript.StdOut.WriteLine("VRDTVSP NOTE: final              vrdtvsp_do_audio_delay=" & vrdtvsp_do_audio_delay)
+WScript.StdOut.WriteLine("VRDTVSP NOTE: final              vrdtvsp_show_mediainfo=" & vrdtvsp_show_mediainfo)
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Create the working folders if they do not already exist
@@ -579,7 +579,8 @@ Function vrdtvsp_get_commandline_parameter(gcp_argument_name, gcp_default_value)
         End If
         Set gcp_NamedArgs = Nothing
     End If
-    If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_get_commandline_parameter exiting with: " & gcp_argument_name & "=""" & gcp_Return_Value & """")
+    WScript.StdOut.WriteLine("VRDTVSP NOTE: vrdtvsp_get_commandline_parameter set: " & gcp_argument_name & "=""" & gcp_Return_Value & """")
+    If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_get_commandline_parameter : " & gcp_argument_name & "=""" & gcp_Return_Value & """")
     vrdtvsp_get_commandline_parameter = gcp_Return_Value
 End Function
 '
@@ -2186,30 +2187,30 @@ Function vrdtvsp_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder - Entered with parameters: ")
 		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder Saved ffmpeg commands: """ & C_saved_ffmpeg_commands_filename & """")
 		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder Created on " & vrdtvsp_current_datetime_string)
-		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder                  ""vapoursynth_root=" & vapoursynth_root & """")
-		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder              ""vrdtvsp_mp4boxexex64=" & vrdtvsp_mp4boxexex64 & """")
-		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder            ""vrdtvsp_mediainfoexe64=" & vrdtvsp_mediainfoexe64 & """")
-		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder              ""vrdtvsp_ffprobeexe64=" & vrdtvsp_ffprobeexe64 & """")
-		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder               ""vrdtvsp_ffmpegexe64=" & vrdtvsp_ffmpegexe64 & """")
-		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder            ""vrdtvsp_dgindexNVexe64=" & vrdtvsp_dgindexNVexe64 & """")
-		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder             ""vrdtvsp_Insomniaexe64=" & vrdtvsp_Insomniaexe64 & """")
-		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder               ""C_source_TS_Folder=" & C_source_TS_Folder & """")
-		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder                 ""C_done_TS_Folder=" & C_done_TS_Folder & """")
-		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder         ""C_destination_mp4_Folder=" & C_destination_mp4_Folder & """")
-		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder    ""C_failed_conversion_TS_Folder=" & C_failed_conversion_TS_Folder & """")
-		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder                      ""C_temp_path=" & C_temp_path & """")
-		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder   ""vrdtvsp_profile_name_for_qsf_mpeg2=" & vrdtvsp_profile_name_for_qsf_mpeg2 & """")
-		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder              ""vrdtvsp_extension_mpeg2=" & vrdtvsp_extension_mpeg2 & """")
-		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder     ""vrdtvsp_profile_name_for_qsf_avc=" & vrdtvsp_profile_name_for_qsf_avc & """")
-		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder                ""vrdtvsp_extension_avc=" & vrdtvsp_extension_avc & """")
-		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder              ""vrdtvsp_version_for_qsf=" & vrdtvsp_version_for_qsf & """")
-		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder             ""vrdtvsp_path_for_qsf_vbs=" & vrdtvsp_path_for_qsf_vbs & """")
-		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder           ""vrdtvsp_version_for_adscan=" & vrdtvsp_version_for_adscan & """")
-		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder          ""vrdtvsp_path_for_adscan_vbs=" & vrdtvsp_path_for_adscan_vbs & """")
-		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder ""C_saved_ffmpeg_commands_filename=" & C_saved_ffmpeg_commands_filename & """")
-		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder                         ""C_do_qsf=" & C_do_qsf & """")
-		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder                      ""C_do_Adscan=" & C_do_Adscan & """")
-		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder                 ""C_do_audio_delay=" & C_do_audio_delay & """")
+		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder                   ""vapoursynth_root=" & vapoursynth_root & """")
+		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder               ""vrdtvsp_mp4boxexex64=" & vrdtvsp_mp4boxexex64 & """")
+		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder             ""vrdtvsp_mediainfoexe64=" & vrdtvsp_mediainfoexe64 & """")
+		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder               ""vrdtvsp_ffprobeexe64=" & vrdtvsp_ffprobeexe64 & """")
+		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder                ""vrdtvsp_ffmpegexe64=" & vrdtvsp_ffmpegexe64 & """")
+		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder             ""vrdtvsp_dgindexNVexe64=" & vrdtvsp_dgindexNVexe64 & """")
+		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder              ""vrdtvsp_Insomniaexe64=" & vrdtvsp_Insomniaexe64 & """")
+		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder                 ""C_source_TS_Folder=" & C_source_TS_Folder & """")
+		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder                   ""C_done_TS_Folder=" & C_done_TS_Folder & """")
+		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder           ""C_destination_mp4_Folder=" & C_destination_mp4_Folder & """")
+		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder      ""C_failed_conversion_TS_Folder=" & C_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder                        ""C_temp_path=" & C_temp_path & """")
+		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder ""vrdtvsp_profile_name_for_qsf_mpeg2=" & vrdtvsp_profile_name_for_qsf_mpeg2 & """")
+		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder            ""vrdtvsp_extension_mpeg2=" & vrdtvsp_extension_mpeg2 & """")
+		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder   ""vrdtvsp_profile_name_for_qsf_avc=" & vrdtvsp_profile_name_for_qsf_avc & """")
+		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder              ""vrdtvsp_extension_avc=" & vrdtvsp_extension_avc & """")
+		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder            ""vrdtvsp_version_for_qsf=" & vrdtvsp_version_for_qsf & """")
+		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder           ""vrdtvsp_path_for_qsf_vbs=" & vrdtvsp_path_for_qsf_vbs & """")
+		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder         ""vrdtvsp_version_for_adscan=" & vrdtvsp_version_for_adscan & """")
+		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder        ""vrdtvsp_path_for_adscan_vbs=" & vrdtvsp_path_for_adscan_vbs & """")
+		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder   ""C_saved_ffmpeg_commands_filename=" & C_saved_ffmpeg_commands_filename & """")
+		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder                           ""C_do_qsf=" & C_do_qsf & """")
+		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder                        ""C_do_Adscan=" & C_do_Adscan & """")
+		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder                   ""C_do_audio_delay=" & C_do_audio_delay & """")
 	End If
 	'
 	' delete the saved FFMPEG COMMANDS file silently 
