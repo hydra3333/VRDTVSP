@@ -45,7 +45,7 @@
   </Settings>
   <Actions Context="Author">
     <Exec>
-      <Command>"G:\HDTV\VRDTVPS_001-BATCH.BAT"</Command>
+      <Command>"G:\HDTV\VRDTVSP_001-BATCH.BAT"</Command>
       <WorkingDirectory>G:\HDTV</WorkingDirectory>
     </Exec>
   </Actions>
