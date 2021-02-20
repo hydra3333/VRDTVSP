@@ -3433,12 +3433,12 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		Footy_FF_V_Target_Minimum_BitRate = ROUND(Footy_FF_V_Target_BitRate * 0.20)
 		Footy_FF_V_Target_Maximum_BitRate = ROUND(Footy_FF_V_Target_BitRate * 2)
 		Footy_FF_V_Target_BufSize = ROUND(Footy_FF_V_Target_BitRate * 2)
-	Else ' default them back to non-footy settngs
-		vrdtvs_final_dg_deinterlace = 1	' set for normal single framerate deinterlace
-		Footy_FF_V_Target_BitRate = ROUND(FF_V_Target_BitRate)
-		Footy_FF_V_Target_Minimum_BitRate = ROUND(FF_V_Target_Minimum_BitRate)
-		Footy_FF_V_Target_Maximum_BitRate = ROUND(FF_V_Target_Maximum_BitRate)
-		Footy_FF_V_Target_BufSize = ROUND(FF_V_Target_BufSize)
+	'Else ' default them back to non-footy settngs
+	'	vrdtvs_final_dg_deinterlace = 1	' set for normal single framerate deinterlace
+	'	Footy_FF_V_Target_BitRate = ROUND(FF_V_Target_BitRate)
+	'	Footy_FF_V_Target_Minimum_BitRate = ROUND(FF_V_Target_Minimum_BitRate)
+	'	Footy_FF_V_Target_Maximum_BitRate = ROUND(FF_V_Target_Maximum_BitRate)
+	'	Footy_FF_V_Target_BufSize = ROUND(FF_V_Target_BufSize)
 	End If
 	If vrdtvs_DEBUG Then 
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - CF_QSF_AbsolutePathName              =""" & CF_QSF_AbsolutePathName & """")
