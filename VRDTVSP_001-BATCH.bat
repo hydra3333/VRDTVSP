@@ -103,13 +103,16 @@ SET vrdtvsp_CMD=cscript //nologo "!vrdtvsp_vbs_script!" ^
 /show_mediainfo:False
 REM
 ECHO !DATE! !TIME! ===================== >> "!vrdtvsp_LOG!" 2>&1
+ECHO !vrdtvsp_CMD!
 ECHO !vrdtvsp_CMD! >> "!vrdtvsp_LOG!" 2>&1
 ECHO !DATE! !TIME! ===================== >> "!vrdtvsp_LOG!" 2>&1
 !vrdtvsp_CMD! >> "!vrdtvsp_LOG!" 2>&1
 SET EL=%ERRORLEVEL% >> "!vrdtvsp_LOG!" 2>&1
+ECHO vrdtvsp EXIT ERRORLEVEL=!EL!
 ECHO vrdtvsp EXIT ERRORLEVEL=!EL! >> "!vrdtvsp_LOG!" 2>&1
 ECHO !DATE! !TIME! ===================== >> "!vrdtvsp_LOG!" 2>&1
 ECHO !DATE! !TIME! Finished !vrdtvsp_current_bat_name! >> "!vrdtvsp_LOG!" 2>&1
+ECHO !DATE! !TIME! ===================== >> "!vrdtvsp_LOG!" 2>&1
 REM =====================================================================================================================================
 REM =====================================================================================================================================
 REM =====================================================================================================================================

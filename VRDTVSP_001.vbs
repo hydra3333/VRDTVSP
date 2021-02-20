@@ -61,6 +61,7 @@ If UCase(cscript_strEngine) <> UCase("\CSCRIPT.EXE") Then
     ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
     WScript.Echo "CSCRIPT Engine MUST be CSCRIPT not WSCRIPT ... Aborting ..."
 	On Error goto 0
+	Wscript.Echo "Error 17 = cannot perform the requested operation"
 	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
 WScript.StdOut.WriteLine("VRDTVSP cscript Engine: """ & cscript_strEngine & """")
@@ -251,6 +252,7 @@ ElseIf vrdtvsp_version_for_qsf = 6 Then
 	vrdtvsp_logfile_wildcard_QSF = vrd6_logfile_wildcard
 Else
     WScript.StdOut.WriteLine("VRDTVSP ERROR - vrdtvsp_version_for_qsf can only be 5 or 6 ... Aborting ...")
+	Wscript.Echo "Error 17 = cannot perform the requested operation"
     On Error goto 0
 	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
@@ -377,7 +379,7 @@ If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Insomnia: Exec Ex
 ' Move .ts .mp4 .mpg .brpj files from the Source Folder to the source folder sincethat is where we process from
 '
 If vrdtvsp_CAPTURE_TS_Folder <> "" Then
-	WScript.StdOut.WriteLine("VRDTVSP Insomnia: ERROR - Insomnia START command created ProcessID is zero ... Aborting ...")
+	WScript.StdOut.WriteLine("VRDTVSP Moving SOURCE files from CAPTURE folder """ & vrdtvsp_CAPTURE_TS_Folder & " to SOURCE folder """ & vrdtvsp_source_TS_Folder & """...")
     vrdtvsp_status = vrdtvsp_move_files_to_folder(vrdtvsp_CAPTURE_TS_Folder & "\*.ts", vrdtvsp_source_TS_Folder & "\")    ' ignore any status
     vrdtvsp_status = vrdtvsp_move_files_to_folder(vrdtvsp_CAPTURE_TS_Folder & "\*.mp4", vrdtvsp_source_TS_Folder & "\")   ' ignore any status
     vrdtvsp_status = vrdtvsp_move_files_to_folder(vrdtvsp_CAPTURE_TS_Folder & "\*.mpg", vrdtvsp_source_TS_Folder & "\")   ' ignore any status
