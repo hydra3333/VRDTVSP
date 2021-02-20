@@ -3450,13 +3450,14 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - vrdtvs_final_dg_deinterlace          =""" & vrdtvs_final_dg_deinterlace & """")
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_found                          =""" & Footy_found & """")
 		If Footy_found Then
-			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_FF_V_Target_BitRate            =""" & Footy_FF_V_Target_BitRate & """")
-			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_FF_V_Target_Minimum_BitRate    =""" & Footy_FF_V_Target_Minimum_BitRate & """")
-			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_FF_V_Target_Maximum_BitRate    =""" & Footy_FF_V_Target_Maximum_BitRate & """")
-			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_FF_V_Target_BufSize            =""" & Footy_FF_V_Target_BufSize & """")
+			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy found, should be using the Footy parameters below.")
 		Else
-			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy not found, not showing Footy parameters.")
+			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy NOT found, should NOT be using the Footy parameters below.")
 		End If
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_FF_V_Target_BitRate            =""" & Footy_FF_V_Target_BitRate & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_FF_V_Target_Minimum_BitRate    =""" & Footy_FF_V_Target_Minimum_BitRate & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_FF_V_Target_Maximum_BitRate    =""" & Footy_FF_V_Target_Maximum_BitRate & """")
+		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_FF_V_Target_BufSize            =""" & Footy_FF_V_Target_BufSize & """")
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - FINAL vrdtvs_final_cq_options        =""" & vrdtvs_final_cq_options & """")
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - FINAL FF_V_Target_BitRate            =""" & FF_V_Target_BitRate & """")
 		WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - FINAL FF_V_Target_Minimum_BitRate    =""" & FF_V_Target_Minimum_BitRate & """")
