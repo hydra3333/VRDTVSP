@@ -19,7 +19,7 @@ Option explicit
 '/failed_Folder:"G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVSP-Failed-Conversion\" ^
 '/temp_path:"D:\VRDTVSP-SCRATCH\" ^
 '/vrdtvsp_version_for_qsf:6 ^
-'/vrdtvsp_version_for_adscan:5 ^
+'/vrdtvsp_version_for_adscan:6 ^
 '/do_qsf:False ^
 '/do_adscan:False ^
 '/do_audio_delay:False ^
@@ -146,7 +146,6 @@ Dim vrdtvsp_path_for_adscan_vbs
 Dim vrdtvsp_profile_name_for_qsf_mpeg2
 Dim vrdtvsp_profile_name_for_qsf_avc
 Dim vrdtvsp_profile_name_for_qsf
-Dim vrdtvsp_profile_name_for_adscan
 Dim vrdtvsp_extension_mpeg2
 Dim vrdtvsp_extension_avc
 Dim vrdtvsp_extension
@@ -170,6 +169,7 @@ Const const_vrd6_profile_mpeg2 = "VRDTVS-for-QSF-MPEG2_VRD6"
 Const const_vrd6_profile_avc = "VRDTVS-for-QSF-H264_VRD6"
 Const const_vrd6_extension_mpeg2 = "mpg"
 Const const_vrd6_extension_avc = "mp4"
+Const const_vrd6_profile_name_for_adscan = "*adscan_default*"
 Dim vrd6_logfile_wildcard
 vrd6_logfile_wildcard =  fso.GetAbsolutePathName(HDTV_root & "\") & "\VideoReDo6_*.Log"
 '
@@ -229,15 +229,15 @@ vrdtvsp_do_audio_delay = vrdtvsp_get_commandline_parameter("do_audio_delay",vrdt
 vrdtvsp_show_mediainfo = vrdtvsp_get_commandline_parameter("show_mediainfo",vrdtvsp_show_mediainfo)                      		                    		' /show_mediainfo:False
 
 ' ***************************************************************************************************************************
-If vrdtvsp_version_for_qsf <> 5 Then '*** QSF
-	WScript.StdOut.WriteLine("VRDTVSP WARNING ******************************************************************************************************************************")
-	WScript.StdOut.WriteLine("VRDTVSP WARNING version vrdtvsp_version_for_qsf=" & vrdtvsp_version_for_qsf & " does not work with DGIndexNV - auto REVERTING to vrdtvsp_version_for_qsf=5")
-	WScript.StdOut.WriteLine("VRDTVSP WARNING ******************************************************************************************************************************")
-	vrdtvsp_version_for_qsf = 5
-End If
+'If vrdtvsp_version_for_qsf <> 5 Then '*** QSF
+'	WScript.StdOut.WriteLine("VRDTVSP WARNING ******************************************************************************************************************************")
+'	WScript.StdOut.WriteLine("VRDTVSP WARNING version vrdtvsp_version_for_qsf=" & vrdtvsp_version_for_qsf & " does not work with DGIndexNV - auto REVERTING to vrdtvsp_version_for_qsf=5")
+'	WScript.StdOut.WriteLine("VRDTVSP WARNING ******************************************************************************************************************************")
+'	vrdtvsp_version_for_qsf = 5
+'End If
 ' ***************************************************************************************************************************
 If vrdtvsp_version_for_qsf = 5 Then '*** QSF
-    vrdtvsp_path_for_qsf_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd5_path,"vp.vbs"))
+	vrdtvsp_path_for_qsf_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd5_path,"vp.vbs"))
     vrdtvsp_profile_name_for_qsf_mpeg2 = const_vrd5_profile_mpeg2
     vrdtvsp_profile_name_for_qsf_avc = const_vrd5_profile_avc
     vrdtvsp_extension_mpeg2 = const_vrd5_extension_mpeg2
@@ -257,18 +257,22 @@ Else
 	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
 ' ***************************************************************************************************************************
-If vrdtvsp_version_for_adscan <> 5 Then '*** QSF
-	WScript.StdOut.WriteLine("VRDTVSP WARNING ************************************************************************************************************************")
-	WScript.StdOut.WriteLine("VRDTVSP WARNING version vrdtvsp_version_for_adscan=" & vrdtvsp_version_for_adscan & " does not work - auto REVERTING to vrdtvsp_version_for_adscan=5")
-	WScript.StdOut.WriteLine("VRDTVSP WARNING ************************************************************************************************************************")
-	vrdtvsp_version_for_adscan = 5
-End If
+'If vrdtvsp_version_for_adscan <> 5 Then '*** QSF
+'	WScript.StdOut.WriteLine("VRDTVSP WARNING ************************************************************************************************************************")
+'	WScript.StdOut.WriteLine("VRDTVSP WARNING version vrdtvsp_version_for_adscan=" & vrdtvsp_version_for_adscan & " does not work - auto REVERTING to vrdtvsp_version_for_adscan=5")
+'	WScript.StdOut.WriteLine("VRDTVSP WARNING ************************************************************************************************************************")
+'	vrdtvsp_version_for_adscan = 5
+'End If
 ' ***************************************************************************************************************************
 If vrdtvsp_version_for_adscan = 5 Then '*** AdScan
     vrdtvsp_path_for_adscan_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd5_path,"AdScan.vbs"))
 	vrdtvsp_logfile_wildcard_ADSCAN = vrd5_logfile_wildcard
 ElseIf vrdtvsp_version_for_adscan = 6 Then
-    vrdtvsp_path_for_adscan_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd6_path,"AdScan2.vbs"))
+    'vrdtvsp_path_for_adscan_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd6_path,"AdScan2.vbs"))
+	' *** v6 has changed,	see https://videoredo.net/msgBoard/index.php?threads/adscan2-for-v6-how-to-use.37593/#post-133909
+	'						AdScans are just saves now. Use the same script you use to QSF and just pass it *adscan_current* as the profile name. 
+	'						All the other progress code is identical to a normal save.
+	vrdtvsp_path_for_adscan_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd6_path,"vp.vbs")) ' and remember to use a different commandline later !!
 	vrdtvsp_logfile_wildcard_ADSCAN= vrd6_logfile_wildcard
 Else
     WScript.StdOut.WriteLine("VRDTVSP ERROR - vrdtvsp_path_for_adscan_vbs can only be 5 or 6 ... Aborting ...")
@@ -4039,7 +4043,17 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		' ++++ START Run the ADSCAN command
 		ff_timerStart = Timer
 		vrdtvsp_status = vrdtvsp_delete_a_file(vrdtvsp_logfile_wildcard_ADSCAN, True) ' True=silently delete it	' is a wildcard, in fso.DeleteFile the filespec can contain wildcard characters in the last path component
-		CF_exe_cmd_string = "cscript //Nologo """ & vrdtvsp_path_for_adscan_vbs & """ """ & CF_TARGET_AbsolutePathName & """  """ & CF_BPRJ_AbsolutePathName & """ /q"
+
+		If vrdtvsp_version_for_adscan = 5 Then
+			CF_exe_cmd_string = "cscript //Nologo """ & vrdtvsp_path_for_adscan_vbs & """ """ & CF_TARGET_AbsolutePathName & """  """ & CF_BPRJ_AbsolutePathName & """ /q"
+		ElseIf vrdtvsp_version_for_adscan = 6 Then ' v6 uses a different scheme, similar to a qsf using vp.vbs but without the "/QSF" flag
+			CF_exe_cmd_string = "cscript //Nologo """ & vrdtvsp_path_for_adscan_vbs & """ """ & CF_TARGET_AbsolutePathName & """  """ & CF_BPRJ_AbsolutePathName & """ /p """ & const_vrd6_profile_name_for_adscan & """ /q /na"
+		Else
+			WScript.StdOut.WriteLine("VRDTVSP ERROR - vrdtvsp_path_for_adscan_vbs can only be 5 or 6 ... Aborting ...")
+			Wscript.Echo "Error 17 = cannot perform the requested operation"
+			On Error goto 0
+			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+		End If
 		If vrdtvsp_DEBUG Then 
 			WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_File """ & CF_TARGET_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ do ADSCAN with CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
 		End If
