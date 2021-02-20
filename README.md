@@ -1,6 +1,6 @@
 # VRDTVSP
 
-### built primarily with vbscript in 1980's coding style   
+### built primarily with vbscript in 1970's coding style   
 
 ### ONLY works on a Win10x64 PC with specific licensed software an free software   
 ### and preset folder/file locations   
