@@ -3398,25 +3398,32 @@ Function vrdtvs_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		vrdtvs_final_dg_tff = True
 	End If
 	Footy_found = False
-	If Ucase(V_ScanType) = Ucase("Progressive") Then ' 
+	If Ucase(V_ScanType) = Ucase("Progressive") Then
 		vrdtvs_final_dg_deinterlace = 0	' no deinterlace for progressive files
 	Else ' only check FOOTY for interlaced files
 		If Instr(1,Ucase(fso.GetBaseName(CF_QSF_AbsolutePathName)), Ucase("AFL"), vbTextCompare) > 0 Then 
 			Footy_found = True
 			If vrdtvs_DEBUG Then 
-			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_found: ""AFL"" found in filename.")
+				WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_found: ""AFL"" found in filename.")
+			End If
 		End If
 		If Instr(1,Ucase(fso.GetBaseName(CF_QSF_AbsolutePathName)), Ucase("SANFL"), vbTextCompare) > 0 Then
 			Footy_found = True
-			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_found: ""SANFL"" found in filename.")
+			If vrdtvs_DEBUG Then 
+				WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_found: ""SANFL"" found in filename.")
+			End If
 		End If
 		If Instr(1,Ucase(fso.GetBaseName(CF_QSF_AbsolutePathName)), Ucase("Adelaide Crows"), vbTextCompare) > 0 Then
 			Footy_found = True
-			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_found: ""Adelaide Crows"" found in filename.")
+			If vrdtvs_DEBUG Then 
+				WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_found: ""Adelaide Crows"" found in filename.")
+			End If
 		End If
 		If Instr(1,Ucase(fso.GetBaseName(CF_QSF_AbsolutePathName)), Ucase("Crows"), vbTextCompare) > 0 Then
 			Footy_found = True
-			WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_found: ""Crows"" found in filename.")
+			If vrdtvs_DEBUG Then 
+				WScript.StdOut.WriteLine("VRDTVS DEBUG: vrdtvs_Convert_File - Footy_found: ""Crows"" found in filename.")
+			End If
 		End If
 	End If		
 	If Footy_found Then ' bump up the bitrates due o double framerate deinterlacing
