@@ -33,9 +33,9 @@ FOR /F %%i IN ("%vrdtvs_HDTV%") DO (SET vrdtvs_HDTV=%%~fi)
 REM ECHO !DATE! !TIME! after vrdtvs_HDTV="%vrdtvs_HDTV%"
 REM --------- resolve any relative paths into absolute paths --------- 
 
-COPY /Y /B /Z /V /D ".\VRDTVS_*.bat" "!vrdtvs_HDTV!"
-COPY /Y /B /Z /V /D ".\VRDTVS_*.xml" "!vrdtvs_HDTV!"
-COPY /Y /B /Z /V /D ".\VRDTVS_*.vbs" "!vrdtvs_HDTV!"
+COPY /Y /B /Z /V /D ".\VRDTVSP_*.bat" "!vrdtvs_HDTV!"
+COPY /Y /B /Z /V /D ".\VRDTVSP_*.xml" "!vrdtvs_HDTV!"
+COPY /Y /B /Z /V /D ".\VRDTVSP_*.vbs" "!vrdtvs_HDTV!"
 
 COPY /Y /B /Z /V /D ".\copy_to_hdtv.bat" "!vrdtvs_HDTV!"
 

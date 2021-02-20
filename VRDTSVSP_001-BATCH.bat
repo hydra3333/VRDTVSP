@@ -2,7 +2,7 @@
 @setlocal ENABLEDELAYEDEXPANSION
 @setlocal enableextensions
 REM
-SET vrdtvs_current_bat_name=!~dpnx0!
+SET vrdtvsp_current_bat_name=!~dpnx0!
 REM
 REM -- Header ---------------------------------------------------------------------
 REM --- start set header to date and time, replacing spaces with zeroes
@@ -22,25 +22,25 @@ REM --- end set header to date and time, replacing spaces with zeroes
 REM -- Header ---------------------------------------------------------------------
 REM
 REM ---------Setup Folders --------- (ensure trailing backslash exists)
-SET vrdtvs_HDTV=G:\HDTV\
-SET vrdtvs_vbs_script=!vrdtvs_HDTV!\VRDTVS_001.vbs
-SET capture_TS_Folder=!vrdtvs_HDTV!
-SET source_TS_Folder=!vrdtvs_HDTV!\000-TO-BE-PROCESSED\
-SET done_TS_Folder=!source_TS_Folder!VRDTVS-done\
-SET failed_conversion_TS_Folder=!source_TS_Folder!VRDTVS-Failed-Conversion\
-SET scratch_Folder=D:\VRDTVS-SCRATCH\
-SET destination_mp4_Folder=T:\HDTV\VRDTVS-Converted\
+SET vrdtvsp_HDTV=G:\HDTV\
+SET vrdtvsp_vbs_script=!vrdtvsp_HDTV!\vrdtvsp_001.vbs
+SET capture_TS_Folder=!vrdtvsp_HDTV!
+SET source_TS_Folder=!vrdtvsp_HDTV!\000-TO-BE-PROCESSED\
+SET done_TS_Folder=!source_TS_Folder!VRDTVSP-done\
+SET failed_conversion_TS_Folder=!source_TS_Folder!VRDTVSP-Failed-Conversion\
+SET scratch_Folder=D:\VRDTVSP-SCRATCH\
+SET destination_mp4_Folder=T:\HDTV\VRDTVSP-Converted\
 REM ---------Setup Folders ---------
 REM
 REM --------- resolve any relative paths into absolute paths --------- 
 REM --------- ensure NO spaces between brackets and end of SET statement --------- 
 REM this also puts a trailing "\" on the end
-REM ECHO !DATE! !TIME! before vrdtvs_vbs_script="%vrdtvs_vbs_script%"
-FOR /F %%i IN ("%vrdtvs_vbs_script%") DO (SET vrdtvs_vbs_script=%%~fi)
-REM ECHO !DATE! !TIME! after vrdtvs_vbs_script="%vrdtvs_vbs_script%"
-REM ECHO !DATE! !TIME! before vrdtvs_HDTV="%vrdtvs_HDTV%"
-FOR /F %%i IN ("%vrdtvs_HDTV%") DO (SET vrdtvs_HDTV=%%~fi)
-REM ECHO !DATE! !TIME! after vrdtvs_HDTV="%vrdtvs_HDTV%"
+REM ECHO !DATE! !TIME! before vrdtvsp_vbs_script="%vrdtvsp_vbs_script%"
+FOR /F %%i IN ("%vrdtvsp_vbs_script%") DO (SET vrdtvsp_vbs_script=%%~fi)
+REM ECHO !DATE! !TIME! after vrdtvsp_vbs_script="%vrdtvsp_vbs_script%"
+REM ECHO !DATE! !TIME! before vrdtvsp_HDTV="%vrdtvsp_HDTV%"
+FOR /F %%i IN ("%vrdtvsp_HDTV%") DO (SET vrdtvsp_HDTV=%%~fi)
+REM ECHO !DATE! !TIME! after vrdtvsp_HDTV="%vrdtvsp_HDTV%"
 REM ECHO !DATE! !TIME! before capture_TS_Folder="%capture_TS_Folder%"
 FOR /F %%i IN ("%capture_TS_Folder%") DO (SET capture_TS_Folder=%%~fi)
 REM ECHO !DATE! !TIME! after capture_TS_Folder="%capture_TS_Folder%"
@@ -62,12 +62,12 @@ REM ECHO !DATE! !TIME! after failed_conversion_TS_Folder="%failed_conversion_TS_
 REM --------- ensure NO spaces between brackets and end of SET statement --------- 
 REM ---------Setup Folders ---------
 REM
-REM --------- setup vrdtvs LOG file ----------------------------
+REM --------- setup vrdtvsp LOG file ----------------------------
 REM base the filename on the running script using %~n0
-SET vrdtvs_LOG=!source_TS_Folder!%~n0-!header!-vrdtvs_LOG.log
-ECHO !DATE! !TIME! DEL /F "!vrdtvs_LOG!"
-DEL /F "!vrdtvs_LOG!" >NUL 2>&1
-REM --------- setup vrdtvs LOG file ----------------------------
+SET vrdtvsp_LOG=!source_TS_Folder!%~n0-!header!-vrdtvsp_LOG.log
+ECHO !DATE! !TIME! DEL /F "!vrdtvsp_LOG!"
+DEL /F "!vrdtvsp_LOG!" >NUL 2>&1
+REM --------- setup vrdtvsp LOG file ----------------------------
 REM
 REM --------- setup TEMP filename for use later in this script ----------------------------
 SET tempfile=!scratch_Folder!%~n0-!header!-tempfile.txt
@@ -78,15 +78,15 @@ REM --------- setup TEMP filename for use later in this script -----------------
 REM =====================================================================================================================================
 REM =====================================================================================================================================
 REM =====================================================================================================================================
-DEL /F "!vrdtvs_LOG!" >NUL 2>&1
-ECHO !DATE! !TIME! Started !vrdtvs_current_bat_name! >> "!vrdtvs_LOG!" 2>&1
+DEL /F "!vrdtvsp_LOG!" >NUL 2>&1
+ECHO !DATE! !TIME! Started !vrdtvsp_current_bat_name! >> "!vrdtvsp_LOG!" 2>&1
 MD "!capture_TS_Folder!" >NUL 2>&1
 MD "!source_TS_Folder!" >NUL 2>&1
 MD "!done_TS_Folder!" >NUL 2>&1
 MD "!destination_mp4_Folder!" >NUL  2>&1
 MD "!failed_conversion_TS_Folder!" >NUL  2>&1
 MD "!scratch_Folder!" >NUL 2>&1 
-SET vrdtvs_CMD=cscript //nologo "!vrdtvs_vbs_script!" ^
+SET vrdtvsp_CMD=cscript //nologo "!vrdtvsp_vbs_script!" ^
 /DEBUG:False ^
 /DEV:False ^
 /capture_Folder:"!capture_TS_Folder!" ^
@@ -102,14 +102,14 @@ SET vrdtvs_CMD=cscript //nologo "!vrdtvs_vbs_script!" ^
 /do_audio_delay:True ^
 /show_mediainfo:False
 REM
-ECHO !DATE! !TIME! ===================== >> "!vrdtvs_LOG!" 2>&1
-ECHO !vrdtvs_CMD! >> "!vrdtvs_LOG!" 2>&1
-ECHO !DATE! !TIME! ===================== >> "!vrdtvs_LOG!" 2>&1
-!vrdtvs_CMD! >> "!vrdtvs_LOG!" 2>&1
-SET EL=%ERRORLEVEL% >> "!vrdtvs_LOG!" 2>&1
-ECHO vrdtvs EXIT ERRORLEVEL=!EL! >> "!vrdtvs_LOG!" 2>&1
-ECHO !DATE! !TIME! ===================== >> "!vrdtvs_LOG!" 2>&1
-ECHO !DATE! !TIME! Finished !vrdtvs_current_bat_name! >> "!vrdtvs_LOG!" 2>&1
+ECHO !DATE! !TIME! ===================== >> "!vrdtvsp_LOG!" 2>&1
+ECHO !vrdtvsp_CMD! >> "!vrdtvsp_LOG!" 2>&1
+ECHO !DATE! !TIME! ===================== >> "!vrdtvsp_LOG!" 2>&1
+!vrdtvsp_CMD! >> "!vrdtvsp_LOG!" 2>&1
+SET EL=%ERRORLEVEL% >> "!vrdtvsp_LOG!" 2>&1
+ECHO vrdtvsp EXIT ERRORLEVEL=!EL! >> "!vrdtvsp_LOG!" 2>&1
+ECHO !DATE! !TIME! ===================== >> "!vrdtvsp_LOG!" 2>&1
+ECHO !DATE! !TIME! Finished !vrdtvsp_current_bat_name! >> "!vrdtvsp_LOG!" 2>&1
 REM =====================================================================================================================================
 REM =====================================================================================================================================
 REM =====================================================================================================================================
@@ -141,7 +141,7 @@ REM Set /p from an input file reads the first line.
 set /p mi_var=<"!tempfile!"
 set !mi_Variable!=!mi_var!
 REM ECHO !DATE! !TIME! "!mi_Variable!=!mi_var!" from "!mi_Section!" "!mi_Parameter!"
-REM ECHO !DATE! !TIME! "!mi_Variable!=!mi_var!" from "!mi_Section!" "!mi_Parameter!" >> "!vrdtvs_LOG!" 2>&1
+REM ECHO !DATE! !TIME! "!mi_Variable!=!mi_var!" from "!mi_Section!" "!mi_Parameter!" >> "!vrdtvsp_LOG!" 2>&1
 DEL /F "!tempfile!" >NUL 2>&1
 goto :eof
 REM
@@ -169,7 +169,7 @@ REM Set /p from an input file reads the first line.
 set /p mi_var=<"!tempfile!"
 set !mi_Variable!=!mi_var!
 REM ECHO !DATE! !TIME! "!mi_Variable!=!mi_var!" from Legacy "!mi_Section!" "!mi_Parameter!"
-REM ECHO !DATE! !TIME! "!mi_Variable!=!mi_var!" from Legacy "!mi_Section!" "!mi_Parameter!" >> "!vrdtvs_LOG!" 2>&1
+REM ECHO !DATE! !TIME! "!mi_Variable!=!mi_var!" from Legacy "!mi_Section!" "!mi_Parameter!" >> "!vrdtvsp_LOG!" 2>&1
 DEL /F "!tempfile!" >NUL 2>&1
 goto :eof
 REM
@@ -197,7 +197,7 @@ REM see if -probesize 5000M  makes any difference
 set /p mi_var=<"!tempfile!"
 set !mi_Variable!=!mi_var!
 REM ECHO !DATE! !TIME! "!mi_Variable!=!mi_var!" from ffprobe "!mi_Parameter!"
-REM ECHO !DATE! !TIME! "!mi_Variable!=!mi_var!" from ffprobe "!mi_Parameter!" >> "!vrdtvs_LOG!" 2>&1
+REM ECHO !DATE! !TIME! "!mi_Variable!=!mi_var!" from ffprobe "!mi_Parameter!" >> "!vrdtvsp_LOG!" 2>&1
 DEL /F "!tempfile!" >NUL 2>&1
 goto :eof
 REM
@@ -240,18 +240,18 @@ set "Timey=%time: =0%"
 set VTDTVS_eval_datetime=!Datey:~10,4!-!Datey:~7,2!-!Datey:~4,2!.!Timey:~0,2!.!Timey:~3,2!.!Timey:~6,2!.!Timey:~9,2!
 set VTDTVS_eval_datetime=!VTDTVS_eval_datetime: =0!
 set VTDTVS_eval_formula_vbs=!temp!\VTDTVS_eval_formula-!VTDTVS_eval_datetime!.vbs
-set VRDTVS_eval_formula=%~1
-set VRDTVS_eval_variable=%~2
-set "VRDTVS_eval_single_number_result="
-REM echo 'cscript //nologo "!VTDTVS_eval_formula_vbs!" "!VRDTVS_eval_formula!"'
+set vrdtvsp_eval_formula=%~1
+set vrdtvsp_eval_variable=%~2
+set "vrdtvsp_eval_single_number_result="
+REM echo 'cscript //nologo "!VTDTVS_eval_formula_vbs!" "!vrdtvsp_eval_formula!"'
 echo wscript.echo eval(wscript.arguments(0))>"!VTDTVS_eval_formula_vbs!"
-for /f %%A in ('cscript //nologo "!VTDTVS_eval_formula_vbs!" "!VRDTVS_eval_formula!"') do (
-    set "!VRDTVS_eval_variable!=%%A"
-    set "VRDTVS_eval_single_number_result=%%A"
+for /f %%A in ('cscript //nologo "!VTDTVS_eval_formula_vbs!" "!vrdtvsp_eval_formula!"') do (
+    set "!vrdtvsp_eval_variable!=%%A"
+    set "vrdtvsp_eval_single_number_result=%%A"
 )
 DEL /F "!VTDTVS_eval_formula_vbs!" >NUL 2>&1
 REM echo "VTDTVS_eval_formula_vbs=!VTDTVS_eval_formula_vbs!"
-REM echo "VRDTVS_eval_variable=!VRDTVS_eval_variable! VRDTVS_eval_formula=!VRDTVS_eval_formula! VRDTVS_eval_single_number_result=!VRDTVS_eval_single_number_result!"
+REM echo "vrdtvsp_eval_variable=!vrdtvsp_eval_variable! vrdtvsp_eval_formula=!vrdtvsp_eval_formula! vrdtvsp_eval_single_number_result=!vrdtvsp_eval_single_number_result!"
 goto :eof
 REM -------------------------------------------------------------------------------------------------------------------------------------
 REM -------------------------------------------------------------------------------------------------------------------------------------

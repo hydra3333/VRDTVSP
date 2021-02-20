@@ -3,8 +3,8 @@
   <RegistrationInfo>
     <Date>2021-02-20T10:24:18.290884</Date>
     <Author>3900X\u</Author>
-    <Description>Runs VRDTVS to convert home Interlaced AVC/MPEG2-AAC/mp2 files into Progressive AVC-AAC files playable by Chromecast devices.</Description>
-    <URI>\VRDTSV_001-BATCH</URI>
+    <Description>Runs VRDTVSP to convert home Interlaced AVC/MPEG2-AAC/mp2 files into Progressive AVC-AAC files playable by Chromecast devices.</Description>
+    <URI>\VRDTSVP_001-BATCH</URI>
   </RegistrationInfo>
   <Triggers>
     <CalendarTrigger>
@@ -45,7 +45,7 @@
   </Settings>
   <Actions Context="Author">
     <Exec>
-      <Command>"G:\HDTV\VRDTSV_001-BATCH.BAT"</Command>
+      <Command>"G:\HDTV\VRDTSVP_001-BATCH.BAT"</Command>
       <WorkingDirectory>G:\HDTV</WorkingDirectory>
     </Exec>
   </Actions>
