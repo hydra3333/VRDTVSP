@@ -3750,11 +3750,12 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		If vpy_denoise <> "" Then CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "video = core.avs.DGDenoise(video, " & vpy_denoise & ") # replaced chroma=True", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "# example: video = core.avs.DGSharpen(video, strength=0.3)", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		If vpy_dsharpen <> "" Then CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "video = core.avs.DGSharpen(video, " & vpy_dsharpen & ")", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		If vrdtvsp_DEBUG Then 
-			CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "video = vs.core.text.ClipInfo(video)", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		Else
-			CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "#video = vs.core.text.ClipInfo(video)", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		End If
+		'If vrdtvsp_DEBUG Then 
+		'	CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "video = vs.core.text.ClipInfo(video)", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		'Else
+		'	CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "#video = vs.core.text.ClipInfo(video)", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		'End If
+		CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "#video = vs.core.text.ClipInfo(video)", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "video.set_output()", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = CF_VPY_object.Close
 		Set CF_VPY_object = Nothing
