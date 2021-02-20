@@ -3,10 +3,10 @@
 ### built primarily with vbscript in 1970's coding style   
 
 ### ONLY works on a Win10x64 PC with    
-### specific licensed software    
-### and free software   
-### and preset folder/file locations   
-### and TV Scheduler Pro recordings   
+###- specific licensed software    
+###- and free software   
+###- and preset folder/file locations   
+###- and TV Scheduler Pro recordings   
 
 ## Is suited to tailored personal needs rather than being a general tool
 
