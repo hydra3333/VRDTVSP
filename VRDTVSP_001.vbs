@@ -4053,10 +4053,15 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ******************** Start of run ADSCAN """ & CF_exe_cmd_string & """ :")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: Doing ADSCAN for """ & CF_TARGET_AbsolutePathName & """ ... ")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: ADSCAN command: " & CF_exe_cmd_string)
-		vrdtvsp_status = vrdtvsp_delete_a_file(CF_BPRJ_AbsolutePathName, True) ' True=silently delete it
 		WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string() & " ====================================================================================================================================================================")
 		WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string() & " ====================================================================================================================================================================")
-		CF_exe_status = vrdtvsp_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string)
+		''' vrdtvsp_status = vrdtvsp_delete_a_file(CF_BPRJ_AbsolutePathName, True) ' True=silently delete it ' - the old way of doing it
+		''' CF_exe_status = vrdtvsp_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string) ' - the old way of doing it
+		ReDim vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1) ' base 0, so the dimension is always 1 less than the number of commands
+		vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(0) = "DEL /F """ & CF_BPRJ_AbsolutePathName & """"
+		vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1) = CF_exe_cmd_string
+		CF_exe_status = vrdtvsp_Exec_in_a_DOS_BAT_file (vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log - the safer way of doing it
+		Erase vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array
 		WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string() & " ====================================================================================================================================================================")
 		WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string() & " ====================================================================================================================================================================")
 		If CF_exe_status <> 0 OR NOT fso.FileExists(CF_BPRJ_AbsolutePathName) Then
