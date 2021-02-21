@@ -1,7 +1,7 @@
 Option explicit
 '
 ' VRDTVSP - automatically parse, convert video/audio from TVSchedulerPro TV recordings, 
-' and perhaps adscan them too. This looks only at .TS .MP4 .MPG files and autofixes associated .BPRJ files.
+' and perhaps adscan them too. This looks only at .TS .MP4 .MPG files and autofixes associated .vprj files.
 '
 ' Copyright hydra3333@gmail.com 2021
 '
@@ -386,15 +386,15 @@ If vrdtvsp_CAPTURE_TS_Folder <> "" Then
     vrdtvsp_status = vrdtvsp_move_files_to_folder(vrdtvsp_CAPTURE_TS_Folder & "\*.ts", vrdtvsp_source_TS_Folder & "\")    ' ignore any status
     vrdtvsp_status = vrdtvsp_move_files_to_folder(vrdtvsp_CAPTURE_TS_Folder & "\*.mp4", vrdtvsp_source_TS_Folder & "\")   ' ignore any status
     vrdtvsp_status = vrdtvsp_move_files_to_folder(vrdtvsp_CAPTURE_TS_Folder & "\*.mpg", vrdtvsp_source_TS_Folder & "\")   ' ignore any status
-    vrdtvsp_status = vrdtvsp_move_files_to_folder(vrdtvsp_CAPTURE_TS_Folder & "\*.bprj", vrdtvsp_source_TS_Folder & "\")  ' ignore any status '.bprj are associated with .mp4 of the same BaseName
+    vrdtvsp_status = vrdtvsp_move_files_to_folder(vrdtvsp_CAPTURE_TS_Folder & "\*.vprj", vrdtvsp_source_TS_Folder & "\")  ' ignore any status '.vprj are associated with .mp4 of the same BaseName
 End If
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' In Top Level Folders: Source
-' (the function filters for file Extensions: .ts .mp4 .mpg, and autofixes .bprj which are associated with .mpg and .mp4 and should have the same BaseName)
-'   a) Remove special characters in filenames for file Extensions: .ts .mp4 .mpg and autofix .bprj
+' (the function filters for file Extensions: .ts .mp4 .mpg, and autofixes .vprj which are associated with .mpg and .mp4 and should have the same BaseName)
+'   a) Remove special characters in filenames for file Extensions: .ts .mp4 .mpg and autofix .vprj
 '   b) Modify the filenames based on the filename content including reformatting the date in the filename
-'	c) Also Modily content of associated .bprj files (they are .xml content) to link to the new media filename since we are modifying the pair
+'	c) Also Modily content of associated .vprj files (they are .xml content) to link to the new media filename since we are modifying the pair
 '
 'If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: about to call vrdtvsp_fix_filenames_in_a_folder_tree(""" & vrdtvsp_source_TS_Folder & """, False)")
 vrdtvsp_status = vrdtvsp_fix_filenames_in_a_folder_tree(vrdtvsp_source_TS_Folder, False) ' this does (a) and (b) and (c).  False indicates to process only the top level folder with NO SUBFOLDERS
@@ -407,8 +407,8 @@ If vrdtvsp_status <> 0 Then ' Something went wrong with processing files in the 
 End If
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
-' Convert Video files and create the associated .bprj files by running adscan on the media file
-' The function filters for file Extensions: .ts .mp4 .mpg and creates .bprj
+' Convert Video files and create the associated .vprj files by running adscan on the media file
+' The function filters for file Extensions: .ts .mp4 .mpg and creates .vprj
 '
 '.................. START video processing for the FULL SOURCE TS folder (not tree) - the function has a big loop - converts .TS .mp4 .mpg Source files then moves them to Done or Failed
 ' ***** Rely on these already being defined/set Globally BEFORE invoking the conversion function
@@ -438,10 +438,10 @@ End If
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' In Top Level Folders: Destination 
-' (the function filters for file Extensions: .ts .mp4 .mpg, and autofixes .bprj which are associated with .mpg and .mp4 and should have the same BaseName)
-'   a) Remove special characters in filenames for file Extensions: .ts .mp4 .mpg and autofix .bprj
+' (the function filters for file Extensions: .ts .mp4 .mpg, and autofixes .vprj which are associated with .mpg and .mp4 and should have the same BaseName)
+'   a) Remove special characters in filenames for file Extensions: .ts .mp4 .mpg and autofix .vprj
 '   b) Modify the filenames based on the filename content including reformatting the date in the filename
-'	c) Also Modily content of associated .bprj files (they are .xml content) to link to the new media filename since we are modifying the pair
+'	c) Also Modily content of associated .vprj files (they are .xml content) to link to the new media filename since we are modifying the pair
 '
 'If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: about to call vrdtvsp_fix_filenames_in_a_folder_tree(""" & vrdtvsp_destination_mp4_Folder & """, True)")
 vrdtvsp_status = vrdtvsp_fix_filenames_in_a_folder_tree(vrdtvsp_destination_mp4_Folder, True) ' this does (a) and (b) and (c).  True indicates to process the top level folder including SUBFOLDERS
@@ -454,7 +454,7 @@ End If
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Fix the DateCreated and DateModified timestamps based on the date in the filename (a PowerShell command ... learn how to do that on the commandline)
-' in Top Level Folders and Subfolders: Source and Destination (the function filters for file Extensions: .ts .mp4 .mpg but NOT .bprj)
+' in Top Level Folders and Subfolders: Source and Destination (the function filters for file Extensions: .ts .mp4 .mpg but NOT .vprj)
 '
 vrdtvsp_temp_powershell_filename = vrdtvsp_gimme_a_temporary_absolute_filename("vrdtvsp_ps1_to_fix_timestamps-" & vrdtvsp_run_datetime) & ".ps1"
 'vrdtvsp_status = vrdtvsp_create_ps1_to_fix_timestamps(vrdtvsp_temp_powershell_filename)
@@ -955,7 +955,7 @@ End Function
 '
 Function vrdtvsp_fix_filenames_in_a_folder_tree (the_folder_tree, do_subfolders_as_well) 
 	' Function to traverse a folder tree ( a called function filters for file Extensions: .ts .mp4 .mpg)
-	'   a) Remove special characters in filenames for file Extensions: .ts .mp4 .mpg and autofixes associated .bprj
+	'   a) Remove special characters in filenames for file Extensions: .ts .mp4 .mpg and autofixes associated .vprj
 	'   b) modify the filenames based on the filename content including reformatting the date in the filename
 	' rely on global variable "fso"
     ' Parameters:
@@ -997,7 +997,7 @@ End Function
 '
 Sub vrdtvsp_ffiaft_Process_Files_In_Subfolders (objSpecifiedFolder, do_subfolders_as_well) ' Process all files in specified folder tree
 	' Function to Process all files in specified folder tree OBJECT with file Extensions: .ts .mp4 .mpg
-	'   a) Remove special characters in filenames for file Extensions: .ts .mp4 .mpg and autofixes associated .bprj
+	'   a) Remove special characters in filenames for file Extensions: .ts .mp4 .mpg and autofixes associated .vprj
 	'   b) modify the filenames based on the filename content including reformatting the date in the filename
 	'   c) *** NOT THIS, do it outside ... fix the file DateCreated and DateModified timestamps based on the date in the filename (a PowerShell command ... since DateCreated can't be modified in vbscript)
     ' rely on global variable "fso"
@@ -1039,7 +1039,7 @@ Sub vrdtvsp_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
     Dim theOriginalAbsoluteFilename, theOriginalParentFolderName, theOriginalBaseName, theOriginalExtName
     Dim NewBaseName, newAbsoluteFilename
 	Dim Final_Renamed_AbsoluteFilename_AfterRetries, Final_Renamed_ParentFolderName, Final_Renamed_BaseName, Final_Renamed_ExtName
-	Dim Original_BPRJ_AbsoluteFilename, Final_Renamed_BPRJ_AbsoluteFilename
+	Dim Original_vprj_AbsoluteFilename, Final_Renamed_vprj_AbsoluteFilename
 	Dim local_timerStart, local_timerEnd
 	local_timerStart = Timer
 	local_timerEnd = Timer
@@ -1076,7 +1076,7 @@ Sub vrdtvsp_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 			'WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_pfis_Rename_a_File: needs a Rename using theOriginalAbsoluteFilename=""" & theOriginalAbsoluteFilename & """" )
 			'WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_pfis_Rename_a_File:                              newAbsoluteFilename=""" & newAbsoluteFilename & """" )
 		End If
-		Final_Renamed_AbsoluteFilename_AfterRetries = vrdtvsp_do_a_Rename_Try99Times(theOriginalAbsoluteFilename, newAbsoluteFilename) ' AUTOFIXING a .BPRJ OCCURS AFTER THIS FUNCTION
+		Final_Renamed_AbsoluteFilename_AfterRetries = vrdtvsp_do_a_Rename_Try99Times(theOriginalAbsoluteFilename, newAbsoluteFilename) ' AUTOFIXING a .vprj OCCURS AFTER THIS FUNCTION
 		If Final_Renamed_AbsoluteFilename_AfterRetries = "" Then
 			' Silly Error detected here, it should never occur unless we have some sort of logic issue ;)
 			WScript.StdOut.WriteLine("VRDTVSP ERROR: vrdtvsp_ffiaft_pfis_Rename_a_File ABORTING: Final_Renamed_AbsoluteFilename_AfterRetries is not properly set after vrdtvsp_do_a_Rename_Try99Times <" & Final_Renamed_AbsoluteFilename_AfterRetries & ">")
@@ -1089,11 +1089,11 @@ Sub vrdtvsp_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 		Final_Renamed_ExtName = fso.GetExtensionName(Final_Renamed_AbsoluteFilename_AfterRetries) ' does not include  the "."
 	End If
 	'
-	' Process an associated .bprj, if one exists
-	vrdtvsp_status = vrdtvsp_ffiaft_pfis_Process_a_BPRJ(theOriginalParentFolderName, theOriginalBaseName, Final_Renamed_ParentFolderName, Final_Renamed_BaseName)
-	If vrdtvsp_status <> 0 Then ' Something went wrong with processing .BPRJ
-		If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: VRDTVSP ERROR - vrdtvsp_ffiaft_pfis_Rename_a_File Error " & vrdtvsp_status & " returned from vrdtvsp_ffiaft_pfis_Process_a_BPRJ ... Aborting ...")
-		WScript.StdOut.WriteLine("VRDTVSP ERROR - vrdtvsp_ffiaft_pfis_Rename_a_File Error " & vrdtvsp_status & " returned from vrdtvsp_ffiaft_pfis_Process_a_BPRJ ... Aborting ...")
+	' Process an associated .vprj, if one exists
+	vrdtvsp_status = vrdtvsp_ffiaft_pfis_Process_a_vprj(theOriginalParentFolderName, theOriginalBaseName, Final_Renamed_ParentFolderName, Final_Renamed_BaseName)
+	If vrdtvsp_status <> 0 Then ' Something went wrong with processing .vprj
+		If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: VRDTVSP ERROR - vrdtvsp_ffiaft_pfis_Rename_a_File Error " & vrdtvsp_status & " returned from vrdtvsp_ffiaft_pfis_Process_a_vprj ... Aborting ...")
+		WScript.StdOut.WriteLine("VRDTVSP ERROR - vrdtvsp_ffiaft_pfis_Rename_a_File Error " & vrdtvsp_status & " returned from vrdtvsp_ffiaft_pfis_Process_a_vprj ... Aborting ...")
 		Wscript.Echo "Error 17 = cannot perform the requested operation"
 		On Error goto 0
 		WScript.Quit 17 ' Error 17 = cannot perform the requested operation
@@ -1112,7 +1112,7 @@ End Sub
 Function vrdtvsp_do_a_Rename_Try99Times(OriginalAbsoluteFilename, TargetAbsoluteFilename)
 	' Try to rename a file and re-Rename it if required, trying up to 99 times
 	' Cater "file already exists" and loop try up to 100 times to add a 2 digit number ".00" to ".99" to the end of NewBaseName if needed fail to failure folder ?
-	' Taking care of editing and rewriting the content .bprj files (which are just XML files) ... test for Ucase(theExtName) = Ucase("bprj")
+	' Taking care of editing and rewriting the content .vprj files (which are just XML files) ... test for Ucase(theExtName) = Ucase("vprj")
     ' Parameters:
 	'		theOriginalAbsoluteFilename		source filename
 	'		theTargetAbsoluteFilename		target filename
@@ -1205,7 +1205,7 @@ Function vrdtvsp_do_a_Rename_Try99Times(OriginalAbsoluteFilename, TargetAbsolute
 	vrdtvsp_do_a_Rename_Try99Times = theTargetAbsoluteFilename ' Final Renamed AbsoluteFilename After Retries
 End Function
 '
-Function vrdtvsp_ffiaft_pfis_Process_a_BPRJ (byVal theOriginalParentFolderName, byVal theOriginalBaseName, byVal Final_Renamed_ParentFolderName, byVal Final_Renamed_BaseName)
+Function vrdtvsp_ffiaft_pfis_Process_a_vprj (byVal theOriginalParentFolderName, byVal theOriginalBaseName, byVal Final_Renamed_ParentFolderName, byVal Final_Renamed_BaseName)
     ' Parameters:
 	'		theOriginalParentFolderName		byVal	Folder of the filename to be renamed and/or fixed
 	'		theOriginalBaseName				byVal	BaseName of the filename to be renamed and/or fixed
@@ -1213,12 +1213,12 @@ Function vrdtvsp_ffiaft_pfis_Process_a_BPRJ (byVal theOriginalParentFolderName, 
 	'		Final_Renamed_BaseName			byVal	Optional BaseName of the filename to be renamed into (the target) ... if "" then becomes theOriginalBaseName
 	' byVal means any changes to the parmater won't be transferred back to the caller
 	'
-	Dim Original_BPRJ_AbsoluteFilename
-	Dim Final_Renamed_BPRJ_AbsoluteFilename
+	Dim Original_vprj_AbsoluteFilename
+	Dim Final_Renamed_vprj_AbsoluteFilename
 	Dim xml_file_to_load
-	Dim bprj_status, bprj_objErr, bprj_errorCode, bprj_reason
-	Dim bprj_nNode, bprj_i, bprj_txtbefore, bprj_txtafter, bprj_ErrNo, bprj_ErrDescription
-	Dim vrdtvsp_xmlDoc, bprj_xmlbefore, bprj_xmlafter
+	Dim vprj_status, vprj_objErr, vprj_errorCode, vprj_reason
+	Dim vprj_nNode, vprj_i, vprj_txtbefore, vprj_txtafter, vprj_ErrNo, vprj_ErrDescription
+	Dim vrdtvsp_xmlDoc, vprj_xmlbefore, vprj_xmlafter
 	Dim vrdtvsp_xslDoc
 	Const vrdtvsp_xslStylesheet_string = "<xsl:stylesheet version=""3.0"" xmlns:xsl=""http://www.w3.org/1999/XSL/Transform"" xmlns=""http://www.w3.org/1999/xhtml""><xsl:output method=""xml"" indent=""yes""/><xsl:template match=""/""><xsl:copy-of select="".""/></xsl:template></xsl:stylesheet>"
 	'Const vrdtvsp_xslStylesheet_string = _
@@ -1236,162 +1236,162 @@ Function vrdtvsp_ffiaft_pfis_Process_a_BPRJ (byVal theOriginalParentFolderName, 
 			'	"</xsl:template>" & _
 			'	"</xsl:stylesheet>"
 	'
-	' ***** If a matching .bprj file exists in the same folder, (a) rename it to match the new filename (b) fix the content of .bprj file (it's xml) to match the media filename 
-	' ***** note: .bprj files should only exist for files aready converted to .mp4 ... ie in the destination folder
-	' *****       however, in this code we choose to re-process/fix the associated .bprj files REGARDLESS of whether they are renamed or not !!!!!
+	' ***** If a matching .vprj file exists in the same folder, (a) rename it to match the new filename (b) fix the content of .vprj file (it's xml) to match the media filename 
+	' ***** note: .vprj files should only exist for files aready converted to .mp4 ... ie in the destination folder
+	' *****       however, in this code we choose to re-process/fix the associated .vprj files REGARDLESS of whether they are renamed or not !!!!!
 	If Final_Renamed_ParentFolderName = "" OR Final_Renamed_BaseName = "" Then ' if the target is "" then make it the same name as the source so that no file renme occurs
 		Final_Renamed_ParentFolderName = theOriginalParentFolderName
 		Final_Renamed_BaseName = theOriginalBaseName
 	End If
-	Original_BPRJ_AbsoluteFilename = fso.GetAbsolutePathName( fso.BuildPath(theOriginalParentFolderName,theOriginalBaseName & ".bprj"))
-	Final_Renamed_BPRJ_AbsoluteFilename = fso.GetAbsolutePathName( fso.BuildPath(Final_Renamed_ParentFolderName,Final_Renamed_BaseName & ".bprj"))
-	If fso.FileExists(Original_BPRJ_AbsoluteFilename) Then 
-		' yeppity, a matching .bprj file is FOUND for the original media filename
+	Original_vprj_AbsoluteFilename = fso.GetAbsolutePathName( fso.BuildPath(theOriginalParentFolderName,theOriginalBaseName & ".vprj"))
+	Final_Renamed_vprj_AbsoluteFilename = fso.GetAbsolutePathName( fso.BuildPath(Final_Renamed_ParentFolderName,Final_Renamed_BaseName & ".vprj"))
+	If fso.FileExists(Original_vprj_AbsoluteFilename) Then 
+		' yeppity, a matching .vprj file is FOUND for the original media filename
 		If vrdtvsp_DEBUG Then 
-			WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_pfis_Process_a_BPRJ: ********** found a matching .bprj file to autofix: """ & Original_BPRJ_AbsoluteFilename & """")
+			WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_pfis_Process_a_vprj: ********** found a matching .vprj file to autofix: """ & Original_vprj_AbsoluteFilename & """")
 		End If
-		If Original_BPRJ_AbsoluteFilename = Final_Renamed_BPRJ_AbsoluteFilename Then
-			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_ffiaft_pfis_Process_a_BPRJ same filenames, NOT RENAMING """ & Original_BPRJ_AbsoluteFilename & """ to """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
-			If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_pfis_Process_a_BPRJ: same filenames, NOT RENAMING """ & Original_BPRJ_AbsoluteFilename & """ to """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
+		If Original_vprj_AbsoluteFilename = Final_Renamed_vprj_AbsoluteFilename Then
+			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_ffiaft_pfis_Process_a_vprj same filenames, NOT RENAMING """ & Original_vprj_AbsoluteFilename & """ to """ & Final_Renamed_vprj_AbsoluteFilename & """")
+			If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_pfis_Process_a_vprj: same filenames, NOT RENAMING """ & Original_vprj_AbsoluteFilename & """ to """ & Final_Renamed_vprj_AbsoluteFilename & """")
 		Else
-			' a) rename the .bprj file to match the new BaseName of the media file ... abort on a failure to simply rename the .bprj file
+			' a) rename the .vprj file to match the new BaseName of the media file ... abort on a failure to simply rename the .vprj file
 			on error resume next
 			If vrdtvsp_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
-				WScript.StdOut.WriteLine("VRDTVSP DEV: vrdtvsp_DEVELOPMENT_NO_ACTIONS: DEV: vrdtvsp_ffiaft_pfis_Process_a_BPRJ NOT RENAMING """ & Original_BPRJ_AbsoluteFilename & """ to """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
+				WScript.StdOut.WriteLine("VRDTVSP DEV: vrdtvsp_DEVELOPMENT_NO_ACTIONS: DEV: vrdtvsp_ffiaft_pfis_Process_a_vprj NOT RENAMING """ & Original_vprj_AbsoluteFilename & """ to """ & Final_Renamed_vprj_AbsoluteFilename & """")
 			Else
-				fso.MoveFile Original_BPRJ_AbsoluteFilename, Final_Renamed_BPRJ_AbsoluteFilename ' this is the actual File Rename
+				fso.MoveFile Original_vprj_AbsoluteFilename, Final_Renamed_vprj_AbsoluteFilename ' this is the actual File Rename
 			End If
-			bprj_ErrNo = Err.Number
-			bprj_ErrDescription = Err.Description
+			vprj_ErrNo = Err.Number
+			vprj_ErrDescription = Err.Description
 			Err.Clear
 			on error goto 0
-			If (bprj_ErrNo <> 0) Then ' Error 0 is OK meaning it renamed just fine
-				WScript.StdOut.WriteLine("VRDTVSP ERROR: vrdtvsp_ffiaft_pfis_Process_a_BPRJ ABORTING: error renaming .bprj ErrorNo: " & bprj_ErrNo & " Description: " & bprj_ErrDescription)
-				WScript.StdOut.WriteLine("VRDTVSP ERROR: vrdtvsp_ffiaft_pfis_Process_a_BPRJ ABORTING: error renaming .bprj      Original_BPRJ_AbsoluteFilename=""" & Original_BPRJ_AbsoluteFilename & """")
-				WScript.StdOut.WriteLine("VRDTVSP ERROR: vrdtvsp_ffiaft_pfis_Process_a_BPRJ ABORTING: error renaming .bprj Final_Renamed_BPRJ_AbsoluteFilename=""" & Final_Renamed_BPRJ_AbsoluteFilename & """")
+			If (vprj_ErrNo <> 0) Then ' Error 0 is OK meaning it renamed just fine
+				WScript.StdOut.WriteLine("VRDTVSP ERROR: vrdtvsp_ffiaft_pfis_Process_a_vprj ABORTING: error renaming .vprj ErrorNo: " & vprj_ErrNo & " Description: " & vprj_ErrDescription)
+				WScript.StdOut.WriteLine("VRDTVSP ERROR: vrdtvsp_ffiaft_pfis_Process_a_vprj ABORTING: error renaming .vprj      Original_vprj_AbsoluteFilename=""" & Original_vprj_AbsoluteFilename & """")
+				WScript.StdOut.WriteLine("VRDTVSP ERROR: vrdtvsp_ffiaft_pfis_Process_a_vprj ABORTING: error renaming .vprj Final_Renamed_vprj_AbsoluteFilename=""" & Final_Renamed_vprj_AbsoluteFilename & """")
 				Wscript.Echo "Error 17 = cannot perform the requested operation"
 				On Error goto 0
 				WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 			End If
 		End If
-		' b) process/fix the content of .bprj file (it's xml) so the media filename in it is updated to match the renamed media filename
-		' load the file Final_Renamed_BPRJ_AbsoluteFilename and replace the file part with Final_Renamed_BaseName in it
+		' b) process/fix the content of .vprj file (it's xml) so the media filename in it is updated to match the renamed media filename
+		' load the file Final_Renamed_vprj_AbsoluteFilename and replace the file part with Final_Renamed_BaseName in it
 		Set vrdtvsp_xmlDoc = CreateObject("Microsoft.XMLDOM")
 		vrdtvsp_xmlDoc.async = False
 		on error resume next 
-		xml_file_to_load = Final_Renamed_BPRJ_AbsoluteFilename
+		xml_file_to_load = Final_Renamed_vprj_AbsoluteFilename
 		If vrdtvsp_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
-			xml_file_to_load = Original_BPRJ_AbsoluteFilename
-			If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEV: vrdtvsp_ffiaft_pfis_Process_a_BPRJ: about to LOAD vrdtvsp_xmlDoc.load ORIGINAL file """ & Original_BPRJ_AbsoluteFilename & """")
-			bprj_status = vrdtvsp_xmlDoc.load(Original_BPRJ_AbsoluteFilename) 
+			xml_file_to_load = Original_vprj_AbsoluteFilename
+			If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEV: vrdtvsp_ffiaft_pfis_Process_a_vprj: about to LOAD vrdtvsp_xmlDoc.load ORIGINAL file """ & Original_vprj_AbsoluteFilename & """")
+			vprj_status = vrdtvsp_xmlDoc.load(Original_vprj_AbsoluteFilename) 
 		Else
-			xml_file_to_load = Final_Renamed_BPRJ_AbsoluteFilename
-			If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_pfis_Process_a_BPRJ: about to LOAD vrdtvsp_xmlDoc.load file """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
-			bprj_status = vrdtvsp_xmlDoc.load(Final_Renamed_BPRJ_AbsoluteFilename) 
+			xml_file_to_load = Final_Renamed_vprj_AbsoluteFilename
+			If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_pfis_Process_a_vprj: about to LOAD vrdtvsp_xmlDoc.load file """ & Final_Renamed_vprj_AbsoluteFilename & """")
+			vprj_status = vrdtvsp_xmlDoc.load(Final_Renamed_vprj_AbsoluteFilename) 
 		End If
-		Set bprj_objErr = vrdtvsp_xmlDoc.parseError
-		bprj_errorCode = bprj_objErr.errorCode
-		bprj_reason = bprj_objErr.reason
-		Set bprj_objErr = Nothing
+		Set vprj_objErr = vrdtvsp_xmlDoc.parseError
+		vprj_errorCode = vprj_objErr.errorCode
+		vprj_reason = vprj_objErr.reason
+		Set vprj_objErr = Nothing
 		Err.clear
 		on error goto 0 
-		If NOT bprj_status Then
-			WScript.StdOut.WriteLine("VRDTVSP ERROR: vrdtvsp_ffiaft_pfis_Process_a_BPRJ ABORTING: Failed to load XML doc .BPRJ file """ & xml_file_to_load & """")
-			WScript.StdOut.WriteLine("VRDTVSP ERROR: vrdtvsp_ffiaft_pfis_Process_a_BPRJ ABORTING: bprj_status: " & bprj_status & " XML error: " & bprj_errorCode & " : " & bprj_reason)
+		If NOT vprj_status Then
+			WScript.StdOut.WriteLine("VRDTVSP ERROR: vrdtvsp_ffiaft_pfis_Process_a_vprj ABORTING: Failed to load XML doc .vprj file """ & xml_file_to_load & """")
+			WScript.StdOut.WriteLine("VRDTVSP ERROR: vrdtvsp_ffiaft_pfis_Process_a_vprj ABORTING: vprj_status: " & vprj_status & " XML error: " & vprj_errorCode & " : " & vprj_reason)
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
 			On Error goto 0
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 		'WScript.StdOut.WriteLine("vbs_rename_files: debug: loaded xml doc " & new_name)
 		'Locate the desired node. Note the use of XPATH instead of looping over all the child nodes.
-		Set bprj_nNode = vrdtvsp_xmlDoc.selectsinglenode ("//VideoReDoProject/Filename")
-		If bprj_nNode is Nothing Then
-			WScript.StdOut.WriteLine("VRDTVSP ERROR: vrdtvsp_ffiaft_pfis_Process_a_BPRJ ABORTING: Could not find XML node //VideoReDoProject/Filename in file " & xml_file_to_load)
+		Set vprj_nNode = vrdtvsp_xmlDoc.selectsinglenode ("//VideoReDoProject/Filename")
+		If vprj_nNode is Nothing Then
+			WScript.StdOut.WriteLine("VRDTVSP ERROR: vrdtvsp_ffiaft_pfis_Process_a_vprj ABORTING: Could not find XML node //VideoReDoProject/Filename in file " & xml_file_to_load)
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
 			On Error goto 0
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation exit with an error ... soft or hard ?
 		End If
-		bprj_txtbefore = bprj_nNode.text ' this is the pathname to the associated media file 
+		vprj_txtbefore = vprj_nNode.text ' this is the pathname to the associated media file 
 		' find the rightmost \ then replace everything at it to the start with .\ ... i.e. replace the full path of the associated media file with "\."
 		' if a \ doesn't exist, add .\ to the start
-		bprj_i = InStrRev(bprj_txtbefore,"\",-1,vbTextCompare)
-		If bprj_i > 0 Then
-			bprj_txtafter = ".\" & mid(bprj_txtbefore,bprj_i+1)
+		vprj_i = InStrRev(vprj_txtbefore,"\",-1,vbTextCompare)
+		If vprj_i > 0 Then
+			vprj_txtafter = ".\" & mid(vprj_txtbefore,vprj_i+1)
 		Else
-			bprj_txtafter = ".\" & bprj_txtbefore
+			vprj_txtafter = ".\" & vprj_txtbefore
 		End If
 		' replace the old basename portion of the associated media filename with the renamed basename portion
-		bprj_txtafter = Replace(bprj_txtafter, fso.GetBaseName(Original_BPRJ_AbsoluteFilename), fso.GetBaseName(Final_Renamed_BPRJ_AbsoluteFilename), 1, -1, vbTextCompare)
-		bprj_xmlbefore = vrdtvsp_xmlDoc.xml ' save the overall XML before we fix and transform
-		bprj_nNode.text = bprj_txtafter ' load the edited text back intothe XML document
+		vprj_txtafter = Replace(vprj_txtafter, fso.GetBaseName(Original_vprj_AbsoluteFilename), fso.GetBaseName(Final_Renamed_vprj_AbsoluteFilename), 1, -1, vbTextCompare)
+		vprj_xmlbefore = vrdtvsp_xmlDoc.xml ' save the overall XML before we fix and transform
+		vprj_nNode.text = vprj_txtafter ' load the edited text back intothe XML document
 		'''' ??????????? try to in-place transform the XML string using an XSL stylesheet  per https://blogs.iis.net/robert_mcmurray/creating-quot-pretty-quot-xml-using-xsl-and-vbscript
 		Set vrdtvsp_xslDoc = CreateObject("Microsoft.XMLDOM") ' or perhaps this instead: Set vrdtvsp_xslDoc = WScript.CreateObject("Msxml2.DOMDocument") ' assume no error
 		vrdtvsp_xslDoc.async = False
 		If vrdtvsp_DEBUG Then
-			WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_pfis_Process_a_BPRJ: about to load XSL vrdtvsp_xslStylesheet_string: ")
+			WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_pfis_Process_a_vprj: about to load XSL vrdtvsp_xslStylesheet_string: ")
 			WScript.StdOut.WriteLine("" & vrdtvsp_xslStylesheet_string & "")
 		End If
 		on error resume next 
-		bprj_status = vrdtvsp_xslDoc.loadXML(vrdtvsp_xslStylesheet_string) ' load the xsl stylesheet string
-		Set bprj_objErr = vrdtvsp_xslDoc.parseError
-		bprj_errorCode = bprj_objErr.errorCode
-		bprj_reason = bprj_objErr.reason
-		Set bprj_objErr = Nothing
+		vprj_status = vrdtvsp_xslDoc.loadXML(vrdtvsp_xslStylesheet_string) ' load the xsl stylesheet string
+		Set vprj_objErr = vrdtvsp_xslDoc.parseError
+		vprj_errorCode = vprj_objErr.errorCode
+		vprj_reason = vprj_objErr.reason
+		Set vprj_objErr = Nothing
 		Err.clear
 		on error goto 0
-		If NOT bprj_status Then ' Error 0 is OK
-			WScript.StdOut.WriteLine("VRDTVSP ERROR: vrdtvsp_ffiaft_pfis_Process_a_BPRJ ABORTING: XSL vrdtvsp_xslStylesheet_string load error bprj_status: " & bprj_status & " ErrorCode: " & bprj_errorCode & " : " & bprj_reason)
+		If NOT vprj_status Then ' Error 0 is OK
+			WScript.StdOut.WriteLine("VRDTVSP ERROR: vrdtvsp_ffiaft_pfis_Process_a_vprj ABORTING: XSL vrdtvsp_xslStylesheet_string load error vprj_status: " & vprj_status & " ErrorCode: " & vprj_errorCode & " : " & vprj_reason)
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
 			On Error goto 0
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 		on error resume next 
-		bprj_txtafter = vrdtvsp_xmlDoc.transformNode(vrdtvsp_xslDoc) ' transform using the xsl stylesheet
-		Set bprj_objErr = vrdtvsp_xslDoc.parseError
-		bprj_errorCode = bprj_objErr.errorCode
-		bprj_reason = bprj_objErr.reason
-		Set bprj_objErr = Nothing
+		vprj_txtafter = vrdtvsp_xmlDoc.transformNode(vrdtvsp_xslDoc) ' transform using the xsl stylesheet
+		Set vprj_objErr = vrdtvsp_xslDoc.parseError
+		vprj_errorCode = vprj_objErr.errorCode
+		vprj_reason = vprj_objErr.reason
+		Set vprj_objErr = Nothing
 		Err.clear
 		on error goto 0
-		If (bprj_errorCode <> 0) Then ' Error 0 is OK
-			WScript.StdOut.WriteLine("VRDTVSP ERROR: vrdtvsp_ffiaft_pfis_Process_a_BPRJ ABORTING: XML/XSL transformNode error bprj_status: " & bprj_status & " ErrorCode: " & bprj_errorCode & " : " & bprj_reason)
+		If (vprj_errorCode <> 0) Then ' Error 0 is OK
+			WScript.StdOut.WriteLine("VRDTVSP ERROR: vrdtvsp_ffiaft_pfis_Process_a_vprj ABORTING: XML/XSL transformNode error vprj_status: " & vprj_status & " ErrorCode: " & vprj_errorCode & " : " & vprj_reason)
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
 			On Error goto 0
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
-		bprj_xmlafter = vrdtvsp_xmlDoc.xml ' save the overall XML after we fix and transform
+		vprj_xmlafter = vrdtvsp_xmlDoc.xml ' save the overall XML after we fix and transform
 		If vrdtvsp_DEBUG Then
-			WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_pfis_Process_a_BPRJ: bprj xml-node before: """ & bprj_txtbefore & """")
-			WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_pfis_Process_a_BPRJ: bprj xml-node  after: """ & bprj_nNode.text & """")
-			WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_pfis_Process_a_BPRJ: xml ALL before: " & bprj_xmlbefore & "")
-			WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_pfis_Process_a_BPRJ: xml ALL  after: " & bprj_xmlafter & "")
+			WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_pfis_Process_a_vprj: vprj xml-node before: """ & vprj_txtbefore & """")
+			WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_pfis_Process_a_vprj: vprj xml-node  after: """ & vprj_nNode.text & """")
+			WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_pfis_Process_a_vprj: xml ALL before: " & vprj_xmlbefore & "")
+			WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_pfis_Process_a_vprj: xml ALL  after: " & vprj_xmlafter & "")
 		End If
 		on error resume next 
 		If vrdtvsp_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
-			WScript.StdOut.WriteLine("VRDTVSP DEV: vrdtvsp_DEVELOPMENT_NO_ACTIONS: DEV: vrdtvsp_ffiaft_pfis_Process_a_BPRJ NOT RE-WRITING bprj """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
+			WScript.StdOut.WriteLine("VRDTVSP DEV: vrdtvsp_DEVELOPMENT_NO_ACTIONS: DEV: vrdtvsp_ffiaft_pfis_Process_a_vprj NOT RE-WRITING vprj """ & Final_Renamed_vprj_AbsoluteFilename & """")
 		Else
-			vrdtvsp_xmlDoc.save(Final_Renamed_BPRJ_AbsoluteFilename) ' tell the XMLDOM processor to save the updated XML file
+			vrdtvsp_xmlDoc.save(Final_Renamed_vprj_AbsoluteFilename) ' tell the XMLDOM processor to save the updated XML file
 		End If
-		Set bprj_objErr = vrdtvsp_xmlDoc.parseError
-		bprj_errorCode = bprj_objErr.errorCode
-		bprj_reason = bprj_objErr.reason
-		Set bprj_objErr = Nothing
+		Set vprj_objErr = vrdtvsp_xmlDoc.parseError
+		vprj_errorCode = vprj_objErr.errorCode
+		vprj_reason = vprj_objErr.reason
+		Set vprj_objErr = Nothing
 		Err.clear
 		on error goto 0 
-		If not bprj_status Then
-			WScript.StdOut.WriteLine("VRDTVSP ERROR: vrdtvsp_ffiaft_pfis_Process_a_BPRJ ABORTING: Failed to save XML doc into .BPRJ file """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
-			WScript.StdOut.WriteLine("VRDTVSP ERROR: vrdtvsp_ffiaft_pfis_Rename_a_File ABORTING: XML error: " & bprj_errorCode & " : Reason: " & bprj_reason)
+		If not vprj_status Then
+			WScript.StdOut.WriteLine("VRDTVSP ERROR: vrdtvsp_ffiaft_pfis_Process_a_vprj ABORTING: Failed to save XML doc into .vprj file """ & Final_Renamed_vprj_AbsoluteFilename & """")
+			WScript.StdOut.WriteLine("VRDTVSP ERROR: vrdtvsp_ffiaft_pfis_Rename_a_File ABORTING: XML error: " & vprj_errorCode & " : Reason: " & vprj_reason)
 			On Error goto 0
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 		Set vrdtvsp_xmlDoc = Nothing
-		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_ffiaft_pfis_Process_a_BPRJ .bprj autofixed: """ & Original_BPRJ_AbsoluteFilename & """ into """ & Final_Renamed_BPRJ_AbsoluteFilename & """")
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_ffiaft_pfis_Process_a_vprj .vprj autofixed: """ & Original_vprj_AbsoluteFilename & """ into """ & Final_Renamed_vprj_AbsoluteFilename & """")
 	Else
 		If vrdtvsp_DEBUG Then 
-			WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_pfis_Process_a_BPRJ: ********** NO matching .bprj file found to autofix: """ & Original_BPRJ_AbsoluteFilename & """")
+			WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_pfis_Process_a_vprj: ********** NO matching .vprj file found to autofix: """ & Original_vprj_AbsoluteFilename & """")
 		End If
 	End If
-	vrdtvsp_ffiaft_pfis_Process_a_BPRJ = 0
+	vrdtvsp_ffiaft_pfis_Process_a_vprj = 0
 End Function
 '
 Function vrdtvsp_remove_tvs_classifying_stuff_from_string (theOriginalString)
@@ -2146,10 +2146,10 @@ Function vrdtvsp_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 	' NOTES: 
 	'	Rely on these already being set Globally to True or False BEFORE invoking the conversion function: vrdtvsp_DEBUG, vrdtvsp_DEVELOPMENT_NO_ACTIONS, wso, fso, vrdtvsp_status
 	'	Check for C_source_TS_Folder = C_destination_mp4_Folder since we don't permit that
-	'	Convert .TS and .MP4 and .MPG files in the C_source_TS_Folder and create adscan .BPRJ files
-	'	Resulting .mp4 and .bprj goes into C_destination_mp4_Folder
-	'	Successfilly completed .TS and .MP4 and .MPG files (and associated .BPRJ, if any) goes into C_done_TS_Folder 
-	'	Failed-to-convert .TS and .MP4 files (and associated .BPRJ, if any) goes into C_failed_conversion_TS_Folder 
+	'	Convert .TS and .MP4 and .MPG files in the C_source_TS_Folder and create adscan .vprj files
+	'	Resulting .mp4 and .vprj goes into C_destination_mp4_Folder
+	'	Successfilly completed .TS and .MP4 and .MPG files (and associated .vprj, if any) goes into C_done_TS_Folder 
+	'	Failed-to-convert .TS and .MP4 files (and associated .vprj, if any) goes into C_failed_conversion_TS_Folder 
 	'	Use a scratch folder (on an SSD) in C_temp_path
 	'	Create file C_saved_ffmpeg_commands_filename to store commands/data used for: qsf, dgindex, .vpy, ffmpeg, adscan
 	'
@@ -2273,7 +2273,7 @@ Function vrdtvsp_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 	C_object_saved_ffmpeg_commands.WriteLine("REM")
 	C_object_saved_ffmpeg_commands.WriteLine("REM NO FILES WILL BE MOVED between folders ")
 	C_object_saved_ffmpeg_commands.WriteLine("REM the SOURCE      .TS and .mp4 and .mpg media files MUST already exist in folder: """ & C_source_TS_Folder & """")
-	C_object_saved_ffmpeg_commands.WriteLine("REM the DESTINATION .mp4 and .bprj files will be created (overwritten) in folder  : """ & C_destination_mp4_Folder & """")
+	C_object_saved_ffmpeg_commands.WriteLine("REM the DESTINATION .mp4 and .vprj files will be created (overwritten) in folder  : """ & C_destination_mp4_Folder & """")
 	C_object_saved_ffmpeg_commands.WriteLine("REM NO FILES WILL BE MOVED between folders ")
 	C_object_saved_ffmpeg_commands.WriteLine("REM")
 	'	
@@ -2286,12 +2286,12 @@ Function vrdtvsp_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 		C_FILE_BaseName = fso.GetBaseName(C_FILE_AbsolutePathName)
 		C_FILE_Ext = fso.GetExtensionName(C_FILE_AbsolutePathName)
         '********* FILTER BY FILE EXTENSION *********
-		If Ucase(C_FILE_Ext) = Ucase("ts") OR Ucase(C_FILE_Ext) = Ucase("mp4") OR Ucase(C_FILE_Ext) = Ucase("mpg") OR Ucase(C_FILE_Ext) = Ucase("bprj") Then ' ********** only process specific file extensions
+		If Ucase(C_FILE_Ext) = Ucase("ts") OR Ucase(C_FILE_Ext) = Ucase("mp4") OR Ucase(C_FILE_Ext) = Ucase("mpg") OR Ucase(C_FILE_Ext) = Ucase("vprj") Then ' ********** only process specific file extensions
 			WScript.StdOut.WriteLine(" ")
 			WScript.StdOut.WriteLine(" ")
 			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_files_in_a_folder ========== Processing C_FILE_AbsolutePathName=""" & C_FILE_AbsolutePathName & """ ==========")
 			Select Case Ucase(C_FILE_Ext)
-			Case Ucase("bprj") 										' it's in the source folder, ignore it
+			Case Ucase("vprj") 										' it's in the source folder, ignore it
 			Case Ucase("ts"), Ucase("mp4"), Ucase("mpg")			' if it's one of these then convert it
 				vrdtvsp_status = vrdtvsp_Convert_File(	C_FILE_AbsolutePathName, _
 														C_object_saved_ffmpeg_commands, _
@@ -2405,7 +2405,7 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Dim                             CF_FILE_ParentFolderName,   CF_FILE_BaseName,   CF_FILE_Ext
 	Dim CF_QSF_AbsolutePathName,    CF_QSF_ParentFolderName,    CF_QSF_BaseName,    CF_QSF_Ext
 	Dim CF_TARGET_AbsolutePathName, CF_TARGET_ParentFolderName, CF_TARGET_BaseName, CF_TARGET_Ext
-	Dim CF_BPRJ_AbsolutePathName,   CF_BPRJ_ParentFolderName,   CF_BPRJ_BaseName,   CF_BPRJ_Ext
+	Dim CF_vprj_AbsolutePathName,   CF_vprj_ParentFolderName,   CF_vprj_BaseName,   CF_vprj_Ext
 	Dim CF_VPY_AbsolutePathName,    CF_VPY_ParentFolderName,    CF_VPY_BaseName,    CF_VPY_Ext, CF_VPY_object, CF_VPY_string
 	Dim CF_DGI_AbsolutePathName,    CF_DGI_ParentFolderName,    CF_DGI_BaseName,    CF_DGI_Ext
 	Dim CF_DGIlog_AbsolutePathName, CF_DGIlog_ParentFolderName, CF_DGIlog_BaseName, CF_DGIlog_Ext
@@ -2731,10 +2731,10 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	CF_TARGET_Ext = "mp4"		' always .mp4
 	CF_TARGET_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_TARGET_ParentFolderName,CF_TARGET_BaseName & "." & CF_TARGET_Ext))
 	'
-	CF_BPRJ_ParentFolderName = CF_destination_mp4_Folder
-	CF_BPRJ_BaseName = CF_TARGET_BaseName
-	CF_BPRJ_Ext = "bprj"		' always .bprj
-	CF_BPRJ_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_BPRJ_ParentFolderName,CF_BPRJ_BaseName & "." & CF_BPRJ_Ext))
+	CF_vprj_ParentFolderName = CF_destination_mp4_Folder
+	CF_vprj_BaseName = CF_TARGET_BaseName
+	CF_vprj_Ext = "vprj"		' always .vprj
+	CF_vprj_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_vprj_ParentFolderName,CF_vprj_BaseName & "." & CF_vprj_Ext))
 	'
 	CF_QSF_ParentFolderName = CF_temp_path
 	CF_QSF_BaseName = CF_FILE_BaseName & ".QSF"
@@ -4041,15 +4041,15 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	' ++++ END do a mediainfo of the TARGET so we can compare them !!! (DGIndex got the FPS wrong)
 	'
 	'------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	' after ffmpeg, do an ADSCAN over the TARGET file and save the .bprj in the target folder as an "associated .bprj" which will be picked up by auto-bprj-processing during bulk file renames :)
+	' after ffmpeg, do an ADSCAN over the TARGET file and save the .vprj in the target folder as an "associated .vprj" which will be picked up by auto-vprj-processing during bulk file renames :)
 	If CF_do_Adscan Then
 		' ++++ START Run the ADSCAN command
 		ff_timerStart = Timer
 		vrdtvsp_status = vrdtvsp_delete_a_file(vrdtvsp_logfile_wildcard_ADSCAN, True) ' True=silently delete it	' is a wildcard, in fso.DeleteFile the filespec can contain wildcard characters in the last path component
 		If vrd_version_for_adscan = 5 Then
-			CF_exe_cmd_string = "cscript //Nologo """ & vrdtvsp_path_for_adscan_vbs & """ """ & CF_TARGET_AbsolutePathName & """  """ & CF_BPRJ_AbsolutePathName & """ /q"
+			CF_exe_cmd_string = "cscript //Nologo """ & vrdtvsp_path_for_adscan_vbs & """ """ & CF_TARGET_AbsolutePathName & """  """ & CF_vprj_AbsolutePathName & """ /q"
 		ElseIf vrd_version_for_adscan = 6 Then ' v6 uses a different scheme, we have a custom temporary script we created
-			CF_exe_cmd_string = "cscript //Nologo """ & vrdtvsp_path_for_adscan_vbs & """ """ & CF_TARGET_AbsolutePathName & """  """ & CF_BPRJ_AbsolutePathName & """ """ & const_vrd6_adscan_profile_name & """"
+			CF_exe_cmd_string = "cscript //Nologo """ & vrdtvsp_path_for_adscan_vbs & """ """ & CF_TARGET_AbsolutePathName & """  """ & CF_vprj_AbsolutePathName & """ """ & const_vrd6_adscan_profile_name & """"
 		Else
 			WScript.StdOut.WriteLine("VRDTVSP ERROR - vrdtvsp_path_for_adscan_vbs can only be 5 or 6 ... Aborting ...")
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
@@ -4063,31 +4063,31 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		CF_object_saved_ffmpeg_commands.WriteLine("REM")
 		CF_object_saved_ffmpeg_commands.WriteLine("REM Do the ADSCAN for """ & CF_TARGET_AbsolutePathName & """ ... ")
 		CF_object_saved_ffmpeg_commands.WriteLine("REM")
-		CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_BPRJ_AbsolutePathName & """")
+		CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_vprj_AbsolutePathName & """")
 		CF_object_saved_ffmpeg_commands.WriteLine("REM ====================================================================================================================================================================")
 		CF_object_saved_ffmpeg_commands.WriteLine("ECHO !DATE! !TIME!")
 		CF_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string) ' write the ADSCAN String to be executed
 		CF_object_saved_ffmpeg_commands.WriteLine("ECHO !DATE! !TIME!")
 		CF_object_saved_ffmpeg_commands.WriteLine("REM ====================================================================================================================================================================")
 		CF_object_saved_ffmpeg_commands.WriteLine("REM")
-		' do the actual ADCSAN command (delete the BPRJ file first)
+		' do the actual ADCSAN command (delete the vprj file first)
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ******************** Start of run ADSCAN """ & CF_exe_cmd_string & """ :")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: Doing ADSCAN for """ & CF_TARGET_AbsolutePathName & """ ... ")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: ADSCAN command: " & CF_exe_cmd_string)
 		WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string() & " ====================================================================================================================================================================")
 		WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string() & " ====================================================================================================================================================================")
-		''' vrdtvsp_status = vrdtvsp_delete_a_file(CF_BPRJ_AbsolutePathName, True) ' True=silently delete it ' - the old way of doing it
+		''' vrdtvsp_status = vrdtvsp_delete_a_file(CF_vprj_AbsolutePathName, True) ' True=silently delete it ' - the old way of doing it
 		''' CF_exe_status = vrdtvsp_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string) ' - the old way of doing it
 		ReDim vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1) ' base 0, so the dimension is always 1 less than the number of commands
-		vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(0) = "DEL /F """ & CF_BPRJ_AbsolutePathName & """"
+		vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(0) = "DEL /F """ & CF_vprj_AbsolutePathName & """"
 		vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1) = CF_exe_cmd_string
 		CF_exe_status = vrdtvsp_Exec_in_a_DOS_BAT_file(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log - the safer way of doing it
 		Erase vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array
 		WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string() & " ====================================================================================================================================================================")
 		WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string() & " ====================================================================================================================================================================")
-		If CF_exe_status <> 0 OR NOT fso.FileExists(CF_BPRJ_AbsolutePathName) Then
-			If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: ERROR vrdtvsp_Convert_File - Error - Failed to ADSCAN """ & CF_TARGET_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
-			WScript.StdOut.WriteLine("VRDTVSP ERROR vrdtvsp_Convert_File - Error - Failed to ADSCAN """ & CF_TARGET_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
+		If CF_exe_status <> 0 OR NOT fso.FileExists(CF_vprj_AbsolutePathName) Then
+			If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: ERROR vrdtvsp_Convert_File - Error - Failed to ADSCAN, ExitStatus=" & CF_exe_status & " """ & CF_TARGET_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
+			WScript.StdOut.WriteLine("VRDTVSP ERROR vrdtvsp_Convert_File - Error - Failed to ADSCAN, ExitStatus=" & CF_exe_status & " """ & CF_TARGET_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
 			If vrdtvsp_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 				Wscript.Echo "Error 17 = cannot perform the requested operation"
 				On Error goto 0
@@ -4234,9 +4234,10 @@ Function vrdtvsp_create_custom_adscan_script_vrd6()
 	Dim ccvas_Absolute_script_name
 	Dim ccvas_object
 	Dim ccvas_status
-	Dim ccvas, i, c
+	Dim ccvas(), i, c
 	'
 	ccvas_Absolute_script_name = vrdtvsp_gimme_a_temporary_absolute_filename("vrdtvsp_custom_vrd6_adscan_script-" & vrdtvsp_run_datetime) & ".vbs"
+	wscript.Echo "ccvas_Absolute_script_name=""" & ccvas_Absolute_script_name & """" 
 	c = -1 ' base 0
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "' File: """ & ccvas_Absolute_script_name & """"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "' Example VRD6 VBScript to do AdScan with Adscan Profile"
@@ -4260,13 +4261,13 @@ Function vrdtvsp_create_custom_adscan_script_vrd6()
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "If argCount <> 3 Then"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_AdScan: ERROR: arg count should be 3, but is "" & argCount)"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_AdScan:			Args(0) is the fully qualified path/name of the input video file"")"
-	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_AdScan:			Args(1) is the fully qualified path/name of the output project (.bprj) file."")"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_AdScan:			Args(1) is the fully qualified path/name of the output project (.vprj) file."")"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_AdScan:			Args(2) is name of AdScan Output Profile already created and saved inside VRD v6"")"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.Quit 5"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "End If"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "'"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "inputFile = Args(0)"
-	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "vprjFile = Args(1)				' including extension .bprj"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "vprjFile = Args(1)				' including extension .vprj"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "adscan_profile_name = Args(2)"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "'"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Set VideoReDoSilent = WScript.CreateObject(""VideoReDo6.VideoReDoSilent"")"
@@ -4351,7 +4352,7 @@ Function vrdtvsp_create_custom_adscan_script_vrd6()
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.Sleep 2000"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Wend"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Wscript.StdOut.WriteLine("" 100% Complete."")"
-	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Wscript.StdOut.Write(""VRDTVS_VRD6_AdScan: Exiting"")"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Wscript.StdOut.WriteLine(""VRDTVS_VRD6_AdScan: Exiting"")"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "on error resume next"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "VideoReDo.ProgramExit()"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "on error goto 0"
@@ -4368,7 +4369,7 @@ Function vrdtvsp_create_custom_adscan_script_vrd6()
 	For i = Lbound(ccvas) to UBound(ccvas) Step 1
 		ccvas_object.WriteLine ccvas(i)
 	Next
-	eiadbf_batfilename_object.close
-	set eiadbf_batfilename_object = Nothing
+	ccvas_object.close
+	set ccvas_object = Nothing
 	vrdtvsp_create_custom_adscan_script_vrd6 = ccvas_Absolute_script_name
 End Function
