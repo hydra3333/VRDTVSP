@@ -1,4 +1,4 @@
-Option explicit
+Option Explicit
 '
 ' VRDTVSP - automatically parse, convert video/audio from TVSchedulerPro TV recordings, 
 ' and perhaps adscan them too. This looks only at .TS .MP4 .MPG files and autofixes associated .vprj files.
@@ -1276,7 +1276,7 @@ Function vrdtvsp_ffiaft_pfis_Process_a_vprj (byVal theOriginalParentFolderName, 
 		End If
 		' b) process/fix the content of .vprj file (it's xml) so the media filename in it is updated to match the renamed media filename
 		' load the file Final_Renamed_vprj_AbsoluteFilename and replace the file part with Final_Renamed_BaseName in it
-		Set vrdtvsp_xmlDoc = CreateObject("Microsoft.XMLDOM")
+		Set vrdtvsp_xmlDoc = WScript.CreateObject("Msxml2.DOMDocument.6.0") ' OLD:  Set vrdtvsp_xmlDoc = CreateObject("Microsoft.XMLDOM")
 		vrdtvsp_xmlDoc.async = False
 		on error resume next 
 		xml_file_to_load = Final_Renamed_vprj_AbsoluteFilename
@@ -1325,7 +1325,8 @@ Function vrdtvsp_ffiaft_pfis_Process_a_vprj (byVal theOriginalParentFolderName, 
 		vprj_xmlbefore = vrdtvsp_xmlDoc.xml ' save the overall XML before we fix and transform
 		vprj_nNode.text = vprj_txtafter ' load the edited text back intothe XML document
 		'''' ??????????? try to in-place transform the XML string using an XSL stylesheet  per https://blogs.iis.net/robert_mcmurray/creating-quot-pretty-quot-xml-using-xsl-and-vbscript
-		Set vrdtvsp_xslDoc = CreateObject("Microsoft.XMLDOM") ' or perhaps this instead: Set vrdtvsp_xslDoc = WScript.CreateObject("Msxml2.DOMDocument") ' assume no error
+		' OLD Set vrdtvsp_xslDoc = CreateObject("Microsoft.XMLDOM") ' or perhaps this instead: Set vrdtvsp_xslDoc = WScript.CreateObject("Msxml2.DOMDocument") ' per https://stackoverflow.com/questions/33187289/parsing-xml-string-in-vbscript#comment54231267_33189735
+		Set vrdtvsp_xslDoc = WScript.CreateObject("Msxml2.DOMDocument.6.0") ' assume no error
 		vrdtvsp_xslDoc.async = False
 		If vrdtvsp_DEBUG Then
 			WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_pfis_Process_a_vprj: about to load XSL vrdtvsp_xslStylesheet_string: ")
@@ -4239,6 +4240,7 @@ Function vrdtvsp_create_custom_adscan_script_vrd6()
 	ccvas_Absolute_script_name = vrdtvsp_gimme_a_temporary_absolute_filename("vrdtvsp_custom_vrd6_adscan_script-" & vrdtvsp_run_datetime) & ".vbs"
 	wscript.Echo "ccvas_Absolute_script_name=""" & ccvas_Absolute_script_name & """" 
 	c = -1 ' base 0
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Option Explicit"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "' File: """ & ccvas_Absolute_script_name & """"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "' Example VRD6 VBScript to do AdScan with Adscan Profile"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "' Args(0) is input video file path"
@@ -4251,7 +4253,7 @@ Function vrdtvsp_create_custom_adscan_script_vrd6()
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim adscan_profile_name"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim VideoReDoSilent"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim VideoReDo"
-	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim openflag"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim openflag, closeflag"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim percent"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim i, profile_count, adscan_profile_count, matching_adscan_profile"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim Adscan_Profile_Names()"
@@ -4333,6 +4335,7 @@ Function vrdtvsp_create_custom_adscan_script_vrd6()
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "If NOT outputOK = True Then"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_AdScan: ERROR: VideoReDo failed to create AdScan file: """""" & vprjFile & """""" using profile:"""""" & adscan_profile_name & """""""")"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	on error resume next"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "  closeflag = VideoReDo.FileClose()"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	VideoReDo.ProgramExit()"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	on error goto 0"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_AdScan: Exiting with errorlevel code 5"")"
@@ -4351,6 +4354,7 @@ Function vrdtvsp_create_custom_adscan_script_vrd6()
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	on error goto 0"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.Sleep 2000"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Wend"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "closeflag = VideoReDo.FileClose()"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Wscript.StdOut.WriteLine("" 100% Complete."")"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Wscript.StdOut.WriteLine(""VRDTVS_VRD6_AdScan: Exiting"")"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "on error resume next"
