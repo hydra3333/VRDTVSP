@@ -35,7 +35,9 @@ REM --------- resolve any relative paths into absolute paths ---------
 
 COPY /Y /B /Z /V /D ".\*.bat" "!vrdtvs_HDTV!"
 COPY /Y /B /Z /V /D ".\*.xml" "!vrdtvs_HDTV!"
+COPY /Y /B /Z /V /D ".\*.xml" "!vrdtvs_HDTV!"
 COPY /Y /B /Z /V /D ".\*.vbs" "!vrdtvs_HDTV!"
+COPY /Y /B /Z /V /D ".\VRD_profiles\*.xml" "!vrdtvs_HDTV!"
 
 COPY /Y /B /Z /V /D ".\copy_to_hdtv.bat" "!vrdtvs_HDTV!"
 
