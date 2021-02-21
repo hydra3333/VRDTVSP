@@ -169,7 +169,7 @@ Const const_vrd6_profile_mpeg2 = "VRDTVS-for-QSF-MPEG2_VRD6"
 Const const_vrd6_profile_avc = "VRDTVS-for-QSF-H264_VRD6"
 Const const_vrd6_extension_mpeg2 = "mpg"
 Const const_vrd6_extension_avc = "mp4"
-Const const_vrd6_profile_name_for_adscan = "*adscan_default*"
+Const const_vrd6_adscan_profile_name = "VRDTVS_ADSCAN_VRD6_NON-INTERACTIVE"	' alternate for interactive is "VRDTVS_ADSCAN_VRD6"
 Dim vrd6_logfile_wildcard
 vrd6_logfile_wildcard =  fso.GetAbsolutePathName(HDTV_root & "\") & "\VideoReDo6_*.Log"
 '
@@ -270,9 +270,8 @@ If vrd_version_for_adscan = 5 Then '*** AdScan
 ElseIf vrd_version_for_adscan = 6 Then
     'vrdtvsp_path_for_adscan_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd6_path,"AdScan2.vbs"))
 	' *** v6 has changed,	see https://videoredo.net/msgBoard/index.php?threads/adscan2-for-v6-how-to-use.37593/#post-133909
-	'						AdScans are just saves now. Use the same script you use to QSF and just pass it *adscan_current* as the profile name. 
-	'						All the other progress code is identical to a normal save.
-	vrdtvsp_path_for_adscan_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd6_path,"vp.vbs")) ' and remember to use a different commandline later !!
+	'						AdScans are just saves now. Use the same script you use to QSF and just pass it *adscan_current* as the profile name. All the other progress code is identical to a normal save.
+	vrdtvsp_path_for_adscan_vbs = vrdtvsp_create_custom_adscan_script_vrd6() ' create our custom VRD v6 adscan script and leave it undeleted in the scratch temporary folder
 	vrdtvsp_logfile_wildcard_ADSCAN= vrd6_logfile_wildcard
 Else
     WScript.StdOut.WriteLine("VRDTVSP ERROR - vrdtvsp_path_for_adscan_vbs can only be 5 or 6 ... Aborting ...")
@@ -4048,10 +4047,14 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		ff_timerStart = Timer
 		vrdtvsp_status = vrdtvsp_delete_a_file(vrdtvsp_logfile_wildcard_ADSCAN, True) ' True=silently delete it	' is a wildcard, in fso.DeleteFile the filespec can contain wildcard characters in the last path component
 
+
+		???????????? script_name = vrdtvsp_create_custom_adscan_script_vrd6
+
+
 		If vrd_version_for_adscan = 5 Then
 			CF_exe_cmd_string = "cscript //Nologo """ & vrdtvsp_path_for_adscan_vbs & """ """ & CF_TARGET_AbsolutePathName & """  """ & CF_BPRJ_AbsolutePathName & """ /q"
-		ElseIf vrd_version_for_adscan = 6 Then ' v6 uses a different scheme, similar to a qsf using vp.vbs but without the "/QSF" flag
-			CF_exe_cmd_string = "cscript //Nologo """ & vrdtvsp_path_for_adscan_vbs & """ """ & CF_TARGET_AbsolutePathName & """  """ & CF_BPRJ_AbsolutePathName & """ /p """ & const_vrd6_profile_name_for_adscan & """ /q /na"
+		ElseIf vrd_version_for_adscan = 6 Then ' v6 uses a different scheme, we have a custom temporary script we created
+			CF_exe_cmd_string = "cscript //Nologo """ & vrdtvsp_path_for_adscan_vbs & """ """ & CF_TARGET_AbsolutePathName & """  """ & CF_BPRJ_AbsolutePathName & """ """ & const_vrd6_adscan_profile_name & """"
 		Else
 			WScript.StdOut.WriteLine("VRDTVSP ERROR - vrdtvsp_path_for_adscan_vbs can only be 5 or 6 ... Aborting ...")
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
@@ -4228,4 +4231,149 @@ Function vrdtvsp_Exec_in_a_DOS_BAT_file (byVal eiadbf_cmd_string_array, ByVal ei
 	eiadbf_status = vrdtvsp_delete_a_file(eiadbf_batfilename, True)
 	eiadbf_status = vrdtvsp_delete_a_file(eiadbf_logfilename, True)
 	vrdtvsp_Exec_in_a_DOS_BAT_file = eiadbf_errorlevel
+End Function
+'
+Function vrdtvsp_create_custom_adscan_script_vrd6()
+	' Create a custome Adscan Script for use with VRD v6 (VideoReDo does not provide a v6 one which works)
+	' Return the Absolute filename of the script
+	Dim ccvas_Absolute_script_name
+	Dim ccvas_object
+	Dim ccvas_status
+	Dim ccvas, i, c
+	'
+	ccvas_Absolute_script_name = vrdtvsp_gimme_a_temporary_absolute_filename("vrdtvsp_custom_vrd6_adscan_script-" & vrdtvsp_run_datetime) & ".vbs"
+	c = -1 ' base 0
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "' File: """ & ccvas_Absolute_script_name & """"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "' Example VRD6 VBScript to do AdScan with Adscan Profile"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "' Args(0) is input video file path"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "' Args(1) is path/name of output project file."
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "' Args(2) is name of AdScan Output Profile created in VRD v6"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "'"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim Args, argCount"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim inputFile"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim vprjFile"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim adscan_profile_name"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim VideoReDoSilent"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim VideoReDo"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim openflag"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim percent"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim i, profile_count, adscan_profile_count, matching_adscan_profile"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim Adscan_Profile_Names()"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "'"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Set Args = Wscript.Arguments"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "argCount = Wscript.Arguments.Count"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "If argCount <> 3 Then"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_AdScan: ERROR: arg count should be 3, but is "" & argCount)"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_AdScan:			Args(0) is the fully qualified path/name of the input video file"")"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_AdScan:			Args(1) is the fully qualified path/name of the output project (.bprj) file."")"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_AdScan:			Args(2) is name of AdScan Output Profile already created and saved inside VRD v6"")"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.Quit 5"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "End If"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "'"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "inputFile = Args(0)"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "vprjFile = Args(1)				' including extension .bprj"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "adscan_profile_name = Args(2)"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "'"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Set VideoReDoSilent = WScript.CreateObject(""VideoReDo6.VideoReDoSilent"")"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Set VideoReDo = VideoReDoSilent.VRDInterface"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "VideoReDo.ProgramSetAudioAlert(False)"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "'"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "adscan_profile_count = 0"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "profile_count = VideoReDo.ProfilesGetCount()"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "For i = 0 to profile_count-1"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	profile_name = VideoReDo.ProfilesGetProfileName( i )"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	is_adscan = VideoReDo.ProfilesGetProfileIsAdScan( i )"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	If ( is_adscan ) Then"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "		adscan_profile_count = adscan_profile_count + 1"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "		ReDim Preserve Adscan_Profile_Names(adscan_profile_count-1) ' base 0, remember"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "		Adscan_Profile_Names(adscan_profile_count-1) = profile_name"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	End If"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Next"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "If adscan_profile_count < 1 Then"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_AdScan: ERROR: no VRD6 AdScan profiles were returned by VRD v6"")"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_AdScan: Exiting with errorlevel code 5"")"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	on error resume next"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	VideoReDo.ProgramExit()"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	on error goto 0"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_AdScan: Exiting with errorlevel code 5"")"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.Quit 5"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "End If"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "matching_adscan_profile = False"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "For i = 0 to (adscan_profile_count-1)"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	If adscan_profile_name = Adscan_Profile_Names(i) Then"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "		matching_adscan_profile = True"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "		Exit For"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	End If"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Next"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "If NOT matching_adscan_profile Then"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_AdScan: ERROR: no VRD6 AdScan profile was located matching your specified profile: """""" & adscan_profile_name & """""""")"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	For i = 0 to profile_count-1"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "		profile_name = VideoReDo.ProfilesGetProfileName( i )"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "		is_adscan = VideoReDo.ProfilesGetProfileIsAdScan( i )"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "		If ( is_adscan ) Then"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "			adscan_profile_count = adscan_profile_count + 1"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "			Wscript.StdOut.WriteLine(""VRDTVS_VRD6_AdScan: Profile ("" & i & "")="""""" & profile_name & """""" is an adscan profile"")"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "		End If"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Next"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_AdScan: Adscan Profile count: "" & adscan_profile_count )"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_AdScan: Exiting with errorlevel code 5"")"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	on error resume next"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	VideoReDo.ProgramExit()"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	on error goto 0"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_AdScan: Exiting with errorlevel code 5"")"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.Quit 5"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "End If"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "'"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "openflag = VideoReDo.FileOpen(inputFile, False)"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "If openflag = False Then"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_AdScan: ERROR: VideoReDo failed to open file: """""" & inputFile & """""""")"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	on error resume next"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	VideoReDo.ProgramExit()"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	on error goto 0"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_AdScan: Exiting with errorlevel code 5"")"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.Quit 5"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "End If"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "outputOK = VideoReDo.FileSaveAs(vprjFile, adscan_profile_name)"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "If NOT outputOK = True Then"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_AdScan: ERROR: VideoReDo failed to create AdScan file: """""" & vprjFile & """""" using profile:"""""" & adscan_profile_name & """""""")"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	on error resume next"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	VideoReDo.ProgramExit()"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	on error goto 0"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_AdScan: Exiting with errorlevel code 5"")"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.Quit 5"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "End If"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Wscript.StdOut.Write(""VRDTVS_VRD6_AdScan: working: "")"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "'Wscript.StdOut.Write(""VRDTVS_VRD6_AdScan: Percent Complete: "")"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "While( VideoRedo.OutputGetState <> 0 )"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	on error resume next"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	'percentComplete = CInt(VideoReDo.OutputGetPercentComplete())"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	'if NOT err.number = 0 then"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	'	percentComplete = 0"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	'end if"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	'Wscript.StdOut.Write("" "" & percent & ""% "")"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.StdOut.Write(""."")"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	on error goto 0"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.Sleep 2000"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Wend"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Wscript.StdOut.WriteLine("" 100% Complete."")"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Wscript.StdOut.Write(""VRDTVS_VRD6_AdScan: Exiting"")"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "on error resume next"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "VideoReDo.ProgramExit()"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "on error goto 0"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Wscript.Quit 0"
+	ccvas_status = vrdtvsp_delete_a_file(ccvas_Absolute_script_name, True) 	' delete the file first
+	set ccvas_object = fso.CreateTextFile(ccvas_Absolute_script_name, True, False) ' *** vapoursynth fails with unicode input file *** [ filename, Overwrite[, Unicode]])
+	If ccvas_object is Nothing  Then ' Something went wrong with creating the file
+		If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: VRDTVSP ERROR vrdtvsp_create_custom_adscan_script_vrd6 - Error - Nothing object returned from fso.CreateTextFile for file """ & ccvas_Absolute_script_name & """... Aborting ...")
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_create_custom_adscan_script_vrd6 - Error - Nothing object returned from fso.CreateTextFile for file """ & ccvas_Absolute_script_name & """... Aborting ...")
+		Wscript.Echo "Error 17 = cannot perform the requested operation"
+		On Error goto 0
+		WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+	End If
+	For i = Lbound(ccvas) to UBound(ccvas) Step 1
+		ccvas_object.WriteLine ccvas(i)
+	Next
+	eiadbf_batfilename_object.close
+	set eiadbf_batfilename_object = Nothing
+	vrdtvsp_create_custom_adscan_script_vrd6 = ccvas_Absolute_script_name
 End Function
