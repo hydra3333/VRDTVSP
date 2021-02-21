@@ -4046,11 +4046,6 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		' ++++ START Run the ADSCAN command
 		ff_timerStart = Timer
 		vrdtvsp_status = vrdtvsp_delete_a_file(vrdtvsp_logfile_wildcard_ADSCAN, True) ' True=silently delete it	' is a wildcard, in fso.DeleteFile the filespec can contain wildcard characters in the last path component
-
-
-		???????????? script_name = vrdtvsp_create_custom_adscan_script_vrd6
-
-
 		If vrd_version_for_adscan = 5 Then
 			CF_exe_cmd_string = "cscript //Nologo """ & vrdtvsp_path_for_adscan_vbs & """ """ & CF_TARGET_AbsolutePathName & """  """ & CF_BPRJ_AbsolutePathName & """ /q"
 		ElseIf vrd_version_for_adscan = 6 Then ' v6 uses a different scheme, we have a custom temporary script we created
