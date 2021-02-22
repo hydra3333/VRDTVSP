@@ -2852,12 +2852,12 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		' the OLD way:
 		'	 CF_exe_status = vrdtvsp_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string) ????? do the QSF in the DOS batch file like adscan
 		' the NEW way:
-		ReDim vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(4) ' base 0, so the dimension is always 1 less than the number of commands
+		ReDim vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(2) ' base 0, so the dimension is always 1 less than the number of commands
 		vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(0) = "DEL /F """ & CF_QSFxml_AbsolutePathName & """"
 		vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1) = "DEL /F """ & CF_QSF_AbsolutePathName & """"
 		vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(2) = CF_exe_cmd_string
-		vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(3) = "ECHO TYPE """ & CF_QSFxml_AbsolutePathName & """"
-		vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(4) = "TYPE """ & CF_QSFxml_AbsolutePathName & """"
+		'vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(3) = "ECHO TYPE """ & CF_QSFxml_AbsolutePathName & """"	' DO NOT DO THIS - the errorlevel returned ins based on the LAST command run
+		'vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(4) = "TYPE """ & CF_QSFxml_AbsolutePathName & """"		' DO NOT DO THIS - the errorlevel returned ins based on the LAST command run
 		CF_exe_status = vrdtvsp_Exec_in_a_DOS_BAT_file(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log - the safer way of doing it
 		Erase vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array
 		WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string() & " ====================================================================================================================================================================")
