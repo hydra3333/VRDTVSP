@@ -244,7 +244,8 @@ If vrd_version_for_qsf = 5 Then '*** QSF
     vrdtvsp_extension_avc = const_vrd5_extension_avc
 	vrdtvsp_logfile_wildcard_QSF = vrd5_logfile_wildcard
 ElseIf vrd_version_for_qsf = 6 Then
-    vrdtvsp_path_for_qsf_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd6_path,"vp.vbs"))
+    ' the old way: vrdtvsp_path_for_qsf_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd6_path,"vp.vbs")) ????????????? generate it
+	vrdtvsp_path_for_qsf_vbs = vrdtvsp_create_custom_QSF_vbscript_vrd6()
     vrdtvsp_profile_name_for_qsf_mpeg2 = const_vrd6_profile_mpeg2
     vrdtvsp_profile_name_for_qsf_avc = const_vrd6_profile_avc
     vrdtvsp_extension_mpeg2 = const_vrd6_extension_mpeg2
@@ -272,7 +273,7 @@ ElseIf vrd_version_for_adscan = 6 Then
 	' *** v6 has changed,	see https://videoredo.net/msgBoard/index.php?threads/adscan2-for-v6-how-to-use.37593/#post-133909
 	'						AdScans are just saves now. Use the same script you use to QSF and just pass it *adscan_current* as the profile name. All the other progress code is identical to a normal save.
 	vrdtvsp_path_for_adscan_vbs = vrdtvsp_create_custom_adscan_script_vrd6() ' create our custom VRD v6 adscan script and leave it undeleted in the scratch temporary folder
-	vrdtvsp_logfile_wildcard_ADSCAN= vrd6_logfile_wildcard
+	vrdtvsp_logfile_wildcard_ADSCAN = vrd6_logfile_wildcard
 Else
     WScript.StdOut.WriteLine("VRDTVSP ERROR - vrdtvsp_path_for_adscan_vbs can only be 5 or 6 ... Aborting ...")
 	Wscript.Echo "Error 17 = cannot perform the requested operation"
@@ -2405,6 +2406,7 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'Dim CF_FILE_AbsolutePathName
 	Dim                             CF_FILE_ParentFolderName,   CF_FILE_BaseName,   CF_FILE_Ext
 	Dim CF_QSF_AbsolutePathName,    CF_QSF_ParentFolderName,    CF_QSF_BaseName,    CF_QSF_Ext
+	Dim CF_QSFxml_AbsolutePathName, CF_QSFxml_ParentFolderName, CF_QSFxml_BaseName, CF_QSFxml_Ext
 	Dim CF_TARGET_AbsolutePathName, CF_TARGET_ParentFolderName, CF_TARGET_BaseName, CF_TARGET_Ext
 	Dim CF_vprj_AbsolutePathName,   CF_vprj_ParentFolderName,   CF_vprj_BaseName,   CF_vprj_Ext
 	Dim CF_VPY_AbsolutePathName,    CF_VPY_ParentFolderName,    CF_VPY_BaseName,    CF_VPY_Ext, CF_VPY_object, CF_VPY_string
@@ -2742,6 +2744,11 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	CF_QSF_Ext = vrdtvsp_extension ' set above based on incoming codec
 	CF_QSF_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_QSF_ParentFolderName,CF_QSF_BaseName & "." & CF_QSF_Ext))
 	'
+	CF_QSFxml_ParentFolderName = CF_temp_path
+	CF_QSFxml_BaseName = CF_FILE_BaseName & ".QSF"
+	CF_QSFxml_Ext = ".xml"
+	CF_QSFxml_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_QSF_ParentFolderName,CF_QSF_BaseName & "." & CF_QSFxml_Ext))
+	'
 	CF_VPY_ParentFolderName = CF_temp_path
 	CF_VPY_BaseName = CF_QSF_BaseName
 	CF_VPY_Ext = "vpy"			' always .vpy
@@ -2763,12 +2770,9 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	' ++++ START Run the QSF command
 	ff_timerStart = Timer
 	vrdtvsp_status = vrdtvsp_delete_a_file(CF_QSF_AbsolutePathName, True) ' True=silently delete it
+	vrdtvsp_status = vrdtvsp_delete_a_file(CF_QSFxml_AbsolutePathName, True) ' True=silently delete it
 	vrdtvsp_status = vrdtvsp_delete_a_file(vrdtvsp_logfile_wildcard_QSF, True) ' True=silently delete it 	' is a wildcard, in fso.DeleteFile the filespec can contain wildcard characters in the last path component
 	vrdtvsp_status = vrdtvsp_delete_a_file(vrdtvsp_logfile_wildcard_ADSCAN, True) ' True=silently delete it	' is a wildcard, in fso.DeleteFile the filespec can contain wildcard characters in the last path component
-	CF_exe_cmd_string = "cscript //Nologo """ & vrdtvsp_path_for_qsf_vbs & """ """ & CF_FILE_AbsolutePathName & """  """ & CF_QSF_AbsolutePathName & """ /qsf /p """ & vrdtvsp_profile_name_for_qsf & """ /q /na"
-	If vrdtvsp_DEBUG Then 
-		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_File """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ do QSF with CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
-	End If
 	' save QSF command	
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	CF_object_saved_ffmpeg_commands.WriteLine("REM ===============================================================================================================")
@@ -2815,25 +2819,23 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	' Here is where we actually do the QSF or just copy the SOURCE file and pretend it is a .QSF'd file
 	' NOTE: we actually to the QSF (so we can determine the Bitrate form the QSF logfile) then delete the QSF file and replace it with a copy of the source file
+	' The OLD way:
+	'	CF_exe_cmd_string = "cscript //Nologo """ & vrdtvsp_path_for_qsf_vbs & """ """ & CF_FILE_AbsolutePathName & """  """ & CF_QSF_AbsolutePathName & """ /qsf /p """ & vrdtvsp_profile_name_for_qsf & """ /q /na"
+	' The NEW way:
+	CF_exe_cmd_string = "cscript //Nologo """ & vrdtvsp_path_for_qsf_vbs & """ """ & CF_FILE_AbsolutePathName & """  """ & CF_QSF_AbsolutePathName & """  """ & vrdtvsp_profile_name_for_qsf & """ """ & CF_QSFxml_AbsolutePathName & """"
+		' Args(0) is input video file path - a fully qualified path name
+		' Args(1) is path/name of output QSF'd file - a fully qualified path name
+		' Args(2) is name of QSF Output Profile created in VRD v6
+		' Args(3) is path/name of a file of XML associated with the output QSF'd file - a fully qualified path name
+	'
+	If vrdtvsp_DEBUG Then 
+		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_File """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ do QSF with CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
+	End If
 	If CF_do_qsf Then
 		' do the actual QSF command (delete the QSF file first)
-		
-
-		WScript.StdOut.WriteLine(" ")
-		WScript.StdOut.WriteLine(" ")
-		WScript.StdOut.WriteLine(" ")
-		WScript.StdOut.WriteLine(" ")
-		vrdtvsp_status = vrdtvsp_create_custom_QSF_script_vrd6() ' TEMP VARIABLE ONLY, should be the filename of the QSF script created
-		WScript.StdOut.WriteLine("Created QSF script """ & vrdtvsp_status & """")
-		WScript.StdOut.WriteLine(" ")
-		WScript.StdOut.WriteLine(" ")
-		WScript.StdOut.WriteLine(" ")
-		Wscript.quit
-
-
-
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: Doing QSF for """ & CF_FILE_AbsolutePathName & """ ... " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: QSF command: " & CF_exe_cmd_string)
+		CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_QSFxml_AbsolutePathName & """")
 		CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_QSF_AbsolutePathName & """")
 		CF_object_saved_ffmpeg_commands.WriteLine("REM ====================================================================================================================================================================")
 		CF_object_saved_ffmpeg_commands.WriteLine("ECHO !DATE! !TIME!")
@@ -2843,7 +2845,12 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		vrdtvsp_status = vrdtvsp_delete_a_file(CF_QSF_AbsolutePathName, True) ' True=silently delete it
 		WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string() & " ====================================================================================================================================================================")
 		WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string() & " ====================================================================================================================================================================")
-		CF_exe_status = vrdtvsp_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string)
+
+
+?????		CF_exe_status = vrdtvsp_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string) ????? do the QSF in the DOS batch file like adscan
+
+
+
 		WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string() & " ====================================================================================================================================================================")
 		WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string() & " ====================================================================================================================================================================")
 	Else ' proceed with creating the "pretend" QSF file
@@ -2856,6 +2863,7 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: ----- Instead-of-QSF for """ & CF_FILE_AbsolutePathName & """ ... " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: ----- Copying: """ & CF_FILE_AbsolutePathName & """ to """ & CF_QSF_AbsolutePathName & """ with: " & CF_exe_cmd_string)
 		CF_object_saved_ffmpeg_commands.WriteLine("REM Instead-of-QSF, copying: " & CF_exe_cmd_string)
+		CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_QSFxml_AbsolutePathName & """")
 		CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_QSF_AbsolutePathName & """")
 		CF_object_saved_ffmpeg_commands.WriteLine("REM ====================================================================================================================================================================")
 		CF_object_saved_ffmpeg_commands.WriteLine("ECHO !DATE! !TIME!")
@@ -2882,6 +2890,7 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		End If
 		CF_exe_status = 0
 	End If
+	vrdtvsp_status = vrdtvsp_delete_a_file(qsf_vbscript_filename, True) ' True=silently delete it
 	'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	If CF_exe_status <> 0 OR NOT fso.FileExists(CF_QSF_AbsolutePathName) Then
 		If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: ERROR vrdtvsp_Convert_File - Error - Failed to QSF """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
@@ -4394,7 +4403,7 @@ Function vrdtvsp_create_custom_adscan_script_vrd6()
 	vrdtvsp_create_custom_adscan_script_vrd6 = ccvas_Absolute_script_name
 End Function
 '
-Function vrdtvsp_create_custom_QSF_script_vrd6()
+Function vrdtvsp_create_custom_QSF_vbscript_vrd6()
 	' Create a custom QSF Script for use with VRD v6
 	' Return the Absolute filename of the script
 	Dim ccqsfs_Absolute_script_name
@@ -4723,18 +4732,12 @@ Function vrdtvsp_create_custom_QSF_script_vrd6()
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	item_text = item_nNode.text ' eg the text for that item //VideoReDoProject/EncodingDimensions"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	gimme_xml_named_attribute = item_nNode.getAttribute(xml_item_attribute_name)"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "End Function"
-
-
-
-
-
-
 	' Create the new custom QSF script in the nominated file from the array above
 	ccqsfs_status = vrdtvsp_delete_a_file(ccqsfs_Absolute_script_name, True) 	' delete the file first
 	Set ccqsfs_object = fso.CreateTextFile(ccqsfs_Absolute_script_name, True, False) ' *** vapoursynth fails with unicode input file *** [ filename, Overwrite[, Unicode]])
 	If ccqsfs_object is Nothing  Then ' Something went wrong with creating the file
-		If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: VRDTVSP ERROR vrdtvsp_create_custom_QSF_script_vrd6 - Error - Nothing object returned from fso.CreateTextFile for file """ & ccqsfs_Absolute_script_name & """... Aborting ...")
-		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_create_custom_QSF_script_vrd6 - Error - Nothing object returned from fso.CreateTextFile for file """ & ccqsfs_Absolute_script_name & """... Aborting ...")
+		If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: VRDTVSP ERROR vrdtvsp_create_custom_QSF_vbscript_vrd6 - Error - Nothing object returned from fso.CreateTextFile for file """ & ccqsfs_Absolute_script_name & """... Aborting ...")
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_create_custom_QSF_vbscript_vrd6 - Error - Nothing object returned from fso.CreateTextFile for file """ & ccqsfs_Absolute_script_name & """... Aborting ...")
 		Wscript.Echo "Error 17 = cannot perform the requested operation"
 		On Error goto 0
 		WScript.Quit 17 ' Error 17 = cannot perform the requested operation
@@ -4744,5 +4747,5 @@ Function vrdtvsp_create_custom_QSF_script_vrd6()
 	Next
 	ccqsfs_object.close
 	Set ccqsfs_object = Nothing
-	vrdtvsp_create_custom_QSF_script_vrd6 = ccqsfs_Absolute_script_name
+	vrdtvsp_create_custom_QSF_vbscript_vrd6 = ccqsfs_Absolute_script_name
 End Function
