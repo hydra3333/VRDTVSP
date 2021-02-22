@@ -519,6 +519,9 @@ vrdtvsp_exit_code = vrdtvsp_delete_a_file(vrdtvsp_Insomnia64_tmp_filename, True)
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Finish and Quit
 '
+vrdtvsp_status = vrdtvsp_delete_a_file(vrdtvsp_path_for_qsf_vbs, True) ' True=silently delete it
+vrdtvsp_status = vrdtvsp_delete_a_file(vrdtvsp_path_for_adscan_vbs, True) ' True=silently delete it
+'
 vrdtvsp_timer_EndTime_overall = Timer
 WScript.StdOut.WriteLine(vrdtvsp_ScriptName & " Finished: " & vrdtvsp_current_datetime_string() & "  Elapsed Time: " & vrdtvsp_Calculate_ElapsedTime_string(vrdtvsp_timer_StartTime_overall, vrdtvsp_timer_EndTime_overall))
 If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: VTDRVS: " & vrdtvsp_ScriptName & " Finished: " & vrdtvsp_current_datetime_string() & "  Elapsed Time: " & vrdtvsp_Calculate_ElapsedTime_string(vrdtvsp_timer_StartTime_overall, vrdtvsp_timer_EndTime_overall))
@@ -1000,7 +1003,7 @@ Sub vrdtvsp_ffiaft_Process_Files_In_Subfolders (objSpecifiedFolder, do_subfolder
 	' Function to Process all files in specified folder tree OBJECT with file Extensions: .ts .mp4 .mpg
 	'   a) Remove special characters in filenames for file Extensions: .ts .mp4 .mpg and autofixes associated .vprj
 	'   b) modify the filenames based on the filename content including reformatting the date in the filename
-	'   c) *** NOT THIS, do it outside ... fix the file DateCreated and DateModified timestamps based on the date in the filename (a PowerShell command ... since DateCreated can't be modified in vbscript)
+	'   c) *** NOT THIS, do it outside : fix the file DateCreated and DateModified timestamps based on the date in the filename (a PowerShell command ... since DateCreated can't be modified in vbscript)
     ' rely on global variable "fso"
     ' Parameters:
 	'	objSpecifiedFolder		Object from fso.GETFOLDER of the top level folder to process
@@ -2893,7 +2896,6 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		End If
 		CF_exe_status = 0
 	End If
-	vrdtvsp_status = vrdtvsp_delete_a_file(qsf_vbscript_filename, True) ' True=silently delete it
 	'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	If CF_exe_status <> 0 OR NOT fso.FileExists(CF_QSF_AbsolutePathName) Then
 		If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: ERROR vrdtvsp_Convert_File - Error - Failed to QSF """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
