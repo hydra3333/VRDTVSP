@@ -4284,7 +4284,7 @@ Function vrdtvsp_create_custom_adscan_script_vrd6()
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim adscan_profile_name"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim VideoReDoSilent"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim VideoReDo"
-	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim openflag, closeflag"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim openflag, closeflag, outputOK"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim percent"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim i, profile_count, adscan_profile_count, matching_adscan_profile, a_profile_name, is_adscan"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim Adscan_Profile_Names()"
