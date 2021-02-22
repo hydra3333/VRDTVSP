@@ -4387,7 +4387,7 @@ Function vrdtvsp_create_custom_adscan_script_vrd6()
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.Sleep 2000"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Wend"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "closeflag = VideoReDo.FileClose()"
-	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Wscript.StdOut.WriteLine("" QSF 100% Complete."")"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Wscript.StdOut.WriteLine("" AdScan 100% Complete."")"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Wscript.StdOut.WriteLine(""VRDTVS_VRD6_AdScan: Exiting"")"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "on error resume next"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "VideoReDo.ProgramExit()"
