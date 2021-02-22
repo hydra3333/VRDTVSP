@@ -4192,7 +4192,7 @@ Function vrdtvsp_Exec_in_a_DOS_BAT_file (byVal eiadbf_cmd_string_array, ByVal ei
 	eiadbf_status = vrdtvsp_delete_a_file(eiadbf_logfilename, True)
 	eiadbf_lbound = LBOUND(eiadbf_cmd_string_array)
 	eiadbf_ubound = UBOUND(eiadbf_cmd_string_array)
-	set eiadbf_batfilename_object = fso.CreateTextFile(eiadbf_batfilename, True, False) ' no unicode please, some things bail with that
+	set eiadbf_batfilename_object = fso.CreateTextFile(eiadbf_batfilename, True, False) ' true to overwrite, false so no unicode please, some things bail with that
 	eiadbf_batfilename_object.WriteLine("@ECHO ON")
 	eiadbf_batfilename_object.WriteLine("@setlocal ENABLEDELAYEDEXPANSION")
 	eiadbf_batfilename_object.WriteLine("@setlocal enableextensions")
@@ -4376,6 +4376,7 @@ Function vrdtvsp_create_custom_adscan_script_vrd6()
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "VideoReDo.ProgramExit()"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "on error goto 0"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Wscript.Quit 0"
+	' Create the new custom ADSCAN script in the nominated file
 	ccvas_status = vrdtvsp_delete_a_file(ccvas_Absolute_script_name, True) 	' delete the file first
 	set ccvas_object = fso.CreateTextFile(ccvas_Absolute_script_name, True, False) ' *** vapoursynth fails with unicode input file *** [ filename, Overwrite[, Unicode]])
 	If ccvas_object is Nothing  Then ' Something went wrong with creating the file
@@ -4483,7 +4484,7 @@ Function vrdtvsp_create_custom_QSF_script_vrd6()
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Dim percent"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Dim i, profile_count, QSF_profile_count, matching_QSF_profile, a_profile_name, is_QSF"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Dim QSF_Profile_Names()"
-	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Dim xml_string, xml_string_openedfile, xml_string_completedfile, do_FileGetOpenedFileProgramInfo"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Dim xml_string, xml_string_openedfile, xml_string_completedfile"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "'"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Set Args = Wscript.Arguments"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "argCount = Wscript.Arguments.Count"
@@ -4583,26 +4584,29 @@ Function vrdtvsp_create_custom_QSF_script_vrd6()
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	on error goto 0"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	Wscript.Sleep 1000 ' reduced from 2000 to 1000"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Wend"
-	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "xml_string_completedfile = VideoReDo.OutputGetCompletedInfo()    ' which is the most recently completed output file (hopefully the QSF file) https://www.videoredo.com/TVSuite_Application_Notes/output_complete_info_xml_forma.html"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "' Grab the *Actual* info about the ""VRD latest save"" and hope it is the QSF file)"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "on error resume next"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "xml_string_completedfile = """" "
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "xml_string_completedfile = VideoReDo.OutputGetCompletedInfo() ' which is the most recently completed output file (hopefully the QSF file) https://www.videoredo.com/TVSuite_Application_Notes/output_complete_info_xml_forma.html"" "
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "on error goto 0"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "closeflag = VideoReDo.FileClose()"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Wscript.StdOut.WriteLine("" QSF 100% Complete."")"
-	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "do_FileGetOpenedFileProgramInfo = False"
-	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	If xml_string_completedfile = "" "" Then"
-	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "		do_FileGetOpenedFileProgramInfo = True"
-	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	'ElseIf xml_string_completedfile.filename <> qsfFile Then"
-	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	'	do_FileGetOpenedFileProgramInfo = True"
-	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "End If"
-	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "If do_FileGetOpenedFileProgramInfo Then"
-	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	xml_string_openedfile = VideoReDo.FileGetOpenedFileProgramInfo() ' https://www.videoredo.com/TVSuite_Application_Notes/program_info_xml_format.html"
-	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "End If"
-	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Wscript.StdOut.WriteLine("" "")"
-	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Wscript.StdOut.WriteLine(""xml_string_completedfile="" & xml_string_completedfile)"
-	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Wscript.StdOut.WriteLine("" "")"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "' Grab the *Estimated* info about the QSF file by a quick open and close"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "on error resume next"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "openflag = VideoReDo.FileOpen(qsfFile, False)' True means QSF mode"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "xml_string_openedfile = """" "
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "xml_string_openedfile = VideoReDo.FileGetOpenedFileProgramInfo() ' https://www.videoredo.com/TVSuite_Application_Notes/program_info_xml_format.html"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "closeflag = VideoReDo.FileClose()"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "on error goto 0"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "'"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Wscript.StdOut.WriteLine(""VRDTVS_VRD6_QSF: xml_string_completedfile="" & xml_string_completedfile)"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Wscript.StdOut.WriteLine(""VRDTVS_VRD6_QSF: xml_string_openedfile="" & xml_string_openedfile)"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Wscript.StdOut.WriteLine(""VRDTVS_VRD6_QSF: Exiting"")"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "on error resume next"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "VideoReDo.ProgramExit()"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "on error goto 0"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Wscript.Quit 0"
+	' Create the new custom QSF script in the nominated file
 	ccqsfs_status = vrdtvsp_delete_a_file(ccqsfs_Absolute_script_name, True) 	' delete the file first
 	set ccqsfs_object = fso.CreateTextFile(ccqsfs_Absolute_script_name, True, False) ' *** vapoursynth fails with unicode input file *** [ filename, Overwrite[, Unicode]])
 	If ccqsfs_object is Nothing  Then ' Something went wrong with creating the file
