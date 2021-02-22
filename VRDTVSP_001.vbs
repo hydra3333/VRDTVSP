@@ -4488,6 +4488,7 @@ Function vrdtvsp_create_custom_QSF_script_vrd6()
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Dim xmlDoc,	xml_status, xml_objErr, xml_errorCode, xml_reason"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Dim actual_outputFile, actual_VideoOutputFrameCount, actual_ActualVideoBitrate"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Dim estimated_outputFile, estimated_VideoOutputFrameCount, estimated_ActualVideoBitrate"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Dim fso, fileObj"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "'"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Set Args = Wscript.Arguments"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "argCount = Wscript.Arguments.Count"
@@ -4607,7 +4608,7 @@ Function vrdtvsp_create_custom_QSF_script_vrd6()
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Wscript.StdOut.WriteLine(""VRDTVS_VRD6_QSF: xml_string_openedfile="") "
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Wscript.StdOut.WriteLine(xml_string_openedfile) "
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "'"
-	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "' Get Actual data obtained during the QSF process"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "''''' Get Actual data obtained during the QSF process"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Set xmlDoc = WScript.CreateObject(""Msxml2.DOMDocument.6.0"")"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "xmlDoc.async = False"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "on error resume next "
@@ -4630,9 +4631,10 @@ Function vrdtvsp_create_custom_QSF_script_vrd6()
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "actual_VideoOutputFrameCount = gimme_xml_named_value(xmlDoc, ""//VRDOutputInfo/VideoOutputFrameCount"")"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "actual_ActualVideoBitrate = gimme_xml_named_value(xmlDoc, ""//VRDOutputInfo/ActualVideoBitrate"") ' decimal number in Mbps"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "If actual_ActualVideoBitrate = "" Then actual_ActualVideoBitrate = 0"
-	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "actual_ActualVideoBitrate = CLng(CDbl(actual_ActualVideoBitrate) * CDdbl(1000000.0)) ' convert from dedcimal Mpbs to bps"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "actual_ActualVideoBitrate = CLng(CDbl(actual_ActualVideoBitrate) * CDbl(1000000.0)) ' convert from dedcimal Mpbs to bps"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Set xmlDoc = Nothing"
-	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "' Get Estimated data from a quick open and close of the the QSF file"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "'"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "''''' Get Estimated data from a quick open and close of the the QSF file"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Set xmlDoc = WScript.CreateObject(""Msxml2.DOMDocument.6.0"")"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "xmlDoc.async = False"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "on error resume next "
@@ -4655,6 +4657,30 @@ Function vrdtvsp_create_custom_QSF_script_vrd6()
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "estimated_VideoOutputFrameCount = gimme_xml_named_attribute(xmlDoc, ""//VRDProgramInfo/ProgramDuration"", ""total_frames"")"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "estimated_ActualVideoBitrate = gimme_xml_named_value(xmlDoc, ""//VRDProgramInfo/Video/EstimatedVideoBitrate"") ' decimal number in Mbps"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Set xmlDoc = Nothing"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "'"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "' Write our own version of the XML values to the specified XML file so that the calling script can read them later"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Set fso = CreateObject(""Scripting.FileSystemObject"")"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Set fileObj = fso.CreateTextFile(xmlFile, True, False) ' *** vapoursynth fails with unicode input file *** [ filename, Overwrite[, Unicode]])"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "If Ucase(actual_outputFile)= Ucase() Then ' Use the Actual QSF values"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	fileObj.WriteLine(""<QSFinfo>"")"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	fileObj.WriteLine(""   <QSFinfo>"")"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	fileObj.WriteLine(""   <type>actual</actual_type>"")"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	fileObj.WriteLine(""   <outputFile>"""""" & actual_outputFile & """"""</outputFile>"")"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	fileObj.WriteLine(""   <VideoOutputFrameCount>"" & actual_VideoOutputFrameCount & ""</VideoOutputFrameCount>"")"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	fileObj.WriteLine(""   <Bitrate>"" & actual_ActualVideoBitrate & ""<Bitrate>"")"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	fileObj.WriteLine(""</QSFinfo>"")"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Else ' Use the Estimated QSF values"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	fileObj.WriteLine(""<QSFinfo>"")"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	fileObj.WriteLine(""   <QSFinfo>"")"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	fileObj.WriteLine(""   <type>estimated</type>"")"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	fileObj.WriteLine(""   <outputFile>"""""" & estimated_outputFile & """"""</outputFile>"")"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	fileObj.WriteLine(""   <VideoOutputFrameCount>"" & estimated_VideoOutputFrameCount & ""</VideoOutputFrameCount>"")"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	fileObj.WriteLine(""   <Bitrate>"" & estimated_ActualVideoBitrate & ""<Bitrate>"")"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	fileObj.WriteLine(""</QSFinfo>"")"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "End If"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "fileObj.close"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Set fileObj = Nothing"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Set fso = Nothing"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "'"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Wscript.StdOut.WriteLine(""VRDTVS_VRD6_QSF: actual_outputFile="""""" & actual_outputFile & """""""") "
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Wscript.StdOut.WriteLine(""VRDTVS_VRD6_QSF: actual_VideoOutputFrameCount="" & actual_VideoOutputFrameCount) "
@@ -4702,9 +4728,12 @@ Function vrdtvsp_create_custom_QSF_script_vrd6()
 
 
 
+
+
+
 	' Create the new custom QSF script in the nominated file from the array above
 	ccqsfs_status = vrdtvsp_delete_a_file(ccqsfs_Absolute_script_name, True) 	' delete the file first
-	set ccqsfs_object = fso.CreateTextFile(ccqsfs_Absolute_script_name, True, False) ' *** vapoursynth fails with unicode input file *** [ filename, Overwrite[, Unicode]])
+	Set ccqsfs_object = fso.CreateTextFile(ccqsfs_Absolute_script_name, True, False) ' *** vapoursynth fails with unicode input file *** [ filename, Overwrite[, Unicode]])
 	If ccqsfs_object is Nothing  Then ' Something went wrong with creating the file
 		If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: VRDTVSP ERROR vrdtvsp_create_custom_QSF_script_vrd6 - Error - Nothing object returned from fso.CreateTextFile for file """ & ccqsfs_Absolute_script_name & """... Aborting ...")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_create_custom_QSF_script_vrd6 - Error - Nothing object returned from fso.CreateTextFile for file """ & ccqsfs_Absolute_script_name & """... Aborting ...")
@@ -4716,6 +4745,6 @@ Function vrdtvsp_create_custom_QSF_script_vrd6()
 		ccqsfs_object.WriteLine ccqsfs(i)
 	Next
 	ccqsfs_object.close
-	set ccqsfs_object = Nothing
+	Set ccqsfs_object = Nothing
 	vrdtvsp_create_custom_QSF_script_vrd6 = ccqsfs_Absolute_script_name
 End Function
