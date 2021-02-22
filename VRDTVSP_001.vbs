@@ -458,6 +458,16 @@ End If
 ' in Top Level Folders and Subfolders: Source and Destination (the function filters for file Extensions: .ts .mp4 .mpg but NOT .vprj)
 '
 vrdtvsp_temp_powershell_filename = vrdtvsp_gimme_a_temporary_absolute_filename("vrdtvsp_ps1_to_fix_timestamps-" & vrdtvsp_run_datetime) & ".ps1"
+'If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: about to call vrdtvsp_fix_timestamps_in_a_folder_tree(""" & vrdtvsp_destination_mp4_Folder & """, False)")
+vrdtvsp_status = vrdtvsp_fix_timestamps_in_a_folder_tree(vrdtvsp_destination_mp4_Folder, False) ' False indicates to process only the top level folder with NO SUBFOLDERS
+If vrdtvsp_status <> 0 Then ' Something went wrong with processing files in the Destination folder ... check for 53 not found ?
+	If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: VRDTVSP ERROR - Error " & vrdtvsp_status & " from vrdtvsp_fix_timestamps_in_a_folder_tree in """ & vrdtvsp_destination_mp4_Folder & """... Aborting ...")
+	WScript.StdOut.WriteLine("VRDTVSP ERROR - Error " & vrdtvsp_status & " from vrdtvsp_fix_timestamps_in_a_folder_tree in """ & vrdtvsp_destination_mp4_Folder & """... Aborting ...")
+	Wscript.Echo "Error 17 = cannot perform the requested operation"
+	On Error goto 0
+	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+End If
+'
 'vrdtvsp_status = vrdtvsp_create_ps1_to_fix_timestamps(vrdtvsp_temp_powershell_filename)
 'If vrdtvsp_status <> 0 Then ' Something went wrong with creating the .ps1 file
 '	If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: VRDTVSP ERROR - Error " & vrdtvsp_status & " from vrdtvsp_create_ps1_to_fix_timestamps with """ & vrdtvsp_temp_powershell_filename & """... Aborting ...")
@@ -519,8 +529,8 @@ vrdtvsp_exit_code = vrdtvsp_delete_a_file(vrdtvsp_Insomnia64_tmp_filename, True)
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Finish and Quit
 '
-vrdtvsp_status = vrdtvsp_delete_a_file(vrdtvsp_path_for_qsf_vbs, True) ' True=silently delete it
-vrdtvsp_status = vrdtvsp_delete_a_file(vrdtvsp_path_for_adscan_vbs, True) ' True=silently delete it
+'vrdtvsp_status = vrdtvsp_delete_a_file(vrdtvsp_path_for_qsf_vbs, True) ' True=silently delete it
+'vrdtvsp_status = vrdtvsp_delete_a_file(vrdtvsp_path_for_adscan_vbs, True) ' True=silently delete it
 '
 vrdtvsp_timer_EndTime_overall = Timer
 WScript.StdOut.WriteLine(vrdtvsp_ScriptName & " Finished: " & vrdtvsp_current_datetime_string() & "  Elapsed Time: " & vrdtvsp_Calculate_ElapsedTime_string(vrdtvsp_timer_StartTime_overall, vrdtvsp_timer_EndTime_overall))
@@ -4756,4 +4766,7 @@ Function vrdtvsp_create_custom_QSF_vbscript_vrd6()
 	ccqsfs_object.close
 	Set ccqsfs_object = Nothing
 	vrdtvsp_create_custom_QSF_vbscript_vrd6 = ccqsfs_Absolute_script_name
+End Function
+'
+Function vrdtvsp_fix_timestamps_in_a_folder_tree (ftiaft_folder_name, ftiaft_do_the_tree)
 End Function
