@@ -4762,7 +4762,7 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (byVal riqowv_FILE_AbsolutePathNam
 	'</VRDOutputInfo>
 	'
 	Const wait_ms = 2000
-	Const giveup_interval_count = (1000 * 60 * 60 * 2) / wait_ms ' 1000 millisecs * 60 Secs * 60 Minutes * 2 = 2 hours in milliseconds divide by the waiting time in millisconds
+	Dim giveup_interval_count
 	Dim xmlDict	' this is a dictionary object returned with Set vrdtvsp_run_inlineQSF_only_with_vrd6 = xmlDict 
 	Dim VideoReDoSilent
 	Dim VideoReDo
@@ -4775,6 +4775,8 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (byVal riqowv_FILE_AbsolutePathNam
 	'
 	Dim actual_outputFile, actual_VideoOutputFrameCount, actual_ActualVideoBitrate
 	Dim estimated_outputFile, estimated_VideoOutputFrameCount, estimated_ActualVideoBitrate
+	'
+	giveup_interval_count = (1000 * 60 * 60 * 2) / wait_ms ' 1000 millisecs * 60 Secs * 60 Minutes * 2 = 2 hours in milliseconds divide by the waiting time in millisconds
 	'
 	riqowv_FILE_AbsolutePathName = fso.GetAbsolutePathName(riqowv_FILE_AbsolutePathName)		' was passed byVal
 	riqowv_QSF_AbsolutePathName = fso.GetAbsolutePathName(riqowv_QSF_AbsolutePathName)			' was passed byVal
