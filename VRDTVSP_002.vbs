@@ -4846,7 +4846,6 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (byVal riqowv_FILE_AbsolutePathNam
 	'
 	Dim actual_outputFile, actual_VideoOutputFrameCount, actual_ActualVideoBitrate
 	Dim estimated_outputFile, estimated_VideoOutputFrameCount, estimated_ActualVideoBitrate
-
 	'
 	riqowv_FILE_AbsolutePathName = fso.GetAbsolutePathName(riqowv_FILE_AbsolutePathName)		' was passed byVal
 	riqowv_QSF_AbsolutePathName = fso.GetAbsolutePathName(riqowv_QSF_AbsolutePathName)			' was passed byVal
@@ -4856,7 +4855,7 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (byVal riqowv_FILE_AbsolutePathNam
 	Set VideoReDo = VideoReDoSilent.VRDInterface
 	VideoReDo.ProgramSetAudioAlert(False)
 	'
-	' Validate the VRD profile exists
+	' Validate the specified VRD QSF profile exists
 	'
 	QSF_profile_count = 0
 	profile_count = VideoReDo.ProfilesGetCount()
@@ -4879,13 +4878,13 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (byVal riqowv_FILE_AbsolutePathNam
 	End If
 	matching_QSF_profile = False
 	For i = 0 to (QSF_profile_count-1)
-		If QSF_profile_name = QSF_Profile_Names(i) Then
+		If riqowv_vrd6_profile_name = QSF_Profile_Names(i) Then
 			matching_QSF_profile = True
 			Exit For
 		End If
 	Next
 	If NOT matching_QSF_profile Then
-		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: ERROR: no VRD6 QSF profile was located matching your specified profile: """ & QSF_profile_name & """")
+		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: ERROR: no VRD6 QSF profile was located matching your specified profile: """ & riqowv_vrd6_profile_name & """")
 		For i = 0 to profile_count-1
 			a_profile_name = VideoReDo.ProfilesGetProfileName( i )
 			is_QSF = NOT VideoReDo.ProfilesGetProfileIsAdScan( i )
@@ -4902,19 +4901,21 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (byVal riqowv_FILE_AbsolutePathNam
 		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: Exiting with errorlevel code 5")
 		Wscript.Quit 5
 	End If
+	' 
+	' Open the Input file and QSF SaveAs to the output file
 	'
-	openflag = VideoReDo.FileOpen(inputFile, True) ' True means QSF mode
+	openflag = VideoReDo.FileOpen(riqowv_FILE_AbsolutePathName, True) ' True means QSF mode
 	If openflag = False Then
-		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: ERROR: VideoReDo failed to open file: """ & inputFile & """")
+		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: ERROR: VideoReDo failed to open file: """ & riqowv_FILE_AbsolutePathName & """")
 		on error resume next
 		VideoReDo.ProgramExit()
 		on error goto 0
 		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: Exiting with errorlevel code 5")
 		Wscript.Quit 5
 	End If
-	outputOK = VideoReDo.FileSaveAs(qsfFile, QSF_profile_name) ' save the QSF file
+	outputOK = VideoReDo.FileSaveAs(riqowv_QSF_AbsolutePathName, riqowv_vrd6_profile_name) ' save the QSF file using the specified QSF profile
 	If NOT outputOK = True Then
-		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: ERROR: VideoReDo failed to create QSF file: """ & qsfFile & """ using profile:""" & QSF_profile_name & """")
+		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: ERROR: VideoReDo failed to create QSF file: """ & riqowv_QSF_AbsolutePathName & """ using profile:""" & riqowv_vrd6_profile_name & """")
 		on error resume next
 		closeflag = VideoReDo.FileClose()
 		VideoReDo.ProgramExit()
