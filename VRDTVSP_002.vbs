@@ -4761,8 +4761,8 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (byVal riqowv_FILE_AbsolutePathNam
 	'  <audio_level_changes hidden="1"/>
 	'</VRDOutputInfo>
 	'
-	Const wait_ms = 2000
-	Dim giveup_interval_count
+	Const wait_ms = 2000 ' in milliseconds
+	Dim dot_count_linebreak_interval, two_hours_in_ms, giveup_interval_count
 	Dim xmlDict	' this is a dictionary object returned with Set vrdtvsp_run_inlineQSF_only_with_vrd6 = xmlDict 
 	Dim VideoReDoSilent
 	Dim VideoReDo
@@ -4776,7 +4776,9 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (byVal riqowv_FILE_AbsolutePathNam
 	Dim actual_outputFile, actual_VideoOutputFrameCount, actual_ActualVideoBitrate
 	Dim estimated_outputFile, estimated_VideoOutputFrameCount, estimated_ActualVideoBitrate
 	'
-	giveup_interval_count = (1000 * 60 * 60 * 2) / wait_ms ' 1000 millisecs * 60 Secs * 60 Minutes * 2 = 2 hours in milliseconds divide by the waiting time in millisconds
+	two_hours_in_ms = CLng( 2 * 60 * 60 * 1000 )
+	dot_count_linebreak_interval = CLng(CLng(120) * CLng(1000) / CLng(wait_ms))		' for 2000 ms, this is 120 seconds worth of intervals
+	giveup_interval_count = CLng( CLng(two_hours_in_ms) / CLng( wait_ms ) )	' two hours worth of intervals
 	'
 	riqowv_FILE_AbsolutePathName = fso.GetAbsolutePathName(riqowv_FILE_AbsolutePathName)		' was passed byVal
 	riqowv_QSF_AbsolutePathName = fso.GetAbsolutePathName(riqowv_QSF_AbsolutePathName)			' was passed byVal
@@ -4859,9 +4861,9 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (byVal riqowv_FILE_AbsolutePathNam
 	i = 0
 	While( VideoRedo.OutputGetState <> 0 )
 		i = i + 1
-		If ((i MOD 30) = 0) Then Wscript.StdOut.WriteLine(" " & i)
+		If ((i MOD dot_count_linebreak_interval) = 0) Then Wscript.StdOut.WriteLine(" " & ((i * wait_ms)/1000) & " Seconds")
 		If i > giveup_interval_count Then
-			Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: ERROR: VideoReDo timeout after " & ((i * wait_ms)/1000) & " seconds working ... Aborting ...")
+			Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: ERROR: VideoReDo timeout after " & ((i * wait_ms)/1000) & " seconds waiting for QSF to complete ... Aborting ...")
 			on error resume next
 			closeflag = VideoReDo.FileClose()
 			VideoReDo.ProgramExit()
