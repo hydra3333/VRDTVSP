@@ -88,8 +88,8 @@ vrdtvsp_timer_EndTime_overall = Timer
 '
 ' (these two are Global but are also Global Defaults declared early here)
 Dim vrdtvsp_DEBUG, vrdtvsp_DEVELOPMENT_NO_ACTIONS
-vrdtvsp_DEBUG = True
-vrdtvsp_DEVELOPMENT_NO_ACTIONS = True
+vrdtvsp_DEBUG = False
+vrdtvsp_DEVELOPMENT_NO_ACTIONS = False
 '
 ' Create a bunch of scratch variables
 '
@@ -556,7 +556,7 @@ Function vrdtvsp_get_commandline_parameter(gcp_argument_name, gcp_default_value)
     '       x = vrdtvsp_get_commandline_parameter("True_or_False", False)
     ' NOTE: if the commandline parameter is a path or something, it is NOT checked or Absoluted by this function
     Dim gcp_argument_count, gcp_NamedArgs, gcp_Return_Value, gcp_defaulted_or_set
-	gcp_defaulted_or_set = "dafaulted"
+	gcp_defaulted_or_set = "defaulted"
     gcp_argument_count = WScript.Arguments.Count
     gcp_Return_Value = gcp_default_value ' default to return the default_value
     'If vrdtvsp_DEBUG Then 
