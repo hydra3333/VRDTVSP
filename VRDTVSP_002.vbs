@@ -9,7 +9,7 @@ Option Explicit
 ' using a single one-line commndline.
 ' All options are, well, optional and are based on a default source_Folder
 '
-'cscript //nologo "E:\GIT-REPOSITORIES\VRDTVSP\VRDTVS_001.vbs" ^
+'cscript //nologo "E:\GIT-REPOSITORIES\VRDTVSP\VRDTVS_002.vbs" ^
 '/DEBUG:True ^
 '/DEV:True ^
 '/capture_Folder:"G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\0save\" ^
