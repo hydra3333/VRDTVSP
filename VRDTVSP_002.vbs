@@ -18,7 +18,6 @@ Option Explicit
 '/destination_Folder:"G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVSP-Converted\" ^
 '/failed_Folder:"G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVSP-Failed-Conversion\" ^
 '/temp_path:"D:\VRDTVSP-SCRATCH\" ^
-'/vrd_version_for_qsf:6 ^
 '/vrd_version_for_adscan:6 ^
 '/do_adscan:False ^
 '/do_audio_delay:False ^
@@ -171,8 +170,8 @@ Const const_vrd6_adscan_profile_name = "VRDTVS_ADSCAN_VRD6_NON-INTERACTIVE"	' al
 Dim vrd6_logfile_wildcard
 vrd6_logfile_wildcard =  fso.GetAbsolutePathName(HDTV_root & "\") & "\VideoReDo6_*.Log"
 '
-vrd_version_for_qsf = 5
-vrd_version_for_adscan = 5
+vrd_version_for_qsf = 6
+vrd_version_for_adscan = 6
 vrdtvsp_do_adscan = False
 vrdtvsp_do_audio_delay = False
 vrdtvsp_show_mediainfo = False
@@ -217,29 +216,22 @@ vrdtvsp_done_TS_Folder = fso.GetAbsolutePathName(vrdtvsp_get_commandline_paramet
 vrdtvsp_destination_mp4_Folder = fso.GetAbsolutePathName(vrdtvsp_get_commandline_parameter("destination_Folder",vrdtvsp_destination_mp4_Folder))       ' /destination_Folder:""
 vrdtvsp_failed_conversion_TS_Folder = fso.GetAbsolutePathName(vrdtvsp_get_commandline_parameter("failed_Folder",vrdtvsp_failed_conversion_TS_Folder))  ' /failed_Folder:""
 vrdtvsp_temp_path = fso.GetAbsolutePathName(vrdtvsp_get_commandline_parameter("temp_path",vrdtvsp_temp_path))                                          ' /temp_path:"D:\VRDTVSP-SCRATCH\"
-'
-vrd_version_for_qsf = vrdtvsp_get_commandline_parameter("vrd_version_for_qsf",vrd_version_for_qsf)                                        				' /vrd_version_for_qsf:6
 vrd_version_for_adscan = vrdtvsp_get_commandline_parameter("vrd_version_for_adscan",vrd_version_for_adscan)                              			   	' /vrd_version_for_adscan:6
 vrdtvsp_do_adscan = vrdtvsp_get_commandline_parameter("do_adscan",vrdtvsp_do_adscan)                      		                    					' /do_adscan:False
 vrdtvsp_do_audio_delay = vrdtvsp_get_commandline_parameter("do_audio_delay",vrdtvsp_do_audio_delay)                      		                    	' /do_audio_delay:False
 vrdtvsp_show_mediainfo = vrdtvsp_get_commandline_parameter("show_mediainfo",vrdtvsp_show_mediainfo)                      		                    	' /show_mediainfo:False
-
-' ***************************************************************************************************************************
-'If vrd_version_for_qsf <> 5 Then '*** QSF
-'	WScript.StdOut.WriteLine("VRDTVSP WARNING ******************************************************************************************************************************")
-'	WScript.StdOut.WriteLine("VRDTVSP WARNING version vrd_version_for_qsf=" & vrd_version_for_qsf & " does not work with DGIndexNV - auto REVERTING to vrd_version_for_qsf=5")
-'	WScript.StdOut.WriteLine("VRDTVSP WARNING ******************************************************************************************************************************")
-'	vrd_version_for_qsf = 5
-'End If
-' ***************************************************************************************************************************
-If vrd_version_for_qsf = 5 Then '*** QSF
-	vrdtvsp_path_for_qsf_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd5_path,"vp.vbs"))
-    vrdtvsp_profile_name_for_qsf_mpeg2 = const_vrd5_profile_mpeg2
-    vrdtvsp_profile_name_for_qsf_avc = const_vrd5_profile_avc
-    vrdtvsp_extension_mpeg2 = const_vrd5_extension_mpeg2
-    vrdtvsp_extension_avc = const_vrd5_extension_avc
-	vrdtvsp_logfile_wildcard_QSF = vrd5_logfile_wildcard
-ElseIf vrd_version_for_qsf = 6 Then
+'
+' 2021.02.23 from now on,always use vrd v6 for QSF
+vrd_version_for_qsf = 6
+'''''vrd_version_for_qsf = vrdtvsp_get_commandline_parameter("vrd_version_for_qsf",vrd_version_for_qsf)                                        				' /vrd_version_for_qsf:6
+'If vrd_version_for_qsf = 5 Then '*** QSF
+'	vrdtvsp_path_for_qsf_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd5_path,"vp.vbs"))
+'    vrdtvsp_profile_name_for_qsf_mpeg2 = const_vrd5_profile_mpeg2
+'    vrdtvsp_profile_name_for_qsf_avc = const_vrd5_profile_avc
+'    vrdtvsp_extension_mpeg2 = const_vrd5_extension_mpeg2
+'    vrdtvsp_extension_avc = const_vrd5_extension_avc
+'	vrdtvsp_logfile_wildcard_QSF = vrd5_logfile_wildcard
+'ElseIf vrd_version_for_qsf = 6 Then
     ' the old way: vrdtvsp_path_for_qsf_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd6_path,"vp.vbs")) ????????????? generate it
 	vrdtvsp_path_for_qsf_vbs = vrdtvsp_create_custom_QSF_vbscript_vrd6()
     vrdtvsp_profile_name_for_qsf_mpeg2 = const_vrd6_profile_mpeg2
@@ -247,12 +239,12 @@ ElseIf vrd_version_for_qsf = 6 Then
     vrdtvsp_extension_mpeg2 = const_vrd6_extension_mpeg2
     vrdtvsp_extension_avc = const_vrd6_extension_avc
 	vrdtvsp_logfile_wildcard_QSF = vrd6_logfile_wildcard
-Else
-    WScript.StdOut.WriteLine("VRDTVSP ERROR - vrd_version_for_qsf can only be 5 or 6 ... Aborting ...")
-	Wscript.Echo "Error 17 = cannot perform the requested operation"
-    On Error goto 0
-	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
-End If
+'Else
+'    WScript.StdOut.WriteLine("VRDTVSP ERROR - vrd_version_for_qsf can only be 5 or 6 ... Aborting ...")
+'	Wscript.Echo "Error 17 = cannot perform the requested operation"
+'    On Error goto 0
+'	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+'End If
 ' ***************************************************************************************************************************
 'If vrd_version_for_adscan <> 5 Then '*** QSF
 '	WScript.StdOut.WriteLine("VRDTVSP WARNING ************************************************************************************************************************")
