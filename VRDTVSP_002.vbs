@@ -4767,7 +4767,6 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (byVal riqowv_FILE_AbsolutePathNam
 	'
 	riqowv_FILE_AbsolutePathName = fso.GetAbsolutePathName(riqowv_FILE_AbsolutePathName)		' was passed byVal
 	riqowv_QSF_AbsolutePathName = fso.GetAbsolutePathName(riqowv_QSF_AbsolutePathName)			' was passed byVal
-	riqowv_QSFxml_AbsolutePathName = fso.GetAbsolutePathName(riqowv_QSFxml_AbsolutePathName)	' was passed byVal
 	'
 	Set VideoReDoSilent = WScript.CreateObject("VideoReDo6.VideoReDoSilent")
 	Set VideoReDo = VideoReDoSilent.VRDInterface
@@ -4822,6 +4821,7 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (byVal riqowv_FILE_AbsolutePathNam
 	' 
 	' Open the Input file and QSF SaveAs to the output file
 	'
+	Wscript.StdOut.Write("vrdtvsp_run_inlineQSF_only_with_vrd6: Commencing: " & vrdtvsp_current_datetime_string())
 	openflag = VideoReDo.FileOpen(riqowv_FILE_AbsolutePathName, True) ' True means QSF mode
 	If openflag = False Then
 		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: ERROR: VideoReDo failed to open file: """ & riqowv_FILE_AbsolutePathName & """")
@@ -4859,7 +4859,7 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (byVal riqowv_FILE_AbsolutePathNam
 	xml_string_completedfile = "" 
 	xml_string_completedfile = VideoReDo.OutputGetCompletedInfo() ' which is the most recently completed output file (hopefully the QSF file) https://www.videoredo.com/TVSuite_Application_Notes/output_complete_info_xml_forma.html" 
 	on error goto 0
-	Wscript.StdOut.WriteLine(" QSF 100% Complete.")
+	Wscript.StdOut.WriteLine(" QSF 100% Completed: " & vrdtvsp_current_datetime_string())
 	closeflag = VideoReDo.FileClose()
 	on error resume next
 	VideoReDo.ProgramExit()
@@ -4909,7 +4909,7 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (byVal riqowv_FILE_AbsolutePathNam
 		WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 	ElseIf NOT ( Ucase(xmlDict.Item("outputFile")) =  Ucase(riqowv_QSF_AbsolutePathName) ) Then 
 		Set xmlDoc = Nothing
-		WScript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: ABORTING: outputFile from VideoReDo.OutputGetCompletedInfo() not equal QSFfilename: xml_string_completedfile=" & xml_string_completedfile & " riqowv_QSF_AbsolutePathName=" & riqowv_QSF_AbsolutePathName
+		WScript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: ABORTING: outputFile from VideoReDo.OutputGetCompletedInfo() not equal QSFfilename: xml_string_completedfile=" & xml_string_completedfile & " riqowv_QSF_AbsolutePathName=" & riqowv_QSF_AbsolutePathName)
 		Wscript.Echo "Error 17 = cannot perform the requested operation"
 		On Error goto 0
 		Set xmlDoc = Nothing
