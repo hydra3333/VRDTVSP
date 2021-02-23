@@ -95,9 +95,7 @@ SET vrdtvsp_CMD=cscript //nologo "!vrdtvsp_vbs_script!" ^
 /destination_Folder:"!destination_mp4_Folder!" ^
 /failed_Folder:"!failed_conversion_TS_Folder!" ^
 /temp_path:"!scratch_Folder!" ^
-/vrd_version_for_qsf:6 ^
 /vrd_version_for_adscan:6 ^
-/do_qsf:True ^
 /do_adscan:True ^
 /do_audio_delay:True ^
 /show_mediainfo:False
