@@ -4,7 +4,7 @@
     <Date>2021-02-20T10:24:18.290884</Date>
     <Author>3900X\u</Author>
     <Description>Runs VRDTVSP to convert home Interlaced AVC/MPEG2-AAC/mp2 files into Progressive AVC-AAC files playable by Chromecast devices.</Description>
-    <URI>\VRDTVSP_0012-BATCH</URI>
+    <URI>\VRDTVSP_002-BATCH</URI>
   </RegistrationInfo>
   <Triggers>
     <CalendarTrigger>
