@@ -4768,24 +4768,14 @@ Function vrdtvsp_create_custom_QSF_vbscript_vrd6()
 	vrdtvsp_create_custom_QSF_vbscript_vrd6 = ccqsfs_Absolute_script_name
 End Function
 '
-Function vrdtvsp_run_inlineQSF_only_with_vrd6 (riqowv_FILE_AbsolutePathName, riqowv_QSF_AbsolutePathName, riqowv_vrd6_profile_name, riqowv_QSFxml_AbsolutePathName)
+Function vrdtvsp_run_inlineQSF_only_with_vrd6 (byVal riqowv_FILE_AbsolutePathName, byVal riqowv_QSF_AbsolutePathName, byVal riqowv_vrd6_profile_name)
 	' This script should ALWAYS be reconciled with that created by function vrdtvsp_create_custom_QSF_vbscript_vrd6
 	' Parameters: 
 	'				riqowv_FILE_AbsolutePathName	is path/name of output QSF'd file - a fully qualified path name
 	'				riqowv_QSF_AbsolutePathName		is input video file path - a fully qualified path name, eg a .TS file
 	'				riqowv_vrd6_profile_name		is name ofa valid  QSF Output Profile created in VRD v6
-	'				riqowv_QSFxml_AbsolutePathName	is path/name of a file of XML associated with the output QSF'd file - a fully qualified path name
 	' Returns:
-	'				a (2 by n) multi-dimensional dynamic array of base 0; eg xx(0,0) xx(0,1) xx(0,2) xx(0,3) ... and xx(1,0) xx(1,1) xx(1,2) xx(1,3) ...
-	'					where for n items :- dimension xx(0,0..(n-1)) are item names, and dimension xx(1,0..(n-1)) are item values
-	'							ubound(xx,1) returns the upper bound of the first  dimension of 2 dimensional array xx
-	'							ubound(xx,2) returns the upper bound of the second dimension of 2 dimensional array xx
-	'					example to use:
-	'							number_if_items = ubound(xx,2) + 1
-	'							for i=0 to (number_of_items - 1) ' base 0
-	'								item_name  = xx(0,i)
-	'								item_value = xx(1,i)
-	'							next
+	'				a dictionary object populated with key/item pairs of data about the resulting QSF file (see xml from VideoReDo.OutputGetCompletedInfo() below ; xml attributes are also added as well as xml items)
 	'
 	' Example xml string: from VideoReDo.FileGetOpenedFileProgramInfo()
 	' This is a well-formed single-item XML string, which make it really easy to find things.
@@ -4844,13 +4834,7 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (riqowv_FILE_AbsolutePathName, riq
 	'  <audio_level_changes hidden="1"/>
 	'</VRDOutputInfo>
 	'
-	Dim returnArray	' this is a synamic array, use ReDim on it which only works on the last (rightmost) dimension
-
-	Dim Args, argCount
-	Dim inputFile
-	Dim qsfFile
-	Dim QSF_profile_name
-	Dim xmlFile
+	Dim xmlDict	' this is a dictionary object returned with Set vrdtvsp_run_inlineQSF_only_with_vrd6 = xmlDict 
 	Dim VideoReDoSilent
 	Dim VideoReDo
 	Dim openflag, closeflag, outputOK
@@ -4859,29 +4843,20 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (riqowv_FILE_AbsolutePathName, riq
 	Dim QSF_Profile_Names()
 	Dim xml_string, xml_string_openedfile, xml_string_completedfile
 	Dim xmlDoc,	xml_status, xml_objErr, xml_errorCode, xml_reason
+	'
 	Dim actual_outputFile, actual_VideoOutputFrameCount, actual_ActualVideoBitrate
 	Dim estimated_outputFile, estimated_VideoOutputFrameCount, estimated_ActualVideoBitrate
-	Dim fso, fileObj
+
 	'
-	Set Args = Wscript.Arguments
-	argCount = Wscript.Arguments.Count
-	If argCount <> 4 Then
-		Wscript.StdOut.WriteLine("VRDTVS_VRD6_QSF: ERROR: arg count should be 3, but is " & argCount)
-		Wscript.StdOut.WriteLine("VRDTVS_VRD6_QSF:			Args(0) is the fully qualified path/name of the input video file")
-		Wscript.StdOut.WriteLine("VRDTVS_VRD6_QSF:			Args(1) is the fully qualified path/name of the output project (.vprj) file.")
-		Wscript.StdOut.WriteLine("VRDTVS_VRD6_QSF:			Args(2) is name of QSF Output Profile already created and saved inside VRD v6")
-		Wscript.StdOut.WriteLine("VRDTVS_VRD6_QSF:			Args(3) ist he fully qualified path/name of an output XML file of QSF file characteristics.")
-		Wscript.Quit 5
-	End If
-	'
-	inputFile = Args(0)
-	qsfFile = Args(1)				' including extension .vprj
-	QSF_profile_name = Args(2)
-	xmlFile = Args(3)				' including extension .xml
+	riqowv_FILE_AbsolutePathName = fso.GetAbsolutePathName(riqowv_FILE_AbsolutePathName)		' was passed byVal
+	riqowv_QSF_AbsolutePathName = fso.GetAbsolutePathName(riqowv_QSF_AbsolutePathName)			' was passed byVal
+	riqowv_QSFxml_AbsolutePathName = fso.GetAbsolutePathName(riqowv_QSFxml_AbsolutePathName)	' was passed byVal
 	'
 	Set VideoReDoSilent = WScript.CreateObject("VideoReDo6.VideoReDoSilent")
 	Set VideoReDo = VideoReDoSilent.VRDInterface
 	VideoReDo.ProgramSetAudioAlert(False)
+	'
+	' Validate the VRD profile exists
 	'
 	QSF_profile_count = 0
 	profile_count = VideoReDo.ProfilesGetCount()
@@ -4895,12 +4870,11 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (riqowv_FILE_AbsolutePathName, riq
 		End If
 	Next
 	If QSF_profile_count < 1 Then
-		Wscript.StdOut.WriteLine("VRDTVS_VRD6_QSF: ERROR: no VRD6 QSF profiles were returned by VRD v6")
-		Wscript.StdOut.WriteLine("VRDTVS_VRD6_QSF: Exiting with errorlevel code 5")
+		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: ERROR: no VRD6 QSF profiles were returned by VRD v6")
 		on error resume next
 		VideoReDo.ProgramExit()
 		on error goto 0
-		Wscript.StdOut.WriteLine("VRDTVS_VRD6_QSF: Exiting with errorlevel code 5")
+		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: Exiting with errorlevel code 5")
 		Wscript.Quit 5
 	End If
 	matching_QSF_profile = False
@@ -4911,44 +4885,44 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (riqowv_FILE_AbsolutePathName, riq
 		End If
 	Next
 	If NOT matching_QSF_profile Then
-		Wscript.StdOut.WriteLine("VRDTVS_VRD6_QSF: ERROR: no VRD6 QSF profile was located matching your specified profile: """ & QSF_profile_name & """")
+		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: ERROR: no VRD6 QSF profile was located matching your specified profile: """ & QSF_profile_name & """")
 		For i = 0 to profile_count-1
 			a_profile_name = VideoReDo.ProfilesGetProfileName( i )
 			is_QSF = NOT VideoReDo.ProfilesGetProfileIsAdScan( i )
 			If ( is_QSF ) Then
 				QSF_profile_count = QSF_profile_count + 1
-				Wscript.StdOut.WriteLine("VRDTVS_VRD6_QSF: Profile (" & i & ")=""" & a_profile_name & """ is an QSF profile")
+				Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6F: Profile (" & i & ")=""" & a_profile_name & """ is an QSF profile")
 			End If
 		Next
-		Wscript.StdOut.WriteLine("VRDTVS_VRD6_QSF: QSF Profile count: " & QSF_profile_count )
-		Wscript.StdOut.WriteLine("VRDTVS_VRD6_QSF: Exiting with errorlevel code 5")
+		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: QSF Profile count: " & QSF_profile_count )
+		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: Exiting with errorlevel code 5")
 		on error resume next
 		VideoReDo.ProgramExit()
 		on error goto 0
-		Wscript.StdOut.WriteLine("VRDTVS_VRD6_QSF: Exiting with errorlevel code 5")
+		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: Exiting with errorlevel code 5")
 		Wscript.Quit 5
 	End If
 	'
 	openflag = VideoReDo.FileOpen(inputFile, True) ' True means QSF mode
 	If openflag = False Then
-		Wscript.StdOut.WriteLine("VRDTVS_VRD6_QSF: ERROR: VideoReDo failed to open file: """ & inputFile & """")
+		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: ERROR: VideoReDo failed to open file: """ & inputFile & """")
 		on error resume next
 		VideoReDo.ProgramExit()
 		on error goto 0
-		Wscript.StdOut.WriteLine("VRDTVS_VRD6_QSF: Exiting with errorlevel code 5")
+		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: Exiting with errorlevel code 5")
 		Wscript.Quit 5
 	End If
 	outputOK = VideoReDo.FileSaveAs(qsfFile, QSF_profile_name) ' save the QSF file
 	If NOT outputOK = True Then
-		Wscript.StdOut.WriteLine("VRDTVS_VRD6_QSF: ERROR: VideoReDo failed to create QSF file: """ & qsfFile & """ using profile:""" & QSF_profile_name & """")
+		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: ERROR: VideoReDo failed to create QSF file: """ & qsfFile & """ using profile:""" & QSF_profile_name & """")
 		on error resume next
 		closeflag = VideoReDo.FileClose()
 		VideoReDo.ProgramExit()
 		on error goto 0
-		Wscript.StdOut.WriteLine("VRDTVS_VRD6_QSF: Exiting with errorlevel code 5")
+		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: Exiting with errorlevel code 5")
 		Wscript.Quit 5
 	End If
-	Wscript.StdOut.Write("VRDTVS_VRD6_QSF: working: ")
+	Wscript.StdOut.Write("vrdtvsp_run_inlineQSF_only_with_vrd6: working: ")
 	'Wscript.StdOut.Write("VRDTVS_VRD6_QSF: Percent Complete: ")
 	While( VideoRedo.OutputGetState <> 0 )
 		on error resume next
@@ -4966,22 +4940,20 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (riqowv_FILE_AbsolutePathName, riq
 	xml_string_completedfile = "" 
 	xml_string_completedfile = VideoReDo.OutputGetCompletedInfo() ' which is the most recently completed output file (hopefully the QSF file) https://www.videoredo.com/TVSuite_Application_Notes/output_complete_info_xml_forma.html" 
 	on error goto 0
-	closeflag = VideoReDo.FileClose()
 	Wscript.StdOut.WriteLine(" QSF 100% Complete.")
-	' Grab the *Estimated* info about the QSF file by a quick open and close
-	on error resume next
-	openflag = VideoReDo.FileOpen(qsfFile, False)' True means QSF mode
-	xml_string_openedfile = "" 
-	xml_string_openedfile = VideoReDo.FileGetOpenedFileProgramInfo() ' https://www.videoredo.com/TVSuite_Application_Notes/program_info_xml_format.html
 	closeflag = VideoReDo.FileClose()
+	on error resume next
+	VideoReDo.ProgramExit()
 	on error goto 0
-	'
-	Wscript.StdOut.WriteLine("VRDTVS_VRD6_QSF: xml_string_completedfile=") 
+	Set VideoReDo = Nothing
+ 	Set VideoReDoSilent = Nothing
+	Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: xml_string_completedfile=") 
 	Wscript.StdOut.WriteLine(xml_string_completedfile) 
-	Wscript.StdOut.WriteLine("VRDTVS_VRD6_QSF: xml_string_openedfile=") 
-	Wscript.StdOut.WriteLine(xml_string_openedfile) 
 	'
-	''''' Get Actual data obtained during the QSF process
+	' Get some of the data obtained during the QSF process and populate a Dict object to return
+	'
+	Set xmlDict = CreateObject("Scripting.Dictionary")
+	xmlDict.CompareMode = vbTextCompare ' set case insensitive key lookups. You can set the CompareMode property only when the dictionary is empty.
 	Set xmlDoc = WScript.CreateObject("Msxml2.DOMDocument.6.0")
 	xmlDoc.async = False
 	on error resume next 
@@ -4994,82 +4966,56 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (riqowv_FILE_AbsolutePathName, riq
 	on error goto 0 
 	If NOT xml_status Then
 		Set xmlDoc = Nothing
-		WScript.StdOut.WriteLine("VRDTVS_VRD6_QSF: ABORTING: Failed to load xml_string_completedfile=" & xml_string_completedfile)
-		WScript.StdOut.WriteLine("VRDTVS_VRD6_QSF: ABORTING: xml_status: " & xml_status & " XML error: " & xml_errorCode & " : " & xml_reason)
+		WScript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: ABORTING: Failed to load string from VideoReDo.OutputGetCompletedInfo() xml_string_completedfile=" & xml_string_completedfile)
+		WScript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: ABORTING: xml_status: " & xml_status & " XML error: " & xml_errorCode & " : " & xml_reason)
 		Wscript.Echo "Error 17 = cannot perform the requested operation"
 		On Error goto 0
 		WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 	End If
-	actual_outputFile = gimme_xml_named_attribute(xmlDoc, "//VRDOutputInfo", "outputFile")
-	actual_VideoOutputFrameCount = gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/VideoOutputFrameCount")
-	actual_ActualVideoBitrate = gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/ActualVideoBitrate") ' decimal number in Mbps
-	If actual_ActualVideoBitrate = "" Then actual_ActualVideoBitrate = 0
-	actual_ActualVideoBitrate = CLng(CDbl(actual_ActualVideoBitrate) * CDbl(1000000.0)) ' convert from dedcimal Mpbs to bps
-	Set xmlDoc = Nothing
-	'
-	''''' Get Estimated data from a quick open and close of the the QSF file
-	Set xmlDoc = WScript.CreateObject("Msxml2.DOMDocument.6.0")
-	xmlDoc.async = False
-	on error resume next 
-	xml_status = xmlDoc.loadXML(xml_string_openedfile) 
-	Set xml_objErr = xmlDoc.parseError
-	xml_errorCode = xml_objErr.errorCode
-	xml_reason = xml_objErr.reason
-	Set xml_objErr = Nothing
-	Err.clear
-	on error goto 0 
-	If NOT xml_status Then
+	xmlDict.Add "outputFile", gimme_xml_named_attribute(xmlDoc, "//VRDOutputInfo", "outputFile")
+	xmlDict.Add "OutputType", gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/OutputType")
+	xmlDict.Add "OutputDurationSecs", gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/OutputDurationSecs")
+	xmlDict.Add "OutputDuration", gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/OutputDuration")
+	xmlDict.Add "OutputSizeMB", gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/OutputSizeMB")
+	xmlDict.Add "OutputSceneCount", gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/OutputSceneCount")
+	xmlDict.Add "VideoOutputFrameCount", gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/VideoOutputFrameCount")
+	xmlDict.Add "AudioOutputFrameCount", gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/AudioOutputFrameCount")
+	xmlDict.Add "ActualVideoBitrate", CLng(CDbl(gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/ActualVideoBitrate")) * CDbl(1000000.0)) ' convert from dedcimal Mpbs to bps
+	If NOT xmlDict.Exists("outputFile") Then 
 		Set xmlDoc = Nothing
-		WScript.StdOut.WriteLine("VRDTVS_VRD6_QSF: ABORTING: Failed to load xml_string_openedfile=" & xml_string_openedfile)
-		WScript.StdOut.WriteLine("VRDTVS_VRD6_QSF: ABORTING: xml_status: " & xml_status & " XML error: " & xml_errorCode & " : " & xml_reason)
+		WScript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: ABORTING: outputFile string from VideoReDo.OutputGetCompletedInfo() not in Dict, xml_string_completedfile=" & xml_string_completedfile)
 		Wscript.Echo "Error 17 = cannot perform the requested operation"
 		On Error goto 0
+		Set xmlDoc = Nothing
+		WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+	ElseIf NOT ( Ucase(xmlDict.Item("outputFile")) =  Ucase(riqowv_QSF_AbsolutePathName) ) Then 
+		Set xmlDoc = Nothing
+		WScript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: ABORTING: outputFile from VideoReDo.OutputGetCompletedInfo() not equal QSFfilename: xml_string_completedfile=" & xml_string_completedfile & " riqowv_QSF_AbsolutePathName=" & riqowv_QSF_AbsolutePathName
+		Wscript.Echo "Error 17 = cannot perform the requested operation"
+		On Error goto 0
+		Set xmlDoc = Nothing
 		WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 	End If
-	estimated_outputFile = gimme_xml_named_value(xmlDoc, "//VRDProgramInfo/FileName")
-	estimated_VideoOutputFrameCount = gimme_xml_named_attribute(xmlDoc, "//VRDProgramInfo/ProgramDuration", "total_frames")
-	estimated_ActualVideoBitrate = gimme_xml_named_value(xmlDoc, "//VRDProgramInfo/Video/EstimatedVideoBitrate") ' decimal number in Mbps
-	Set xmlDoc = Nothing
-	'
-	' Write our own version of the XML values to the specified XML file so that the calling script can read them later
-	Set fso = CreateObject("Scripting.FileSystemObject")
-	Set fileObj = fso.CreateTextFile(xmlFile, True, False) ' *** vapoursynth fails with unicode input file *** [ filename, Overwrite[, Unicode]])
-	If Ucase(actual_outputFile) = Ucase(qsfFile) Then ' Use the Actual QSF values
-		fileObj.WriteLine("<QSFinfo>")
-		fileObj.WriteLine("   <type>actual</actual_type>")
-		fileObj.WriteLine("   <outputFile>""" & actual_outputFile & """</outputFile>")
-		fileObj.WriteLine("   <VideoOutputFrameCount>" & actual_VideoOutputFrameCount & "</VideoOutputFrameCount>")
-		fileObj.WriteLine("   <Bitrate>" & actual_ActualVideoBitrate & "<Bitrate>")
-		fileObj.WriteLine("</QSFinfo>")
-	Else ' Use the Estimated QSF values
-		fileObj.WriteLine("   <QSFinfo>")
-		fileObj.WriteLine("   <type>estimated</type>")
-		fileObj.WriteLine("   <outputFile>""" & estimated_outputFile & """</outputFile>")
-		fileObj.WriteLine("   <VideoOutputFrameCount>" & estimated_VideoOutputFrameCount & "</VideoOutputFrameCount>")
-		fileObj.WriteLine("   <Bitrate>" & estimated_ActualVideoBitrate & "<Bitrate>")
-		fileObj.WriteLine("</QSFinfo>")
-	End If
-	fileObj.close
-	Set fileObj = Nothing
-	Set fso = Nothing
-	'
-	Wscript.StdOut.WriteLine("VRDTVS_VRD6_QSF: actual_outputFile=""" & actual_outputFile & """") 
-	Wscript.StdOut.WriteLine("VRDTVS_VRD6_QSF: actual_VideoOutputFrameCount=" & actual_VideoOutputFrameCount) 
-	Wscript.StdOut.WriteLine("VRDTVS_VRD6_QSF: actual_ActualVideoBitrate=" & actual_ActualVideoBitrate) 
-	Wscript.StdOut.WriteLine("VRDTVS_VRD6_QSF: estimated_outputFile=""" & estimated_outputFile & """") 
-	Wscript.StdOut.WriteLine("VRDTVS_VRD6_QSF: estimated_VideoOutputFrameCount=" & estimated_VideoOutputFrameCount) 
-	Wscript.StdOut.WriteLine("VRDTVS_VRD6_QSF: estimated_ActualVideoBitrate=" & estimated_ActualVideoBitrate) 
-	'
-	Wscript.StdOut.WriteLine("VRDTVS_VRD6_QSF: Exiting")
-	on error resume next
-	VideoReDo.ProgramExit()
 	on error goto 0
-	Wscript.Quit 0
-
-	
-
-
-
+	Set xmlDoc = Nothing
+	Set vrdtvsp_run_inlineQSF_only_with_vrd6 = xmlDict
+	' Can use the returned Dict like this:
+	'	Dim vrdtvs_dict
+	'	Set vrdtvs_dict = CreateObject("Scripting.Dictionary")
+	'	vrdtvs_dict.CompareMode = vbTextCompare ' case insensitive key lookups. You can set the CompareMode property only when the dictionary is empty.
+	'	vrdtvs_dict.Add key, item
+	'	vrdtvs_dict.Remove (key)
+	'	vrdtvs_dict.RemoveAll
+	'	If vrdtvs_dict.Exists(key) Then temp = vrdtvs_dict.Item(key) Else temp = ""
+	'	End If
+	'	For Each key In vrdtvs_dict
+	'		wscript.echo "Dict key=" & key & " value= " & vrdtvs_dict.Item(key)
+	'	Next
+	'	vrdtvs_dict.Items().Count ' count of items in the dictionary
+	'	vrdtvs_dict.Keys().(i)	' the value, say in a for/next loop, base 0 (0 to Count-1)
+	'	vrdtvs_dict.Items().(i)	' the value, say in a for/next loop, base 0 (0 to Count-1)
+	'	vrdtvs_dict.Remove vrdtvs_dict.Keys()(i)
+	'	vrdtvs_dict.Key(key) = newkey ' but You can't change a value in a key-value pair.  If you want a different value, you need to delete the item, then add a new one.
 End Function
 Function gimme_xml_named_value (xmlDoc_object, ByVal xml_item_name) ' assumes the xml doc is already loaded in xmlDoc_object
 	'	Parameters:
