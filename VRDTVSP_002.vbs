@@ -4859,7 +4859,7 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (byVal riqowv_FILE_AbsolutePathNam
 	i = 0
 	While( VideoRedo.OutputGetState <> 0 )
 		i = i + 1
-		If (i MOD 50) = 0) Then Wscript.StdOut.WriteLine(" " & i)
+		If ((i MOD 50) = 0) Then Wscript.StdOut.WriteLine(" " & i)
 		If i > giveup_interval_count Then
 			Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: ERROR: VideoReDo timeout after " & ((i * wait_ms)/1000) & " seconds working ... Aborting ...")
 			on error resume next
