@@ -4761,6 +4761,8 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (byVal riqowv_FILE_AbsolutePathNam
 	'  <audio_level_changes hidden="1"/>
 	'</VRDOutputInfo>
 	'
+	Const wait_ms = 2000
+	Const giveup_interval_count = (1000 * 60 * 60 * 2) / wait_ms ' 1000 millisecs * 60 Secs * 60 Minutes * 2 = 2 hours in milliseconds divide by the waiting time in millisconds
 	Dim xmlDict	' this is a dictionary object returned with Set vrdtvsp_run_inlineQSF_only_with_vrd6 = xmlDict 
 	Dim VideoReDoSilent
 	Dim VideoReDo
@@ -4830,7 +4832,7 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (byVal riqowv_FILE_AbsolutePathNam
 	' 
 	' Open the Input file and QSF SaveAs to the output file
 	'
-	Wscript.StdOut.Write("vrdtvsp_run_inlineQSF_only_with_vrd6: Commencing: " & vrdtvsp_current_datetime_string())
+	Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: Commencing: " & vrdtvsp_current_datetime_string())
 	openflag = VideoReDo.FileOpen(riqowv_FILE_AbsolutePathName, True) ' True means QSF mode
 	If openflag = False Then
 		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: ERROR: VideoReDo failed to open file: """ & riqowv_FILE_AbsolutePathName & """")
@@ -4852,7 +4854,19 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (byVal riqowv_FILE_AbsolutePathNam
 	End If
 	Wscript.StdOut.Write("vrdtvsp_run_inlineQSF_only_with_vrd6: working: ")
 	'Wscript.StdOut.Write("VRDTVS_VRD6_QSF: Percent Complete: ")
+	i = 0
 	While( VideoRedo.OutputGetState <> 0 )
+		i = i + 1
+		If (i MOD 50) = 0) Then Wscript.StdOut.WriteLine(" " & i)
+		If i > giveup_interval_count Then
+			Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: ERROR: VideoReDo timeout after " & ((i * wait_ms)/1000) & " seconds working ... Aborting ...")
+			on error resume next
+			closeflag = VideoReDo.FileClose()
+			VideoReDo.ProgramExit()
+			on error goto 0
+			Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: Exiting with errorlevel code 5")
+			Wscript.Quit 5
+		End If
 		on error resume next
 		'percentComplete = CInt(VideoReDo.OutputGetPercentComplete())
 		'if NOT err.number = 0 then
@@ -4861,7 +4875,7 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (byVal riqowv_FILE_AbsolutePathNam
 		'Wscript.StdOut.Write(" " & percent & "% ")
 		Wscript.StdOut.Write(".")
 		on error goto 0
-		Wscript.Sleep 1000 ' reduced from 2000 to 1000
+		Wscript.Sleep wait_ms
 	Wend
 	' Grab the *Actual* info about the "VRD latest save" and hope it is the QSF file)
 	on error resume next
