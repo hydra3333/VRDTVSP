@@ -20,7 +20,6 @@ Option Explicit
 '/temp_path:"D:\VRDTVSP-SCRATCH\" ^
 '/vrd_version_for_qsf:6 ^
 '/vrd_version_for_adscan:6 ^
-'/do_qsf:False ^
 '/do_adscan:False ^
 '/do_audio_delay:False ^
 '/show_mediainfo:False 
@@ -151,7 +150,6 @@ Dim vrdtvsp_extension_avc
 Dim vrdtvsp_extension
 Dim vrdtvsp_logfile_wildcard_QSF
 Dim vrdtvsp_logfile_wildcard_ADSCAN
-Dim vrdtvsp_do_qsf
 Dim vrdtvsp_do_adscan
 Dim vrdtvsp_do_audio_delay
 Dim vrdtvsp_show_mediainfo
@@ -175,7 +173,6 @@ vrd6_logfile_wildcard =  fso.GetAbsolutePathName(HDTV_root & "\") & "\VideoReDo6
 '
 vrd_version_for_qsf = 5
 vrd_version_for_adscan = 5
-vrdtvsp_do_qsf = False
 vrdtvsp_do_adscan = False
 vrdtvsp_do_audio_delay = False
 vrdtvsp_show_mediainfo = False
@@ -223,7 +220,6 @@ vrdtvsp_temp_path = fso.GetAbsolutePathName(vrdtvsp_get_commandline_parameter("t
 '
 vrd_version_for_qsf = vrdtvsp_get_commandline_parameter("vrd_version_for_qsf",vrd_version_for_qsf)                                        				' /vrd_version_for_qsf:6
 vrd_version_for_adscan = vrdtvsp_get_commandline_parameter("vrd_version_for_adscan",vrd_version_for_adscan)                              			   	' /vrd_version_for_adscan:6
-vrdtvsp_do_qsf = vrdtvsp_get_commandline_parameter("do_qsf",vrdtvsp_do_qsf) 			                     		                    				' /do_qsf:False
 vrdtvsp_do_adscan = vrdtvsp_get_commandline_parameter("do_adscan",vrdtvsp_do_adscan)                      		                    					' /do_adscan:False
 vrdtvsp_do_audio_delay = vrdtvsp_get_commandline_parameter("do_audio_delay",vrdtvsp_do_audio_delay)                      		                    	' /do_audio_delay:False
 vrdtvsp_show_mediainfo = vrdtvsp_get_commandline_parameter("show_mediainfo",vrdtvsp_show_mediainfo)                      		                    	' /show_mediainfo:False
@@ -299,7 +295,6 @@ WScript.StdOut.WriteLine("VRDTVSP NOTE: final             vrdtvsp_extension_mpeg
 WScript.StdOut.WriteLine("VRDTVSP NOTE: final               vrdtvsp_extension_avc=""" & vrdtvsp_extension_avc & """")
 WScript.StdOut.WriteLine("VRDTVSP NOTE: final              vrd_version_for_adscan=" & vrd_version_for_adscan)
 WScript.StdOut.WriteLine("VRDTVSP NOTE: final         vrdtvsp_path_for_adscan_vbs=""" & vrdtvsp_path_for_adscan_vbs & """")
-WScript.StdOut.WriteLine("VRDTVSP NOTE: final                      vrdtvsp_do_qsf=" & vrdtvsp_do_qsf)
 WScript.StdOut.WriteLine("VRDTVSP NOTE: final                   vrdtvsp_do_adscan=" & vrdtvsp_do_adscan)
 WScript.StdOut.WriteLine("VRDTVSP NOTE: final              vrdtvsp_do_audio_delay=" & vrdtvsp_do_audio_delay)
 WScript.StdOut.WriteLine("VRDTVSP NOTE: final              vrdtvsp_show_mediainfo=" & vrdtvsp_show_mediainfo)
@@ -425,7 +420,6 @@ vrdtvsp_status = vrdtvsp_Convert_files_in_a_folder(	vrdtvsp_source_TS_Folder, _
 													vrdtvsp_failed_conversion_TS_Folder, _
 													vrdtvsp_temp_path, _
 													vrdtvsp_saved_ffmpeg_commands_filename, _
-													vrdtvsp_do_qsf, _
 													vrdtvsp_do_adscan, _
 													vrdtvsp_do_audio_delay )
 If vrdtvsp_status <> 0 Then ' Something bad went wrong (invididual conversion failures just result in moving the source file to the Failed folder)
@@ -2153,7 +2147,6 @@ Function vrdtvsp_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 											byVal	C_failed_conversion_TS_Folder, _
 											byVal	C_temp_path, _
 											byVal	C_saved_ffmpeg_commands_filename, _
-											byVal	C_do_qsf, _
 											byVal	C_do_Adscan, _
 											byVal	C_do_audio_delay )
 	' Loop and convert .TS .mp4 .mpg Source files in a folder into acceptable avc/aac .mp4 Destination files 
@@ -2186,7 +2179,6 @@ Function vrdtvsp_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_files_in_a_folder:     C_failed_conversion_TS_Folder=""" & C_failed_conversion_TS_Folder & """")
 	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_files_in_a_folder:                       C_temp_path=""" & C_temp_path & """")
 	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_files_in_a_folder:  C_saved_ffmpeg_commands_filename=""" & C_saved_ffmpeg_commands_filename & """")
-	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_files_in_a_folder:                          C_do_qsf=""" & C_do_qsf & """")
 	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_files_in_a_folder:                       C_do_Adscan=""" & C_do_Adscan & """")
 	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_files_in_a_folder:               C_do_do_audio_delay=""" & C_do_audio_delay & """")
 
@@ -2224,7 +2216,6 @@ Function vrdtvsp_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder             ""vrd_version_for_adscan=" & vrd_version_for_adscan & """")
 		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder        ""vrdtvsp_path_for_adscan_vbs=" & vrdtvsp_path_for_adscan_vbs & """")
 		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder   ""C_saved_ffmpeg_commands_filename=" & C_saved_ffmpeg_commands_filename & """")
-		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder                           ""C_do_qsf=" & C_do_qsf & """")
 		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder                        ""C_do_Adscan=" & C_do_Adscan & """")
 		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder                   ""C_do_audio_delay=" & C_do_audio_delay & """")
 	End If
@@ -2282,7 +2273,6 @@ Function vrdtvsp_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 	C_object_saved_ffmpeg_commands.WriteLine("Set ""vrdtvsp_path_for_adscan_vbs=" & vrdtvsp_path_for_adscan_vbs & """")
 	C_object_saved_ffmpeg_commands.WriteLine("REM")
 	C_object_saved_ffmpeg_commands.WriteLine("Set ""C_saved_ffmpeg_commands_filename=" & C_saved_ffmpeg_commands_filename & """")
-	C_object_saved_ffmpeg_commands.WriteLine("Set ""C_do_qsf=" & C_do_qsf & """")
 	C_object_saved_ffmpeg_commands.WriteLine("Set ""C_do_Adscan=" & C_do_Adscan & """")
 	C_object_saved_ffmpeg_commands.WriteLine("Set ""C_do_audio_delay=" & C_do_audio_delay & """")
 	C_object_saved_ffmpeg_commands.WriteLine("REM")
@@ -2316,7 +2306,6 @@ Function vrdtvsp_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 														C_failed_conversion_TS_Folder, _
 														C_temp_path, _
 														C_saved_ffmpeg_commands_filename, _
-														C_do_qsf, _
 														C_do_Adscan, _
 														C_do_audio_delay )
 			Case Else	' extension not recognised, do nothing
@@ -2413,7 +2402,6 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 								byVal 	CF_failed_conversion_TS_Folder, _
 								byVal 	CF_temp_path, _
 								byVal 	CF_saved_ffmpeg_commands_filename, _
-								byVal 	CF_do_qsf, _
 								byVal 	CF_do_Adscan, _
 								byVal	CF_do_audio_delay )
 	'Dim CF_FILE_AbsolutePathName
@@ -2431,8 +2419,6 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Dim T_V_IsAVC, T_V_IsMPEG2, T_V_IsProgressive, T_V_IsInterlaced
 	'
 	Dim ff_cmd_string, ff_tmp_object, ff_tmp_string, ff_logfile, ff_batfile, ff_cmd_string_for_bat, ff_run_errorlevel
-	'
-	Dim CF_QSF_logfile, CF_QSF_logfile_object, CF_QSF_logfile_line, CF_QSF_logfile_string, CF_QSF_string_array
 	'
 	Dim CF_exe_cmd_string
 	Dim CF_exe_object
@@ -2529,11 +2515,11 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Dim T_A_Audio_Delay_ms
 	Dim T_A_Audio_Delay_ms_legacy
 	'
-	Dim Q_ACTUAL_QSF_LOG_BITRATE
+	Dim Q_ACTUAL_QSF_XML_BITRATE
 	Dim V_INCOMING_BITRATE
 	Dim V_INCOMING_BITRATE_MEDIAINFO
 	Dim V_INCOMING_BITRATE_FFPROBE
-	Dim V_INCOMING_BITRATE_QSF_LOG
+	Dim V_INCOMING_BITRATE_QSF_XML
 	'
 	Dim vrdtvsp_final_RTX2060super_extra_flags
 	'
@@ -2558,6 +2544,13 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Dim vpy_dsharpen
 	Dim af_audio_delay_filter, it_video_delay
 	'
+	Dim Q_V_FrameRate
+	Dim Q_V_FrameRate_String
+	Dim Q_V_Frame_Rate_FF
+	Dim Q_V_Avg_Frame_Rate_FF
+	'
+	Dim xmlDict, xmlDict_key
+	'
 	WScript.StdOut.WriteLine(" ")
 	WScript.StdOut.WriteLine(" ")
 	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: STARTED " & vrdtvsp_current_datetime_string() & " ======================================================================================================================================================")
@@ -2569,7 +2562,6 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File:     CF_failed_conversion_TS_Folder=""" & CF_failed_conversion_TS_Folder & """")
 	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File:                       CF_temp_path=""" & CF_temp_path & """")
 	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File:  CF_saved_ffmpeg_commands_filename=""" & CF_saved_ffmpeg_commands_filename & """")
-	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File:                          CF_do_qsf=""" & CF_do_qsf & """")
 	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File:                       CF_do_Adscan=""" & CF_do_Adscan & """")
 	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File:                  CF_do_audio_delay=""" & CF_do_audio_delay & """")
 	'
@@ -2844,71 +2836,50 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	If vrdtvsp_DEBUG Then 
 		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_File """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ do QSF with CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
 	End If
-	If CF_do_qsf Then
-		' do the actual QSF command (delete the QSF file first)
-		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: Doing QSF for """ & CF_FILE_AbsolutePathName & """ ... " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
-		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: QSF command: " & CF_exe_cmd_string)
-		CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_QSFxml_AbsolutePathName & """")
-		CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_QSF_AbsolutePathName & """")
-		CF_object_saved_ffmpeg_commands.WriteLine("REM ====================================================================================================================================================================")
-		CF_object_saved_ffmpeg_commands.WriteLine("ECHO !DATE! !TIME!")
-		CF_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string) ' write the QSF String to be executed, only if we're doing a QSF
-		CF_object_saved_ffmpeg_commands.WriteLine("ECHO !DATE! !TIME!")
-		CF_object_saved_ffmpeg_commands.WriteLine("TYPE """ & CF_QSFxml_AbsolutePathName & """")
-		CF_object_saved_ffmpeg_commands.WriteLine("REM ====================================================================================================================================================================")
-		vrdtvsp_status = vrdtvsp_delete_a_file(CF_QSF_AbsolutePathName, True) ' True=silently delete it
-		WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string() & " ====================================================================================================================================================================")
-		WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string() & " ====================================================================================================================================================================")
-		' the OLD way:
-		'	 CF_exe_status = vrdtvsp_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string) ????? do the QSF in the DOS batch file like adscan
-		' the NEW way:
-		ReDim vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(2) ' base 0, so the dimension is always 1 less than the number of commands
-		vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(0) = "DEL /F """ & CF_QSFxml_AbsolutePathName & """"
-		vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1) = "DEL /F """ & CF_QSF_AbsolutePathName & """"
-		vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(2) = CF_exe_cmd_string
-		'vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(3) = "ECHO TYPE """ & CF_QSFxml_AbsolutePathName & """"	' DO NOT DO THIS - the errorlevel returned ins based on the LAST command run
-		'vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(4) = "TYPE """ & CF_QSFxml_AbsolutePathName & """"		' DO NOT DO THIS - the errorlevel returned ins based on the LAST command run
-		CF_exe_status = vrdtvsp_Exec_in_a_DOS_BAT_file(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log - the safer way of doing it
-		Erase vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array
-		WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string() & " ====================================================================================================================================================================")
-		WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string() & " ====================================================================================================================================================================")
-	Else ' proceed with creating the "pretend" QSF file
-		CF_QSF_Ext = CF_FILE_Ext ' NOT "vrdtvsp_extension" CF_FILE_AbsolutePathName
-		CF_QSF_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_QSF_ParentFolderName, CF_QSF_BaseName & CF_QSF_Ext))		
-		CF_exe_cmd_string = "COPY /Y /V /Z /B """ & CF_FILE_AbsolutePathName & """ """ & CF_QSF_AbsolutePathName & """"
-		If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: ----- Instead-of-QSF: Copying """ & CF_FILE_AbsolutePathName & """ to """ & CF_QSF_AbsolutePathName & """ with: " & CF_exe_cmd_string)
-		WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string() & " ====================================================================================================================================================================")
-		WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string() & " ====================================================================================================================================================================")
-		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: ----- Instead-of-QSF for """ & CF_FILE_AbsolutePathName & """ ... " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
-		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: ----- Copying: """ & CF_FILE_AbsolutePathName & """ to """ & CF_QSF_AbsolutePathName & """ with: " & CF_exe_cmd_string)
-		CF_object_saved_ffmpeg_commands.WriteLine("REM Instead-of-QSF, copying: " & CF_exe_cmd_string)
-		CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_QSFxml_AbsolutePathName & """")
-		CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_QSF_AbsolutePathName & """")
-		CF_object_saved_ffmpeg_commands.WriteLine("REM ====================================================================================================================================================================")
-		CF_object_saved_ffmpeg_commands.WriteLine("ECHO !DATE! !TIME!")
-		CF_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string) ' write the pretend QSF String to be executed
-		CF_object_saved_ffmpeg_commands.WriteLine("ECHO !DATE! !TIME!")
-		CF_object_saved_ffmpeg_commands.WriteLine("REM ====================================================================================================================================================================")
-		On Error Resume Next
-		vrdtvsp_status = vrdtvsp_delete_a_file(CF_QSF_AbsolutePathName, True) ' True=silently delete it
-		fso.CopyFile CF_FILE_AbsolutePathName, CF_QSF_AbsolutePathName, True ' copy file with overwrite
-		vrdrvs_Err_Code = Err.Number
-		vrdrvs_Err_Description = Err.Description
-		On Error Goto 0
-		WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string() & " ====================================================================================================================================================================")
-		WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string() & " ====================================================================================================================================================================")
-		'If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Insomnia: File Copy returned error code: " & vrdrvs_Err_Code & " Descrption: " & vrdrvs_Err_Description)
-		If vrdrvs_Err_Code <> 0 Then
-    		Err.Clear
-    		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: ERROR - Error " & vrdrvs_Err_Code & " Copying: """ & CF_FILE_AbsolutePathName & """ to """ & CF_QSF_AbsolutePathName & """ ... Aborting ...")
-    		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: ERROR - " & vrdrvs_Err_Description)
-    		' Err.Raise 17 ' Error 17 = cannot perform the requested operation
-			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			On Error goto 0
-			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
-		End If
-		CF_exe_status = 0
-	End If
+	' do the actual QSF command (delete the QSF file first)
+	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: Doing QSF for """ & CF_FILE_AbsolutePathName & """ ... " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
+	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: QSF command: " & CF_exe_cmd_string)
+	CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_QSFxml_AbsolutePathName & """")
+	CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_QSF_AbsolutePathName & """")
+	CF_object_saved_ffmpeg_commands.WriteLine("REM ====================================================================================================================================================================")
+	CF_object_saved_ffmpeg_commands.WriteLine("ECHO !DATE! !TIME!")
+	CF_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string) ' write the QSF String to be executed, only if we're doing a QSF
+	CF_object_saved_ffmpeg_commands.WriteLine("ECHO !DATE! !TIME!")
+	CF_object_saved_ffmpeg_commands.WriteLine("TYPE """ & CF_QSFxml_AbsolutePathName & """")
+	CF_object_saved_ffmpeg_commands.WriteLine("REM ====================================================================================================================================================================")
+	vrdtvsp_status = vrdtvsp_delete_a_file(CF_QSF_AbsolutePathName, True) ' True=silently delete it
+	WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string() & " ====================================================================================================================================================================")
+	WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string() & " ====================================================================================================================================================================")
+	'
+	' the OLD way:
+	'	 CF_exe_status = vrdtvsp_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string) ????? do the QSF in the DOS batch file like adscan
+	'
+	' the NEW way:
+	'ReDim vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(2) ' base 0, so the dimension is always 1 less than the number of commands
+	'vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(0) = "DEL /F """ & CF_QSFxml_AbsolutePathName & """"
+	'vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1) = "DEL /F """ & CF_QSF_AbsolutePathName & """"
+	'vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(2) = CF_exe_cmd_string
+	''vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(3) = "ECHO TYPE """ & CF_QSFxml_AbsolutePathName & """"	' DO NOT DO THIS - the errorlevel returned ins based on the LAST command run
+	''vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(4) = "TYPE """ & CF_QSFxml_AbsolutePathName & """"		' DO NOT DO THIS - the errorlevel returned ins based on the LAST command run
+	'CF_exe_status = vrdtvsp_Exec_in_a_DOS_BAT_file(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log - the safer way of doing it
+	'Erase vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array
+	'WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string() & " ====================================================================================================================================================================")
+	'WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string() & " ====================================================================================================================================================================")
+	'
+	' the NEWER way, which returns a Dict object with these keys:
+	'	"outputFile" string ... eg value retrieved like: v = xmlDict.Item("outputFile")
+	'	"OutputType" string
+	'	"OutputDurationSecs" long integer
+	'	"OutputDuration" hh:mm:ss
+	'	"OutputSizeMB" long integer
+	'	"OutputSceneCount" long integer
+	'	"VideoOutputFrameCount" long integer
+	'	"AudioOutputFrameCount" long integer
+	'	"ActualVideoBitrate" long integer ... eg value retrieved like: v = xmlDict.Item("ActualVideoBitrate")
+	Set xmlDict = vrdtvsp_run_inlineQSF_only_with_vrd6 (CF_FILE_AbsolutePathName, CF_QSF_AbsolutePathName, vrdtvsp_profile_name_for_qsf)
+	For Each xmlDict_key In xmlDict
+		wscript.echo "vrdtvsp_Convert_File: VRD QSF returned XML data: xmlDict_key=""" & xmlDict_key & """ xmlDict_value= """ & xmlDict.Item(xmlDict_key) & """"
+	Next
 	'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	If CF_exe_status <> 0 OR NOT fso.FileExists(CF_QSF_AbsolutePathName) Then
 		If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: ERROR vrdtvsp_Convert_File - Error - Failed to QSF """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
@@ -2929,7 +2900,7 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - QSF command completed with Elapsed Time " & vrdtvsp_Calculate_ElapsedTime_string(ff_timerStart, ff_timerEnd))
 	' ++++ END Run the QSF command
 	'
-	' ++++ START do a mediainfo of the SOURCE so we can compare them !!! (DGIndex got the FPS wrong)
+	' ++++ START do a mediainfo of the SOURCE so we can compare them !!!
 	If vrdtvsp_DEBUG OR vrdtvsp_show_mediainfo Then
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File ---------- doing mediainfo on SOURCE """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ ----------")
 		vrdtvsp_REM = ""
@@ -2948,8 +2919,8 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		CF_exe_status = vrdtvsp_Exec_in_a_DOS_BAT_file(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log
 	End If
 	Erase vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array
-	' ++++ END do a mediainfo of the SOURCE so we can compare them !!! (DGIndex got the FPS wrong)
-	' ++++ START do a mediainfo of the QSF so we can compare them !!! (DGIndex got the FPS wrong)
+	' ++++ END do a mediainfo of the SOURCE so we can compare them !!!
+	' ++++ START do a mediainfo of the QSF so we can compare them !!!
 	If vrdtvsp_DEBUG OR vrdtvsp_show_mediainfo Then
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File ---------- doing mediainfo on QSF """ & CF_QSF_AbsolutePathName & """ Q_V_Codec_legacy=""" & Q_V_Codec_legacy & """ ----------")
 		vrdtvsp_REM = ""
@@ -2971,53 +2942,12 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	' ++++ END do a mediainfo of the QSF so we can compare them !!! (DGIndex got the FPS wrong)
 	' End ======================================================  Do the QSF ======================================================
 	'
-	' Copy the QSF log and then search it for a bitrate value
-	If CF_do_qsf Then
-		CF_QSF_logfile =  CF_QSF_AbsolutePathName & ".log"
-		vrdtvsp_status = vrdtvsp_delete_a_file(CF_QSF_logfile, True) ' True=silently delete it
-		CF_exe_cmd_string = "CMD /C COPY /Y """ & vrdtvsp_logfile_wildcard_QSF & """ """ & CF_QSF_logfile & """ 2>&1"
-		If vrdtvsp_DEBUG Then 
-			WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_File """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ copy log with CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
-		End If
-		CF_exe_status = vrdtvsp_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string)
-		If CF_exe_status <> 0 OR NOT fso.FileExists(CF_QSF_AbsolutePathName) Then
-			If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: ERROR vrdtvsp_Convert_File - Error - Failed to copy QSF log """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
-			WScript.StdOut.WriteLine("VRDTVSP ERROR vrdtvsp_Convert_File - Error - Failed to copy QSF log """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
-			If vrdtvsp_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
-				Wscript.Echo "Error 17 = cannot perform the requested operation"
-				On Error goto 0
-				WScript.Quit 17 ' Error 17 = cannot perform the requested operation
-			Else
-				Wscript.Echo "Error 17 = cannot perform the requested operation"
-				On Error goto 0
-				WScript.Quit 17 ' Error 17 = cannot perform the requested operation
-			End If
-			vrdtvsp_Convert_File = -1
-			Exit Function
-		End If
-		' Search the QSF logfile for the "Actual Video Bitrate"
-		Set CF_QSF_logfile_object = fso.OpenTextFile(CF_QSF_logfile, ForReading)
-		Const CF_Search_for_this_for_bitrate_in_QSF_logfile = "Actual Video Bitrate: " ' the trailing space is important
-		Q_ACTUAL_QSF_LOG_BITRATE = 0
-		Do Until CF_QSF_logfile_object.AtEndOfStream
-			CF_QSF_logfile_line = CF_QSF_logfile_object.ReadLine
-			CF_tmp = instr(1,CF_QSF_logfile_line, CF_Search_for_this_for_bitrate_in_QSF_logfile, vbTextCompare)
-			If CF_tmp > 0 Then ' InStr([start, ]string1, string2[, compare])
-				' OK, the line looks like "Actual Video Bitrate: 3.74 Mbps"
-				CF_QSF_logfile_string = Mid(CF_QSF_logfile_line,(CF_tmp+len(CF_Search_for_this_for_bitrate_in_QSF_logfile)))	' Mid(string, start[, length]))
-				CF_QSF_string_array = Split(CF_QSF_logfile_string," ",2,vbTextCompare) 				' Split(expression[,delimiter[,count[,compare]]])
-				CF_QSF_logfile_string = Replace(CF_QSF_string_array(0)," ","",1,-1,vbTextCompare)	' Replace(string,find,replacewith[,start[,count[,compare]]]) 'Always assume units is Mbps ...
-				If IsNumeric(CF_QSF_logfile_string) Then ' assume it's a decimal Mbps, convert it to 
-					Q_ACTUAL_QSF_LOG_BITRATE = CDbl(CF_QSF_logfile_string) * 1000000  ' expand the decimal number into a full integer number of Mbps
-				End If
-				Exit Do ' exits the READLINES Do loop at the first detection of the constant
-			End If
-		Loop
-		CF_QSF_logfile_object.Close
-		Set CF_QSF_logfile_object = Nothing
-		vrdtvsp_status = vrdtvsp_delete_a_file(CF_QSF_logfile, True) ' True=silently delete the QSF logfile
+	' PROCESS the bitrate value from the QSF returned XML
+	'
+	If IsNumeric(xmlDict.Item("ActualVideoBitrate")) Then
+		Q_ACTUAL_QSF_XML_BITRATE = xmlDict.Item("ActualVideoBitrate")
 	Else
-		Q_ACTUAL_QSF_LOG_BITRATE = V_BitRate ' here it is the value used it NOT doing a QSF (use the mediainfo value)
+		Q_ACTUAL_QSF_XML_BITRATE = V_BitRate ' BAD qsf VALUE found (use the mediainfo value)
 	End If
 	'
 	' Obtain QSF file characteristics via mediainfo 
@@ -3039,12 +2969,8 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Q_A_CodecID							= vrdtvsp_get_mediainfo_parameter("Audio", "CodecID", CF_QSF_AbsolutePathName, "")
 	Q_A_CodecID_String					= vrdtvsp_get_mediainfo_parameter("Audio", "CodecID/String", CF_QSF_AbsolutePathName, "")
 	Q_A_Video_Delay_ms					= vrdtvsp_get_mediainfo_parameter("Audio", "Video_Delay", CF_QSF_AbsolutePathName, "")
-	Dim Q_V_FrameRate
-	Dim Q_V_FrameRate_String
-	Dim Q_V_Frame_Rate_FF
-	Dim Q_V_Avg_Frame_Rate_FF
-	Q_V_FrameRate = vrdtvsp_get_mediainfo_parameter("Video", "FrameRate", CF_QSF_AbsolutePathName, "")
-	Q_V_FrameRate_String = vrdtvsp_get_mediainfo_parameter("Video", "FrameRate/String", CF_QSF_AbsolutePathName, "")
+	Q_V_FrameRate						= vrdtvsp_get_mediainfo_parameter("Video", "FrameRate", CF_QSF_AbsolutePathName, "")
+	Q_V_FrameRate_String				= vrdtvsp_get_mediainfo_parameter("Video", "FrameRate/String", CF_QSF_AbsolutePathName, "")
 	' Obtain QSF file characteristics via ffprobe 
 	Q_V_CodecID_FF						= vrdtvsp_get_ffprobe_video_stream_parameter("codec_name", CF_QSF_AbsolutePathName)  
 	Q_V_CodecID_String_FF				= vrdtvsp_get_ffprobe_video_stream_parameter("codec_tag_string", CF_QSF_AbsolutePathName)  
@@ -3147,15 +3073,15 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	V_INCOMING_BITRATE = 0
 	V_INCOMING_BITRATE_MEDIAINFO = 0
 	V_INCOMING_BITRATE_FFPROBE = 0
-	V_INCOMING_BITRATE_QSF_LOG = 0
+	V_INCOMING_BITRATE_QSF_XML = 0
 	'REM Check if supposed numbers are NUMERIC.
 	If IsNumeric(Q_V_BitRate) Then 				V_INCOMING_BITRATE_MEDIAINFO = Q_V_BitRate
 	If IsNumeric(Q_V_BitRate_FF) Then 			V_INCOMING_BITRATE_FFPROBE = Q_V_BitRate_FF
-	If IsNumeric(Q_ACTUAL_QSF_LOG_BITRATE) Then	V_INCOMING_BITRATE_QSF_LOG = Q_ACTUAL_QSF_LOG_BITRATE
+	If IsNumeric(Q_ACTUAL_QSF_XML_BITRATE) Then	V_INCOMING_BITRATE_QSF_XML = Q_ACTUAL_QSF_XML_BITRATE
 	'USE the ffprobe bitrate value, sometimes it mis-reports as a much larger bitrate value but it seems to be correct.
 	IF V_INCOMING_BITRATE_FFPROBE   > V_INCOMING_BITRATE Then V_INCOMING_BITRATE = V_INCOMING_BITRATE_FFPROBE
 	IF V_INCOMING_BITRATE_MEDIAINFO > V_INCOMING_BITRATE Then V_INCOMING_BITRATE = V_INCOMING_BITRATE_MEDIAINFO
-	IF V_INCOMING_BITRATE_QSF_LOG   > V_INCOMING_BITRATE Then V_INCOMING_BITRATE = V_INCOMING_BITRATE_QSF_LOG
+	IF V_INCOMING_BITRATE_QSF_XML   > V_INCOMING_BITRATE Then V_INCOMING_BITRATE = V_INCOMING_BITRATE_QSF_XML
 	IF V_INCOMING_BITRATE = 0  Then
 		' Jolly Bother and Dash it all, no valid bitrate found anywhere, we need to set an artifical incoming bitrate. Choose 4Mb/s for AVC
 		V_INCOMING_BITRATE = 4000000
@@ -3197,7 +3123,7 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvsp_Convert_File Q_V_Avg_Frame_Rate_FF=""" & Q_V_Avg_Frame_Rate_FF & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvsp_Convert_File V_INCOMING_BITRATE_MEDIAINFO=""" & V_INCOMING_BITRATE_MEDIAINFO & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvsp_Convert_File V_INCOMING_BITRATE_FFPROBE=""" & V_INCOMING_BITRATE_FFPROBE & """") 
-		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvsp_Convert_File V_INCOMING_BITRATE_QSF_LOG=""" & V_INCOMING_BITRATE_QSF_LOG & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvsp_Convert_File V_INCOMING_BITRATE_QSF_XML=""" & V_INCOMING_BITRATE_QSF_XML & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvsp_Convert_File V_INCOMING_BITRATE=""" & V_INCOMING_BITRATE & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvsp_Convert_File adjusted QSF media characteristics above") 
 	End If
@@ -3279,7 +3205,7 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvsp_Convert_File Q_V_Avg_Frame_Rate_FF=""" & Q_V_Avg_Frame_Rate_FF & """") 
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvsp_Convert_File V_INCOMING_BITRATE_MEDIAINFO=""" & V_INCOMING_BITRATE_MEDIAINFO & """") 
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvsp_Convert_File V_INCOMING_BITRATE_FFPROBE=""" & V_INCOMING_BITRATE_FFPROBE & """") 
-		WScript.StdOut.WriteLine("VRDTVS: vrdtvsp_Convert_File V_INCOMING_BITRATE_QSF_LOG=""" & V_INCOMING_BITRATE_QSF_LOG & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvsp_Convert_File V_INCOMING_BITRATE_QSF_XML=""" & V_INCOMING_BITRATE_QSF_XML & """") 
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvsp_Convert_File V_INCOMING_BITRATE=""" & V_INCOMING_BITRATE & """") 
 		If vrdtvsp_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
@@ -3358,7 +3284,7 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvsp_Convert_File Q_V_Avg_Frame_Rate_FF=""" & Q_V_Avg_Frame_Rate_FF & """") 
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvsp_Convert_File V_INCOMING_BITRATE_MEDIAINFO=""" & V_INCOMING_BITRATE_MEDIAINFO & """") 
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvsp_Convert_File V_INCOMING_BITRATE_FFPROBE=""" & V_INCOMING_BITRATE_FFPROBE & """") 
-		WScript.StdOut.WriteLine("VRDTVS: vrdtvsp_Convert_File V_INCOMING_BITRATE_QSF_LOG=""" & V_INCOMING_BITRATE_QSF_LOG & """") 
+		WScript.StdOut.WriteLine("VRDTVS: vrdtvsp_Convert_File V_INCOMING_BITRATE_QSF_XML=""" & V_INCOMING_BITRATE_QSF_XML & """") 
 		WScript.StdOut.WriteLine("VRDTVS: vrdtvsp_Convert_File V_INCOMING_BITRATE=""" & V_INCOMING_BITRATE & """") 
 		If vrdtvsp_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
@@ -4050,7 +3976,7 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvsp_Convert_File T_V_Avg_Frame_Rate_FF=""" & T_V_Avg_Frame_Rate_FF & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvsp_Convert_File V_INCOMING_BITRATE_MEDIAINFO=""" & V_INCOMING_BITRATE_MEDIAINFO & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvsp_Convert_File V_INCOMING_BITRATE_FFPROBE=""" & V_INCOMING_BITRATE_FFPROBE & """") 
-		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvsp_Convert_File V_INCOMING_BITRATE_QSF_LOG=""" & V_INCOMING_BITRATE_QSF_LOG & """") 
+		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvsp_Convert_File V_INCOMING_BITRATE_QSF_XML=""" & V_INCOMING_BITRATE_QSF_XML & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvsp_Convert_File V_INCOMING_BITRATE=""" & V_INCOMING_BITRATE & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvsp_Convert_File adjusted TARGET media characteristics above") 
 	End If
