@@ -3073,15 +3073,15 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'USE the ffprobe bitrate value, sometimes it mis-reports as a much larger bitrate value but it seems to be correct.
 	IF V_INCOMING_BITRATE_FFPROBE   > V_INCOMING_BITRATE Then 
 		V_INCOMING_BITRATE = V_INCOMING_BITRATE_FFPROBE
-		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: updating to use V_INCOMING_BITRATE = V_INCOMING_BITRATE_FFPROBE")
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: updating to use V_INCOMING_BITRATE = V_INCOMING_BITRATE_FFPROBE = " & V_INCOMING_BITRATE_FFPROBE)
 	End If
 	IF V_INCOMING_BITRATE_MEDIAINFO > V_INCOMING_BITRATE Then 
 		V_INCOMING_BITRATE = V_INCOMING_BITRATE_MEDIAINFO
-		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: updating to use V_INCOMING_BITRATE = V_INCOMING_BITRATE_MEDIAINFO")
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: updating to use V_INCOMING_BITRATE = V_INCOMING_BITRATE_MEDIAINFO = " & V_INCOMING_BITRATE_MEDIAINFO)
 	End If
 	IF V_INCOMING_BITRATE_QSF_XML   > V_INCOMING_BITRATE Then 
 		V_INCOMING_BITRATE = V_INCOMING_BITRATE_QSF_XML
-		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: updating to use V_INCOMING_BITRATE = V_INCOMING_BITRATE_QSF_XML")
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: updating to use V_INCOMING_BITRATE = V_INCOMING_BITRATE_QSF_XML = " & V_INCOMING_BITRATE_MEDIAINFO)
 	End If
 IF V_INCOMING_BITRATE = 0  Then
 		' Jolly Bother and Dash it all, no valid bitrate found anywhere, we need to set an artifical incoming bitrate. Choose 4Mb/s for AVC
