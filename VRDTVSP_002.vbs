@@ -4791,7 +4791,7 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (byVal riqowv_FILE_AbsolutePathNam
 	Dim xmlDict	' this is a dictionary object returned with Set vrdtvsp_run_inlineQSF_only_with_vrd6 = xmlDict 
 	Dim VideoReDoSilent
 	Dim VideoReDo
-	Dim openflag, closeflag, outputOK, OutputGetState
+	Dim openflag, closeflag, outputOK, OutputGetState, percentComplete
 	Dim percent
 	Dim i, profile_count, QSF_profile_count, matching_QSF_profile, a_profile_name, is_QSF
 	Dim QSF_Profile_Names()
