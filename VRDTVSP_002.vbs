@@ -4911,8 +4911,7 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (byVal riqowv_FILE_AbsolutePathNam
 		Wscript.Sleep wait_ms
 		OutputGetState = VideoRedo.OutputGetState()
 	Wend
-	Wscript.StdOut.Write( "." & OutputGetState & ".")
-	Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: QSF 100% Complete.")
+	Wscript.StdOut.WriteLine( "." & OutputGetState & ".")
 	'
 	' Grab the *Actual* info about the "VRD latest save" and hope it is the QSF file)
 	'	
@@ -4921,7 +4920,7 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (byVal riqowv_FILE_AbsolutePathNam
 	xml_string_completedfile = "" 
 	xml_string_completedfile = VideoReDo.OutputGetCompletedInfo() ' which is the most recently completed output file (hopefully the QSF file) https://www.videoredo.com/TVSuite_Application_Notes/output_complete_info_xml_forma.html" 
 	on error goto 0
-	Wscript.StdOut.WriteLine(" QSF 100% Completed: " & vrdtvsp_current_datetime_string())
+	Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: QSF 100% Completed: " & vrdtvsp_current_datetime_string())
 	closeflag = VideoReDo.FileClose()
 	'on error resume next
 	on error goto 0
