@@ -4885,7 +4885,7 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (byVal riqowv_FILE_AbsolutePathNam
 		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: Exiting with errorlevel code 5")
 		Wscript.Quit 5
 	End If
-	Wscript.StdOut.Write("vrdtvsp_run_inlineQSF_only_with_vrd6: working: ")
+	Wscript.StdOut.Write("vrdtvsp_run_inlineQSF_only_with_vrd6: QSF working: ")
 	'Wscript.StdOut.Write("VRDTVS_VRD6_QSF: Percent Complete: ")
 	i = 0
 	OutputGetState = VideoRedo.OutputGetState()
@@ -4903,7 +4903,8 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (byVal riqowv_FILE_AbsolutePathNam
 			Wscript.Quit 5
 		End If
 		'on error resume next
-		'percentComplete = CLng(OutputGetState)
+		on error goto 0
+		percentComplete = CLng(VideoReDo.OutputGetPercentComplete())
 		'if NOT err.number = 0 then
 		'	percentComplete = 0
 		'end if
