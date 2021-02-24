@@ -1026,7 +1026,7 @@ Sub vrdtvsp_ffiaft_Process_Files_In_Subfolders (objSpecifiedFolder, do_subfolder
 	If do_subfolders_as_well Then
     	' If specified, locate and recursively process subfolders of the current folder
     	For Each objSubFolder in objCurrentFolder.SubFolders
-        	Call vrdtvsp_ffiaft_Process_Files_In_Subfolders(objSubFolder)
+        	Call vrdtvsp_ffiaft_Process_Files_In_Subfolders(objSubFolder, do_subfolders_as_well)
     	Next
     	Set objCurrentFolder = Nothing
 	End If
