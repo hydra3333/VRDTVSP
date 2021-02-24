@@ -4221,7 +4221,7 @@ Function vrdtvsp_create_custom_adscan_script_vrd6()
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim adscan_profile_name"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim VideoReDoSilent"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim VideoReDo"
-	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim openflag, closeflag, outputOK"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim openflag, closeflag, outputOK, OutputGetState"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim percent"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim i, profile_count, adscan_profile_count, matching_adscan_profile, a_profile_name, is_adscan"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim Adscan_Profile_Names()"
@@ -4258,7 +4258,8 @@ Function vrdtvsp_create_custom_adscan_script_vrd6()
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "If adscan_profile_count < 1 Then"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_AdScan: ERROR: no VRD6 AdScan profiles were returned by VRD v6"")"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_AdScan: Exiting with errorlevel code 5"")"
-	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	on error resume next"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	'on error resume next"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	on error goto 0"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	VideoReDo.ProgramExit()"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	on error goto 0"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_AdScan: Exiting with errorlevel code 5"")"
@@ -4294,7 +4295,8 @@ Function vrdtvsp_create_custom_adscan_script_vrd6()
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "openflag = VideoReDo.FileOpen(inputFile, False) ' False means not QSF mode"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "If openflag = False Then"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_AdScan: ERROR: VideoReDo failed to open file: """""" & inputFile & """""""")"
-	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	on error resume next"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	'on error resume next"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	on error goto 0"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	VideoReDo.ProgramExit()"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	on error goto 0"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_AdScan: Exiting with errorlevel code 5"")"
@@ -4303,7 +4305,8 @@ Function vrdtvsp_create_custom_adscan_script_vrd6()
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "outputOK = VideoReDo.FileSaveAs(vprjFile, adscan_profile_name)"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "If NOT outputOK = True Then"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_AdScan: ERROR: VideoReDo failed to create AdScan file: """""" & vprjFile & """""" using profile:"""""" & adscan_profile_name & """""""")"
-	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	on error resume next"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	'on error resume next"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	on error goto 0"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	closeflag = VideoReDo.FileClose()"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	VideoReDo.ProgramExit()"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	on error goto 0"
@@ -4312,22 +4315,27 @@ Function vrdtvsp_create_custom_adscan_script_vrd6()
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "End If"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Wscript.StdOut.Write(""VRDTVS_VRD6_AdScan: working: "")"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "'Wscript.StdOut.Write(""VRDTVS_VRD6_AdScan: Percent Complete: "")"
-	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "While( VideoRedo.OutputGetState <> 0 )"
-	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	on error resume next"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "OutputGetState = VideoRedo.OutputGetState()"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "While( OutputGetState <> 0 )"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	'on error resume next"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	on error goto 0"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	percentComplete = CInt(VideoReDo.OutputGetPercentComplete())"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	'if NOT err.number = 0 then"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	'	percentComplete = 0"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	'end if"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	'Wscript.StdOut.Write("" "" & percent & ""% "")"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	'Wscript.StdOut.Write(""."")"
-	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.StdOut.Write( ""."" & VideoRedo.OutputGetState & ""."")"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.StdOut.Write( ""."" & OutputGetState & ""."")"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	on error goto 0"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.Sleep 2000"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	OutputGetState = VideoRedo.OutputGetState()"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Wend"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "closeflag = VideoReDo.FileClose()"
-	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Wscript.StdOut.WriteLine("" AdScan 100% Complete."")"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Wscript.StdOut.WriteLine( ""."" & OutputGetState & ""."")"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Wscript.StdOut.WriteLine(""VRDTVS_VRD6_AdScan AdScan 100% Complete."")"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Wscript.StdOut.WriteLine(""VRDTVS_VRD6_AdScan: Exiting"")"
-	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "on error resume next"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	'on error resume next"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	on error goto 0"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "VideoReDo.ProgramExit()"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "on error goto 0"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Wscript.Quit 0"
@@ -4435,7 +4443,7 @@ Function vrdtvsp_create_custom_QSF_vbscript_vrd6()
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Dim xmlFile"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Dim VideoReDoSilent"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Dim VideoReDo"
-	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Dim openflag, closeflag, outputOK"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Dim openflag, closeflag, outputOK, OutputGetState"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Dim percent"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Dim i, profile_count, QSF_profile_count, matching_QSF_profile, a_profile_name, is_QSF"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Dim QSF_Profile_Names()"
@@ -4479,7 +4487,8 @@ Function vrdtvsp_create_custom_QSF_vbscript_vrd6()
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "If QSF_profile_count < 1 Then"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_QSF: ERROR: no VRD6 QSF profiles were returned by VRD v6"")"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_QSF: Exiting with errorlevel code 5"")"
-	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	on error resume next"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	'on error resume next"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	on error goto 0"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	VideoReDo.ProgramExit()"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	on error goto 0"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_QSF: Exiting with errorlevel code 5"")"
@@ -4504,7 +4513,8 @@ Function vrdtvsp_create_custom_QSF_vbscript_vrd6()
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	Next"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_QSF: QSF Profile count: "" & QSF_profile_count )"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_QSF: Exiting with errorlevel code 5"")"
-	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	on error resume next"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	'on error resume next"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	on error goto 0"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	VideoReDo.ProgramExit()"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	on error goto 0"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_QSF: Exiting with errorlevel code 5"")"
@@ -4514,7 +4524,8 @@ Function vrdtvsp_create_custom_QSF_vbscript_vrd6()
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "openflag = VideoReDo.FileOpen(inputFile, True) ' True means QSF mode" 
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "If openflag = False Then"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_QSF: ERROR: VideoReDo failed to open file: """""" & inputFile & """""""")"
-	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	on error resume next"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	'on error resume next"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	on error goto 0"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	VideoReDo.ProgramExit()"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	on error goto 0"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_QSF: Exiting with errorlevel code 5"")"
@@ -4523,7 +4534,8 @@ Function vrdtvsp_create_custom_QSF_vbscript_vrd6()
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "outputOK = VideoReDo.FileSaveAs(qsfFile, QSF_profile_name) ' save the QSF file"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "If NOT outputOK = True Then"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	Wscript.StdOut.WriteLine(""VRDTVS_VRD6_QSF: ERROR: VideoReDo failed to create QSF file: """""" & qsfFile & """""" using profile:"""""" & QSF_profile_name & """""""")"
-	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	on error resume next"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	'on error resume next"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	on error goto 0"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	closeflag = VideoReDo.FileClose()"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	VideoReDo.ProgramExit()"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	on error goto 0"
@@ -4532,26 +4544,33 @@ Function vrdtvsp_create_custom_QSF_vbscript_vrd6()
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "End If"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Wscript.StdOut.Write(""VRDTVS_VRD6_QSF: working: "")"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "'Wscript.StdOut.Write(""VRDTVS_VRD6_QSF: Percent Complete: "")"
-	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "While( VideoRedo.OutputGetState <> 0 )"
-	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	on error resume next"
-	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	'percentComplete = CInt(VideoReDo.OutputGetPercentComplete())"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "OutputGetState = VideoRedo.OutputGetState()"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "While( OutputGetState <> 0 )"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	'on error resume next"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	on error goto 0"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	percentComplete = CLng(OutputGetState)"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	'if NOT err.number = 0 then"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	'	percentComplete = 0"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	'end if"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	'Wscript.StdOut.Write("" "" & percent & ""% "")"
-	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	Wscript.StdOut.Write(""."")"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	Wscript.StdOut.Write( ""."" & OutputGetState & ""."")"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	on error goto 0"
-	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	Wscript.Sleep 1000 ' reduced from 2000 to 1000"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	Wscript.Sleep 2000"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	OutputGetState = VideoRedo.OutputGetState()"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Wend"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Wscript.StdOut.WriteLine( ""."" & OutputGetState & ""."")"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Wscript.StdOut.WriteLine(""VRDTVS_VRD6_QSF: QSF 100% Complete."")"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "' Grab the *Actual* info about the ""VRD latest save"" and hope it is the QSF file)"
-	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "on error resume next"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "'on error resume next"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "on error goto 0"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "xml_string_completedfile = """" "
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "xml_string_completedfile = VideoReDo.OutputGetCompletedInfo() ' which is the most recently completed output file (hopefully the QSF file) https://www.videoredo.com/TVSuite_Application_Notes/output_complete_info_xml_forma.html"" "
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "on error goto 0"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "closeflag = VideoReDo.FileClose()"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Wscript.StdOut.WriteLine("" QSF 100% Complete."")"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "' Grab the *Estimated* info about the QSF file by a quick open and close"
-	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "on error resume next"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "'on error resume next"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "on error goto 0"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "openflag = VideoReDo.FileOpen(qsfFile, False)' True means QSF mode"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "xml_string_openedfile = """" "
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "xml_string_openedfile = VideoReDo.FileGetOpenedFileProgramInfo() ' https://www.videoredo.com/TVSuite_Application_Notes/program_info_xml_format.html"
@@ -4566,7 +4585,8 @@ Function vrdtvsp_create_custom_QSF_vbscript_vrd6()
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "''''' Get Actual data obtained during the QSF process"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Set xmlDoc = WScript.CreateObject(""Msxml2.DOMDocument.6.0"")"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "xmlDoc.async = False"
-	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "on error resume next "
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "'on error resume next"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "on error goto 0"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "xml_status = xmlDoc.loadXML(xml_string_completedfile) "
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Set xml_objErr = xmlDoc.parseError"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "xml_errorCode = xml_objErr.errorCode"
@@ -4592,7 +4612,8 @@ Function vrdtvsp_create_custom_QSF_vbscript_vrd6()
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "''''' Get Estimated data from a quick open and close of the the QSF file"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Set xmlDoc = WScript.CreateObject(""Msxml2.DOMDocument.6.0"")"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "xmlDoc.async = False"
-	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "on error resume next "
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "'on error resume next"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "on error goto 0"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "xml_status = xmlDoc.loadXML(xml_string_openedfile) "
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Set xml_objErr = xmlDoc.parseError"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "xml_errorCode = xml_objErr.errorCode"
@@ -4643,7 +4664,8 @@ Function vrdtvsp_create_custom_QSF_vbscript_vrd6()
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Wscript.StdOut.WriteLine(""VRDTVS_VRD6_QSF: estimated_ActualVideoBitrate="" & estimated_ActualVideoBitrate) "
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "'"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Wscript.StdOut.WriteLine(""VRDTVS_VRD6_QSF: Exiting"")"
-	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "on error resume next"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "'on error resume next"
+	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "on error goto 0"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "VideoReDo.ProgramExit()"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "on error goto 0"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Wscript.Quit 0"
@@ -4767,7 +4789,7 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (byVal riqowv_FILE_AbsolutePathNam
 	Dim xmlDict	' this is a dictionary object returned with Set vrdtvsp_run_inlineQSF_only_with_vrd6 = xmlDict 
 	Dim VideoReDoSilent
 	Dim VideoReDo
-	Dim openflag, closeflag, outputOK
+	Dim openflag, closeflag, outputOK, OutputGetState
 	Dim percent
 	Dim i, profile_count, QSF_profile_count, matching_QSF_profile, a_profile_name, is_QSF
 	Dim QSF_Profile_Names()
@@ -4803,7 +4825,8 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (byVal riqowv_FILE_AbsolutePathNam
 	Next
 	If QSF_profile_count < 1 Then
 		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: ERROR: no VRD6 QSF profiles were returned by VRD v6")
-		on error resume next
+		'on error resume next
+		on error goto 0
 		VideoReDo.ProgramExit()
 		on error goto 0
 		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: Exiting with errorlevel code 5")
@@ -4828,7 +4851,8 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (byVal riqowv_FILE_AbsolutePathNam
 		Next
 		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: QSF Profile count: " & QSF_profile_count )
 		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: Exiting with errorlevel code 5")
-		on error resume next
+		'on error resume next
+		on error goto 0
 		VideoReDo.ProgramExit()
 		on error goto 0
 		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: Exiting with errorlevel code 5")
@@ -4841,7 +4865,8 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (byVal riqowv_FILE_AbsolutePathNam
 	openflag = VideoReDo.FileOpen(riqowv_FILE_AbsolutePathName, True) ' True means QSF mode
 	If openflag = False Then
 		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: ERROR: VideoReDo failed to open file: """ & riqowv_FILE_AbsolutePathName & """")
-		on error resume next
+		'on error resume next
+		on error goto 0
 		VideoReDo.ProgramExit()
 		on error goto 0
 		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: Exiting with errorlevel code 5")
@@ -4850,7 +4875,8 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (byVal riqowv_FILE_AbsolutePathNam
 	outputOK = VideoReDo.FileSaveAs(riqowv_QSF_AbsolutePathName, riqowv_vrd6_profile_name) ' save the QSF file using the specified QSF profile
 	If NOT outputOK = True Then
 		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: ERROR: VideoReDo failed to create QSF file: """ & riqowv_QSF_AbsolutePathName & """ using profile:""" & riqowv_vrd6_profile_name & """")
-		on error resume next
+		'on error resume next
+		on error goto 0
 		closeflag = VideoReDo.FileClose()
 		VideoReDo.ProgramExit()
 		on error goto 0
@@ -4860,36 +4886,45 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (byVal riqowv_FILE_AbsolutePathNam
 	Wscript.StdOut.Write("vrdtvsp_run_inlineQSF_only_with_vrd6: working: ")
 	'Wscript.StdOut.Write("VRDTVS_VRD6_QSF: Percent Complete: ")
 	i = 0
-	While( VideoRedo.OutputGetState <> 0 )
+	OutputGetState = VideoRedo.OutputGetState()
+	While( OutputGetState <> 0 )
 		i = i + 1
 		If ((i MOD dot_count_linebreak_interval) = 0) Then Wscript.StdOut.WriteLine(" " & ((i * wait_ms)/1000) & " Seconds")
 		If i > giveup_interval_count Then
 			Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: ERROR: VideoReDo timeout after " & ((i * wait_ms)/1000) & " seconds waiting for QSF to complete ... Aborting ...")
-			on error resume next
+			'on error resume next
+			on error goto 0
 			closeflag = VideoReDo.FileClose()
 			VideoReDo.ProgramExit()
 			on error goto 0
 			Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: Exiting with errorlevel code 5")
 			Wscript.Quit 5
 		End If
-		on error resume next
-		'percentComplete = CInt(VideoReDo.OutputGetPercentComplete())
+		'on error resume next
+		'percentComplete = CLng(OutputGetState)
 		'if NOT err.number = 0 then
 		'	percentComplete = 0
 		'end if
 		'Wscript.StdOut.Write(" " & percent & "% ")
-		Wscript.StdOut.Write(".")
+		Wscript.StdOut.Write( "." & OutputGetState & ".")
 		on error goto 0
 		Wscript.Sleep wait_ms
+		OutputGetState = VideoRedo.OutputGetState()
 	Wend
+	Wscript.StdOut.Write( "." & OutputGetState & ".")
+	Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd6: QSF 100% Complete.")
+	'
 	' Grab the *Actual* info about the "VRD latest save" and hope it is the QSF file)
-	on error resume next
+	'	
+	'on error resume next
+	on error goto 0
 	xml_string_completedfile = "" 
 	xml_string_completedfile = VideoReDo.OutputGetCompletedInfo() ' which is the most recently completed output file (hopefully the QSF file) https://www.videoredo.com/TVSuite_Application_Notes/output_complete_info_xml_forma.html" 
 	on error goto 0
 	Wscript.StdOut.WriteLine(" QSF 100% Completed: " & vrdtvsp_current_datetime_string())
 	closeflag = VideoReDo.FileClose()
-	on error resume next
+	'on error resume next
+	on error goto 0
 	VideoReDo.ProgramExit()
 	on error goto 0
 	Set VideoReDo = Nothing
@@ -4903,7 +4938,8 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (byVal riqowv_FILE_AbsolutePathNam
 	xmlDict.CompareMode = vbTextCompare ' set case insensitive key lookups. You can set the CompareMode property only when the dictionary is empty.
 	Set xmlDoc = WScript.CreateObject("Msxml2.DOMDocument.6.0")
 	xmlDoc.async = False
-	on error resume next 
+	'on error resume next
+	on error goto 0
 	xml_status = xmlDoc.loadXML(xml_string_completedfile) 
 	Set xml_objErr = xmlDoc.parseError
 	xml_errorCode = xml_objErr.errorCode
