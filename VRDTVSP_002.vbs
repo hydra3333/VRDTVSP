@@ -3475,7 +3475,7 @@ IF V_INCOMING_BITRATE = 0  Then
 		CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_DGIlog_AbsolutePathName & """")
 		CF_object_saved_ffmpeg_commands.WriteLine("REM ====================================================================================================================================================================")
 		CF_object_saved_ffmpeg_commands.WriteLine("ECHO !DATE! !TIME!")
-		CF_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string) ' write the QSF String to be executed
+		CF_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string) ' write the DGIndexNV String to be executed
 		CF_object_saved_ffmpeg_commands.WriteLine("ECHO !DATE! !TIME!")
 		CF_object_saved_ffmpeg_commands.WriteLine("REM ====================================================================================================================================================================")
 		CF_object_saved_ffmpeg_commands.WriteLine("REM")
