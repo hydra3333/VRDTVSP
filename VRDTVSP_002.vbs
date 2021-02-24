@@ -4909,7 +4909,7 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd6 (byVal riqowv_FILE_AbsolutePathNam
 		'	percentComplete = 0
 		'end if
 		'Wscript.StdOut.Write(" " & percent & "% ")
-		Wscript.StdOut.Write( "." & OutputGetState & ".")
+		Wscript.StdOut.Write( "." & OutputGetState)
 		on error goto 0
 		Wscript.Sleep wait_ms
 		OutputGetState = VideoRedo.OutputGetState()
