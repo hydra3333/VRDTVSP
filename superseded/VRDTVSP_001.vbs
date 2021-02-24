@@ -2759,7 +2759,7 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'
 	CF_QSFxml_ParentFolderName = CF_temp_path
 	CF_QSFxml_BaseName = CF_FILE_BaseName & ".QSF"
-	CF_QSFxml_Ext = ".xml"
+	CF_QSFxml_Ext = "xml"
 	CF_QSFxml_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_QSF_ParentFolderName,CF_QSF_BaseName & "." & CF_QSFxml_Ext))
 	'
 	CF_VPY_ParentFolderName = CF_temp_path
@@ -4294,7 +4294,7 @@ Function vrdtvsp_create_custom_adscan_script_vrd6()
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim adscan_profile_name"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim VideoReDoSilent"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim VideoReDo"
-	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim openflag, closeflag, outputOK"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim openflag, closeflag, outputOK, OutputGetState"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim percent"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim i, profile_count, adscan_profile_count, matching_adscan_profile, a_profile_name, is_adscan"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Dim Adscan_Profile_Names()"
@@ -4386,13 +4386,15 @@ Function vrdtvsp_create_custom_adscan_script_vrd6()
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Wscript.StdOut.Write(""VRDTVS_VRD6_AdScan: working: "")"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "'Wscript.StdOut.Write(""VRDTVS_VRD6_AdScan: Percent Complete: "")"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "While( VideoRedo.OutputGetState <> 0 )"
-	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	on error resume next"
-	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	'percentComplete = CInt(VideoReDo.OutputGetPercentComplete())"
-	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	'if NOT err.number = 0 then"
-	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	'	percentComplete = 0"
-	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	'end if"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	'on error resume next"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	on error goto 0"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	percentComplete = CInt(VideoReDo.OutputGetPercentComplete())"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	if NOT err.number = 0 then"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "		percentComplete = 0"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	end if"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	'Wscript.StdOut.Write("" "" & percent & ""% "")"
-	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.StdOut.Write(""."")"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	'Wscript.StdOut.Write(""."")"
+	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.StdOut.Write( ""."" & VideoRedo.OutputGetState & ""."")"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	on error goto 0"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "	Wscript.Sleep 2000"
 	c=c+1 : ReDim Preserve ccvas(c) : ccvas(c) = "Wend"
