@@ -4839,9 +4839,9 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 	profile_count = VideoReDo.ProfilesGetCount()
 	For i = 0 to profile_count-1
 		a_profile_name = VideoReDo.ProfilesGetProfileName( i )
-		If ccqsfs_vrd_version = 5 Then
+		If riqowv_vrd_version = 5 Then
 			is_QSF = True
-		ElseIf ccqsfs_vrd_version = 6 Then
+		ElseIf riqowv_vrd_version = 6 Then
 			is_QSF = NOT VideoReDo.ProfilesGetProfileIsAdScan( i )
 		End If
 		If ( is_QSF ) Then
