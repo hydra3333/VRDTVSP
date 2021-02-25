@@ -220,8 +220,6 @@ vrd_version_for_adscan = vrdtvsp_get_commandline_parameter("vrd_version_for_adsc
 vrdtvsp_do_adscan = vrdtvsp_get_commandline_parameter("do_adscan",vrdtvsp_do_adscan)                      		                    					' /do_adscan:False
 vrdtvsp_do_audio_delay = vrdtvsp_get_commandline_parameter("do_audio_delay",vrdtvsp_do_audio_delay)                      		                    	' /do_audio_delay:False
 vrdtvsp_show_mediainfo = vrdtvsp_get_commandline_parameter("show_mediainfo",vrdtvsp_show_mediainfo)                      		                    	' /show_mediainfo:False
-'
-vrd_version_for_qsf = 6
 vrd_version_for_qsf = vrdtvsp_get_commandline_parameter("vrd_version_for_qsf",vrd_version_for_qsf)                                        				' /vrd_version_for_qsf:6
 If vrd_version_for_qsf = 5 Then '*** QSF
 	' THE old WAY 2021.02.25. the new way is similar to vrd6 (TESTING IT NOW)
