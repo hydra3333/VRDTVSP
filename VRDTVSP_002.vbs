@@ -4851,7 +4851,7 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 		End If
 	Next
 	If QSF_profile_count < 1 Then
-		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: ERROR: no VRD QSF profiles were returned by VRD v6")
+		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: ERROR: no VRD QSF profiles were returned by VRD")
 		'on error resume next
 		on error goto 0
 		VideoReDo.ProgramExit()
@@ -4895,9 +4895,12 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 		'on error resume next
 		on error goto 0
 		VideoReDo.ProgramExit()
+		' change hard fail to a soft fail so this source file can be ignored and moved and the process continue with the next source file
 		on error goto 0
-		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: Exiting with errorlevel code 5")
-		Wscript.Quit 5
+		set vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 = Nothing
+		exit function
+		'Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: Exiting with errorlevel code 5")
+		'Wscript.Quit 5
 	End If
 	outputOK = VideoReDo.FileSaveAs(riqowv_QSF_AbsolutePathName, riqowv_vrd6_profile_name) ' save the QSF file using the specified QSF profile
 	If NOT outputOK = True Then
@@ -4906,9 +4909,12 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 		on error goto 0
 		closeflag = VideoReDo.FileClose()
 		VideoReDo.ProgramExit()
+		' change hard fail to a soft fail so this source file can be ignored and moved and the process continue with the next source file
 		on error goto 0
-		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: Exiting with errorlevel code 5")
-		Wscript.Quit 5
+		set vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 = Nothing
+		exit function
+		'Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: Exiting with errorlevel code 5")
+		'Wscript.Quit 5
 	End If
 	Wscript.StdOut.Write("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: QSF working: ")
 	'Wscript.StdOut.Write("VRDTVS_VRD_QSF: Percent Complete: ")
@@ -4923,9 +4929,12 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 			on error goto 0
 			closeflag = VideoReDo.FileClose()
 			VideoReDo.ProgramExit()
+			' change hard fail to a soft fail so this source file can be ignored and moved and the process continue with the next source file
 			on error goto 0
-			Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: Exiting with errorlevel code 5")
-			Wscript.Quit 5
+			set vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 = Nothing
+			exit function
+			'Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: Exiting with errorlevel code 5")
+			'Wscript.Quit 5
 		End If
 		'on error resume next
 		on error goto 0
@@ -4978,9 +4987,12 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 		Set xmlDoc = Nothing
 		WScript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: ABORTING: Failed to load string from VideoReDo.OutputGetCompletedInfo() xml_string_completedfile=" & xml_string_completedfile)
 		WScript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: ABORTING: xml_status: " & xml_status & " XML error: " & xml_errorCode & " : " & xml_reason)
-		Wscript.Echo "Error 17 = cannot perform the requested operation"
-		On Error goto 0
-		WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+		' change hard fail to a soft fail so this source file can be ignored and moved and the process continue with the next source file
+		on error goto 0
+		set vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 = Nothing
+		exit function
+		'Wscript.Echo "Error 17 = cannot perform the requested operation"
+		'WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 	End If
 	'
 	'Call vrdtvs_DumpNodes_from_xml(xmlDoc.childNodes, 0)	' PRINT INTERESTING INFORMATION FORM WITH THE XML DOCUMENT
@@ -5000,14 +5012,24 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 		Wscript.Echo "Error 17 = cannot perform the requested operation"
 		On Error goto 0
 		Set xmlDoc = Nothing
-		WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+		' change hard fail to a soft fail so this source file can be ignored and moved and the process continue with the next source file
+		on error goto 0
+		set vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 = Nothing
+		exit function
+		'Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: Exiting with errorlevel code 17")
+		'WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 	ElseIf NOT ( Ucase(xmlDict.Item("outputFile")) =  Ucase(riqowv_QSF_AbsolutePathName) ) Then 
 		Set xmlDoc = Nothing
 		WScript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: ABORTING: outputFile from VideoReDo.OutputGetCompletedInfo() not equal QSFfilename: xml_string_completedfile=" & xml_string_completedfile & " riqowv_QSF_AbsolutePathName=" & riqowv_QSF_AbsolutePathName)
 		Wscript.Echo "Error 17 = cannot perform the requested operation"
 		On Error goto 0
 		Set xmlDoc = Nothing
-		WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+		' change hard fail to a soft fail so this source file can be ignored and moved and the process continue with the next source file
+		on error goto 0
+		set vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 = Nothing
+		exit function
+		'Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: Exiting with errorlevel code 17")
+		'WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 	End If
 	on error goto 0
 	Set xmlDoc = Nothing
@@ -5040,8 +5062,12 @@ Function gimme_xml_named_value (xmlDoc_object, byVAL xml_item_name) ' assumes th
 		WScript.StdOut.WriteLine("VRDTVS gimme_xml_named_value ABORTING : Could not find XML node " & xml_item_name & " in xmlDoc_object")
 		Wscript.Echo "Error 17 = cannot perform the requested operation"
 		Set xmlDoc_object = Nothing
-		On Error goto 0
-		WScript.Quit 17 ' Error 17 = cannot perform the requested operation exit with an error ... soft or hard ?
+		' change hard fail to a soft fail so this source file can be ignored and moved and the process continue with the next source file
+		on error goto 0
+		gimme_xml_named_value = "no xml node to get data from"
+		exit function
+		'Wscript.StdOut.WriteLine("gimme_xml_named_value: Exiting with errorlevel code 17")
+		'WScript.Quit 17 ' Error 17 = cannot perform the requested operation exit with an error ... soft or hard ?
 	End If
 	gimme_xml_named_value = item_nNode.text ' eg the text for that item //VideoReDoProject/EstimatedVideoBitrate
 	End Function
@@ -5056,8 +5082,12 @@ Function gimme_xml_named_attribute (xmlDoc_object, byVAL xml_item_name, byVAL xm
 		WScript.StdOut.WriteLine("VRDTVS gimme_xml_named_attribute ABORTING: Could not find XML node " & xml_item_name & " in xmlDoc_object")
 		Wscript.Echo "Error 17 = cannot perform the requested operation"
 		Set xmlDoc_object = Nothing
-		On Error goto 0
-		WScript.Quit 17 ' Error 17 = cannot perform the requested operation exit with an error ... soft or hard ?
+		' change hard fail to a soft fail so this source file can be ignored and moved and the process continue with the next source file
+		on error goto 0
+		gimme_xml_named_attribute = "no xml node to get data from"
+		exit function
+		'Wscript.StdOut.WriteLine("gimme_xml_named_attribute: Exiting with errorlevel code 17")
+		'WScript.Quit 17 ' Error 17 = cannot perform the requested operation exit with an error ... soft or hard ?
 	End If
 	item_text = item_nNode.text ' eg the text for that item //VideoReDoProject/EncodingDimensions
 	gimme_xml_named_attribute = item_nNode.getAttribute(xml_item_attribute_name)
