@@ -4982,6 +4982,9 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 		On Error goto 0
 		WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 	End If
+	'
+	'Call vrdtvs_DumpNodes_from_xml(xmlDoc.childNodes, 0)	' PRINT INTERESTING INFORMATION FORM WITH THE XML DOCUMENT
+	'
 	xmlDict.Add "outputFile", gimme_xml_named_attribute(xmlDoc, "//VRDOutputInfo", "outputFile")
 	xmlDict.Add "OutputType", gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/OutputType")
 	xmlDict.Add "OutputDurationSecs", gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/OutputDurationSecs")
@@ -5059,9 +5062,46 @@ Function gimme_xml_named_attribute (xmlDoc_object, byVAL xml_item_name, byVAL xm
 	item_text = item_nNode.text ' eg the text for that item //VideoReDoProject/EncodingDimensions
 	gimme_xml_named_attribute = item_nNode.getAttribute(xml_item_attribute_name)
 End Function
-'
-Function vrdtvsp_run_inlineADSCAN_only_with_vrd6()
+Sub vrdtvs_DumpNodes_from_xml(dnfx_Nodes, dnfx_Indent_Size)
+	'	Dump useful information from the xmlDoc object which contains XML data
+	'	Called like:
+	'		Call vrdtvs_DumpNodes_from_xml(xmlDoc.childNodes, 0)
+	Dim dnfx_xNode
+	For Each dnfx_xNode In dnfx_Nodes
+		Select Case dnfx_xNode.nodeType ' 1=NODE ELEMENT, 3=NODE VALUE
+			Case 1:   ' NODE_ELEMENT
+				If dnfx_xNode.nodeName <> "#document" Then ' looks like a hack for the top level
+					' change "vrdtvs_DisplayAttributes_from_xml_node(dnfx_xNode, dnfx_Indent_Size + 2)" to "vrdtvs_DisplayAttributes_from_xml_node(dnfx_xNode, 0)" to see inline attributes rather than indented
+					WScript.Echo String(dnfx_Indent_Size," ") & "<" & dnfx_xNode.nodeName & vrdtvs_DisplayAttributes_from_xml_node(dnfx_xNode, dnfx_Indent_Size + 2) & ">" ' this is the nodename and note attributes THE START OF THE NODE
+					If dnfx_xNode.hasChildNodes Then
+					Call DisplayNode_from_xml(dnfx_xNode.childNodes, dnfx_Indent_Size + 2)	' THIS IS THE CHILD NODES OF THE CURRENT NODE
+					End If
+					WScript.Echo String(dnfx_Indent_Size," ") & "</" & dnfx_xNode.nodeName & ">"	' THIS IS THE END OF THE NODE 
+				Else 'NODENAME =  "#document" 		' looks like a hack for the top level
+					If dnfx_xNode.hasChildNodes Then
+						Call DisplayNode_from_xml(dnfx_xNode.childNodes, dnfx_Indent_Size + 2)
+					End If
+				End If
+			Case 3:   ' value                       
+				WScript.Echo String(dnfx_Indent_Size," ") & "" & dnfx_xNode.nodeValue ' this is the value of the node ' <-- THIS IS THE VALUE
+		End Select
+	Next
+End Sub
+Function vrdtvs_DisplayAttributes_from_xml_node(dafxn_Node, dafxn_Indent_Size)
+	Dim dafxn_xAttr, dafxn_res
+	dafxn_res = ""
+	For Each dafxn_xAttr In dafxn_Node.attributes
+		If dafxn_Indent_Size = 0 Then
+			dafxn_res = dafxn_res & " " & dafxn_xAttr.name & "=""" & dafxn_xAttr.value & """"
+		Else 
+			dafxn_res = dafxn_res & vbCrLf & String(dafxn_Indent_Size," ") & "" & dafxn_xAttr.name & """" & dafxn_xAttr.value & """"
+		End If
+	Next
+	vrdtvs_DisplayAttributes_from_xml_node = dafxn_res
 End Function
+'
+
+
 '
 Function vrdtvsp_fix_timestamps_in_a_folder_tree (ftiaft_folder_name, ftiaft_do_the_tree)
 End Function
