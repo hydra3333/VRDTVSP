@@ -817,9 +817,12 @@ Function vrdtvsp_get_mediainfo_parameter (byVAL mi_Section, byVAL mi_Parameter, 
         WScript.StdOut.WriteLine("VRDTVSP ERROR: vrdtvsp_get_mediainfo_parameter ABORTING with Exec command: " & mi_cmd)
         WScript.StdOut.WriteLine("VRDTVSP ERROR: vrdtvsp_get_mediainfo_parameter ABORTING with  Exit Status: " & mi_status)
         ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
-		Wscript.Echo "Error 17 = cannot perform the requested operation"
+		'Wscript.Echo "Error 17 = cannot perform the requested operation"
+		'On Error goto 0
+		'WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		On Error goto 0
-		WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+		' *** 2021.02.27 LET IT CONTINUE WITH A BLANK RESULT
+		mi_tmp=""
     End If
     mi_tmp="" ' default to Nothing
     Do Until mi_exe.StdOut.AtEndOfStream ' we need to read only one line though
@@ -879,12 +882,13 @@ Function vrdtvsp_get_ffprobe_video_stream_parameter (byVAL ffp_Parameter, byVAL 
     If ffp_status <> 0 then
         WScript.StdOut.WriteLine("VRDTVSP ERROR: vrdtvsp_get_ffprobe_video_stream_parameter ABORTING with Exec command: " & ffp_cmd)
         WScript.StdOut.WriteLine("VRDTVSP ERROR: vrdtvsp_get_ffprobe_video_stream_parameter ABORTING with  Exit Status: " & ffp_status)
-        ' Err.Raise 17 ' Error 17 = cannot perform the requested operation
-		Wscript.Echo "Error 17 = cannot perform the requested operation"
+        '' Err.Raise 17 ' Error 17 = cannot perform the requested operation
+		'Wscript.Echo "Error 17 = cannot perform the requested operation"
 		On Error goto 0
-		WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+		' *** 2021.02.27 LET IT CONTINUE WITH A BLANK RESULT
+		ffp_tmp=""
     End If
-        ffp_tmp="" ' default to Nothing
+    ffp_tmp="" ' default to Nothing
     Do Until ffp_exe.StdOut.AtEndOfStream ' we need to read only one line though
         ffp_tmp = ffp_exe.StdOut.ReadLine()
         If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_get_ffprobe_video_stream_parameter StdOut: " & ffp_tmp)
