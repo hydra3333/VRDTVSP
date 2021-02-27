@@ -97,6 +97,7 @@ vrdtvsp_DEVELOPMENT_NO_ACTIONS = False
 ' Create a bunch of scratch variables
 '
 Dim vrdtvsp_tmp, vrdtvsp_REM, vrdtvsp_status, vrdtvsp_exit_code, vrdrvs_Err_Code, vrdrvs_Err_Description, vrdtvsp_cmd, vrdtvsp_exe_obj ' a few working variables, for common use
+Dim file_count_checked, file_count_fixed
 Dim vrdtvsp_temp_powershell_filename, vrdtvsp_temp_powershell_cmd, vrdtvsp_temp_powershell_exe
 Dim vrdtvsp_saved_ffmpeg_commands_filename, vrdtvsp_saved_ffmpeg_commands_object
 Dim scratch_local_timerStart, scratch_local_timerEnd
@@ -405,7 +406,9 @@ End If
 WScript.StdOut.WriteLine("======================================================================================================================================================")
 WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
 WScript.StdOut.WriteLine("STARTED vrdtvsp_fix_filenames_in_a_folder_tree on SOURCE folder")
-vrdtvsp_status = vrdtvsp_fix_filenames_in_a_folder_tree(vrdtvsp_source_TS_Folder, False) ' this does (a) and (b) and (c).  False indicates to process only the top level folder with NO SUBFOLDERS
+file_count_checked = 0
+file_count_fixed = 0
+vrdtvsp_status = vrdtvsp_fix_filenames_in_a_folder_tree(vrdtvsp_source_TS_Folder, False, file_count_checked, file_count_fixed)) ' this does (a) and (b) and (c).  False indicates to process only the top level folder with NO SUBFOLDERS
 If vrdtvsp_status <> 0 Then ' Something went wrong with processing files in the Source folder ... check for 53 not found ?
 	If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: VRDTVSP ERROR - Error " & vrdtvsp_status & " from vrdtvsp_fix_filenames_in_a_folder_tree in """ & vrdtvsp_source_TS_Folder & """... Aborting ...")
 	WScript.StdOut.WriteLine("VRDTVSP ERROR - Error " & vrdtvsp_status & " from vrdtvsp_fix_filenames_in_a_folder_tree in """ & vrdtvsp_source_TS_Folder & """ ... Aborting ...")
@@ -413,7 +416,7 @@ If vrdtvsp_status <> 0 Then ' Something went wrong with processing files in the 
 	On Error goto 0
 	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
-WScript.StdOut.WriteLine("FINISHED vrdtvsp_fix_filenames_in_a_folder_tree on SOURCE folder")
+WScript.StdOut.WriteLine("FINISHED vrdtvsp_fix_filenames_in_a_folder_tree on SOURCE folder. Checked=" & file_count_checked & " Fixed=" & file_count_fixed)
 WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
 WScript.StdOut.WriteLine("======================================================================================================================================================")
 '
@@ -463,14 +466,16 @@ WScript.StdOut.WriteLine("======================================================
 WScript.StdOut.WriteLine("======================================================================================================================================================")
 WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
 WScript.StdOut.WriteLine("STARTED vrdtvsp_fix_filenames_in_a_folder_tree on DESTINATION folder and subfolders")
-vrdtvsp_status = vrdtvsp_fix_filenames_in_a_folder_tree(vrdtvsp_destination_mp4_Folder, True) ' this does (a) and (b) and (c).  True indicates to process the top level folder including SUBFOLDERS
+file_count_checked = 0
+file_count_fixed = 0
+vrdtvsp_status = vrdtvsp_fix_filenames_in_a_folder_tree(vrdtvsp_destination_mp4_Folder, True, file_count_checked, file_count_fixed) ' this does (a) and (b) and (c).  True indicates to process the top level folder including SUBFOLDERS
 If vrdtvsp_status <> 0 Then ' Something went wrong with processing files in the Destination folder ... check for 53 not found ?
 	If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: VRDTVSP ERROR - Error " & vrdtvsp_status & " from vrdtvsp_fix_filenames_in_a_folder_tree in """ & vrdtvsp_destination_mp4_Folder & """... Aborting ...")
 	WScript.StdOut.WriteLine("VRDTVSP ERROR - Error " & vrdtvsp_status & " from vrdtvsp_fix_filenames_in_a_folder_tree in """ & vrdtvsp_destination_mp4_Folder & """ ... Aborting ...")
 	Wscript.Echo "Error " & vrdtvsp_status
 	Wscript.Quit vrdtvsp_status
 End If
-WScript.StdOut.WriteLine("FINISHED vrdtvsp_fix_filenames_in_a_folder_tree on DESTINATION folder and subfolders")
+WScript.StdOut.WriteLine("FINISHED vrdtvsp_fix_filenames_in_a_folder_tree on DESTINATION folder and subfolders. Checked=" & file_count_checked & " Fixed=" & file_count_fixed)
 WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
 WScript.StdOut.WriteLine("======================================================================================================================================================")
 '
@@ -1007,7 +1012,7 @@ End Function
 '****************************************************************************************************************************************
 '****************************************************************************************************************************************
 '
-Function vrdtvsp_fix_filenames_in_a_folder_tree (the_folder_tree, do_subfolders_as_well) 
+Function vrdtvsp_fix_filenames_in_a_folder_tree (the_folder_tree, do_subfolders_as_well, byRef ffiaft_count_checked, byRef ffiaft_count_fixed) 
 	' Function to traverse a folder tree ( a called function filters for file Extensions: .ts .mp4 .mpg)
 	'   a) Remove special characters in filenames for file Extensions: .ts .mp4 .mpg and autofixes associated .vprj
 	'   b) modify the filenames based on the filename content including reformatting the date in the filename
@@ -1022,10 +1027,13 @@ Function vrdtvsp_fix_filenames_in_a_folder_tree (the_folder_tree, do_subfolders_
     Dim vrdtvsp_f_object
 	Dim local_timerStart, local_timerEnd
 	Dim local_timerStart_2, local_timerEnd_2
+	Dim ffiaft_count_checked, ffiaft_count_fixed
 	local_timerStart = Timer
 	local_timerEnd = Timer
 	local_timerStart_2 = Timer
 	local_timerEnd_2 = Timer
+	ffiaft_count_checked = 0
+	ffiaft_count_fixed = 0
 	'
 	ffiaft_folder_tree = the_folder_tree
     If NOT fso.FolderExists(ffiaft_folder_tree) Then
@@ -1037,7 +1045,7 @@ Function vrdtvsp_fix_filenames_in_a_folder_tree (the_folder_tree, do_subfolders_
     '
 	'If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_fix_filenames_in_a_folder_tree: Started basic file renames for folder tree """ & ffiaft_folder_tree & """")
 	Set vrdtvsp_folder_object = fso.GetFolder(ffiaft_folder_tree)            ' get an object of the specified top level folder to process
-	Call vrdtvsp_ffiaft_Process_Files_In_Subfolders (vrdtvsp_folder_object, do_subfolders_as_well)   ' process the content (files, folders) of that specified top level folder and if specified the SUBFOLDERS too
+	Call vrdtvsp_ffiaft_Process_Files_In_Subfolders (vrdtvsp_folder_object, do_subfolders_as_well, ffiaft_count_checked, ffiaft_count_fixed)   ' process the content (files, folders) of that specified top level folder and if specified the SUBFOLDERS too
     Set vrdtvsp_folder_object = Nothing                                      ' finished, disppose of the object
 	local_timerEnd = Timer
 	'If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_fix_filenames_in_a_folder_tree: Finished basic file renames for folder tree """ & ffiaft_folder_tree & """ with Elapsed Time " & vrdtvsp_Calculate_ElapsedTime_string(local_timerStart, local_timerEnd))
@@ -1049,7 +1057,7 @@ Function vrdtvsp_fix_filenames_in_a_folder_tree (the_folder_tree, do_subfolders_
 	vrdtvsp_fix_filenames_in_a_folder_tree = 0 ' return with status 0
 End Function
 '
-Sub vrdtvsp_ffiaft_Process_Files_In_Subfolders (objSpecifiedFolder, do_subfolders_as_well) ' Process all files in specified folder tree
+Sub vrdtvsp_ffiaft_Process_Files_In_Subfolders (objSpecifiedFolder, do_subfolders_as_well, byRef vrdtvsp_ffiaft_count_checked, byRef vrdtvsp_ffiaft_count_fixed) ' Process all files in specified folder tree
 	' Function to Process all files in specified folder tree OBJECT with file Extensions: .ts .mp4 .mpg
 	'   a) Remove special characters in filenames for file Extensions: .ts .mp4 .mpg and autofixes associated .vprj
 	'   b) modify the filenames based on the filename content including reformatting the date in the filename
@@ -1061,6 +1069,8 @@ Sub vrdtvsp_ffiaft_Process_Files_In_Subfolders (objSpecifiedFolder, do_subfolder
     ' Call like this:
     '       status = vrdtvsp_ffiaft_Process_Files_In_Subfolders (folder_object, False) 
 	Dim objCurrentFolder, objColFiles, objSubFolder, objFile, ext
+	Dim tmp_no_fixed
+	tmp_no_fixed = 0
 	If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_Process_Files_In_Subfolders: Started with incoming folder path """ & fso.GetFolder(objSpecifiedFolder.Path) & """")
     Set objCurrentFolder = fso.GetFolder(objSpecifiedFolder.Path) ' get a NEW instance of a folder object (keep for recursion)
 	If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_Process_Files_In_Subfolders: Started with " & objCurrentFolder.Files.Count & " files in folder """ & fso.GetFolder(objSpecifiedFolder.Path) & """")
@@ -1071,8 +1081,11 @@ Sub vrdtvsp_ffiaft_Process_Files_In_Subfolders (objSpecifiedFolder, do_subfolder
         ext = UCase(fso.GetExtensionName(objFile.name))
         '********* FILTER BY FILE EXTENSION *********
 		If ext = Ucase("ts") OR ext = Ucase("mp4") OR ext = Ucase("mpg") Then ' ********** only process specific file extensions
+			tmp_no_fixed = 0
+			vrdtvsp_ffiaft_count_checked = vrdtvsp_ffiaft_count_checked + 1
 			If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_Process_Files_In_Subfolders: recognised Extension of file in collection=""" & objFile.Path & """ and about to call vrdtvsp_ffiaft_pfis_Rename_a_File")
-            Call vrdtvsp_ffiaft_pfis_Rename_a_File(objFile)'  fso.GetAbsolutePathName(objFile.Path) should be the fully qualified absolute filename of this file
+            tmp_no_fixed = vrdtvsp_ffiaft_pfis_Rename_a_File(objFile)'  fso.GetAbsolutePathName(objFile.Path) should be the fully qualified absolute filename of this file
+			vrdtvsp_ffiaft_count_fixed = vrdtvsp_ffiaft_count_fixed + tmp_no_fixed
         End If
         '********* FILTER BY FILE EXTENSION *********
 		Next
@@ -1080,13 +1093,13 @@ Sub vrdtvsp_ffiaft_Process_Files_In_Subfolders (objSpecifiedFolder, do_subfolder
 	If do_subfolders_as_well Then
     	' If specified, locate and recursively process subfolders of the current folder
     	For Each objSubFolder in objCurrentFolder.SubFolders
-        	Call vrdtvsp_ffiaft_Process_Files_In_Subfolders(objSubFolder, do_subfolders_as_well)
+        	Call vrdtvsp_ffiaft_Process_Files_In_Subfolders(objSubFolder, do_subfolders_as_well, vrdtvsp_ffiaft_count_checked, vrdtvsp_ffiaft_count_fixed)
     	Next
     	Set objCurrentFolder = Nothing
 	End If
 End Sub
 '
-Sub vrdtvsp_ffiaft_pfis_Rename_a_File (objSpecifiedFile) 
+Function vrdtvsp_ffiaft_pfis_Rename_a_File (objSpecifiedFile) 
     ' Process a specific file ... fso.GetAbsolutePathName(objSpecifiedFile.Path) should be the fully qualified absolute filename of this file
     ' Parameters:
 	'		objSpecifiedFile is already pre-filtered beforehand to be one of ts mp4 mpg
@@ -1095,8 +1108,10 @@ Sub vrdtvsp_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 	Dim Final_Renamed_AbsoluteFilename_AfterRetries, Final_Renamed_ParentFolderName, Final_Renamed_BaseName, Final_Renamed_ExtName
 	Dim Original_vprj_AbsoluteFilename, Final_Renamed_vprj_AbsoluteFilename
 	Dim local_timerStart, local_timerEnd
+	Dim tmp_count_fixed
 	local_timerStart = Timer
 	local_timerEnd = Timer
+	tmp_count_fixed = 0
     theOriginalAbsoluteFilename = fso.GetAbsolutePathName(objSpecifiedFile.Path) ' should already be fully qualified but do it anyway just to be safe
     theOriginalParentFolderName = fso.GetParentFolderName(theOriginalAbsoluteFilename)
     theOriginalBaseName = fso.GetBaseName(theOriginalAbsoluteFilename)
@@ -1124,6 +1139,7 @@ Sub vrdtvsp_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
 		Final_Renamed_BaseName = fso.GetBaseName(theOriginalAbsoluteFilename)
 		Final_Renamed_ExtName = fso.GetExtensionName(theOriginalAbsoluteFilename) ' does not include  the "."
 	Else ' is a change to the filename
+		tmp_count_fixed = 1
 		If vrdtvsp_DEBUG Then 
 			'WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_pfis_Rename_a_File: needs a Rename using theOriginalBaseName=""" & theOriginalBaseName & """" )
 			'WScript.StdOut.WriteLine("                                                                       NewBaseName=""" & NewBaseName & """" )
@@ -1160,8 +1176,8 @@ Sub vrdtvsp_ffiaft_pfis_Rename_a_File (objSpecifiedFile)
     If vrdtvsp_DEBUG Then 
 		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_pfis_Rename_a_File: Exit having Elapsed Time " & vrdtvsp_Calculate_ElapsedTime_string(local_timerStart, local_timerEnd))
 	End If
-	' vrdtvsp_ffiaft_pfis_Rename_a_File is a Sub, hence no return values
-End Sub
+	vrdtvsp_ffiaft_pfis_Rename_a_File = tmp_count_fixed
+End Function
 '
 Function vrdtvsp_do_a_Rename_Try99Times(OriginalAbsoluteFilename, TargetAbsoluteFilename)
 	' Try to rename a file and re-Rename it if required, trying up to 99 times
@@ -4628,7 +4644,7 @@ Function vrdtvsp_Exec_in_a_DOS_BAT_file (byVAL eiadbf_cmd_string_array, byVAL ei
 	set eiadbf_batfilename_object = Nothing
 	'
 	If eiadbf_print_batfile Then
-		WScript.StdOut.WriteLine("START Content of """ & eiadbf_batfilename & """ Below ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
+		WScript.StdOut.WriteLine("---------- START Content of """ & eiadbf_batfilename & """ Below ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
 		Set eiadbf_batfilename_object = fso.OpenTextFile(eiadbf_batfilename, ForReading) ' ForReading is global
 		Do Until eiadbf_batfilename_object.AtEndOfStream
 			eiadbf_tmp = eiadbf_batfilename_object.ReadLine
@@ -4636,16 +4652,16 @@ Function vrdtvsp_Exec_in_a_DOS_BAT_file (byVAL eiadbf_cmd_string_array, byVAL ei
 		Loop			
 		eiadbf_status = eiadbf_batfilename_object.Close
 		Set eiadbf_batfilename_object = Nothing
-		WScript.StdOut.WriteLine("END   Content of """ & eiadbf_batfilename & """ Above ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
+		WScript.StdOut.WriteLine("---------- END   Content of """ & eiadbf_batfilename & """ Above ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
 	End If
 	'
 	' Now .Run the .bat
-	WScript.StdOut.WriteLine("Start .Run """ & eiadbf_batfilename & """ " & vrdtvsp_current_datetime_string() & " ########################################################################################################################################################################################################################################")
+	WScript.StdOut.WriteLine("########## Start .Run """ & eiadbf_batfilename & """ " & vrdtvsp_current_datetime_string() & " ########################################################################################################################################################################################################################################")
 	eiadbf_errorlevel = wso.Run("CMD /C """ & eiadbf_batfilename & """", 7, True) '(strCommand, [intWindowStyle], [bWaitOnReturn]) ' https://ss64.com/vb/run.html
-	WScript.StdOut.WriteLine("End   .Run """ & eiadbf_batfilename & """ " & vrdtvsp_current_datetime_string() & " Final Exit status :" & eiadbf_errorlevel & " ########################################################################################################################################################################################################################################")
+	WScript.StdOut.WriteLine("########## End   .Run """ & eiadbf_batfilename & """ " & vrdtvsp_current_datetime_string() & " Final Exit status :" & eiadbf_errorlevel & " ########################################################################################################################################################################################################################################")
 	'
 	If eiadbf_print_logfile Then
-		WScript.StdOut.WriteLine("START Content of """ & eiadbf_logfilename & """ Below ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+		WScript.StdOut.WriteLine("++++++++++ START Content of """ & eiadbf_logfilename & """ Below ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 		Set eiadbf_logfilename_object = fso.OpenTextFile(eiadbf_logfilename, ForReading) ' ForReading is global
 		Do Until eiadbf_logfilename_object.AtEndOfStream
 			eiadbf_tmp = eiadbf_logfilename_object.ReadLine
@@ -4653,7 +4669,7 @@ Function vrdtvsp_Exec_in_a_DOS_BAT_file (byVAL eiadbf_cmd_string_array, byVAL ei
 		Loop			
 		eiadbf_status = eiadbf_logfilename_object.Close
 		Set eiadbf_logfilename_object = Nothing
-		WScript.StdOut.WriteLine("END   Content of """ & eiadbf_logfilename & """ Above ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+		WScript.StdOut.WriteLine("++++++++++ END   Content of """ & eiadbf_logfilename & """ Above ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 	End If
 	eiadbf_status = vrdtvsp_delete_a_file(eiadbf_batfilename, True)
 	eiadbf_status = vrdtvsp_delete_a_file(eiadbf_logfilename, True)
