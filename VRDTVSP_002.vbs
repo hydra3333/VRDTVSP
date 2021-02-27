@@ -2158,6 +2158,17 @@ Function vrdtvsp_Move_Date_to_End_of_String(theOriginalString)
 	theNewString = Replace(theNewString, "._", ".", 1, -1, vbTextCompare)
 	theNewString = Replace(theNewString, "_-", "_", 1, -1, vbTextCompare)
 	theNewString = Replace(theNewString, "-_", "_", 1, -1, vbTextCompare)
+	'
+	theNewString = Replace(theNewString, "..", ".", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "..", ".", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "..", ".", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "..", ".", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "..", ".", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
 	timerEnd_MDES = Timer
     'If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Move_Date_to_End_of_String: exiting with return value   """ & theNewString & """ having Loop Elapsed Time " & vrdtvsp_Calculate_ElapsedTime_string(timerStart_MDES, timerEnd_MDES))
 	vrdtvsp_Move_Date_to_End_of_String = theNewString
