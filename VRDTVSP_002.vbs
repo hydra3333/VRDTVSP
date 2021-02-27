@@ -431,7 +431,7 @@ vrdtvsp_saved_ffmpeg_commands_filename = fso.GetAbsolutePathName(fso.BuildPath(v
 ' process the files
 WScript.StdOut.WriteLine("======================================================================================================================================================")
 WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
-WScript.StdOut.WriteLine("STARTED about to vrdtvsp_Convert_files_in_a_folder")
+WScript.StdOut.WriteLine("about to vrdtvsp_Convert_files_in_a_folder")
 vrdtvsp_status = vrdtvsp_Convert_files_in_a_folder(	vrdtvsp_source_TS_Folder, _
 													vrdtvsp_done_TS_Folder, _
 													vrdtvsp_destination_mp4_Folder, _
@@ -448,7 +448,7 @@ If vrdtvsp_status <> 0 Then ' Something bad went wrong (invididual conversion fa
 	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
 '.................. END video processing for the FULL SOURCE TS folder (not tree) - the function has a big loop - converts Source files then moves them to Done or Failed
-WScript.StdOut.WriteLine("FINISHED vrdtvsp_Convert_files_in_a_folder")
+WScript.StdOut.WriteLine("after vrdtvsp_Convert_files_in_a_folder")
 WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
 WScript.StdOut.WriteLine("======================================================================================================================================================")
 '
@@ -2259,10 +2259,8 @@ Function vrdtvsp_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 	Dim C_exe_status
 	Dim C_tmp, c_status
 	'
-	WScript.StdOut.WriteLine("======================================================================================================================================================")
 	WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
 	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_files_in_a_folder STARTED: " & vrdtvsp_current_datetime_string())
-	WScript.StdOut.WriteLine("======================================================================================================================================================")
 	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_files_in_a_folder:                C_source_TS_Folder=""" & C_source_TS_Folder & """")
 	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_files_in_a_folder:                  C_done_TS_Folder=""" & C_done_TS_Folder & """")
 	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_files_in_a_folder:          C_destination_mp4_Folder=""" & C_destination_mp4_Folder & """")
@@ -2413,10 +2411,8 @@ Function vrdtvsp_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 	'
 	vrdtvsp_status = C_object_saved_ffmpeg_commands.Close
 	Set C_object_saved_ffmpeg_commands = Nothing
-	WScript.StdOut.WriteLine("======================================================================================================================================================")
 	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_files_in_a_folder FINISHED: " & vrdtvsp_current_datetime_string())
 	WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
-	WScript.StdOut.WriteLine("======================================================================================================================================================")
 	vrdtvsp_Convert_files_in_a_folder = 0 ' return success
 End Function
 '
