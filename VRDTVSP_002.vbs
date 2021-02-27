@@ -4630,7 +4630,7 @@ Function vrdtvsp_create_custom_QSF_vbscript_vrd_5_AND_6( byVAL ccqsfs_vrd_versio
 	Dim ccqsfs_status
 	Dim ccqsfs(), i, c
 	'
-	ccqsfs_Absolute_script_name = vrdtvsp_gimme_a_temporary_absolute_filename("vrdtvsp_custom_vrd6_QSF_script-" & vrdtvsp_run_datetime) & ".vbs"
+	ccqsfs_Absolute_script_name = vrdtvsp_gimme_a_temporary_absolute_filename("vrdtvsp_custom_vrd" & ccqsfs_vrd_version & "_QSF_script-" & vrdtvsp_run_datetime) & ".vbs"
 	c = -1 ' base 0
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Option Explicit"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "' File: """ & ccqsfs_Absolute_script_name & """"
@@ -5083,6 +5083,8 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 	'
 	riqowv_FILE_AbsolutePathName = fso.GetAbsolutePathName(riqowv_FILE_AbsolutePathName)		' was passed byVal
 	riqowv_QSF_AbsolutePathName = fso.GetAbsolutePathName(riqowv_QSF_AbsolutePathName)			' was passed byVal
+	'
+	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 - VRD VERSION SPECIFIED TO BE USED IS: """ & riqowv_vrd_version & """")
 	'
 	If riqowv_vrd_version = 5 Then
 		Set VideoReDoSilent = WScript.CreateObject("VideoReDo5.VideoReDoSilent")
