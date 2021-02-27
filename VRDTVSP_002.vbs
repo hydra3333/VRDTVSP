@@ -2219,6 +2219,7 @@ Function vrdtvsp_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 	Dim C_tmp, c_status
 	'
 	WScript.StdOut.WriteLine("======================================================================================================================================================")
+	WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
 	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_files_in_a_folder STARTED: " & vrdtvsp_current_datetime_string())
 	WScript.StdOut.WriteLine("======================================================================================================================================================")
 	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_files_in_a_folder:                C_source_TS_Folder=""" & C_source_TS_Folder & """")
@@ -2342,7 +2343,7 @@ Function vrdtvsp_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 		If Ucase(C_FILE_Ext) = Ucase("ts") OR Ucase(C_FILE_Ext) = Ucase("mp4") OR Ucase(C_FILE_Ext) = Ucase("mpg") OR Ucase(C_FILE_Ext) = Ucase("vprj") Then ' ********** only process specific file extensions
 			WScript.StdOut.WriteLine("======================================================================================================================================================")
 			WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
-			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_files_in_a_folder ========== PROCESSING file C_FILE_AbsolutePathName=""" & C_FILE_AbsolutePathName & """ ==========")
+			WScript.StdOut.WriteLine("VRDTVSP ========== PROCESSING file C_FILE_AbsolutePathName=""" & C_FILE_AbsolutePathName & """ ==========")
 			WScript.StdOut.WriteLine(" ")
 			Select Case Ucase(C_FILE_Ext)
 			Case Ucase("vprj") 										' it's in the source folder, ignore it
@@ -2359,11 +2360,11 @@ Function vrdtvsp_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 														C_do_audio_delay )
 				' hmm, looks like status checking is ignored ... eg "-1" for failed conversion
 				If vrdtvsp_status <> 0 Then
-					WScript.StdOut.WriteLine("VRDTVSP ERROR vrdtvsp_Convert_files_in_a_folder - Error - SOURCE FILE NOT CONVERTED, ASSUMED FILE(S) MOVED TO FAILED FOLDER. File: """ & C_FILE_AbsolutePathName & """... Continuing ...")
+					WScript.StdOut.WriteLine("VRDTVSP ERROR vrdtvsp_Convert_files_in_a_folder - Error - SOURCE FILE NOT CONVERTED, ASSUMED FILE(S) HAVE BEEN MOVED TO FAILED FOLDER. File: """ & C_FILE_AbsolutePathName & """... Continuing ...")
 				End If
 			Case Else	' extension not recognised, do Nothing
 			End Select 
-			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_files_in_a_folder ========== FINISHED file C_FILE_AbsolutePathName=""" & C_FILE_AbsolutePathName & """ ==========")
+			WScript.StdOut.WriteLine("VRDTVSP ========== FINISHED file C_FILE_AbsolutePathName=""" & C_FILE_AbsolutePathName & """ ==========")
 			WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
 			WScript.StdOut.WriteLine("======================================================================================================================================================")
 		End If
@@ -2373,6 +2374,7 @@ Function vrdtvsp_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 	Set C_object_saved_ffmpeg_commands = Nothing
 	WScript.StdOut.WriteLine("======================================================================================================================================================")
 	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_files_in_a_folder FINISHED: " & vrdtvsp_current_datetime_string())
+	WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
 	WScript.StdOut.WriteLine("======================================================================================================================================================")
 	vrdtvsp_Convert_files_in_a_folder = 0 ' return success
 End Function
@@ -2383,6 +2385,8 @@ Function vrdtvsp_exec_a_command_and_show_stdout_stderr (byVAL eac_command_string
 		vrdtvsp_exec_a_command = 0
 		Exit Function
 	End If
+	WScript.StdOut.WriteLine("======================================================================================================================================================")
+	WScript.StdOut.WriteLine("vrdtvsp_exec_a_command_and_show_stdout_stderr " & vrdtvsp_current_datetime_string())
 	' Examples with and without CMD and 2>&1
 	'		eac_exe_cmd_string = "CMD /C ""something"""
 	'		eac_exe_cmd_string = "CMD /C ""something"" 2>&1"
@@ -2391,29 +2395,31 @@ Function vrdtvsp_exec_a_command_and_show_stdout_stderr (byVAL eac_command_string
 	If vrdtvsp_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 		eac_exe_object = "REM " & eac_command_string ' comment out any action
 	End If
-	WScript.StdOut.WriteLine("vrdtvsp_exec_a_command_and_show_stdout_stderr Exec command: " & eac_command_string)
+	WScript.StdOut.WriteLine("EXEC command: " & eac_command_string)
 	set eac_exe_object = wso.Exec(eac_command_string)
 	Do While eac_exe_object.Status = 0 '0 is running and 1 is ending
 	 	Wscript.Sleep 100
 		 'Wscript.Echo "vrdtvsp_exec_a_command_and_show_stdout_stderr About to sleep for 5 seconds"
 		 'Wscript.Sleep 5000
 	Loop
-	WScript.StdOut.WriteLine("vrdtvsp_exec_a_command_and_show_stdout_stderr START StdOut: ")
+	WScript.StdOut.WriteLine("START StdOut: ")
 	Do Until eac_exe_object.StdOut.AtEndOfStream
 		eac_tmp = eac_exe_object.StdOut.ReadLine()
 		WScript.StdOut.WriteLine(eac_tmp)
 	Loop
-	WScript.StdOut.WriteLine("vrdtvsp_exec_a_command_and_show_stdout_stderr END   StdOut: ")
-	WScript.StdOut.WriteLine("vrdtvsp_exec_a_command_and_show_stdout_stderr START StdErr: ")
+	WScript.StdOut.WriteLine("END   StdOut: ")
+	WScript.StdOut.WriteLine("START StdErr: ")
 	Do Until eac_exe_object.StdErr.AtEndOfStream
 		eac_tmp = eac_exe_object.StdErr.ReadLine()
 		WScript.StdOut.WriteLine(eac_tmp)
 	Loop
-	WScript.StdOut.WriteLine("vrdtvsp_exec_a_command_and_show_stdout_stderr END   StdErr: ")
+	WScript.StdOut.WriteLine("END   StdErr: ")
 	eac_exe_status = eac_exe_object.ExitCode
-	WScript.StdOut.WriteLine("vrdtvsp_exec_a_command_and_show_stdout_stderr Exit Status: " & eac_exe_status)
+	WScript.StdOut.WriteLine("EXIT STATUS: " & eac_exe_status)
 	Set eac_exe_object = Nothing
 	If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_exec_a_command_and_show_stdout_stderr exiting with status=""" & eac_exe_status & """")
+	WScript.StdOut.WriteLine("vrdtvsp_exec_a_command_and_show_stdout_stderr " & vrdtvsp_current_datetime_string())
+	WScript.StdOut.WriteLine("======================================================================================================================================================")
 	vrdtvsp_exec_a_command_and_show_stdout_stderr = eac_exe_status
 End Function
 '
@@ -2423,10 +2429,12 @@ Function vrdtvsp_exec_a_FFMPEG_command_and_show_stderr_only (byVAL eac_command_s
 		vrdtvsp_exec_a_command = 0
 		Exit Function
 	End If
+	WScript.StdOut.WriteLine("======================================================================================================================================================")
+	WScript.StdOut.WriteLine("vrdtvsp_exec_a_FFMPEG_command_and_show_stderr_only " & vrdtvsp_current_datetime_string())
 	If vrdtvsp_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 		eac_exe_object = "REM " & eac_command_string ' comment out any action
 	End If
-	WScript.StdOut.WriteLine("vrdtvsp_exec_a_command_and_show_stdout_stderr Exec command: " & eac_command_string)
+	WScript.StdOut.WriteLine("EXEC command: " & eac_command_string)
 	set eac_exe_object = wso.Exec(eac_command_string)
 	Do While eac_exe_object.Status = 0 '0 is running and 1 is ending
 	 	Wscript.Sleep 100
@@ -2439,16 +2447,18 @@ Function vrdtvsp_exec_a_FFMPEG_command_and_show_stderr_only (byVAL eac_command_s
 	'	WScript.StdOut.WriteLine(eac_tmp)
 	'Loop
 	'WScript.StdOut.WriteLine("vrdtvsp_exec_a_command_and_show_stdout_stderr END   StdOut: ")
-	WScript.StdOut.WriteLine("vrdtvsp_exec_a_command_and_show_stdout_stderr START StdErr: ")
+	WScript.StdOut.WriteLine("START StdErr: ")
 	Do Until eac_exe_object.StdErr.AtEndOfStream
 		eac_tmp = eac_exe_object.StdErr.ReadLine()
 		WScript.StdOut.WriteLine(eac_tmp)
 	Loop
-	WScript.StdOut.WriteLine("vrdtvsp_exec_a_command_and_show_stdout_stderr END   StdErr: ")
+	WScript.StdOut.WriteLine("END   StdErr: ")
 	eac_exe_status = eac_exe_object.ExitCode
-	WScript.StdOut.WriteLine("vrdtvsp_exec_a_command_and_show_stdout_stderr Exit Status: " & eac_exe_status)
+	WScript.StdOut.WriteLine("EXIT STATUS: " & eac_exe_status)
 	Set eac_exe_object = Nothing
 	If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_exec_a_command_and_show_stdout_stderr exiting with status=""" & eac_exe_status & """")
+	WScript.StdOut.WriteLine("vrdtvsp_exec_a_FFMPEG_command_and_show_stderr_only " & vrdtvsp_current_datetime_string())
+	WScript.StdOut.WriteLine("======================================================================================================================================================")
 	vrdtvsp_exec_a_command_and_show_stdout_stderr = eac_exe_status
 End Function
 '
@@ -2660,8 +2670,8 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'	
 	WScript.StdOut.WriteLine(" ")
 	WScript.StdOut.WriteLine("======================================================================================================================================================")
-	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: STARTED " & vrdtvsp_current_datetime_string())
-	WScript.StdOut.WriteLine("======================================================================================================================================================")
+	WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+	WScript.StdOut.WriteLine("vrdtvsp_Convert_File STARTED " & vrdtvsp_current_datetime_string())
 	WScript.StdOut.WriteLine(" ")
 	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File:           CF_FILE_AbsolutePathName=""" & CF_FILE_AbsolutePathName & """")
 	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File:                CF_source_TS_Folder=""" & CF_source_TS_Folder & """")
@@ -4420,12 +4430,12 @@ IF V_INCOMING_BITRATE = 0  Then
 		vrdtvsp_status = vrdtvsp_move_files_to_folder(CF_FILE_AbsolutePathName, CF_done_TS_Folder)
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: moved file to DONE folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_done_TS_Folder & """")
 	End If
+	WScript.StdOut.WriteLine(" ")
+	WScript.StdOut.WriteLine("vrdtvsp_Convert_File FINISHED " & vrdtvsp_current_datetime_string())
+	WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+	WScript.StdOut.WriteLine("======================================================================================================================================================")
+	WScript.StdOut.WriteLine(" ")
 	vrdtvsp_Convert_File = 0	
-	WScript.StdOut.WriteLine(" ")
-	WScript.StdOut.WriteLine("======================================================================================================================================================")
-	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: FINISHED " & vrdtvsp_current_datetime_string())
-	WScript.StdOut.WriteLine("======================================================================================================================================================")
-	WScript.StdOut.WriteLine(" ")
 End Function
 '
 Function vrdtvsp_writeline_for_vpy (vpy_filename_object, bat_filename_object, a_vpy_statement, prepend_string, append_string)
