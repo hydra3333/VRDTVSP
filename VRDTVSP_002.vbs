@@ -5392,7 +5392,7 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 	xml_string_completedfile = "" 
 	xml_string_completedfile = VideoReDo.OutputGetCompletedInfo() ' which is the most recently completed output file (hopefully the QSF file) https://www.videoredo.com/TVSuite_Application_Notes/output_complete_info_xml_forma.html" 
 	on error goto 0
-	Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: QSF 100% Completed: " & vrdtvsp_current_datetime_string())
+	Wscript.StdOut.WriteLine("QSF 100% Completed: " & vrdtvsp_current_datetime_string())
 	closeflag = VideoReDo.FileClose()
 	'on error resume next
 	on error goto 0
@@ -5400,7 +5400,7 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 	on error goto 0
 	Set VideoReDo = Nothing
  	Set VideoReDoSilent = Nothing
-	Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: xml_string_completedfile=") 
+	Wscript.StdOut.WriteLine("QSF xml_string_completedfile=") 
 	Wscript.StdOut.WriteLine(xml_string_completedfile) 
 	'
 	' Get some of the data obtained during the QSF process and populate a Dict object to return
@@ -5567,9 +5567,6 @@ Function vrdtvs_DisplayAttributes_from_xml_node(dafxn_Node, dafxn_Indent_Size)
 	Next
 	vrdtvs_DisplayAttributes_from_xml_node = dafxn_res
 End Function
-'
-
-
 '
 Function vrdtvsp_fix_timestamps_in_a_folder_tree (ftiaft_folder_name, ftiaft_do_the_tree)
 End Function
