@@ -4648,7 +4648,7 @@ Function vrdtvsp_Exec_in_a_DOS_BAT_file (byVAL eiadbf_cmd_string_array, byVAL ei
 	' Now .Run the .bat
 	WScript.StdOut.WriteLine("******************** Start .Run """ & eiadbf_batfilename & """ " & vrdtvsp_current_datetime_string())
 	eiadbf_errorlevel = wso.Run("CMD /C """ & eiadbf_batfilename & """", 7, True) '(strCommand, [intWindowStyle], [bWaitOnReturn]) ' https://ss64.com/vb/run.html
-	WScript.StdOut.WriteLine("******************** End   .Run """ & eiadbf_batfilename & """ " &  & vrdtvsp_current_datetime_string() & " Final Exit status :" & eiadbf_errorlevel)
+	WScript.StdOut.WriteLine("******************** End   .Run """ & eiadbf_batfilename & """ " & vrdtvsp_current_datetime_string() & " Final Exit status :" & eiadbf_errorlevel)
 	'
 	If eiadbf_print_logfile Then
 		WScript.StdOut.WriteLine("******************** START Content of """ & eiadbf_logfilename & """ Below:")
