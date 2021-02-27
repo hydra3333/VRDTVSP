@@ -4451,12 +4451,11 @@ IF V_INCOMING_BITRATE = 0  Then
 		CF_object_saved_ffmpeg_commands.WriteLine("REM ====================================================================================================================================================================")
 		CF_object_saved_ffmpeg_commands.WriteLine("REM")
 		' do the actual ADCSAN command (delete the vprj file first)
-		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ******************** Start of run ADSCAN """ & CF_exe_cmd_string & """ :")
-		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: Doing ADSCAN for """ & CF_TARGET_AbsolutePathName & """ ... ")
-		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: ADSCAN command: " & CF_exe_cmd_string)
-		WScript.StdOut.WriteLine(" ====================================================================================================================================================================")
-		WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string())
-		WScript.StdOut.WriteLine(" ====================================================================================================================================================================")
+		WScript.StdOut.WriteLine("======================================================================================================================================================")
+		WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+		WScript.StdOut.WriteLine("******************** Start of run ADSCAN """ & CF_exe_cmd_string & """ :")
+		WScript.StdOut.WriteLine("Doing ADSCAN for """ & CF_TARGET_AbsolutePathName & """ ... ")
+		WScript.StdOut.WriteLine("ADSCAN command: " & CF_exe_cmd_string)
 		''' vrdtvsp_status = vrdtvsp_delete_a_file(CF_vprj_AbsolutePathName, True) ' True=silently delete it ' - the old way of doing it
 		''' CF_exe_status = vrdtvsp_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string) ' - the old way of doing it
 		ReDim vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1) ' base 0, so the dimension is always 1 less than the number of commands
@@ -4464,11 +4463,11 @@ IF V_INCOMING_BITRATE = 0  Then
 		vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1) = CF_exe_cmd_string
 		CF_exe_status = vrdtvsp_Exec_in_a_DOS_BAT_file(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log - the safer way of doing it
 		Erase vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array
-		WScript.StdOut.WriteLine(" ====================================================================================================================================================================")
-		WScript.StdOut.WriteLine(" ====================================================================================================================================================================")
-		WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string())
-		WScript.StdOut.WriteLine(" ====================================================================================================================================================================")
-		WScript.StdOut.WriteLine(" ====================================================================================================================================================================")
+		WScript.StdOut.WriteLine("******************** Finished run ADSCAN """ & CF_exe_cmd_string & """ :")
+		WScript.StdOut.WriteLine("Done ADSCAN for """ & CF_TARGET_AbsolutePathName & """ ... ")
+		WScript.StdOut.WriteLine("ADSCAN command: " & CF_exe_cmd_string)
+		WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+		WScript.StdOut.WriteLine("======================================================================================================================================================")
 		If CF_exe_status <> 0 OR NOT fso.FileExists(CF_vprj_AbsolutePathName) Then
 			If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: ERROR vrdtvsp_Convert_File - Error - Failed to ADSCAN, ExitStatus=" & CF_exe_status & " """ & CF_TARGET_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
 			WScript.StdOut.WriteLine("VRDTVSP ERROR vrdtvsp_Convert_File - Error - Failed to ADSCAN, ExitStatus=" & CF_exe_status & " """ & CF_TARGET_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
