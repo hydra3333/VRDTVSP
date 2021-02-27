@@ -4619,16 +4619,16 @@ Function vrdtvsp_Exec_in_a_DOS_BAT_file (byVAL eiadbf_cmd_string_array, byVAL ei
 	eiadbf_batfilename_object.WriteLine("@setlocal enableextensions")
 	eiadbf_batfilename_object.WriteLine("DEL /F """ & eiadbf_logfilename & """")
 	eiadbf_batfilename_object.WriteLine("Set EL=0")
-	eiadbf_batfilename_object.WriteLine("ECHO !DATE! !TIME! STARTED *************************************************************************** >>""" & eiadbf_logfilename & """ 2>&1")
+	'eiadbf_batfilename_object.WriteLine("ECHO !DATE! !TIME! STARTED *************************************************************************** >>""" & eiadbf_logfilename & """ 2>&1")
 	for i = eiadbf_lbound to eiadbf_ubound STEP 1
-		eiadbf_batfilename_object.WriteLine("ECHO !DATE! !TIME! ------------------------" & " >>""" & eiadbf_logfilename & """ 2>&1")	' redirect both stdout and stderr to the logfile
+		'eiadbf_batfilename_object.WriteLine("ECHO !DATE! !TIME! ------------------------" & " >>""" & eiadbf_logfilename & """ 2>&1")	' redirect both stdout and stderr to the logfile
 		eiadbf_batfilename_object.WriteLine("ECHO " & eiadbf_cmd_string_array(i) & " >>""" & eiadbf_logfilename & """ 2>&1")			' redirect both stdout and stderr to the logfile
 		eiadbf_batfilename_object.WriteLine(eiadbf_cmd_string_array(i) & " >>""" & eiadbf_logfilename & """ 2>&1")						' redirect both stdout and stderr to the logfile
 		eiadbf_batfilename_object.WriteLine("Set EL=%ERRORLEVEL%" & " >>""" & eiadbf_logfilename & """ 2>&1")							' redirect both stdout and stderr to the logfile
 		'eiadbf_batfilename_object.WriteLine("ECHO that returned Errorlevel=%EL%" & " >>""" & eiadbf_logfilename & """ 2>&1")			' redirect both stdout and stderr to the logfile
 	Next
-	eiadbf_batfilename_object.WriteLine("ECHO !DATE! !TIME! ------------------------" & " >>""" & eiadbf_logfilename & """ 2>&1")	' redirect both stdout and stderr to the logfile
-	eiadbf_batfilename_object.WriteLine("ECHO !DATE! !TIME! FINISHED *************************************************************************** >>""" & eiadbf_logfilename & """ 2>&1")
+	'eiadbf_batfilename_object.WriteLine("ECHO !DATE! !TIME! ------------------------" & " >>""" & eiadbf_logfilename & """ 2>&1")	' redirect both stdout and stderr to the logfile
+	'eiadbf_batfilename_object.WriteLine("ECHO !DATE! !TIME! FINISHED *************************************************************************** >>""" & eiadbf_logfilename & """ 2>&1")
 	eiadbf_batfilename_object.WriteLine("EXIT %EL%")
 	eiadbf_batfilename_object.close
 	set eiadbf_batfilename_object = Nothing
@@ -5268,7 +5268,7 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 	'</VRDOutputInfo>
 	'
 	Const wait_ms = 2000 ' in milliseconds
-	Dim dot_count_linebreak_interval, two_hours_in_ms, one_hour_in_ms, half_hour_in_ms, quarter_hour_in_ms, giveup_interval_count
+	Dim dot_count_linebreak_interval, two_hours_in_ms, one_hour_in_ms, half_hour_in_ms, quarter_hour_in_ms, ten_minutes_in_ms, giveup_interval_count
 	Dim xmlDict	' this is a dictionary object returned with Set vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 = xmlDict 
 	Dim VideoReDoSilent
 	Dim VideoReDo
@@ -5286,8 +5286,9 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 	one_hour_in_ms = ROUND(two_hours_in_ms / 2)
 	half_hour_in_ms = ROUND(one_hour_in_ms / 2)
 	quarter_hour_in_ms = ROUND(half_hour_in_ms / 2)
+	ten_minutes_in_ms = ROUND(two_hours_in_ms / 6)
 	dot_count_linebreak_interval = CLng(CLng(120) * CLng(1000) / CLng(wait_ms))		' for 2000 ms, this is 120 seconds worth of intervals
-	giveup_interval_count = CLng( CLng(quarter_hour_in_ms) / CLng( wait_ms ) )	' two hours worth of intervals
+	giveup_interval_count = CLng( CLng(ten_minutes_in_ms) / CLng( wait_ms ) )	' two hours worth of intervals
 	'
 	riqowv_FILE_AbsolutePathName = fso.GetAbsolutePathName(riqowv_FILE_AbsolutePathName)		' was passed byVal
 	riqowv_QSF_AbsolutePathName = fso.GetAbsolutePathName(riqowv_QSF_AbsolutePathName)			' was passed byVal
