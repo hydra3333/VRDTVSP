@@ -2610,10 +2610,10 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	CF_DGIlog_AbsolutePathName = fso.GetAbsolutePathName(fso.BuildPath(CF_DGI_ParentFolderName,CF_DGIlog_BaseName & "." & CF_DGIlog_Ext))
 	'	
 	WScript.StdOut.WriteLine(" ")
-	WScript.StdOut.WriteLine(" ")
 	WScript.StdOut.WriteLine("======================================================================================================================================================")
 	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: STARTED " & vrdtvsp_current_datetime_string())
 	WScript.StdOut.WriteLine("======================================================================================================================================================")
+	WScript.StdOut.WriteLine(" ")
 	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File:           CF_FILE_AbsolutePathName=""" & CF_FILE_AbsolutePathName & """")
 	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File:                CF_source_TS_Folder=""" & CF_source_TS_Folder & """")
 	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File:                  CF_done_TS_Folder=""" & CF_done_TS_Folder & """")
@@ -4361,12 +4361,12 @@ IF V_INCOMING_BITRATE = 0  Then
 		vrdtvsp_status = vrdtvsp_move_files_to_folder(CF_FILE_AbsolutePathName, CF_done_TS_Folder)
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: moved file to DONE folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_done_TS_Folder & """")
 	End If
-	vrdtvsp_Convert_File = 0				
-	WScript.StdOut.WriteLine(" ====================================================================================================================================================================")
-	WScript.StdOut.WriteLine(" ====================================================================================================================================================================")
-	WScript.StdOut.WriteLine("vrdtvsp_Convert_File: EXITING " &vrdtvsp_current_datetime_string())
-	WScript.StdOut.WriteLine(" ====================================================================================================================================================================")
-	WScript.StdOut.WriteLine(" ====================================================================================================================================================================")
+	vrdtvsp_Convert_File = 0	
+	WScript.StdOut.WriteLine(" ")
+	WScript.StdOut.WriteLine("======================================================================================================================================================")
+	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: FINISHED " & vrdtvsp_current_datetime_string())
+	WScript.StdOut.WriteLine("======================================================================================================================================================")
+	WScript.StdOut.WriteLine(" ")
 End Function
 '
 Function vrdtvsp_writeline_for_vpy (vpy_filename_object, bat_filename_object, a_vpy_statement, prepend_string, append_string)
