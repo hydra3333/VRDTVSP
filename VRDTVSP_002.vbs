@@ -4494,7 +4494,6 @@ IF V_INCOMING_BITRATE = 0  Then
 			vrdtvsp_Convert_File = -1
 			Exit Function
 		End If
-		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ******************** End of run ADSCAN """ & CF_exe_cmd_string & """ ")
 		ff_timerEnd = Timer
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ADSCAN command completed with Elapsed Time " & vrdtvsp_Calculate_ElapsedTime_string(ff_timerStart, ff_timerEnd))
 		' ++++ END Run the ADSCAN command
@@ -4594,6 +4593,7 @@ Function vrdtvsp_Exec_in_a_DOS_BAT_file (byVAL eiadbf_cmd_string_array, byVAL ei
 	set eiadbf_batfilename_object = Nothing
 	'
 	If eiadbf_print_batfile Then
+		WScript.StdOut.WriteLine("******************** START Content of """ & eiadbf_batfilename & """ Below:")
 		Set eiadbf_batfilename_object = fso.OpenTextFile(eiadbf_batfilename, ForReading) ' ForReading is global
 		Do Until eiadbf_batfilename_object.AtEndOfStream
 			eiadbf_tmp = eiadbf_batfilename_object.ReadLine
@@ -4601,16 +4601,16 @@ Function vrdtvsp_Exec_in_a_DOS_BAT_file (byVAL eiadbf_cmd_string_array, byVAL ei
 		Loop			
 		eiadbf_status = eiadbf_batfilename_object.Close
 		Set eiadbf_batfilename_object = Nothing
-		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Exec_in_a_DOS_BAT_file: ********** END Content of """ & eiadbf_batfilename & """ Above.")
+		WScript.StdOut.WriteLine("******************** END   Content of """ & eiadbf_batfilename & """ Above.")
 	End If
 	'
 	' Now .Run the .bat
-	'WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Exec_in_a_DOS_BAT_file: - ********** Start .Run """ & eiadbf_batfilename & """ :")
+	WScript.StdOut.WriteLine("******************** Start .Run """ & eiadbf_batfilename & """ " & vrdtvsp_current_datetime_string())
 	eiadbf_errorlevel = wso.Run("CMD /C """ & eiadbf_batfilename & """", 7, True) '(strCommand, [intWindowStyle], [bWaitOnReturn]) ' https://ss64.com/vb/run.html
-	'WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Exec_in_a_DOS_BAT_file:  - ********** End .Run """ & eiadbf_batfilename & """ : Final Exit status :" & eiadbf_errorlevel)
+	WScript.StdOut.WriteLine("******************** End   .Run """ & eiadbf_batfilename & """ " &  & vrdtvsp_current_datetime_string() & " Final Exit status :" & eiadbf_errorlevel)
 	'
 	If eiadbf_print_logfile Then
-		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Exec_in_a_DOS_BAT_file: ********** START Content of """ & eiadbf_logfilename & """ Below:")
+		WScript.StdOut.WriteLine("******************** START Content of """ & eiadbf_logfilename & """ Below:")
 		Set eiadbf_logfilename_object = fso.OpenTextFile(eiadbf_logfilename, ForReading) ' ForReading is global
 		Do Until eiadbf_logfilename_object.AtEndOfStream
 			eiadbf_tmp = eiadbf_logfilename_object.ReadLine
@@ -4618,7 +4618,7 @@ Function vrdtvsp_Exec_in_a_DOS_BAT_file (byVAL eiadbf_cmd_string_array, byVAL ei
 		Loop			
 		eiadbf_status = eiadbf_logfilename_object.Close
 		Set eiadbf_logfilename_object = Nothing
-		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Exec_in_a_DOS_BAT_file: ********** END Content of """ & eiadbf_logfilename & """ Above.")
+		WScript.StdOut.WriteLine("******************** END   Content of """ & eiadbf_logfilename & """ Above.")
 	End If
 	eiadbf_status = vrdtvsp_delete_a_file(eiadbf_batfilename, True)
 	eiadbf_status = vrdtvsp_delete_a_file(eiadbf_logfilename, True)
