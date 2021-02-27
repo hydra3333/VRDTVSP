@@ -170,7 +170,7 @@ Const const_vrd6_adscan_profile_name = "VRDTVS_ADSCAN_VRD6_NON-INTERACTIVE"	' al
 Dim vrd6_logfile_wildcard
 vrd6_logfile_wildcard =  fso.GetAbsolutePathName(HDTV_root & "\") & "\VideoReDo6_*.Log"
 '
-vrd_version_for_qsf = 5
+vrd_version_for_qsf = 6
 vrd_version_for_adscan = 6
 vrdtvsp_do_adscan = False
 vrdtvsp_do_audio_delay = False
@@ -3724,7 +3724,7 @@ IF V_INCOMING_BITRATE = 0  Then
 	vpy_dsharpen = ""
 	af_audio_delay_filter = " "
 	it_video_delay = " "
-	
+	' It turns out Audio Delays after QSF are not worth worrying about, so leave them out by default
 	If CF_do_audio_delay Then
 		If Q_A_Audio_Delay_ms > 0 Then	' video before audio
 			af_audio_delay_filter = "-af ""adelay=delays=" & Q_A_Audio_Delay_ms & "ms:all=1"" "
