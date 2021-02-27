@@ -226,11 +226,49 @@ vrdtvsp_do_audio_delay = vrdtvsp_get_commandline_parameter("do_audio_delay",vrdt
 vrdtvsp_show_mediainfo = vrdtvsp_get_commandline_parameter("show_mediainfo",vrdtvsp_show_mediainfo)                      		                    	' /show_mediainfo:False
 vrd_version_for_adscan = vrdtvsp_get_commandline_parameter("vrd_version_for_adscan",vrd_version_for_adscan)                              			   	' /vrd_version_for_adscan:6
 vrd_version_for_qsf = vrdtvsp_get_commandline_parameter("vrd_version_for_qsf",vrd_version_for_qsf)                                        				' /vrd_version_for_qsf:6
-If vrd_version_for_qsf = 5 Then '*** QSF
+'----------------------------------------------------------------------------------------------------------------------------------------
+' Create the working folders if they do not already exist
+If NOT fso.FolderExists(vrdtvsp_source_TS_Folder) Then     
+	Set objFolder = fso.CreateFolder(vrdtvsp_source_TS_Folder)
+	Set objFolder = Nothing
+    If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Created vrdtvsp_source_TS_Folder folder=" & vrdtvsp_source_TS_Folder)
+Else
+    If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Folder Already Exists, not created - vrdtvsp_source_TS_Folder folder=" & vrdtvsp_source_TS_Folder)
+End If
+If NOT fso.FolderExists(vrdtvsp_done_TS_Folder) Then     
+	Set objFolder = fso.CreateFolder(vrdtvsp_done_TS_Folder)
+	Set objFolder = Nothing
+    If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Created vrdtvsp_done_TS_Folder folder=" & vrdtvsp_done_TS_Folder)
+Else
+    If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Folder Already Exists, not created - vrdtvsp_done_TS_Folder folder=" & vrdtvsp_done_TS_Folder)
+End If
+If NOT fso.FolderExists(vrdtvsp_destination_mp4_Folder) Then     
+	Set objFolder = fso.CreateFolder(vrdtvsp_destination_mp4_Folder)
+	Set objFolder = Nothing
+    If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Created vrdtvsp_destination_mp4_Folder folder=" & vrdtvsp_destination_mp4_Folder)
+Else
+    If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Folder Already Exists, not created - vrdtvsp_destination_mp4_Folder folder=" & vrdtvsp_destination_mp4_Folder)
+End If
+If NOT fso.FolderExists(vrdtvsp_failed_conversion_TS_Folder) Then     
+	Set objFolder = fso.CreateFolder(vrdtvsp_failed_conversion_TS_Folder)
+	Set objFolder = Nothing
+    If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Created vrdtvsp_failed_conversion_TS_Folder folder=" & vrdtvsp_failed_conversion_TS_Folder)
+Else
+    If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Folder Already Exists, not created - vrdtvsp_failed_conversion_TS_Folder folder=" & vrdtvsp_failed_conversion_TS_Folder)
+End If
+If NOT fso.FolderExists(vrdtvsp_temp_path) Then     
+	Set objFolder = fso.CreateFolder(vrdtvsp_temp_path)
+	Set objFolder = Nothing
+    If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Created vrdtvsp_temp_path folder=" & vrdtvsp_temp_path)
+Else
+    If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Folder Already Exists, not created - vrdtvsp_temp_path folder=" & vrdtvsp_temp_path)
+End If
+'----------------------------------------------------------------------------------------------------------------------------------------
+If vrd_version_for_qsf = 5 Then '*** QSF  ' can only do this AFTER folders are created !!!!!!!!!!!!!!!!!!!!!!!!
 	' THE old WAY 2021.02.25.
 	'vrdtvsp_path_for_qsf_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd5_path,"vp.vbs"))
 	' THE NEW way is similar to vrd6
-	vrdtvsp_path_for_qsf_vbs = vrdtvsp_create_custom_QSF_vbscript_vrd_5_AND_6( vrd_version_for_qsf )
+	vrdtvsp_path_for_qsf_vbs = vrdtvsp_create_custom_QSF_vbscript_vrd_5_AND_6( vrd_version_for_qsf ) ' can only do this AFTER folders are created !!!!!!!!!!!!!!!!!!!!!!!!
     vrdtvsp_profile_name_for_qsf_mpeg2 = const_vrd5_profile_mpeg2
     vrdtvsp_profile_name_for_qsf_avc = const_vrd5_profile_avc
     vrdtvsp_extension_mpeg2 = const_vrd5_extension_mpeg2
@@ -239,7 +277,7 @@ If vrd_version_for_qsf = 5 Then '*** QSF
 ElseIf vrd_version_for_qsf = 6 Then
     ' the old way: vrdtvsp_path_for_qsf_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd6_path,"vp.vbs"))
 	' THE NEW way is similar to vrd6
-	vrdtvsp_path_for_qsf_vbs = vrdtvsp_create_custom_QSF_vbscript_vrd_5_AND_6( vrd_version_for_qsf )
+	vrdtvsp_path_for_qsf_vbs = vrdtvsp_create_custom_QSF_vbscript_vrd_5_AND_6( vrd_version_for_qsf ) ' can only do this AFTER folders are created !!!!!!!!!!!!!!!!!!!!!!!!
     vrdtvsp_profile_name_for_qsf_mpeg2 = const_vrd6_profile_mpeg2
     vrdtvsp_profile_name_for_qsf_avc = const_vrd6_profile_avc
     vrdtvsp_extension_mpeg2 = const_vrd6_extension_mpeg2
@@ -302,45 +340,7 @@ WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
 WScript.StdOut.WriteLine("======================================================================================================================================================")
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
-' Create the working folders if they do not already exist
 '
-If NOT fso.FolderExists(vrdtvsp_source_TS_Folder) Then     
-	Set objFolder = fso.CreateFolder(vrdtvsp_source_TS_Folder)
-	Set objFolder = Nothing
-    If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Created vrdtvsp_source_TS_Folder folder=" & vrdtvsp_source_TS_Folder)
-Else
-    If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Folder Already Exists, not created - vrdtvsp_source_TS_Folder folder=" & vrdtvsp_source_TS_Folder)
-End If
-If NOT fso.FolderExists(vrdtvsp_done_TS_Folder) Then     
-	Set objFolder = fso.CreateFolder(vrdtvsp_done_TS_Folder)
-	Set objFolder = Nothing
-    If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Created vrdtvsp_done_TS_Folder folder=" & vrdtvsp_done_TS_Folder)
-Else
-    If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Folder Already Exists, not created - vrdtvsp_done_TS_Folder folder=" & vrdtvsp_done_TS_Folder)
-End If
-If NOT fso.FolderExists(vrdtvsp_destination_mp4_Folder) Then     
-	Set objFolder = fso.CreateFolder(vrdtvsp_destination_mp4_Folder)
-	Set objFolder = Nothing
-    If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Created vrdtvsp_destination_mp4_Folder folder=" & vrdtvsp_destination_mp4_Folder)
-Else
-    If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Folder Already Exists, not created - vrdtvsp_destination_mp4_Folder folder=" & vrdtvsp_destination_mp4_Folder)
-End If
-If NOT fso.FolderExists(vrdtvsp_failed_conversion_TS_Folder) Then     
-	Set objFolder = fso.CreateFolder(vrdtvsp_failed_conversion_TS_Folder)
-	Set objFolder = Nothing
-    If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Created vrdtvsp_failed_conversion_TS_Folder folder=" & vrdtvsp_failed_conversion_TS_Folder)
-Else
-    If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Folder Already Exists, not created - vrdtvsp_failed_conversion_TS_Folder folder=" & vrdtvsp_failed_conversion_TS_Folder)
-End If
-If NOT fso.FolderExists(vrdtvsp_temp_path) Then     
-	Set objFolder = fso.CreateFolder(vrdtvsp_temp_path)
-	Set objFolder = Nothing
-    If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Created vrdtvsp_temp_path folder=" & vrdtvsp_temp_path)
-Else
-    If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Folder Already Exists, not created - vrdtvsp_temp_path folder=" & vrdtvsp_temp_path)
-End If
-'
-'----------------------------------------------------------------------------------------------------------------------------------------
 ' Start a new copy of Insomnia so the PC does not go to sleep in the middle of conversions, do not wait for it to finish
 '
 WScript.StdOut.WriteLine("======================================================================================================================================================")
