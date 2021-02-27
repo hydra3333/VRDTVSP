@@ -32,7 +32,9 @@ Option Explicit
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' 1. Check and Exit if this .vbs isn't run under CSCRIPT (not WSCRIPT which is the default)
 '    NOTE:  For ANY of this to work, the vb script MUST be run under Cscript host - or, things like stdout fail to work.
-WScript.StdOut.WriteLine("------------------------------------------------------------------------------------------------------")
+WScript.StdOut.WriteLine("======================================================================================================================================================")
+WScript.StdOut.WriteLine("VRDTVS started " & vrdtvsp_current_datetime_string())
+WScript.StdOut.WriteLine("======================================================================================================================================================")
 Dim  cscript_wshShell, cscript_strEngine
 Dim vrdtvsp_ComputerName
 '
@@ -62,6 +64,7 @@ If UCase(cscript_strEngine) <> UCase("\CSCRIPT.EXE") Then
 	Wscript.Echo "Error 17 = cannot perform the requested operation"
 	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
+WScript.StdOut.WriteLine("------------------------------------------------------------------------------------------------------")
 WScript.StdOut.WriteLine("VRDTVSP cscript Engine: """ & cscript_strEngine & """")
 WScript.StdOut.WriteLine("VRDTVSP    Script name: " & Wscript.ScriptName)
 WScript.StdOut.WriteLine("VRDTVSP    Script path: " & Wscript.ScriptFullName)
@@ -267,6 +270,8 @@ Else
 	On Error goto 0
 	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
+WScript.StdOut.WriteLine("======================================================================================================================================================")
+WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
 WScript.StdOut.WriteLine("VRDTVSP NOTE: final                       vrdtvsp_DEBUG=" & vrdtvsp_DEBUG)
 WScript.StdOut.WriteLine("VRDTVSP NOTE: final      vrdtvsp_DEVELOPMENT_NO_ACTIONS=" & vrdtvsp_DEVELOPMENT_NO_ACTIONS)
 WScript.StdOut.WriteLine("VRDTVSP NOTE: final                vrdtvsp_ComputerName=""" & vrdtvsp_ComputerName & """")
@@ -289,6 +294,8 @@ WScript.StdOut.WriteLine("VRDTVSP NOTE: final         vrdtvsp_path_for_adscan_vb
 WScript.StdOut.WriteLine("VRDTVSP NOTE: final                   vrdtvsp_do_adscan=" & vrdtvsp_do_adscan)
 WScript.StdOut.WriteLine("VRDTVSP NOTE: final              vrdtvsp_do_audio_delay=" & vrdtvsp_do_audio_delay)
 WScript.StdOut.WriteLine("VRDTVSP NOTE: final              vrdtvsp_show_mediainfo=" & vrdtvsp_show_mediainfo)
+WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+WScript.StdOut.WriteLine("======================================================================================================================================================")
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Create the working folders if they do not already exist
@@ -322,6 +329,9 @@ End If
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Start a new copy of Insomnia so the PC does not go to sleep in the middle of conversions, do not wait for it to finish
 '
+WScript.StdOut.WriteLine("======================================================================================================================================================")
+WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+WScript.StdOut.WriteLine("STARTED Run Insomnia")
 vrdtvsp_Insomnia64_tmp_filename = vrdtvsp_gimme_a_temporary_absolute_filename("VRDTVS_Insomnia64_copy-" & vrdtvsp_run_datetime) & ".exe"
 If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Insomnia: Creating and running Insomnia vrdtvsp_Insomnia64_tmp_filename=" & vrdtvsp_Insomnia64_tmp_filename)
 vrdtvsp_exit_code = vrdtvsp_delete_a_file(vrdtvsp_Insomnia64_tmp_filename, True) ' True=silently delete it even though it should never pre-exist
@@ -354,26 +364,34 @@ set vrdtvsp_exe_obj = wso.Exec(vrdtvsp_cmd)
 vrdtvsp_Insomnia64_ProcessID = vrdtvsp_exe_obj.ProcessID
 vrdtvsp_status = vrdtvsp_exe_obj.ExitCode
 Set vrdtvsp_exe_obj = Nothing
-WScript.StdOut.WriteLine("VTDRVS Insomnia: Exec command: " & vrdtvsp_cmd)
-WScript.StdOut.WriteLine("VTDRVS Insomnia: has run asynchronously with vrdtvsp_Insomnia64_ProcessID=" & vrdtvsp_Insomnia64_ProcessID)
+WScript.StdOut.WriteLine("VRDTVS Run Insomnia: Exec command: " & vrdtvsp_cmd)
+WScript.StdOut.WriteLine("VTDRVS Run Insomnia: has run asynchronously with vrdtvsp_Insomnia64_ProcessID=" & vrdtvsp_Insomnia64_ProcessID)
 If vrdtvsp_Insomnia64_ProcessID = 0 Then
-    WScript.StdOut.WriteLine("VRDTVSP Insomnia: ERROR - Insomnia START command created ProcessID is zero ... Aborting ...")
+    WScript.StdOut.WriteLine("VRDTVSP Run Insomnia: ERROR - Insomnia START command created ProcessID is zero ... Aborting ...")
 	Wscript.Echo "Error 17 = cannot perform the requested operation"
 	On Error goto 0
 	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
-WScript.StdOut.WriteLine("VTDRVS Insomnia: Exec Exit Status: " & vrdtvsp_status)
+WScript.StdOut.WriteLine("VRDTVS Run Insomnia: Exec Exit Status: " & vrdtvsp_status)
 If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Insomnia: Exec Exit Status: " & vrdtvsp_status)
+WScript.StdOut.WriteLine("FINISHED Run Insomnia")
+WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+WScript.StdOut.WriteLine("======================================================================================================================================================")
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Move .ts .mp4 .mpg .brpj files from the Source Folder to the source folder sincethat is where we process from
 '
 If vrdtvsp_CAPTURE_TS_Folder <> "" Then
-	WScript.StdOut.WriteLine("VRDTVSP Moving SOURCE files from CAPTURE_TS folder """ & vrdtvsp_CAPTURE_TS_Folder & """ to SOURCE_TS folder """ & vrdtvsp_source_TS_Folder & """ ...")
+	WScript.StdOut.WriteLine("======================================================================================================================================================")
+	WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+	WScript.StdOut.WriteLine("STARTED VRDTVSP Moving SOURCE files from CAPTURE_TS folder """ & vrdtvsp_CAPTURE_TS_Folder & """ to SOURCE_TS folder """ & vrdtvsp_source_TS_Folder & """ ...")
     vrdtvsp_status = vrdtvsp_move_files_to_folder(vrdtvsp_CAPTURE_TS_Folder & "\*.ts", vrdtvsp_source_TS_Folder & "\")    ' ignore any status
     vrdtvsp_status = vrdtvsp_move_files_to_folder(vrdtvsp_CAPTURE_TS_Folder & "\*.mp4", vrdtvsp_source_TS_Folder & "\")   ' ignore any status
     vrdtvsp_status = vrdtvsp_move_files_to_folder(vrdtvsp_CAPTURE_TS_Folder & "\*.mpg", vrdtvsp_source_TS_Folder & "\")   ' ignore any status
     vrdtvsp_status = vrdtvsp_move_files_to_folder(vrdtvsp_CAPTURE_TS_Folder & "\*.vprj", vrdtvsp_source_TS_Folder & "\")  ' ignore any status '.vprj are associated with .mp4 of the same BaseName
+	WScript.StdOut.WriteLine("FINISHED VRDTVSP Moving SOURCE files from CAPTURE_TS folder """ & vrdtvsp_CAPTURE_TS_Folder & """ to SOURCE_TS folder """ & vrdtvsp_source_TS_Folder & """ ...")
+	WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+	WScript.StdOut.WriteLine("======================================================================================================================================================")
 End If
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
@@ -384,6 +402,9 @@ End If
 '	c) Also Modily content of associated .vprj files (they are .xml content) to link to the new media filename since we are modifying the pair
 '
 'If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: about to call vrdtvsp_fix_filenames_in_a_folder_tree(""" & vrdtvsp_source_TS_Folder & """, False)")
+WScript.StdOut.WriteLine("======================================================================================================================================================")
+WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+WScript.StdOut.WriteLine("STARTED vrdtvsp_fix_filenames_in_a_folder_tree")
 vrdtvsp_status = vrdtvsp_fix_filenames_in_a_folder_tree(vrdtvsp_source_TS_Folder, False) ' this does (a) and (b) and (c).  False indicates to process only the top level folder with NO SUBFOLDERS
 If vrdtvsp_status <> 0 Then ' Something went wrong with processing files in the Source folder ... check for 53 not found ?
 	If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: VRDTVSP ERROR - Error " & vrdtvsp_status & " from vrdtvsp_fix_filenames_in_a_folder_tree in """ & vrdtvsp_source_TS_Folder & """... Aborting ...")
@@ -392,6 +413,9 @@ If vrdtvsp_status <> 0 Then ' Something went wrong with processing files in the 
 	On Error goto 0
 	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
+WScript.StdOut.WriteLine("FINISHED vrdtvsp_fix_filenames_in_a_folder_tree")
+WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+WScript.StdOut.WriteLine("======================================================================================================================================================")
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Convert Video files and create the associated .vprj files by running adscan on the media file
