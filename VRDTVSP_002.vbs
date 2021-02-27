@@ -2896,7 +2896,7 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'	"VideoOutputFrameCount" long integer
 	'	"AudioOutputFrameCount" long integer
 	'	"ActualVideoBitrate" long integer ... eg value retrieved like: v = xmlDict.Item("ActualVideoBitrate")
-	Set  = vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (vrd_version_for_qsf, CF_FILE_AbsolutePathName, CF_QSF_AbsolutePathName, vrdtvsp_profile_name_for_qsf)
+	Set xmlDict = vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (vrd_version_for_qsf, CF_FILE_AbsolutePathName, CF_QSF_AbsolutePathName, vrdtvsp_profile_name_for_qsf)
 	If xmlDict is Nothing Then
 		' eek, did not QSF properly 
 		' ... if was v6 QSF, try a v5 QSF, then if that also fails then try to exit in such a way that the source file is moved to "failed" folder and the process continues with other files
