@@ -1305,7 +1305,7 @@ Function vrdtvsp_ffiaft_pfis_Process_a_vprj (byVAL theOriginalParentFolderName, 
 			WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_pfis_Process_a_vprj: ********** found a matching .vprj file to autofix: """ & Original_vprj_AbsoluteFilename & """")
 		End If
 		If Original_vprj_AbsoluteFilename = Final_Renamed_vprj_AbsoluteFilename Then
-			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_ffiaft_pfis_Process_a_vprj same filenames, NOT RENAMING """ & Original_vprj_AbsoluteFilename & """ to """ & Final_Renamed_vprj_AbsoluteFilename & """")
+			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_ffiaft_pfis_Process_a_vprj same filenames, NOT RENAMING """ & Original_vprj_AbsoluteFilename & """ as it is fine already.")
 			If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_pfis_Process_a_vprj: same filenames, NOT RENAMING """ & Original_vprj_AbsoluteFilename & """ to """ & Final_Renamed_vprj_AbsoluteFilename & """")
 		Else
 			' a) rename the .vprj file to match the new BaseName of the media file ... abort on a failure to simply rename the .vprj file
@@ -4634,7 +4634,7 @@ Function vrdtvsp_Exec_in_a_DOS_BAT_file (byVAL eiadbf_cmd_string_array, byVAL ei
 	set eiadbf_batfilename_object = Nothing
 	'
 	If eiadbf_print_batfile Then
-		WScript.StdOut.WriteLine("******************** START Content of """ & eiadbf_batfilename & """ Below:")
+		WScript.StdOut.WriteLine("START Content of """ & eiadbf_batfilename & """ Below ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
 		Set eiadbf_batfilename_object = fso.OpenTextFile(eiadbf_batfilename, ForReading) ' ForReading is global
 		Do Until eiadbf_batfilename_object.AtEndOfStream
 			eiadbf_tmp = eiadbf_batfilename_object.ReadLine
@@ -4642,16 +4642,16 @@ Function vrdtvsp_Exec_in_a_DOS_BAT_file (byVAL eiadbf_cmd_string_array, byVAL ei
 		Loop			
 		eiadbf_status = eiadbf_batfilename_object.Close
 		Set eiadbf_batfilename_object = Nothing
-		WScript.StdOut.WriteLine("******************** END   Content of """ & eiadbf_batfilename & """ Above.")
+		WScript.StdOut.WriteLine("END   Content of """ & eiadbf_batfilename & """ Above ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
 	End If
 	'
 	' Now .Run the .bat
-	WScript.StdOut.WriteLine("******************** Start .Run """ & eiadbf_batfilename & """ " & vrdtvsp_current_datetime_string())
+	WScript.StdOut.WriteLine("Start .Run """ & eiadbf_batfilename & """ " & vrdtvsp_current_datetime_string() & " ########################################################################################################################################################################################################################################")
 	eiadbf_errorlevel = wso.Run("CMD /C """ & eiadbf_batfilename & """", 7, True) '(strCommand, [intWindowStyle], [bWaitOnReturn]) ' https://ss64.com/vb/run.html
-	WScript.StdOut.WriteLine("******************** End   .Run """ & eiadbf_batfilename & """ " & vrdtvsp_current_datetime_string() & " Final Exit status :" & eiadbf_errorlevel)
+	WScript.StdOut.WriteLine("End   .Run """ & eiadbf_batfilename & """ " & vrdtvsp_current_datetime_string() & " Final Exit status :" & eiadbf_errorlevel & " ########################################################################################################################################################################################################################################")
 	'
 	If eiadbf_print_logfile Then
-		WScript.StdOut.WriteLine("******************** START Content of """ & eiadbf_logfilename & """ Below:")
+		WScript.StdOut.WriteLine("START Content of """ & eiadbf_logfilename & """ Below ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 		Set eiadbf_logfilename_object = fso.OpenTextFile(eiadbf_logfilename, ForReading) ' ForReading is global
 		Do Until eiadbf_logfilename_object.AtEndOfStream
 			eiadbf_tmp = eiadbf_logfilename_object.ReadLine
@@ -4659,7 +4659,7 @@ Function vrdtvsp_Exec_in_a_DOS_BAT_file (byVAL eiadbf_cmd_string_array, byVAL ei
 		Loop			
 		eiadbf_status = eiadbf_logfilename_object.Close
 		Set eiadbf_logfilename_object = Nothing
-		WScript.StdOut.WriteLine("******************** END   Content of """ & eiadbf_logfilename & """ Above.")
+		WScript.StdOut.WriteLine("END   Content of """ & eiadbf_logfilename & """ Above ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 	End If
 	eiadbf_status = vrdtvsp_delete_a_file(eiadbf_batfilename, True)
 	eiadbf_status = vrdtvsp_delete_a_file(eiadbf_logfilename, True)
