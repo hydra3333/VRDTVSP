@@ -18,6 +18,7 @@ Option Explicit
 '/destination_Folder:"G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVSP-Converted\" ^
 '/failed_Folder:"G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVSP-Failed-Conversion\" ^
 '/temp_path:"D:\VRDTVSP-SCRATCH\" ^
+'/vrd_version_for_qsf:6 ^
 '/vrd_version_for_adscan:6 ^
 '/do_adscan:False ^
 '/do_audio_delay:False ^
@@ -220,11 +221,11 @@ vrdtvsp_done_TS_Folder = fso.GetAbsolutePathName(vrdtvsp_get_commandline_paramet
 vrdtvsp_destination_mp4_Folder = fso.GetAbsolutePathName(vrdtvsp_get_commandline_parameter("destination_Folder",vrdtvsp_destination_mp4_Folder))       ' /destination_Folder:""
 vrdtvsp_failed_conversion_TS_Folder = fso.GetAbsolutePathName(vrdtvsp_get_commandline_parameter("failed_Folder",vrdtvsp_failed_conversion_TS_Folder))  ' /failed_Folder:""
 vrdtvsp_temp_path = fso.GetAbsolutePathName(vrdtvsp_get_commandline_parameter("temp_path",vrdtvsp_temp_path))                                          ' /temp_path:"D:\VRDTVSP-SCRATCH\"
-vrd_version_for_adscan = vrdtvsp_get_commandline_parameter("vrd_version_for_adscan",vrd_version_for_adscan)                              			   	' /vrd_version_for_adscan:6
 vrdtvsp_do_adscan = vrdtvsp_get_commandline_parameter("do_adscan",vrdtvsp_do_adscan)                      		                    					' /do_adscan:False
 vrdtvsp_do_audio_delay = vrdtvsp_get_commandline_parameter("do_audio_delay",vrdtvsp_do_audio_delay)                      		                    	' /do_audio_delay:False
 vrdtvsp_show_mediainfo = vrdtvsp_get_commandline_parameter("show_mediainfo",vrdtvsp_show_mediainfo)                      		                    	' /show_mediainfo:False
-vrd_version_for_qsf = vrdtvsp_get_commandline_parameter("vrd_version_for_qsf",vrd_version_for_qsf)                                        				' /vrd_version_for_qsf:6
+vrd_version_for_adscan = vrdtvsp_get_commandline_parameter("vrd_version_for_adscan",vrd_version_for_adscan)                              			   	' /vrd_version_for_adscan:6
+vrd_version_for_qsf = vrdtvsp_get_commandline_parameter("vrd_version_for_qsf",vrd_version_for_qsf)                                        				' /vrd_version_for_qsf:6 ... ADSCAN is ALWAYS v6
 If vrd_version_for_qsf = 5 Then '*** QSF
 	' THE old WAY 2021.02.25. the new way is similar to vrd6 (TESTING IT NOW)
 	'vrdtvsp_path_for_qsf_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd5_path,"vp.vbs"))
