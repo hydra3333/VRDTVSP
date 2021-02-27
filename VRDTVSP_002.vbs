@@ -416,7 +416,8 @@ If vrdtvsp_status <> 0 Then ' Something went wrong with processing files in the 
 	On Error goto 0
 	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
-WScript.StdOut.WriteLine("FINISHED vrdtvsp_fix_filenames_in_a_folder_tree on SOURCE folder. Non-vprj files Checked=" & file_count_checked & " Fixed=" & file_count_fixed)
+WScript.StdOut.WriteLine("FINISHED vrdtvsp_fix_filenames_in_a_folder_tree on SOURCE folder.")
+WScript.StdOut.WriteLine("Non-vprj files Checked=" & file_count_checked & " Fixed=" & file_count_fixed)
 WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
 WScript.StdOut.WriteLine("======================================================================================================================================================")
 '
@@ -475,7 +476,8 @@ If vrdtvsp_status <> 0 Then ' Something went wrong with processing files in the 
 	Wscript.Echo "Error " & vrdtvsp_status
 	Wscript.Quit vrdtvsp_status
 End If
-WScript.StdOut.WriteLine("FINISHED vrdtvsp_fix_filenames_in_a_folder_tree on DESTINATION folder and subfolders. Non-vprj files Checked=" & file_count_checked & " Fixed=" & file_count_fixed)
+WScript.StdOut.WriteLine("FINISHED vrdtvsp_fix_filenames_in_a_folder_tree on DESTINATION folder.")
+WScript.StdOut.WriteLine("Non-vprj files Checked=" & file_count_checked & " Fixed=" & file_count_fixed)
 WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
 WScript.StdOut.WriteLine("======================================================================================================================================================")
 '
