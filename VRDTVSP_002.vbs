@@ -2381,8 +2381,8 @@ Function vrdtvsp_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
         '********* FILTER BY FILE EXTENSION *********
 		If Ucase(C_FILE_Ext) = Ucase("ts") OR Ucase(C_FILE_Ext) = Ucase("mp4") OR Ucase(C_FILE_Ext) = Ucase("mpg") OR Ucase(C_FILE_Ext) = Ucase("vprj") Then ' ********** only process specific file extensions
 			WScript.StdOut.WriteLine("======================================================================================================================================================")
-			WScript.StdOut.WriteLine(" ")
-			WScript.StdOut.WriteLine("========== PROCESSING file C_FILE_AbsolutePathName=""" & C_FILE_AbsolutePathName & """ ========== " &  vrdtvsp_current_datetime_string())
+			WScript.StdOut.WriteLine("#################### PROCESSING file C_FILE_AbsolutePathName=""" & C_FILE_AbsolutePathName & """ ========== " &  vrdtvsp_current_datetime_string())
+			WScript.StdOut.WriteLine("#################### PROCESSING file C_FILE_AbsolutePathName=""" & C_FILE_AbsolutePathName & """ ========== " &  vrdtvsp_current_datetime_string())
 			WScript.StdOut.WriteLine(" ")
 			Select Case Ucase(C_FILE_Ext)
 			Case Ucase("vprj") 										' it's in the source folder, ignore it
@@ -2404,8 +2404,8 @@ Function vrdtvsp_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 			Case Else	' extension not recognised, do Nothing
 			End Select 
 			WScript.StdOut.WriteLine(" ")
-			WScript.StdOut.WriteLine("========== FINISHED PROCESSING file C_FILE_AbsolutePathName=""" & C_FILE_AbsolutePathName & """ ========== " & vrdtvsp_current_datetime_string())
-			WScript.StdOut.WriteLine(" ")
+			WScript.StdOut.WriteLine("#################### FINISHED PROCESSING file C_FILE_AbsolutePathName=""" & C_FILE_AbsolutePathName & """ ========== " & vrdtvsp_current_datetime_string())
+			WScript.StdOut.WriteLine("#################### FINISHED PROCESSING file C_FILE_AbsolutePathName=""" & C_FILE_AbsolutePathName & """ ========== " & vrdtvsp_current_datetime_string())
 			WScript.StdOut.WriteLine("======================================================================================================================================================")
 		End If
 	Next
@@ -3443,7 +3443,6 @@ IF V_INCOMING_BITRATE = 0  Then
 	WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
 	WScript.StdOut.WriteLine("End QSF of """ & CF_FILE_AbsolutePathName & """ into """ & CF_QSF_AbsolutePathName & """")
 	WScript.StdOut.WriteLine("output QSF file: " & " Q_V_FrameRate=" & Q_V_FrameRate & " (Q_V_Frame_Rate_FF=" & Q_V_Frame_Rate_FF & ") Q_V_Codec_legacy: """ & Q_V_Codec_legacy & """ Q_V_ScanType: """ & Q_V_ScanType & """ Q_V_ScanOrder: """ & Q_V_ScanOrder & """ " & Q_V_Width & "x" & Q_V_Height & " dar=" & Q_V_DisplayAspectRatio_String_slash & " sar=" & Q_V_PixelAspectRatio & " Q_A_Codec_legacy: " & Q_A_Codec_legacy & " Q_A_Audio_Delay_ms: " & Q_A_Audio_Delay_ms & " Q_A_Audio_Delay_ms_legacy: " & Q_A_Audio_Delay_ms_legacy & " Q_A_Video_Delay_ms: " &  Q_A_Video_Delay_ms & " Q_A_Video_Delay_ms_legacy: " &  Q_A_Video_Delay_ms_legacy)
-	WScript.StdOut.WriteLine("End QSF of """ & CF_FILE_AbsolutePathName & """ into """ & CF_QSF_AbsolutePathName & """")
 	WScript.StdOut.WriteLine(" ====================================================================================================================================================================")
 	WScript.StdOut.WriteLine("V_INCOMING_BITRATE: Using """ & CF_FILE_AbsolutePathName & """ and """ & CF_QSF_AbsolutePathName & """ The V_INCOMING_BITRATE=""" & V_INCOMING_BITRATE & """")
 	WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
@@ -4176,7 +4175,7 @@ IF V_INCOMING_BITRATE = 0  Then
 	' ++++ START Run the ffmpeg command
 	WScript.StdOut.WriteLine("======================================================================================================================================================")
 	WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
-	WScript.StdOut.WriteLine("START Run the ffmpeg command")
+	WScript.StdOut.WriteLine("###################################################### START Run the ffmpeg command " & vrdtvsp_current_datetime_string())
 	ff_timerStart = Timer
 	vrdtvsp_status = vrdtvsp_delete_a_file(CF_TARGET_AbsolutePathName, True)
 	'???????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????
@@ -4224,8 +4223,7 @@ IF V_INCOMING_BITRATE = 0  Then
 		vrdtvsp_Convert_File = -1 ' just exit and hope the source file is moved to "failed" folder and the process continues with other files
 		Exit Function
 	End If
-	WScript.StdOut.WriteLine("FINISH Run the ffmpeg command")
-	WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+	WScript.StdOut.WriteLine("###################################################### FINISH Run the ffmpeg command " & vrdtvsp_current_datetime_string())
 	WScript.StdOut.WriteLine("======================================================================================================================================================")
 	vrdtvsp_status = vrdtvsp_delete_a_file(ff_logfile, True)		' Delete the .bat file to be created with the ffmpeg command
 	vrdtvsp_status = vrdtvsp_delete_a_file(ff_batfile, True)		' Delete the .bat file to be created with the ffmpeg command
@@ -4431,7 +4429,6 @@ IF V_INCOMING_BITRATE = 0  Then
 	WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
 	WScript.StdOut.WriteLine("End FFMPEG of """ & CF_FILE_AbsolutePathName & """ into """ & CF_TARGET_AbsolutePathName & """")
 	WScript.StdOut.WriteLine("output TARGET file: " & " T_V_FrameRate=" & T_V_FrameRate & " (T_V_Frame_Rate_FF=" & T_V_Frame_Rate_FF & ") T_V_Codec_legacy: """ & T_V_Codec_legacy & """ T_V_ScanType: """ & T_V_ScanType & """ T_V_ScanOrder: """ & T_V_ScanOrder & """ " & T_V_Width & "x" & T_V_Height & " dar=" & T_V_DisplayAspectRatio_String_slash & " sar=" & T_V_PixelAspectRatio & " T_A_Codec_legacy: " & T_A_Codec_legacy & " T_A_Audio_Delay_ms: " & T_A_Audio_Delay_ms & " T_A_Audio_Delay_ms_legacy: " & T_A_Audio_Delay_ms_legacy & " T_A_Video_Delay_ms: " &  T_A_Video_Delay_ms & " T_A_Video_Delay_ms_legacy: " &  T_A_Video_Delay_ms_legacy)
-	WScript.StdOut.WriteLine("End FFMPEG of """ & CF_FILE_AbsolutePathName & """ into """ & CF_TARGET_AbsolutePathName & """")
 	WScript.StdOut.WriteLine("======================================================================================================================================================")
 	WScript.StdOut.WriteLine("V_INCOMING_BITRATE: Using """ & CF_FILE_AbsolutePathName & """ and """ & CF_TARGET_AbsolutePathName & """ The V_INCOMING_BITRATE=""" & V_INCOMING_BITRATE & """")
 	WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
