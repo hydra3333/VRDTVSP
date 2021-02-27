@@ -308,26 +308,36 @@ If NOT fso.FolderExists(vrdtvsp_source_TS_Folder) Then
 	Set objFolder = fso.CreateFolder(vrdtvsp_source_TS_Folder)
 	Set objFolder = Nothing
     If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Created vrdtvsp_source_TS_Folder folder=" & vrdtvsp_source_TS_Folder)
+Else
+    If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Folder Already Exists, not created - vrdtvsp_source_TS_Folder folder=" & vrdtvsp_source_TS_Folder)
 End If
 If NOT fso.FolderExists(vrdtvsp_done_TS_Folder) Then     
 	Set objFolder = fso.CreateFolder(vrdtvsp_done_TS_Folder)
 	Set objFolder = Nothing
     If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Created vrdtvsp_done_TS_Folder folder=" & vrdtvsp_done_TS_Folder)
+Else
+    If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Folder Already Exists, not created - vrdtvsp_done_TS_Folder folder=" & vrdtvsp_done_TS_Folder)
 End If
 If NOT fso.FolderExists(vrdtvsp_destination_mp4_Folder) Then     
 	Set objFolder = fso.CreateFolder(vrdtvsp_destination_mp4_Folder)
 	Set objFolder = Nothing
     If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Created vrdtvsp_destination_mp4_Folder folder=" & vrdtvsp_destination_mp4_Folder)
+Else
+    If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Folder Already Exists, not created - vrdtvsp_destination_mp4_Folder folder=" & vrdtvsp_destination_mp4_Folder)
 End If
 If NOT fso.FolderExists(vrdtvsp_failed_conversion_TS_Folder) Then     
 	Set objFolder = fso.CreateFolder(vrdtvsp_failed_conversion_TS_Folder)
 	Set objFolder = Nothing
     If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Created vrdtvsp_failed_conversion_TS_Folder folder=" & vrdtvsp_failed_conversion_TS_Folder)
+Else
+    If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Folder Already Exists, not created - vrdtvsp_failed_conversion_TS_Folder folder=" & vrdtvsp_failed_conversion_TS_Folder)
 End If
 If NOT fso.FolderExists(vrdtvsp_temp_path) Then     
 	Set objFolder = fso.CreateFolder(vrdtvsp_temp_path)
 	Set objFolder = Nothing
     If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Created vrdtvsp_temp_path folder=" & vrdtvsp_temp_path)
+Else
+    If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Folder Already Exists, not created - vrdtvsp_temp_path folder=" & vrdtvsp_temp_path)
 End If
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
@@ -1185,7 +1195,7 @@ End Function
 '
 Function vrdtvsp_do_a_Rename_Try99Times(OriginalAbsoluteFilename, TargetAbsoluteFilename)
 	' Try to rename a file and re-Rename it if required, trying up to 99 times
-	' Cater "file already exists" and loop try up to 100 times to add a 2 digit number ".00" to ".99" to the end of NewBaseName if needed fail to failure folder ?
+	' Cater for "file already exists" and loop try up to 100 times to add a 2 digit number ".00" to ".99" to the end of NewBaseName if needed fail to failure folder ?
 	' Taking care of editing and rewriting the content .vprj files (which are just XML files) ... test for Ucase(theExtName) = Ucase("vprj")
     ' Parameters:
 	'		theOriginalAbsoluteFilename		source filename
