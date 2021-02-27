@@ -225,10 +225,11 @@ vrdtvsp_do_adscan = vrdtvsp_get_commandline_parameter("do_adscan",vrdtvsp_do_ads
 vrdtvsp_do_audio_delay = vrdtvsp_get_commandline_parameter("do_audio_delay",vrdtvsp_do_audio_delay)                      		                    	' /do_audio_delay:False
 vrdtvsp_show_mediainfo = vrdtvsp_get_commandline_parameter("show_mediainfo",vrdtvsp_show_mediainfo)                      		                    	' /show_mediainfo:False
 vrd_version_for_adscan = vrdtvsp_get_commandline_parameter("vrd_version_for_adscan",vrd_version_for_adscan)                              			   	' /vrd_version_for_adscan:6
-vrd_version_for_qsf = vrdtvsp_get_commandline_parameter("vrd_version_for_qsf",vrd_version_for_qsf)                                        				' /vrd_version_for_qsf:6 ... ADSCAN is ALWAYS v6
+vrd_version_for_qsf = vrdtvsp_get_commandline_parameter("vrd_version_for_qsf",vrd_version_for_qsf)                                        				' /vrd_version_for_qsf:6
 If vrd_version_for_qsf = 5 Then '*** QSF
-	' THE old WAY 2021.02.25. the new way is similar to vrd6 (TESTING IT NOW)
+	' THE old WAY 2021.02.25.
 	'vrdtvsp_path_for_qsf_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd5_path,"vp.vbs"))
+	' THE NEW way is similar to vrd6
 	vrdtvsp_path_for_qsf_vbs = vrdtvsp_create_custom_QSF_vbscript_vrd_5_AND_6( vrd_version_for_qsf )
     vrdtvsp_profile_name_for_qsf_mpeg2 = const_vrd5_profile_mpeg2
     vrdtvsp_profile_name_for_qsf_avc = const_vrd5_profile_avc
@@ -236,7 +237,8 @@ If vrd_version_for_qsf = 5 Then '*** QSF
     vrdtvsp_extension_avc = const_vrd5_extension_avc
 	vrdtvsp_logfile_wildcard_QSF = vrd5_logfile_wildcard
 ElseIf vrd_version_for_qsf = 6 Then
-    ' the old way: vrdtvsp_path_for_qsf_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd6_path,"vp.vbs")) ????????????? generate it
+    ' the old way: vrdtvsp_path_for_qsf_vbs = fso.GetAbsolutePathName(fso.BuildPath(const_vrd6_path,"vp.vbs"))
+	' THE NEW way is similar to vrd6
 	vrdtvsp_path_for_qsf_vbs = vrdtvsp_create_custom_QSF_vbscript_vrd_5_AND_6( vrd_version_for_qsf )
     vrdtvsp_profile_name_for_qsf_mpeg2 = const_vrd6_profile_mpeg2
     vrdtvsp_profile_name_for_qsf_avc = const_vrd6_profile_avc
