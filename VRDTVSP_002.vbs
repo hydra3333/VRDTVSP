@@ -2701,6 +2701,11 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine(" ")
+		WScript.StdOut.WriteLine("vrdtvsp_Convert_File FINISHED " & vrdtvsp_current_datetime_string())
+		WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+		WScript.StdOut.WriteLine("======================================================================================================================================================")
+		WScript.StdOut.WriteLine(" ")
 		vrdtvsp_Convert_File = -1
 		Exit Function
 	End If
@@ -2728,6 +2733,11 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine(" ")
+		WScript.StdOut.WriteLine("vrdtvsp_Convert_File FINISHED " & vrdtvsp_current_datetime_string())
+		WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+		WScript.StdOut.WriteLine("======================================================================================================================================================")
+		WScript.StdOut.WriteLine(" ")
 		vrdtvsp_Convert_File = -1
 		Exit Function
 	End If
@@ -2796,6 +2806,11 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine(" ")
+		WScript.StdOut.WriteLine("vrdtvsp_Convert_File FINISHED " & vrdtvsp_current_datetime_string())
+		WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+		WScript.StdOut.WriteLine("======================================================================================================================================================")
+		WScript.StdOut.WriteLine(" ")
 		vrdtvsp_Convert_File = -1
 		Exit Function
 	End If
@@ -2841,6 +2856,11 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine(" ")
+		WScript.StdOut.WriteLine("vrdtvsp_Convert_File FINISHED " & vrdtvsp_current_datetime_string())
+		WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+		WScript.StdOut.WriteLine("======================================================================================================================================================")
+		WScript.StdOut.WriteLine(" ")
 		vrdtvsp_Convert_File = -1
 		Exit Function
 	End If
@@ -2885,11 +2905,11 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvsp_Convert_File adjusted SOURCE media characteristics above") 
 	End If
 	WScript.StdOut.WriteLine("======================================================================================================================================================")
-	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: " & vrdtvsp_current_datetime_string())
-	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: End Examining of SOURCE """ & CF_FILE_AbsolutePathName & """")
-	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: SOURCE file: " & " V_FrameRate=" & V_FrameRate & " (V_Frame_Rate_FF=" & V_Frame_Rate_FF & ") V_Codec_legacy: """ & V_Codec_legacy & """ V_ScanType: """ & V_ScanType & """ V_ScanOrder: """ & V_ScanOrder & """ " & V_Width & "x" & V_Height & " dar=" & V_DisplayAspectRatio_String_slash & " sar=" & V_PixelAspectRatio & " A_Codec_legacy: " & A_Codec_legacy & " A_Audio_Delay_ms: " & A_Audio_Delay_ms & " A_Audio_Delay_ms_legacy: " & A_Audio_Delay_ms_legacy & " A_Video_Delay_ms: " &  A_Video_Delay_ms & " A_Video_Delay_ms_legacy: " &  A_Video_Delay_ms_legacy)
-	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: End Exmaining of SOURCE """ & CF_FILE_AbsolutePathName & """")
-	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: " & vrdtvsp_current_datetime_string())
+	WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+	WScript.StdOut.WriteLine("End Examining of SOURCE """ & CF_FILE_AbsolutePathName & """")
+	WScript.StdOut.WriteLine("SOURCE file: " & " V_FrameRate=" & V_FrameRate & " (V_Frame_Rate_FF=" & V_Frame_Rate_FF & ") V_Codec_legacy: """ & V_Codec_legacy & """ V_ScanType: """ & V_ScanType & """ V_ScanOrder: """ & V_ScanOrder & """ " & V_Width & "x" & V_Height & " dar=" & V_DisplayAspectRatio_String_slash & " sar=" & V_PixelAspectRatio & " A_Codec_legacy: " & A_Codec_legacy & " A_Audio_Delay_ms: " & A_Audio_Delay_ms & " A_Audio_Delay_ms_legacy: " & A_Audio_Delay_ms_legacy & " A_Video_Delay_ms: " &  A_Video_Delay_ms & " A_Video_Delay_ms_legacy: " &  A_Video_Delay_ms_legacy)
+	WScript.StdOut.WriteLine("End Exmaining of SOURCE """ & CF_FILE_AbsolutePathName & """")
+	WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
 	WScript.StdOut.WriteLine("======================================================================================================================================================")
 	'
 	' Now that we know the Video Codec and have determined that proper QSF File extension to use, set things up
@@ -3006,14 +3026,12 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	CF_object_saved_ffmpeg_commands.WriteLine("ECHO !DATE! !TIME!")
 	CF_object_saved_ffmpeg_commands.WriteLine("TYPE """ & CF_QSFxml_AbsolutePathName & """")
 	CF_object_saved_ffmpeg_commands.WriteLine("REM ====================================================================================================================================================================")
-	vrdtvsp_status = vrdtvsp_delete_a_file(CF_QSF_AbsolutePathName, True) ' True=silently delete it
-	WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string())
-	WScript.StdOut.WriteLine(" ====================================================================================================================================================================")
-	WScript.StdOut.WriteLine(" ====================================================================================================================================================================")
 	'
+	WScript.StdOut.WriteLine("======================================================================================================================================================")
+	WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+	vrdtvsp_status = vrdtvsp_delete_a_file(CF_QSF_AbsolutePathName, True) ' True=silently delete it
 	' the OLD way:
 	'	 CF_exe_status = vrdtvsp_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string) ????? do the QSF in the DOS batch file like adscan
-	'
 	' the NEW way:
 	'ReDim vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(2) ' base 0, so the dimension is always 1 less than the number of commands
 	'vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(0) = "DEL /F """ & CF_QSFxml_AbsolutePathName & """"
@@ -3025,7 +3043,6 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'Erase vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array
 	'WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string() & " ====================================================================================================================================================================")
 	'WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string() & " ====================================================================================================================================================================")
-	'
 	' 2021.02.25 the NEWER way, which returns a Dict object with these keys:
 	'	"outputFile" string ... eg value retrieved like: v = xmlDict.Item("outputFile")
 	'	"OutputType" string
@@ -3065,6 +3082,11 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			WScript.StdOut.WriteLine(" ")
+			WScript.StdOut.WriteLine("vrdtvsp_Convert_File FINISHED " & vrdtvsp_current_datetime_string())
+			WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+			WScript.StdOut.WriteLine("======================================================================================================================================================")
+			WScript.StdOut.WriteLine(" ")
 			vrdtvsp_Convert_File = -1 ' just exit and hope the source file is moved to "failed" folder and the process continues with other files
 			Exit Function
 		End If
@@ -3092,6 +3114,11 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine(" ")
+		WScript.StdOut.WriteLine("vrdtvsp_Convert_File FINISHED " & vrdtvsp_current_datetime_string())
+		WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+		WScript.StdOut.WriteLine("======================================================================================================================================================")
+		WScript.StdOut.WriteLine(" ")
 		vrdtvsp_Convert_File = -1 ' just exit and hope the source file is moved to "failed" folder and the process continues with other files
 		Exit Function
 	End If
@@ -3214,6 +3241,11 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine(" ")
+		WScript.StdOut.WriteLine("vrdtvsp_Convert_File FINISHED " & vrdtvsp_current_datetime_string())
+		WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+		WScript.StdOut.WriteLine("======================================================================================================================================================")
+		WScript.StdOut.WriteLine(" ")
 		vrdtvsp_Convert_File = -1 ' just exit and hope the source file is moved to "failed" folder and the process continues with other files
 		Exit Function
 	End If
@@ -3259,6 +3291,11 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine(" ")
+		WScript.StdOut.WriteLine("vrdtvsp_Convert_File FINISHED " & vrdtvsp_current_datetime_string())
+		WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+		WScript.StdOut.WriteLine("======================================================================================================================================================")
+		WScript.StdOut.WriteLine(" ")
 		vrdtvsp_Convert_File = -1 ' just exit and hope the source file is moved to "failed" folder and the process continues with other files
 		Exit Function
 	End If
@@ -3283,6 +3320,11 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine(" ")
+		WScript.StdOut.WriteLine("vrdtvsp_Convert_File FINISHED " & vrdtvsp_current_datetime_string())
+		WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+		WScript.StdOut.WriteLine("======================================================================================================================================================")
+		WScript.StdOut.WriteLine(" ")
 		vrdtvsp_Convert_File = -1 ' just exit and hope the source file is moved to "failed" folder and the process continues with other files
 		Exit Function
 	End If
@@ -3458,6 +3500,11 @@ IF V_INCOMING_BITRATE = 0  Then
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine(" ")
+		WScript.StdOut.WriteLine("vrdtvsp_Convert_File FINISHED " & vrdtvsp_current_datetime_string())
+		WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+		WScript.StdOut.WriteLine("======================================================================================================================================================")
+		WScript.StdOut.WriteLine(" ")
 		vrdtvsp_Convert_File = -1 ' just exit and hope the source file is moved to "failed" folder and the process continues with other files
 		Exit Function
 	End If
@@ -3544,6 +3591,11 @@ IF V_INCOMING_BITRATE = 0  Then
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine(" ")
+		WScript.StdOut.WriteLine("vrdtvsp_Convert_File FINISHED " & vrdtvsp_current_datetime_string())
+		WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+		WScript.StdOut.WriteLine("======================================================================================================================================================")
+		WScript.StdOut.WriteLine(" ")
 		vrdtvsp_Convert_File = -1 ' just exit and hope the source file is moved to "failed" folder and the process continues with other files
 		Exit Function
 	End If
@@ -3762,6 +3814,11 @@ IF V_INCOMING_BITRATE = 0  Then
 			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			WScript.StdOut.WriteLine(" ")
+			WScript.StdOut.WriteLine("vrdtvsp_Convert_File FINISHED " & vrdtvsp_current_datetime_string())
+			WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+			WScript.StdOut.WriteLine("======================================================================================================================================================")
+			WScript.StdOut.WriteLine(" ")
 			vrdtvsp_Convert_File = -1 ' just exit and hope the source file is moved to "failed" folder and the process continues with other files
 			Exit Function
 		End If
@@ -3857,6 +3914,11 @@ IF V_INCOMING_BITRATE = 0  Then
 			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			WScript.StdOut.WriteLine(" ")
+			WScript.StdOut.WriteLine("vrdtvsp_Convert_File FINISHED " & vrdtvsp_current_datetime_string())
+			WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+			WScript.StdOut.WriteLine("======================================================================================================================================================")
+			WScript.StdOut.WriteLine(" ")
 			vrdtvsp_Convert_File = -1 ' just exit and hope the source file is moved to "failed" folder and the process continues with other files
 			Exit Function
 		End If
@@ -3953,6 +4015,11 @@ IF V_INCOMING_BITRATE = 0  Then
 			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			WScript.StdOut.WriteLine(" ")
+			WScript.StdOut.WriteLine("vrdtvsp_Convert_File FINISHED " & vrdtvsp_current_datetime_string())
+			WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+			WScript.StdOut.WriteLine("======================================================================================================================================================")
+			WScript.StdOut.WriteLine(" ")
 			vrdtvsp_Convert_File = -1 ' just exit and hope the source file is moved to "failed" folder and the process continues with other files
 			Exit Function
 		End If
@@ -3969,6 +4036,11 @@ IF V_INCOMING_BITRATE = 0  Then
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine(" ")
+		WScript.StdOut.WriteLine("vrdtvsp_Convert_File FINISHED " & vrdtvsp_current_datetime_string())
+		WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+		WScript.StdOut.WriteLine("======================================================================================================================================================")
+		WScript.StdOut.WriteLine(" ")
 		vrdtvsp_Convert_File = -1 ' just exit and hope the source file is moved to "failed" folder and the process continues with other files
 		Exit Function
 	End If
@@ -3989,6 +4061,11 @@ IF V_INCOMING_BITRATE = 0  Then
 			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			WScript.StdOut.WriteLine(" ")
+			WScript.StdOut.WriteLine("vrdtvsp_Convert_File FINISHED " & vrdtvsp_current_datetime_string())
+			WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+			WScript.StdOut.WriteLine("======================================================================================================================================================")
+			WScript.StdOut.WriteLine(" ")
 			vrdtvsp_Convert_File = -1 ' just exit and hope the source file is moved to "failed" folder and the process continues with other files
 			Exit Function
 		End If
@@ -4102,6 +4179,11 @@ IF V_INCOMING_BITRATE = 0  Then
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine(" ")
+		WScript.StdOut.WriteLine("vrdtvsp_Convert_File FINISHED " & vrdtvsp_current_datetime_string())
+		WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+		WScript.StdOut.WriteLine("======================================================================================================================================================")
+		WScript.StdOut.WriteLine(" ")
 		vrdtvsp_Convert_File = -1 ' just exit and hope the source file is moved to "failed" folder and the process continues with other files
 		Exit Function
 	End If
@@ -4182,6 +4264,11 @@ IF V_INCOMING_BITRATE = 0  Then
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine(" ")
+		WScript.StdOut.WriteLine("vrdtvsp_Convert_File FINISHED " & vrdtvsp_current_datetime_string())
+		WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+		WScript.StdOut.WriteLine("======================================================================================================================================================")
+		WScript.StdOut.WriteLine(" ")
 		vrdtvsp_Convert_File = -1
 		Exit Function
 	End If
@@ -4256,6 +4343,11 @@ IF V_INCOMING_BITRATE = 0  Then
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine(" ")
+		WScript.StdOut.WriteLine("vrdtvsp_Convert_File FINISHED " & vrdtvsp_current_datetime_string())
+		WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+		WScript.StdOut.WriteLine("======================================================================================================================================================")
+		WScript.StdOut.WriteLine(" ")
 		vrdtvsp_Convert_File = -1 ' just exit and hope the source file is moved to "failed" folder and the process continues with other files
 		Exit Function
 	End If
@@ -4403,6 +4495,11 @@ IF V_INCOMING_BITRATE = 0  Then
 			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
 			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			WScript.StdOut.WriteLine(" ")
+			WScript.StdOut.WriteLine("vrdtvsp_Convert_File FINISHED " & vrdtvsp_current_datetime_string())
+			WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+			WScript.StdOut.WriteLine("======================================================================================================================================================")
+			WScript.StdOut.WriteLine(" ")
 			vrdtvsp_Convert_File = -1
 			Exit Function
 		End If
