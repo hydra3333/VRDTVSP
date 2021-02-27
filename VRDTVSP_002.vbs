@@ -5070,7 +5070,7 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 	'</VRDOutputInfo>
 	'
 	Const wait_ms = 2000 ' in milliseconds
-	Dim dot_count_linebreak_interval, two_hours_in_ms, giveup_interval_count
+	Dim dot_count_linebreak_interval, two_hours_in_ms, one_hour_in_ms, half_hour_in_ms, quarter_hour_in_ms, giveup_interval_count
 	Dim xmlDict	' this is a dictionary object returned with Set vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 = xmlDict 
 	Dim VideoReDoSilent
 	Dim VideoReDo
@@ -5085,8 +5085,11 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 	Dim estimated_outputFile, estimated_VideoOutputFrameCount, estimated_ActualVideoBitrate
 	'
 	two_hours_in_ms = CLng( 2 * 60 * 60 * 1000 )
+	one_hour_in_ms = ROUND(two_hours_in_ms / 2)
+	half_hour_in_ms = ROUND(one_hour_in_ms / 2)
+	quarter_hour_in_ms = ROUND(half_hour_in_ms / 2)
 	dot_count_linebreak_interval = CLng(CLng(120) * CLng(1000) / CLng(wait_ms))		' for 2000 ms, this is 120 seconds worth of intervals
-	giveup_interval_count = CLng( CLng(two_hours_in_ms) / CLng( wait_ms ) )	' two hours worth of intervals
+	giveup_interval_count = CLng( CLng(quarter_hour_in_ms) / CLng( wait_ms ) )	' two hours worth of intervals
 	'
 	riqowv_FILE_AbsolutePathName = fso.GetAbsolutePathName(riqowv_FILE_AbsolutePathName)		' was passed byVal
 	riqowv_QSF_AbsolutePathName = fso.GetAbsolutePathName(riqowv_QSF_AbsolutePathName)			' was passed byVal
