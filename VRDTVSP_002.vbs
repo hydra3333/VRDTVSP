@@ -408,7 +408,7 @@ WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
 WScript.StdOut.WriteLine("STARTED vrdtvsp_fix_filenames_in_a_folder_tree on SOURCE folder")
 file_count_checked = 0
 file_count_fixed = 0
-vrdtvsp_status = vrdtvsp_fix_filenames_in_a_folder_tree(vrdtvsp_source_TS_Folder, False, file_count_checked, file_count_fixed)) ' this does (a) and (b) and (c).  False indicates to process only the top level folder with NO SUBFOLDERS
+vrdtvsp_status = vrdtvsp_fix_filenames_in_a_folder_tree(vrdtvsp_source_TS_Folder, False, file_count_checked, file_count_fixed) ' this does (a) and (b) and (c).  False indicates to process only the top level folder with NO SUBFOLDERS
 If vrdtvsp_status <> 0 Then ' Something went wrong with processing files in the Source folder ... check for 53 not found ?
 	If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: VRDTVSP ERROR - Error " & vrdtvsp_status & " from vrdtvsp_fix_filenames_in_a_folder_tree in """ & vrdtvsp_source_TS_Folder & """... Aborting ...")
 	WScript.StdOut.WriteLine("VRDTVSP ERROR - Error " & vrdtvsp_status & " from vrdtvsp_fix_filenames_in_a_folder_tree in """ & vrdtvsp_source_TS_Folder & """ ... Aborting ...")
