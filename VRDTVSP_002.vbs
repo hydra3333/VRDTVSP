@@ -1496,13 +1496,28 @@ Function vrdtvsp_remove_tvs_classifying_stuff_from_string (theOriginalString)
 	theNewString = Replace(theNewString, "__", "_", 1, -1, vbTextCompare) ' yes again to catch all  replaces
 	theNewString = Replace(theNewString, "__", "_", 1, -1, vbTextCompare) ' yes again to catch all  replaces
 	theNewString = Replace(theNewString, "__", "_", 1, -1, vbTextCompare) ' yes again to catch all  replaces
-
+	theNewString = Replace(theNewString, "__", "_", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "__", "_", 1, -1, vbTextCompare) ' yes again to catch all  replaces
+	theNewString = Replace(theNewString, "__", "_", 1, -1, vbTextCompare) ' yes again to catch all  replaces
+	theNewString = Replace(theNewString, "__", "_", 1, -1, vbTextCompare) ' yes again to catch all  replaces
+	theNewString = Replace(theNewString, "__", "_", 1, -1, vbTextCompare) ' yes again to catch all  replaces
+	'
+	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
 	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
 	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
 	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
 	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
 	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
 	'
+	theNewString = Replace(theNewString, "..", ".", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "..", ".", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "..", ".", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "..", ".", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "..", ".", 1, -1, vbTextCompare)
 	theNewString = Replace(theNewString, "..", ".", 1, -1, vbTextCompare)
 	theNewString = Replace(theNewString, "..", ".", 1, -1, vbTextCompare)
 	theNewString = Replace(theNewString, "..", ".", 1, -1, vbTextCompare)
@@ -2026,13 +2041,28 @@ Function vrdtvsp_remove_tvs_classifying_stuff_from_string (theOriginalString)
 	theNewString = Replace(theNewString, "__", "_", 1, -1, vbTextCompare) ' yes again to catch all  replaces
 	theNewString = Replace(theNewString, "__", "_", 1, -1, vbTextCompare) ' yes again to catch all  replaces
 	theNewString = Replace(theNewString, "__", "_", 1, -1, vbTextCompare) ' yes again to catch all  replaces
-
+	theNewString = Replace(theNewString, "__", "_", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "__", "_", 1, -1, vbTextCompare) ' yes again to catch all  replaces
+	theNewString = Replace(theNewString, "__", "_", 1, -1, vbTextCompare) ' yes again to catch all  replaces
+	theNewString = Replace(theNewString, "__", "_", 1, -1, vbTextCompare) ' yes again to catch all  replaces
+	theNewString = Replace(theNewString, "__", "_", 1, -1, vbTextCompare) ' yes again to catch all  replaces
+	'
+	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
 	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
 	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
 	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
 	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
 	theNewString = Replace(theNewString, "--", "-", 1, -1, vbTextCompare)
 	'
+	theNewString = Replace(theNewString, "..", ".", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "..", ".", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "..", ".", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "..", ".", 1, -1, vbTextCompare)
+	theNewString = Replace(theNewString, "..", ".", 1, -1, vbTextCompare)
 	theNewString = Replace(theNewString, "..", ".", 1, -1, vbTextCompare)
 	theNewString = Replace(theNewString, "..", ".", 1, -1, vbTextCompare)
 	theNewString = Replace(theNewString, "..", ".", 1, -1, vbTextCompare)
