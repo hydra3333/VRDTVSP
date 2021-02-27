@@ -1027,7 +1027,6 @@ Function vrdtvsp_fix_filenames_in_a_folder_tree (the_folder_tree, do_subfolders_
     Dim vrdtvsp_f_object
 	Dim local_timerStart, local_timerEnd
 	Dim local_timerStart_2, local_timerEnd_2
-	Dim ffiaft_count_checked, ffiaft_count_fixed
 	local_timerStart = Timer
 	local_timerEnd = Timer
 	local_timerStart_2 = Timer
