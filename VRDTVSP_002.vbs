@@ -2381,8 +2381,8 @@ Function vrdtvsp_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
         '********* FILTER BY FILE EXTENSION *********
 		If Ucase(C_FILE_Ext) = Ucase("ts") OR Ucase(C_FILE_Ext) = Ucase("mp4") OR Ucase(C_FILE_Ext) = Ucase("mpg") OR Ucase(C_FILE_Ext) = Ucase("vprj") Then ' ********** only process specific file extensions
 			WScript.StdOut.WriteLine("======================================================================================================================================================")
-			WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
-			WScript.StdOut.WriteLine("VRDTVSP ========== PROCESSING file C_FILE_AbsolutePathName=""" & C_FILE_AbsolutePathName & """ ==========")
+			WScript.StdOut.WriteLine(" ")
+			WScript.StdOut.WriteLine("========== PROCESSING file C_FILE_AbsolutePathName=""" & C_FILE_AbsolutePathName & """ ========== " &  vrdtvsp_current_datetime_string())
 			WScript.StdOut.WriteLine(" ")
 			Select Case Ucase(C_FILE_Ext)
 			Case Ucase("vprj") 										' it's in the source folder, ignore it
@@ -2403,8 +2403,9 @@ Function vrdtvsp_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 				End If
 			Case Else	' extension not recognised, do Nothing
 			End Select 
-			WScript.StdOut.WriteLine("VRDTVSP ========== FINISHED file C_FILE_AbsolutePathName=""" & C_FILE_AbsolutePathName & """ ==========")
-			WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+			WScript.StdOut.WriteLine(" ")
+			WScript.StdOut.WriteLine("========== FINISHED PROCESSING file C_FILE_AbsolutePathName=""" & C_FILE_AbsolutePathName & """ ========== " & vrdtvsp_current_datetime_string())
+			WScript.StdOut.WriteLine(" ")
 			WScript.StdOut.WriteLine("======================================================================================================================================================")
 		End If
 	Next
