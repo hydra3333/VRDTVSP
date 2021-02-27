@@ -3781,15 +3781,13 @@ IF V_INCOMING_BITRATE = 0  Then
 		If vrdtvsp_DEBUG Then 
 			WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_File run DGIndexNV """ & CF_QSF_AbsolutePathName & """ with CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
 		End If
+		WScript.StdOut.WriteLine("======================================================================================================================================================")
+		WScript.StdOut.WriteLine("START RUN DGIndexNV " & vrdtvsp_current_datetime_string())
 		vrdtvsp_status = vrdtvsp_delete_a_file(CF_DGI_AbsolutePathName, True)		' Delete the DGI file to be created by DGIndexNV
 		vrdtvsp_status = vrdtvsp_delete_a_file(CF_DGIlog_AbsolutePathName, True)	' Delete the DGIlog file to be created by DGIndexNV
-		WScript.StdOut.WriteLine(" ====================================================================================================================================================================")
-		WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string())
-		WScript.StdOut.WriteLine(" ====================================================================================================================================================================")
 		CF_exe_status = vrdtvsp_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string)
-		WScript.StdOut.WriteLine(" ====================================================================================================================================================================")
-		WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string())
-		WScript.StdOut.WriteLine(" ====================================================================================================================================================================")
+		WScript.StdOut.WriteLine("FINISH RUN DGIndexNV " & vrdtvsp_current_datetime_string())
+		WScript.StdOut.WriteLine("======================================================================================================================================================")
 		If CF_exe_status <> 0 OR NOT fso.FileExists(CF_DGI_AbsolutePathName) Then
 			If vrdtvsp_DEBUG Then 
 				WScript.StdOut.WriteLine("")
@@ -3828,7 +3826,7 @@ IF V_INCOMING_BITRATE = 0  Then
 		vrdtvsp_status = vrdtvsp_delete_a_file (CF_DGIlog_AbsolutePathName, True)	' Delete the DGIlog file created by DGIndexNV
 	End If
 	ff_timerEnd = Timer
-	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - DGIndexNV command completed with Elapsed Time " & vrdtvsp_Calculate_ElapsedTime_string(ff_timerStart, ff_timerEnd))
+	WScript.StdOut.WriteLine("************** DGIndexNV command completed with Elapsed Time " & vrdtvsp_Calculate_ElapsedTime_string(ff_timerStart, ff_timerEnd))
 	' ++++ END Run the DGIndexNV command
 	' END  ======================================================  Do the DGIndexNV ======================================================
 	'
@@ -4108,7 +4106,9 @@ IF V_INCOMING_BITRATE = 0  Then
 		CF_object_saved_ffmpeg_commands.WriteLine("ECHO !DATE! !TIME!")
 		CF_object_saved_ffmpeg_commands.WriteLine("REM ====================================================================================================================================================================")
 		' display the content of .VPY file
-		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - Content of VPY file """ & CF_VPY_AbsolutePathName & """ Below :")
+		WScript.StdOut.WriteLine("======================================================================================================================================================")
+		WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+		WScript.StdOut.WriteLine("Content of VPY file """ & CF_VPY_AbsolutePathName & """ Below --------------------------------------------------------------------------------------------------------------------")
 		Set CF_VPY_object = fso.OpenTextFile(CF_VPY_AbsolutePathName, ForReading)
 		Do Until CF_VPY_object.AtEndOfStream
 			CF_VPY_string = CF_VPY_object.ReadLine
@@ -4116,7 +4116,9 @@ IF V_INCOMING_BITRATE = 0  Then
 		Loop			
 		CF_status = CF_VPY_object.Close
 		Set CF_VPY_object = Nothing
-		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - Content of VPY file """ & CF_VPY_AbsolutePathName & """ Above.")
+		WScript.StdOut.WriteLine("Content of VPY file """ & CF_VPY_AbsolutePathName & """ Above --------------------------------------------------------------------------------------------------------------------")
+		WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+		WScript.StdOut.WriteLine("======================================================================================================================================================")
 	Else ' Else is previously flagged as not creating a VPY since incoming stream is Progressive/AVC
 	End If
 	'
@@ -4134,11 +4136,9 @@ IF V_INCOMING_BITRATE = 0  Then
 	CF_object_saved_ffmpeg_commands.WriteLine("REM ====================================================================================================================================================================")
 		'
 	' ++++ START Run the ffmpeg command
-	WScript.StdOut.WriteLine(" ====================================================================================================================================================================")
-	WScript.StdOut.WriteLine(" ====================================================================================================================================================================")
-	WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string())
-	WScript.StdOut.WriteLine(" ====================================================================================================================================================================")
-	WScript.StdOut.WriteLine(" ====================================================================================================================================================================")
+	WScript.StdOut.WriteLine("======================================================================================================================================================")
+	WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+	WScript.StdOut.WriteLine("START Run the ffmpeg command")
 	ff_timerStart = Timer
 	vrdtvsp_status = vrdtvsp_delete_a_file(CF_TARGET_AbsolutePathName, True)
 	'???????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????
@@ -4186,11 +4186,9 @@ IF V_INCOMING_BITRATE = 0  Then
 		vrdtvsp_Convert_File = -1 ' just exit and hope the source file is moved to "failed" folder and the process continues with other files
 		Exit Function
 	End If
-	WScript.StdOut.WriteLine(" ====================================================================================================================================================================")
-	WScript.StdOut.WriteLine(" ====================================================================================================================================================================")
-	WScript.StdOut.WriteLine(vrdtvsp_current_datetime_string())
-	WScript.StdOut.WriteLine(" ====================================================================================================================================================================")
-	WScript.StdOut.WriteLine(" ====================================================================================================================================================================")
+	WScript.StdOut.WriteLine("FINISH Run the ffmpeg command")
+	WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+	WScript.StdOut.WriteLine("======================================================================================================================================================")
 	vrdtvsp_status = vrdtvsp_delete_a_file(ff_logfile, True)		' Delete the .bat file to be created with the ffmpeg command
 	vrdtvsp_status = vrdtvsp_delete_a_file(ff_batfile, True)		' Delete the .bat file to be created with the ffmpeg command
 	ff_timerEnd = Timer
