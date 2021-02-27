@@ -2564,7 +2564,18 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: VRDTVSP ERROR vrdtvsp_Convert_File - Error - SUPPOSEDLY VALID SOURCE FILE NOT FOUND """ & CF_FILE_AbsolutePathName & """... Aborting ...")
 		WScript.StdOut.WriteLine("VRDTVSP ERROR vrdtvsp_Convert_File - Error - SUPPOSEDLY VALID SOURCE FILE NOT FOUND """ & CF_FILE_AbsolutePathName & """... Aborting ...")
 		On Error goto 0
-		WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+		vrdtvsp_status = vrdtvsp_move_files_to_folder(CF_FILE_AbsolutePathName, CF_failed_conversion_TS_Folder)
+		vrdtvsp_status = vrdtvsp_move_files_to_folder(CF_vprj_AbsolutePathName, CF_failed_conversion_TS_Folder)
+		'vrdtvsp_status = vrdtvsp_delete_a_file(CF_DGI_AbsolutePathName, True)
+		'vrdtvsp_status = vrdtvsp_delete_a_file(CF_VPY_AbsolutePathName, True)
+		'vrdtvsp_status = vrdtvsp_delete_a_file(CF_QSF_AbsolutePathName, True)
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		vrdtvsp_Convert_File = -1
+		Exit Function
 	End If
 	If vrdtvsp_DEBUG Then
 		If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: Entered vrdtvsp_Convert_File with VALID SOURCE FILE """ & CF_FILE_AbsolutePathName & """")
@@ -2637,10 +2648,6 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
 			On Error goto 0
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
-		Else
-			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			On Error goto 0
-			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
 		vrdtvsp_status = vrdtvsp_move_files_to_folder(CF_FILE_AbsolutePathName, CF_failed_conversion_TS_Folder)
 		vrdtvsp_status = vrdtvsp_move_files_to_folder(CF_vprj_AbsolutePathName, CF_failed_conversion_TS_Folder)
@@ -2686,11 +2693,19 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
 			On Error goto 0
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
-		Else
-			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			On Error goto 0
-			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
+		vrdtvsp_status = vrdtvsp_move_files_to_folder(CF_FILE_AbsolutePathName, CF_failed_conversion_TS_Folder)
+		vrdtvsp_status = vrdtvsp_move_files_to_folder(CF_vprj_AbsolutePathName, CF_failed_conversion_TS_Folder)
+		'vrdtvsp_status = vrdtvsp_delete_a_file(CF_DGI_AbsolutePathName, True)
+		'vrdtvsp_status = vrdtvsp_delete_a_file(CF_VPY_AbsolutePathName, True)
+		'vrdtvsp_status = vrdtvsp_delete_a_file(CF_QSF_AbsolutePathName, True)
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		vrdtvsp_Convert_File = -1
+		Exit Function
 	End If
 	If V_ScanOrder = "" Then
 		V_ScanOrder = "TFF" ' Default to Top Field First
@@ -2888,7 +2903,7 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 		If vrd_version_for_qsf = 6 Then
 			Set xmlDict = vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (5, CF_FILE_AbsolutePathName, CF_QSF_AbsolutePathName, vrdtvsp_profile_name_for_qsf) ' fallback to try a v5 QSF
 		End If
-		If xmlDict is Nothing Then
+		If xmlDict is Nothing Then	' it must have failed QSF in both version 5 and version 6
 			WScript.StdOut.WriteLine("VRDTVSP ERROR vrdtvsp_Convert_File - Error - Failed to QSF after re-trying with v5 QSF """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
 			vrdtvsp_status = vrdtvsp_move_files_to_folder(CF_FILE_AbsolutePathName, CF_failed_conversion_TS_Folder)
 			vrdtvsp_status = vrdtvsp_move_files_to_folder(CF_vprj_AbsolutePathName, CF_failed_conversion_TS_Folder)
@@ -3083,11 +3098,19 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
 			On Error goto 0
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
-		Else
-			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			On Error goto 0
-			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
+		vrdtvsp_status = vrdtvsp_move_files_to_folder(CF_FILE_AbsolutePathName, CF_failed_conversion_TS_Folder)
+		vrdtvsp_status = vrdtvsp_move_files_to_folder(CF_vprj_AbsolutePathName, CF_failed_conversion_TS_Folder)
+		'vrdtvsp_status = vrdtvsp_delete_a_file(CF_DGI_AbsolutePathName, True)
+		'vrdtvsp_status = vrdtvsp_delete_a_file(CF_VPY_AbsolutePathName, True)
+		'vrdtvsp_status = vrdtvsp_delete_a_file(CF_QSF_AbsolutePathName, True)
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		vrdtvsp_Convert_File = -1 ' just exit and hope the source file is moved to "failed" folder and the process continues with other files
+		Exit Function
 	End If
 	If Q_V_ScanOrder = "" Then
 		Q_V_ScanOrder = "TFF" ' Default to Top Field First
@@ -3099,11 +3122,19 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
 			On Error goto 0
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
-		Else
-			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			On Error goto 0
-			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
+		vrdtvsp_status = vrdtvsp_move_files_to_folder(CF_FILE_AbsolutePathName, CF_failed_conversion_TS_Folder)
+		vrdtvsp_status = vrdtvsp_move_files_to_folder(CF_vprj_AbsolutePathName, CF_failed_conversion_TS_Folder)
+		'vrdtvsp_status = vrdtvsp_delete_a_file(CF_DGI_AbsolutePathName, True)
+		'vrdtvsp_status = vrdtvsp_delete_a_file(CF_VPY_AbsolutePathName, True)
+		'vrdtvsp_status = vrdtvsp_delete_a_file(CF_QSF_AbsolutePathName, True)
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		vrdtvsp_Convert_File = -1 ' just exit and hope the source file is moved to "failed" folder and the process continues with other files
+		Exit Function
 	End If
 	'
 	' Choose the most likely video bitrate of the SOURCE file from amongst the various options. 
@@ -3565,12 +3596,19 @@ IF V_INCOMING_BITRATE = 0  Then
 				Wscript.Echo "Error 17 = cannot perform the requested operation"
 				On Error goto 0
 				WScript.Quit 17 ' Error 17 = cannot perform the requested operation
-			Else
-				Wscript.Echo "error after DGindexNV " & CF_exe_status
-				Wscript.Echo "Error 17 = cannot perform the requested operation"
-				On Error goto 0
-				WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 			End If
+			vrdtvsp_status = vrdtvsp_move_files_to_folder(CF_FILE_AbsolutePathName, CF_failed_conversion_TS_Folder)
+			vrdtvsp_status = vrdtvsp_move_files_to_folder(CF_vprj_AbsolutePathName, CF_failed_conversion_TS_Folder)
+			'vrdtvsp_status = vrdtvsp_delete_a_file(CF_DGI_AbsolutePathName, True)
+			'vrdtvsp_status = vrdtvsp_delete_a_file(CF_VPY_AbsolutePathName, True)
+			'vrdtvsp_status = vrdtvsp_delete_a_file(CF_QSF_AbsolutePathName, True)
+			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			vrdtvsp_Convert_File = -1 ' just exit and hope the source file is moved to "failed" folder and the process continues with other files
+			Exit Function
 		End If
 		If vrdtvsp_DEBUG Then
 			WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_File about to delete DG autolog " & CF_DGIlog_AbsolutePathName)
@@ -3653,10 +3691,19 @@ IF V_INCOMING_BITRATE = 0  Then
 			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: ========== Created ffmpeg_cmd_string, hopefully Progressive/MPEG2 vs file: " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
 			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: ========== Created ffmpeg_cmd_string <" & ff_cmd_string & ">")
 		Else
-			Wscript.Echo "Unable to create ff_cmd_string Progressive avc/mpeg2 - unknown codec " & Q_V_Codec_legacy
-			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			On Error goto 0
-			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: ERROR - Unable to create ff_cmd_string Progressive avc/mpeg2 - unknown codec " & Q_V_Codec_legacy)
+			vrdtvsp_status = vrdtvsp_move_files_to_folder(CF_FILE_AbsolutePathName, CF_failed_conversion_TS_Folder)
+			vrdtvsp_status = vrdtvsp_move_files_to_folder(CF_vprj_AbsolutePathName, CF_failed_conversion_TS_Folder)
+			'vrdtvsp_status = vrdtvsp_delete_a_file(CF_DGI_AbsolutePathName, True)
+			'vrdtvsp_status = vrdtvsp_delete_a_file(CF_VPY_AbsolutePathName, True)
+			'vrdtvsp_status = vrdtvsp_delete_a_file(CF_QSF_AbsolutePathName, True)
+			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			vrdtvsp_Convert_File = -1 ' just exit and hope the source file is moved to "failed" folder and the process continues with other files
+			Exit Function
 		End If
 	ElseIf V_IsInterlaced Then
 		if V_IsAVC Then
@@ -3740,17 +3787,35 @@ IF V_INCOMING_BITRATE = 0  Then
 			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: ========== Created ffmpeg_cmd_string, hopefully Interlaced/MPEG2 vs file: " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
 			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: ========== Created ffmpeg_cmd_string <" & ff_cmd_string & ">")
 		Else
-			Wscript.Echo "Unable to create ff_cmd_string Interlaced avc/mpeg2 - unknown codec " & Q_V_Codec_legacy
-			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			On Error goto 0
-			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: ERROR - Unable to create ff_cmd_string Interlaced avc/mpeg2 - unknown codec " & Q_V_Codec_legacy)
+			vrdtvsp_status = vrdtvsp_move_files_to_folder(CF_FILE_AbsolutePathName, CF_failed_conversion_TS_Folder)
+			vrdtvsp_status = vrdtvsp_move_files_to_folder(CF_vprj_AbsolutePathName, CF_failed_conversion_TS_Folder)
+			'vrdtvsp_status = vrdtvsp_delete_a_file(CF_DGI_AbsolutePathName, True)
+			'vrdtvsp_status = vrdtvsp_delete_a_file(CF_VPY_AbsolutePathName, True)
+			'vrdtvsp_status = vrdtvsp_delete_a_file(CF_QSF_AbsolutePathName, True)
+			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			vrdtvsp_Convert_File = -1 ' just exit and hope the source file is moved to "failed" folder and the process continues with other files
+			Exit Function
 		End If
 	Else
 		'??????????????print diagnostics and exit since not Progressive nor Interlaced ...
-		Wscript.Echo "Unable to create ff_cmd_string as flag is neither Interlaced nor Progressive .. V_IsInterlaced=" & V_IsInterlaced & " V_IsProgressive=" & V_IsProgressive
-		Wscript.Echo "Error 17 = cannot perform the requested operation"
-		On Error goto 0
-		WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: ERROR - Unable to create ff_cmd_string as flag is neither Interlaced nor Progressive .. V_IsInterlaced=" & V_IsInterlaced & " V_IsProgressive=" & V_IsProgressive)
+		vrdtvsp_status = vrdtvsp_move_files_to_folder(CF_FILE_AbsolutePathName, CF_failed_conversion_TS_Folder)
+		vrdtvsp_status = vrdtvsp_move_files_to_folder(CF_vprj_AbsolutePathName, CF_failed_conversion_TS_Folder)
+		'vrdtvsp_status = vrdtvsp_delete_a_file(CF_DGI_AbsolutePathName, True)
+		'vrdtvsp_status = vrdtvsp_delete_a_file(CF_VPY_AbsolutePathName, True)
+		'vrdtvsp_status = vrdtvsp_delete_a_file(CF_QSF_AbsolutePathName, True)
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		vrdtvsp_Convert_File = -1 ' just exit and hope the source file is moved to "failed" folder and the process continues with other files
+		Exit Function
 	End If
 	If vrdtvsp_create_VPY Then
 		'create the vpy file
@@ -3759,8 +3824,18 @@ IF V_INCOMING_BITRATE = 0  Then
 		If CF_VPY_object is Nothing  Then ' Something went wrong with creating the file
 			If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: VRDTVSP ERROR vrdtvsp_Convert_File - Error - Nothing object returned from fso.CreateTextFile with VPY file """ & CF_VPY_AbsolutePathName & """... Aborting ...")
 			WScript.StdOut.WriteLine("VRDTVSP ERROR vrdtvsp_Convert_File - Error - Nothing object returned from fso.CreateTextFile with VPY file  """ & CF_VPY_AbsolutePathName & """... Aborting ...")
-			On Error goto 0
-			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+			vrdtvsp_status = vrdtvsp_move_files_to_folder(CF_FILE_AbsolutePathName, CF_failed_conversion_TS_Folder)
+			vrdtvsp_status = vrdtvsp_move_files_to_folder(CF_vprj_AbsolutePathName, CF_failed_conversion_TS_Folder)
+			'vrdtvsp_status = vrdtvsp_delete_a_file(CF_DGI_AbsolutePathName, True)
+			'vrdtvsp_status = vrdtvsp_delete_a_file(CF_VPY_AbsolutePathName, True)
+			'vrdtvsp_status = vrdtvsp_delete_a_file(CF_QSF_AbsolutePathName, True)
+			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+			vrdtvsp_Convert_File = -1 ' just exit and hope the source file is moved to "failed" folder and the process continues with other files
+			Exit Function
 		End If
 		CF_object_saved_ffmpeg_commands.WriteLine("REM")
 		CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_VPY_AbsolutePathName & """")
@@ -4003,17 +4078,25 @@ IF V_INCOMING_BITRATE = 0  Then
 		T_V_ScanOrder = "TFF" ' Default to Top Field First
 	End If
 	If NOT T_V_IsProgressive Then 'by now the Target MUST be progressive
-		If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: VRDTVSP ERROR vrdtvsp_Convert_File - Error - TARGET SHOULD BE PROGRESSIVE BUT IS NOT - V_ScanType=""" & V_ScanType & """ T_V_ScanType=""" & T_V_ScanType &  """ ... Ignoring file ...")
-		WScript.StdOut.WriteLine("VRDTVSP ERROR vrdtvsp_Convert_File - Error - TARGET SHOULD BE PROGRESSIVE BUT IS NOT - V_ScanType=""" & V_ScanType & """ T_V_ScanType=""" & T_V_ScanType & """ ... Ignoring file ...")
+		If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: VRDTVSP ERROR vrdtvsp_Convert_File - Error - TARGET SHOULD BE PROGRESSIVE BUT IS NOT - V_ScanType=""" & V_ScanType & """ T_V_ScanType=""" & T_V_ScanType & """ """ & CF_TARGET_AbsolutePathName & """ ... Ignoring file ...")
+		WScript.StdOut.WriteLine("VRDTVSP ERROR vrdtvsp_Convert_File - Error - TARGET SHOULD BE PROGRESSIVE BUT IS NOT - V_ScanType=""" & V_ScanType & """ T_V_ScanType=""" & T_V_ScanType & """ """ & CF_TARGET_AbsolutePathName & """ ... Ignoring file ...")
 		If vrdtvsp_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
 			Wscript.Echo "Error 17 = cannot perform the requested operation"
 			On Error goto 0
 			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
-		Else
-			Wscript.Echo "Error 17 = cannot perform the requested operation"
-			On Error goto 0
-			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 		End If
+		vrdtvsp_status = vrdtvsp_move_files_to_folder(CF_FILE_AbsolutePathName, CF_failed_conversion_TS_Folder)
+		vrdtvsp_status = vrdtvsp_move_files_to_folder(CF_vprj_AbsolutePathName, CF_failed_conversion_TS_Folder)
+		'vrdtvsp_status = vrdtvsp_delete_a_file(CF_DGI_AbsolutePathName, True)
+		'vrdtvsp_status = vrdtvsp_delete_a_file(CF_VPY_AbsolutePathName, True)
+		'vrdtvsp_status = vrdtvsp_delete_a_file(CF_QSF_AbsolutePathName, True)
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? moved FAILED CONVERSION file to FAILED folder: """ & CF_FILE_AbsolutePathName & """ to """ & CF_failed_conversion_TS_Folder & """")
+		vrdtvsp_Convert_File = -1 ' just exit and hope the source file is moved to "failed" folder and the process continues with other files
+		Exit Function
 	End If
 	If vrdtvsp_DEBUG Then
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvsp_Convert_File adjusted TARGET media characteristics below:") 
