@@ -1061,17 +1061,17 @@ Sub vrdtvsp_ffiaft_Process_Files_In_Subfolders (objSpecifiedFolder, do_subfolder
     ' Call like this:
     '       status = vrdtvsp_ffiaft_Process_Files_In_Subfolders (folder_object, False) 
 	Dim objCurrentFolder, objColFiles, objSubFolder, objFile, ext
-	'If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_Process_Files_In_Subfolders: Started with incoming folder path """ & fso.GetFolder(objSpecifiedFolder.Path) & """")
+	If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_Process_Files_In_Subfolders: Started with incoming folder path """ & fso.GetFolder(objSpecifiedFolder.Path) & """")
     Set objCurrentFolder = fso.GetFolder(objSpecifiedFolder.Path) ' get a NEW instance of a folder object (keep for recursion)
-	'If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_Process_Files_In_Subfolders: Started with " & objCurrentFolder.Files.Count & " files in folder """ & fso.GetFolder(objSpecifiedFolder.Path) & """")
+	If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_Process_Files_In_Subfolders: Started with " & objCurrentFolder.Files.Count & " files in folder """ & fso.GetFolder(objSpecifiedFolder.Path) & """")
     ' Process all files in the current folder
     Set objColFiles = objCurrentFolder.Files ' get an object of a collection of files for the folder object
     For Each objFile in objColFiles
-		'If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_Process_Files_In_Subfolders: found File in collection=""" & objFile.Path & """")
+		If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_Process_Files_In_Subfolders: found File in collection=""" & objFile.Path & """")
         ext = UCase(fso.GetExtensionName(objFile.name))
         '********* FILTER BY FILE EXTENSION *********
 		If ext = Ucase("ts") OR ext = Ucase("mp4") OR ext = Ucase("mpg") Then ' ********** only process specific file extensions
-			'If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_Process_Files_In_Subfolders: recognised Extension of file in collection=""" & objFile.Path & """ and about to call vrdtvsp_ffiaft_pfis_Rename_a_File")
+			If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_Process_Files_In_Subfolders: recognised Extension of file in collection=""" & objFile.Path & """ and about to call vrdtvsp_ffiaft_pfis_Rename_a_File")
             Call vrdtvsp_ffiaft_pfis_Rename_a_File(objFile)'  fso.GetAbsolutePathName(objFile.Path) should be the fully qualified absolute filename of this file
         End If
         '********* FILTER BY FILE EXTENSION *********
@@ -2340,10 +2340,9 @@ Function vrdtvsp_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 		C_FILE_Ext = fso.GetExtensionName(C_FILE_AbsolutePathName)
         '********* FILTER BY FILE EXTENSION *********
 		If Ucase(C_FILE_Ext) = Ucase("ts") OR Ucase(C_FILE_Ext) = Ucase("mp4") OR Ucase(C_FILE_Ext) = Ucase("mpg") OR Ucase(C_FILE_Ext) = Ucase("vprj") Then ' ********** only process specific file extensions
-			WScript.StdOut.WriteLine(" ")
-			WScript.StdOut.WriteLine(" ")
-			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_files_in_a_folder ========== PROCESSING file C_FILE_AbsolutePathName=""" & C_FILE_AbsolutePathName & """ ==========" & vrdtvsp_current_datetime_string())
-			WScript.StdOut.WriteLine(" ")
+			WScript.StdOut.WriteLine("======================================================================================================================================================")
+			WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_files_in_a_folder ========== PROCESSING file C_FILE_AbsolutePathName=""" & C_FILE_AbsolutePathName & """ ==========")
 			WScript.StdOut.WriteLine(" ")
 			Select Case Ucase(C_FILE_Ext)
 			Case Ucase("vprj") 										' it's in the source folder, ignore it
@@ -2364,11 +2363,9 @@ Function vrdtvsp_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 				End If
 			Case Else	' extension not recognised, do Nothing
 			End Select 
-			WScript.StdOut.WriteLine(" ")
-			WScript.StdOut.WriteLine(" ")
-			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_files_in_a_folder ========== FINISHED file C_FILE_AbsolutePathName=""" & C_FILE_AbsolutePathName & """ ==========" & vrdtvsp_current_datetime_string())
-			WScript.StdOut.WriteLine(" ")
-			WScript.StdOut.WriteLine(" ")
+			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_files_in_a_folder ========== FINISHED file C_FILE_AbsolutePathName=""" & C_FILE_AbsolutePathName & """ ==========")
+			WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+			WScript.StdOut.WriteLine("======================================================================================================================================================")
 		End If
 	Next
 	'
