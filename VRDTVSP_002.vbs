@@ -3401,16 +3401,15 @@ IF V_INCOMING_BITRATE = 0  Then
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvsp_Convert_File V_INCOMING_BITRATE=""" & V_INCOMING_BITRATE & """") 
 		WScript.StdOut.WriteLine("VRDTVS: DEBUG: vrdtvsp_Convert_File adjusted QSF media characteristics above") 
 	End If
+	WScript.StdOut.WriteLine("======================================================================================================================================================")
+	WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+	WScript.StdOut.WriteLine("End QSF of """ & CF_FILE_AbsolutePathName & """ into """ & CF_QSF_AbsolutePathName & """")
+	WScript.StdOut.WriteLine("output QSF file: " & " Q_V_FrameRate=" & Q_V_FrameRate & " (Q_V_Frame_Rate_FF=" & Q_V_Frame_Rate_FF & ") Q_V_Codec_legacy: """ & Q_V_Codec_legacy & """ Q_V_ScanType: """ & Q_V_ScanType & """ Q_V_ScanOrder: """ & Q_V_ScanOrder & """ " & Q_V_Width & "x" & Q_V_Height & " dar=" & Q_V_DisplayAspectRatio_String_slash & " sar=" & Q_V_PixelAspectRatio & " Q_A_Codec_legacy: " & Q_A_Codec_legacy & " Q_A_Audio_Delay_ms: " & Q_A_Audio_Delay_ms & " Q_A_Audio_Delay_ms_legacy: " & Q_A_Audio_Delay_ms_legacy & " Q_A_Video_Delay_ms: " &  Q_A_Video_Delay_ms & " Q_A_Video_Delay_ms_legacy: " &  Q_A_Video_Delay_ms_legacy)
+	WScript.StdOut.WriteLine("End QSF of """ & CF_FILE_AbsolutePathName & """ into """ & CF_QSF_AbsolutePathName & """")
 	WScript.StdOut.WriteLine(" ====================================================================================================================================================================")
-	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: " & vrdtvsp_current_datetime_string())
-	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: End QSF of """ & CF_FILE_AbsolutePathName & """ into """ & CF_QSF_AbsolutePathName & """")
-	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: output QSF file: " & " Q_V_FrameRate=" & Q_V_FrameRate & " (Q_V_Frame_Rate_FF=" & Q_V_Frame_Rate_FF & ") Q_V_Codec_legacy: """ & Q_V_Codec_legacy & """ Q_V_ScanType: """ & Q_V_ScanType & """ Q_V_ScanOrder: """ & Q_V_ScanOrder & """ " & Q_V_Width & "x" & Q_V_Height & " dar=" & Q_V_DisplayAspectRatio_String_slash & " sar=" & Q_V_PixelAspectRatio & " Q_A_Codec_legacy: " & Q_A_Codec_legacy & " Q_A_Audio_Delay_ms: " & Q_A_Audio_Delay_ms & " Q_A_Audio_Delay_ms_legacy: " & Q_A_Audio_Delay_ms_legacy & " Q_A_Video_Delay_ms: " &  Q_A_Video_Delay_ms & " Q_A_Video_Delay_ms_legacy: " &  Q_A_Video_Delay_ms_legacy)
-	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: End QSF of """ & CF_FILE_AbsolutePathName & """ into """ & CF_QSF_AbsolutePathName & """")
-	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: " & vrdtvsp_current_datetime_string())
-	WScript.StdOut.WriteLine(" ====================================================================================================================================================================")
-	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: V_INCOMING_BITRATE: Using """ & CF_FILE_AbsolutePathName & """ and """ & CF_QSF_AbsolutePathName & """ The V_INCOMING_BITRATE=""" & V_INCOMING_BITRATE & """")
-	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: " & vrdtvsp_current_datetime_string())
-	WScript.StdOut.WriteLine(" ====================================================================================================================================================================")
+	WScript.StdOut.WriteLine("V_INCOMING_BITRATE: Using """ & CF_FILE_AbsolutePathName & """ and """ & CF_QSF_AbsolutePathName & """ The V_INCOMING_BITRATE=""" & V_INCOMING_BITRATE & """")
+	WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+	WScript.StdOut.WriteLine("======================================================================================================================================================")
 	'
 	' Cross-Check SOURCE ScanType and ScanOrder with QSF ScanType and ScanOrder and bail if not the same
 	If Ucase(V_ScanType) <> Ucase(Q_V_ScanType) Then
