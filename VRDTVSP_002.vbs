@@ -404,7 +404,7 @@ End If
 'If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: about to call vrdtvsp_fix_filenames_in_a_folder_tree(""" & vrdtvsp_source_TS_Folder & """, False)")
 WScript.StdOut.WriteLine("======================================================================================================================================================")
 WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
-WScript.StdOut.WriteLine("STARTED vrdtvsp_fix_filenames_in_a_folder_tree")
+WScript.StdOut.WriteLine("STARTED vrdtvsp_fix_filenames_in_a_folder_tree on SOURCE folder")
 vrdtvsp_status = vrdtvsp_fix_filenames_in_a_folder_tree(vrdtvsp_source_TS_Folder, False) ' this does (a) and (b) and (c).  False indicates to process only the top level folder with NO SUBFOLDERS
 If vrdtvsp_status <> 0 Then ' Something went wrong with processing files in the Source folder ... check for 53 not found ?
 	If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: VRDTVSP ERROR - Error " & vrdtvsp_status & " from vrdtvsp_fix_filenames_in_a_folder_tree in """ & vrdtvsp_source_TS_Folder & """... Aborting ...")
@@ -413,7 +413,7 @@ If vrdtvsp_status <> 0 Then ' Something went wrong with processing files in the 
 	On Error goto 0
 	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
-WScript.StdOut.WriteLine("FINISHED vrdtvsp_fix_filenames_in_a_folder_tree")
+WScript.StdOut.WriteLine("FINISHED vrdtvsp_fix_filenames_in_a_folder_tree on SOURCE folder")
 WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
 WScript.StdOut.WriteLine("======================================================================================================================================================")
 '
@@ -429,6 +429,9 @@ WScript.StdOut.WriteLine("======================================================
 ' generate a unique filename to save FFMPEG and related commands
 vrdtvsp_saved_ffmpeg_commands_filename = fso.GetAbsolutePathName(fso.BuildPath(vrdtvsp_source_TS_Folder, "vrdtvsp_saved_ffmpeg_commands-" & vrdtvsp_run_datetime & ".bat"))
 ' process the files
+WScript.StdOut.WriteLine("======================================================================================================================================================")
+WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+WScript.StdOut.WriteLine("STARTED about to vrdtvsp_Convert_files_in_a_folder")
 vrdtvsp_status = vrdtvsp_Convert_files_in_a_folder(	vrdtvsp_source_TS_Folder, _
 													vrdtvsp_done_TS_Folder, _
 													vrdtvsp_destination_mp4_Folder, _
@@ -445,6 +448,9 @@ If vrdtvsp_status <> 0 Then ' Something bad went wrong (invididual conversion fa
 	WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 End If
 '.................. END video processing for the FULL SOURCE TS folder (not tree) - the function has a big loop - converts Source files then moves them to Done or Failed
+WScript.StdOut.WriteLine("FINISHED vrdtvsp_Convert_files_in_a_folder")
+WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+WScript.StdOut.WriteLine("======================================================================================================================================================")
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' In Top Level Folders: Destination 
@@ -454,6 +460,9 @@ End If
 '	c) Also Modily content of associated .vprj files (they are .xml content) to link to the new media filename since we are modifying the pair
 '
 'If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: about to call vrdtvsp_fix_filenames_in_a_folder_tree(""" & vrdtvsp_destination_mp4_Folder & """, True)")
+WScript.StdOut.WriteLine("======================================================================================================================================================")
+WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+WScript.StdOut.WriteLine("STARTED vrdtvsp_fix_filenames_in_a_folder_tree on DESTINATION folder and subfolders")
 vrdtvsp_status = vrdtvsp_fix_filenames_in_a_folder_tree(vrdtvsp_destination_mp4_Folder, True) ' this does (a) and (b) and (c).  True indicates to process the top level folder including SUBFOLDERS
 If vrdtvsp_status <> 0 Then ' Something went wrong with processing files in the Destination folder ... check for 53 not found ?
 	If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: VRDTVSP ERROR - Error " & vrdtvsp_status & " from vrdtvsp_fix_filenames_in_a_folder_tree in """ & vrdtvsp_destination_mp4_Folder & """... Aborting ...")
@@ -461,11 +470,17 @@ If vrdtvsp_status <> 0 Then ' Something went wrong with processing files in the 
 	Wscript.Echo "Error " & vrdtvsp_status
 	Wscript.Quit vrdtvsp_status
 End If
+WScript.StdOut.WriteLine("FINISHED vrdtvsp_fix_filenames_in_a_folder_tree on DESTINATION folder and subfolders")
+WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+WScript.StdOut.WriteLine("======================================================================================================================================================")
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Fix the DateCreated and DateModified timestamps based on the date in the filename (a PowerShell command ... learn how to do that on the commandline)
 ' in Top Level Folders and Subfolders: Source and Destination (the function filters for file Extensions: .ts .mp4 .mpg but NOT .vprj)
 '
+WScript.StdOut.WriteLine("======================================================================================================================================================")
+WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+WScript.StdOut.WriteLine("STARTED vrdtvsp_fix_timestamps_in_a_folder_tree on DESTINATION folder and subfolders")
 vrdtvsp_temp_powershell_filename = vrdtvsp_gimme_a_temporary_absolute_filename("vrdtvsp_ps1_to_fix_timestamps-" & vrdtvsp_run_datetime) & ".ps1"
 'If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: about to call vrdtvsp_fix_timestamps_in_a_folder_tree(""" & vrdtvsp_destination_mp4_Folder & """, False)")
 vrdtvsp_status = vrdtvsp_fix_timestamps_in_a_folder_tree(vrdtvsp_destination_mp4_Folder, False) ' False indicates to process only the top level folder with NO SUBFOLDERS
@@ -503,10 +518,16 @@ End If
 '	WScript.StdOut.WriteLine("VRDTVSP ERROR - Error " & vrdtvsp_status & " from vrdtvsp_delete_a_file with """ & vrdtvsp_temp_powershell_filename & """... Aborting ...")
 '	Wscript.Quit vrdtvsp_status
 'End If
+WScript.StdOut.WriteLine("FINISHED vrdtvsp_fix_timestamps_in_a_folder_tree on DESTINATION folder and subfolders")
+WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+WScript.StdOut.WriteLine("======================================================================================================================================================")
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Kill the Insomnia64 process that we started earlier
 '
+WScript.StdOut.WriteLine("======================================================================================================================================================")
+WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+WScript.StdOut.WriteLine("STARTED Kill Insomnia")
 'vrdtvsp_cmd = "TaskKill /t /f /im """ & vrdtvsp_Insomnia64_tmp_filename & """" ' we saved the ProcessId when we started it
 vrdtvsp_cmd = "TaskKill /t /f /pid " & vrdtvsp_Insomnia64_ProcessID ' we saved the ProcessId when we started it
 ' taskkill /t /f /im "%iFile%"
@@ -534,15 +555,21 @@ If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: VTDRVS TaskKill I
 '
 'Delete the temporary Insomnia .exe file
 vrdtvsp_exit_code = vrdtvsp_delete_a_file(vrdtvsp_Insomnia64_tmp_filename, True) ' True=silently delete. Ignore any errors.
-
+WScript.StdOut.WriteLine("FINSIHED Kill Insomnia")
+WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+WScript.StdOut.WriteLine("======================================================================================================================================================")
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Finish and Quit
 '
 'vrdtvsp_status = vrdtvsp_delete_a_file(vrdtvsp_path_for_qsf_vbs, True) ' True=silently delete it
 'vrdtvsp_status = vrdtvsp_delete_a_file(vrdtvsp_path_for_adscan_vbs, True) ' True=silently delete it
 '
+WScript.StdOut.WriteLine("======================================================================================================================================================")
+WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
 vrdtvsp_timer_EndTime_overall = Timer
-WScript.StdOut.WriteLine(vrdtvsp_ScriptName & " Finished: " & vrdtvsp_current_datetime_string() & "  Elapsed Time: " & vrdtvsp_Calculate_ElapsedTime_string(vrdtvsp_timer_StartTime_overall, vrdtvsp_timer_EndTime_overall))
+WScript.StdOut.WriteLine("VRDTVS " & vrdtvsp_ScriptName & " Finished: " & vrdtvsp_current_datetime_string() & "  Elapsed Time: " & vrdtvsp_Calculate_ElapsedTime_string(vrdtvsp_timer_StartTime_overall, vrdtvsp_timer_EndTime_overall))
+WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+WScript.StdOut.WriteLine("======================================================================================================================================================")
 If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: VTDRVS: " & vrdtvsp_ScriptName & " Finished: " & vrdtvsp_current_datetime_string() & "  Elapsed Time: " & vrdtvsp_Calculate_ElapsedTime_string(vrdtvsp_timer_StartTime_overall, vrdtvsp_timer_EndTime_overall))
 WScript.Quit
 '
@@ -603,7 +630,7 @@ Function vrdtvsp_get_commandline_parameter(gcp_argument_name, gcp_default_value)
         End If
         Set gcp_NamedArgs = Nothing
     End If
-	WScript.StdOut.WriteLine("VRDTVSP NOTE: vrdtvsp_get_commandline_parameter " & gcp_defaulted_or_set & ": " & gcp_argument_name & "=""" & gcp_Return_Value & """")
+	' WScript.StdOut.WriteLine("VRDTVSP NOTE: vrdtvsp_get_commandline_parameter " & gcp_defaulted_or_set & ": " & gcp_argument_name & "=""" & gcp_Return_Value & """")
     If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_get_commandline_parameter " & gcp_defaulted_or_set & ": " & gcp_argument_name & "=""" & gcp_Return_Value & """")
     vrdtvsp_get_commandline_parameter = gcp_Return_Value
 End Function
