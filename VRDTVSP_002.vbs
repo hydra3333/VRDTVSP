@@ -2424,6 +2424,7 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Dim CF_DGI_AbsolutePathName,    CF_DGI_ParentFolderName,    CF_DGI_BaseName,    CF_DGI_Ext
 	Dim CF_DGIlog_AbsolutePathName, CF_DGIlog_ParentFolderName, CF_DGIlog_BaseName, CF_DGIlog_Ext
 	'
+	Dim fallback_vrdtvsp_profile_name_for_qsfv5
 	Dim   V_IsAVC,   V_IsMPEG2,   V_IsProgressive,   V_IsInterlaced
 	Dim Q_V_IsAVC, Q_V_IsMPEG2, Q_V_IsProgressive, Q_V_IsInterlaced
 	Dim T_V_IsAVC, T_V_IsMPEG2, T_V_IsProgressive, T_V_IsInterlaced
@@ -2981,8 +2982,18 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	If xmlDict is Nothing Then
 		' eek, did not QSF properly 
 		' ... if was v6 QSF, try a v5 QSF, then if that also fails then try to exit in such a way that the source file is moved to "failed" folder and the process continues with other files
-		If vrd_version_for_qsf = 6 Then
-			Set xmlDict = vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (5, CF_FILE_AbsolutePathName, CF_QSF_AbsolutePathName, vrdtvsp_profile_name_for_qsf) ' fallback to try a v5 QSF
+		If vrd_version_for_qsf = 6 Then ' retry with QSFv5, so use v5 equivalent v5 PROFILE name
+			If V_IsMPEG2 Then
+				fallback_vrdtvsp_profile_name_for_qsfv5 = const_vrd5_profile_mpeg2
+			ElseIf V_IsAVC Then
+				fallback_vrdtvsp_profile_name_for_qsfv5 = const_vrd5_profile_avc
+			Else
+				WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? CODEC NOT DETERMINED FOR FALBACK QSF : """ & CF_FILE_AbsolutePathName & """ - was v6 """ & vrdtvsp_profile_name_for_qsf & """")
+				Wscript.Echo "Error 17 = cannot perform the requested operation"
+				On Error goto 0
+				WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+			End If
+			Set xmlDict = vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (5, CF_FILE_AbsolutePathName, CF_QSF_AbsolutePathName, fallback_vrdtvsp_profile_name_for_qsfv5) ' fallback to try a v5 QSF
 		End If
 		If xmlDict is Nothing Then	' it must have failed QSF in both version 5 and version 6
 			WScript.StdOut.WriteLine("VRDTVSP ERROR vrdtvsp_Convert_File - Error - Failed to QSF after re-trying with v5 QSF """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
