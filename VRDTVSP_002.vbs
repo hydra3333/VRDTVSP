@@ -3059,8 +3059,7 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	CF_object_saved_ffmpeg_commands.WriteLine("REM Do the QSF for """ & CF_FILE_AbsolutePathName & """ ... " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	' Here is where we actually do the QSF or just copy the SOURCE file and pretend it is a .QSF'd file
-	' NOTE: we actually to the QSF (so we can determine the Bitrate form the QSF logfile) then delete the QSF file and replace it with a copy of the source file
+	' Here is where we actually do the QSF
 	' The OLD way:
 	'	CF_exe_cmd_string = "cscript //Nologo """ & vrdtvsp_path_for_qsf_vbs & """ """ & CF_FILE_AbsolutePathName & """  """ & CF_QSF_AbsolutePathName & """ /qsf /p """ & vrdtvsp_profile_name_for_qsf & """ /q /na"
 	' The NEW way:
