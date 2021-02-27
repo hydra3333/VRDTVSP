@@ -5251,7 +5251,9 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 	riqowv_FILE_AbsolutePathName = fso.GetAbsolutePathName(riqowv_FILE_AbsolutePathName)		' was passed byVal
 	riqowv_QSF_AbsolutePathName = fso.GetAbsolutePathName(riqowv_QSF_AbsolutePathName)			' was passed byVal
 	'
-	WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 - VRD VERSION SPECIFIED TO BE USED IS: """ & riqowv_vrd_version & """")
+	WScript.StdOut.WriteLine("======================================================================================================================================================")
+	WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+	WScript.StdOut.WriteLine("START vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 - QSF VRD VERSION SPECIFIED TO BE USED IS: """ & riqowv_vrd_version & """")
 	'
 	If riqowv_vrd_version = 5 Then
 		Set VideoReDoSilent = WScript.CreateObject("VideoReDo5.VideoReDoSilent")
@@ -5349,7 +5351,7 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 		'Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: Exiting with errorlevel code 5")
 		'Wscript.Quit 5
 	End If
-	Wscript.StdOut.Write("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: QSF working: ")
+	Wscript.StdOut.WriteLine("QSF working: ")
 	'Wscript.StdOut.Write("VRDTVS_VRD_QSF: Percent Complete: ")
 	i = 0
 	OutputGetState = VideoRedo.OutputGetState()
@@ -5357,7 +5359,7 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 		i = i + 1
 		If ((i MOD dot_count_linebreak_interval) = 0) Then Wscript.StdOut.WriteLine(" " & ((i * wait_ms)/1000) & " Seconds")
 		If i > giveup_interval_count Then
-			Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: ERROR: VideoReDo timeout after " & ((i * wait_ms)/1000) & " seconds waiting for QSF to complete ... Aborting ...")
+			Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: ERROR: VideoReDo timeout after " & ((i * wait_ms)/1000) & " seconds waiting for QSF to complete ... Exiting ...")
 			'on error resume next
 			on error goto 0
 			closeflag = VideoReDo.FileClose()
@@ -5466,6 +5468,9 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 	End If
 	on error goto 0
 	Set xmlDoc = Nothing
+	WScript.StdOut.WriteLine("END vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 - QSF VRD VERSION SPECIFIED TO BE USED WAS: """ & riqowv_vrd_version & """")
+	WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+	WScript.StdOut.WriteLine("======================================================================================================================================================")
 	Set vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 = xmlDict
 	' Can use the returned Dict like this:
 	'	Dim vrdtvs_dict
