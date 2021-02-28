@@ -5655,15 +5655,16 @@ Function vrdtvsp_fix_timestamps_in_a_folder_tree (byVal ftiaft_folder_name, byVa
 	If Right(ftiaft_path,1) <> "\" Then
 		ftiaft_path = ftiaft_path & "\"
 	End if
-	ftiaft_path = fso.GetParentFolderName(ftiaft_folder_name) ' this gets rid of trailing slash, but do not rely on that since a trailing \ can kill the .ps1 script
+	ftiaft_path = fso.GetAbsolutePathName(ftiaft_folder_name) ' this gets rid of trailing slash, but do not rely on that since a trailing \ can kill the .ps1 script
 	If Right(ftiaft_path,1) = "\" Then
 		ftiaft_path = left(ftiaft_path,len(ftiaft_path)-1)
 	End if
-	'
 	If NOT fso.FolderExists(ftiaft_path & "\") Then    
 		vrdtvsp_fix_timestamps_in_a_folder_tree = -1
 		Exit Function
 	End If
+	'wscript.echo "incoming ftiaft_folder_name=" & ftiaft_folder_name
+	'wscript.echo "GetAbsolutePathName, ftiaft_path=" & ftiaft_path
 	'
 	' Create the .ps1 powershell script to do the work
 	ftiaft_temp_powershell_filename = vrdtvsp_gimme_a_temporary_absolute_filename("vrdtvsp_ps1_to_fix_timestamps-" & vrdtvsp_run_datetime) & ".ps1"
@@ -5679,6 +5680,8 @@ Function vrdtvsp_fix_timestamps_in_a_folder_tree (byVal ftiaft_folder_name, byVa
 	End If
 	vrdtvsp_ps1_file_object.WriteLine("param ( [Parameter(Mandatory=$False)] [string]$Folder = """ & ftiaft_path & """ , [Parameter(Mandatory=$False)] [switch]$Recurse = $False )" )
 	vrdtvsp_ps1_file_object.WriteLine("[console]::BufferWidth = 512")
+	vrdtvsp_ps1_file_object.WriteLine("echo '*** Ignore the error: Exception setting ""BufferWidth"": ""The handle is invalid.""' ")
+	vrdtvsp_ps1_file_object.WriteLine("echo '*** Ignore the error: Exception setting ""BufferWidth"": ""The handle is invalid.""' ")
 	vrdtvsp_ps1_file_object.WriteLine("echo '*** Ignore the error: Exception setting ""BufferWidth"": ""The handle is invalid.""' ")
 	vrdtvsp_ps1_file_object.WriteLine("#")
 	vrdtvsp_ps1_file_object.WriteLine("# Powershell script to make timestamps equal to the date in the filename itself")
@@ -5719,7 +5722,7 @@ Function vrdtvsp_fix_timestamps_in_a_folder_tree (byVal ftiaft_folder_name, byVa
 	vrdtvsp_ps1_file_object.WriteLine("		$DateString = $Matches.DateString")
 	vrdtvsp_ps1_file_object.WriteLine("		$date_from_file = [datetime]::ParseExact($DateString, $DateFormat, $Null)")
 	vrdtvsp_ps1_file_object.WriteLine("	} else {")
-	vrdtvsp_ps1_file_object.WriteLine("		$date_from_file = $FL_Item.CreationTime.Date # .Date removes the time component")
+	vrdtvsp_ps1_file_object.WriteLine("		$date_from_file = $FL_Item.CreationTime.Date # .Date removes the time component; use the existing date-created")
 	vrdtvsp_ps1_file_object.WriteLine("	}")
 	vrdtvsp_ps1_file_object.WriteLine("	$FL_Item.CreationTime = $date_from_file")
 	vrdtvsp_ps1_file_object.WriteLine("	$FL_Item.LastWriteTime = $date_from_file")
