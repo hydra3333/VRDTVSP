@@ -501,7 +501,6 @@ WScript.StdOut.WriteLine("======================================================
 WScript.StdOut.WriteLine("======================================================================================================================================================")
 WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
 WScript.StdOut.WriteLine("STARTED vrdtvsp_fix_timestamps_in_a_folder_tree on DESTINATION folder and subfolders")
-vrdtvsp_temp_powershell_filename = vrdtvsp_gimme_a_temporary_absolute_filename("vrdtvsp_ps1_to_fix_timestamps-" & vrdtvsp_run_datetime) & ".ps1"
 'If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: about to call vrdtvsp_fix_timestamps_in_a_folder_tree(""" & vrdtvsp_destination_mp4_Folder & """, False)")
 vrdtvsp_status = vrdtvsp_fix_timestamps_in_a_folder_tree(vrdtvsp_destination_mp4_Folder, False) ' False indicates to process only the top level folder with NO SUBFOLDERS
 If vrdtvsp_status <> 0 Then ' Something went wrong with processing files in the Destination folder ... check for 53 not found ?
@@ -5637,6 +5636,160 @@ Function vrdtvs_DisplayAttributes_from_xml_node(dafxn_Node, dafxn_Indent_Size)
 	vrdtvs_DisplayAttributes_from_xml_node = dafxn_res
 End Function
 '
-Function vrdtvsp_fix_timestamps_in_a_folder_tree (ftiaft_folder_name, ftiaft_do_the_tree)
+Function vrdtvsp_fix_timestamps_in_a_folder_tree (byVal ftiaft_folder_name, byVal ftiaft_do_the_tree)
+	'	create a powershell .ps1 script to
+	'		affix Timestamps in a specified folder (tree) basd n the dtae in the file's filename
+	'	Parameters:
+	'		ftiaft_folder_name		the folder name containing files to process; we must check and ensure no trailing "\" in it
+	'		ftiaft_do_the_tree		True if we are to recurse subfolders as well
+	Dim ftiaft_temp_powershell_filename
+	Dim ftiaft_path
+	Dim ftiaft_status
+	Dim ftiaft_exit_code
+	Dim vrdtvsp_ps1_file_object
+	Dim ftiaft_ps1_string
+	Dim ftiaft_ps1_cmd_string
+	'
+	' First check for and get rid of any trailing backslash in the incoming folder name
+	ftiaft_path = ftiaft_folder_name
+	If Right(ftiaft_path,1) <> "\" Then
+		ftiaft_path = ftiaft_path & "\"
+	End if
+	ftiaft_path = fso.GetParentFolderName(ftiaft_folder_name) ' this gets rid of trailing slash, but do not rely on that since a trailing \ can kill the .ps1 script
+	If Right(ftiaft_path,1) = "\" Then
+		ftiaft_path = left(ftiaft_path,len(ftiaft_path)-1)
+	End if
+	'
+	If NOT fso.FolderExists(ftiaft_path & "\") Then    
+		vrdtvsp_fix_timestamps_in_a_folder_tree = -1
+		Exit Function
+	End If
+	'
+	' Create the .ps1 powershell script to do the work
+	ftiaft_temp_powershell_filename = vrdtvsp_gimme_a_temporary_absolute_filename("vrdtvsp_ps1_to_fix_timestamps-" & vrdtvsp_run_datetime) & ".ps1"
+	ftiaft_exit_code = vrdtvsp_delete_a_file(ftiaft_temp_powershell_filename, True) ' True=silently delete it even though it should never pre-exist	
+	set vrdtvsp_ps1_file_object = fso.CreateTextFile(ftiaft_temp_powershell_filename, True, False) ' *** make .BAT file ascii for compatibility, since vapoursynth fails with unicode files [ filename, Overwrite[, Unicode]])
+	If vrdtvsp_ps1_file_object is Nothing  Then ' Something went wrong with creating the file
+		If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: VRDTVSP ERROR vrdtvsp_fix_timestamps_in_a_folder_tree - Error - Nothing object returned from fso.CreateTextFile with .ps1 file """ & ftiaft_temp_powershell_filename & """... Aborting ...")
+		WScript.StdOut.WriteLine("VRDTVSP ERROR vrdtvsp_fix_timestamps_in_a_folder_tree - Error - Nothing object returned from fso.CreateTextFile with .ps1 file """ & ftiaft_temp_powershell_filename & """... Aborting ...")
+		Wscript.Echo "Error 17 = cannot perform the requested operation"
+		On Error goto 0
+		set vrdtvsp_ps1_file_object = Nothing
+		WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+	End If
+	vrdtvsp_ps1_file_object.WriteLine("param ( [Parameter(Mandatory=$False)] [string]$Folder = ""T:\HDTV\autoTVS-mpg\Converted"" , [Parameter(Mandatory=$False)] [switch]$Recurse = $False , [Parameter(Mandatory=$False)] [string]$logFile = ""G:\HDTV\Rename_fix_mp4_bprj_files_in_a_folder.vbs-2021.02.20.04.06.55.0064.log"")"
+	vrdtvsp_ps1_file_object.WriteLine("[console]::BufferWidth = 512  "
+	vrdtvsp_ps1_file_object.WriteLine("echo '*** Ignore the error: Exception setting ""BufferWidth"": ""The handle is invalid.""' >>""$logFile"""
+	vrdtvsp_ps1_file_object.WriteLine("#"
+	vrdtvsp_ps1_file_object.WriteLine("# Powershell script to make timestamps equal to the date in the filename itself"
+	vrdtvsp_ps1_file_object.WriteLine("# BEFORE this powershell script is invoked, ensure the incoming folder has no trailing ""\"""
+	vrdtvsp_ps1_file_object.WriteLine("# OTHERWISE the trailing double-quote "" becomes 'escaped', thus everything on the commandline after it gets included in that parameter value."
+	vrdtvsp_ps1_file_object.WriteLine("# eg in a .bat:#"
+	vrdtvsp_ps1_file_object.WriteLine("#set ""the_folder=G:\HDTV\000-TO-BE-PROCESSED"""
+	vrdtvsp_ps1_file_object.WriteLine("#set ""rightmost_character=!the_folder:~-1!"""
+	vrdtvsp_ps1_file_object.WriteLine("#if /I ""!rightmost_character!"" == ""\"" (set ""the_folder=!the_folder:~,-1!"""
+	vrdtvsp_ps1_file_object.WriteLine("#powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Normal -File ""G:\HDTV\000-TO-BE-PROCESSED\something.ps1"" -Recurse:$False -Folder ""G:\HDTV\000-TO-BE-PROCESSED"""
+	vrdtvsp_ps1_file_object.WriteLine("#"
+	vrdtvsp_ps1_file_object.WriteLine("# The following checks are still necessary if an incoming foldername string STILL has a trailing \"
+	vrdtvsp_ps1_file_object.WriteLine("echo ""Rename files to remove special characters: Incoming Folder = '$Folder'"" >>""$logFile"""
+	vrdtvsp_ps1_file_object.WriteLine("if ($Folder.Substring($Folder.Length-2,2) -eq '"" ') {$Folder=$Folder -Replace ""..$""} # removes the last 2 characters"
+	vrdtvsp_ps1_file_object.WriteLine("if ($Folder.Substring($Folder.Length-2,2) -eq ' ""') {$Folder=$Folder -Replace ""..$""} # removes the last 2 characters"
+	vrdtvsp_ps1_file_object.WriteLine("if ($Folder.Substring($Folder.Length-2,2) -eq "" '"") {$Folder=$Folder -Replace ""..$""} # removes the last 2 characters"
+	vrdtvsp_ps1_file_object.WriteLine("if ($Folder.Substring($Folder.Length-1,1) -eq ""\"")  {$Folder=$Folder -Replace "".$""}  # removes the last 1 character"
+	vrdtvsp_ps1_file_object.WriteLine("if ($Folder.Substring(0,1) -eq ""'"" -And $Folder.Substring($Folder.Length-1,1) -eq ""'"") {$Folder=$Folder.Trim(""'"")} # removes the specified character ' from both ends of the string"
+	vrdtvsp_ps1_file_object.WriteLine("#"
+	vrdtvsp_ps1_file_object.WriteLine("# Now set the date-created and date-modified"
+	vrdtvsp_ps1_file_object.WriteLine("echo ""Set file date-time timestamps: START in folder tree '$Folder' ..."" >>""$logFile"""
+	vrdtvsp_ps1_file_object.WriteLine("if ($Recurse) {"
+	vrdtvsp_ps1_file_object.WriteLine("	echo ""Set file date-time timestamps: RECURSE FOUND for tree '$Folder'"" >>""$logFile"""
+	vrdtvsp_ps1_file_object.WriteLine("	# note we add -Recurse and leave ""\*"" off of the folder name"
+	vrdtvsp_ps1_file_object.WriteLine("	$FileList = Get-ChildItem -Path ""$Folder"" -Recurse -File -Include '*.ts','*.mp4','*.mpg','*.bprj','*.vprj','*.mp3','*.aac','*.mp2'"
+	vrdtvsp_ps1_file_object.WriteLine("} else {"
+	vrdtvsp_ps1_file_object.WriteLine("	# note we add ""\*"" to the folder name"
+	vrdtvsp_ps1_file_object.WriteLine("echo ""Set file date-time timestamps: NON RECURSE FOUND for only '$Folder'"" >>""$logFile"""
+	vrdtvsp_ps1_file_object.WriteLine("$FileList = Get-ChildItem -Path ""$Folder\*"" -File -Include '*.ts','*.mp4','*.mpg','*.bprj','*.mp3','*.aac','*.mp2'"
+	vrdtvsp_ps1_file_object.WriteLine("}"
+	vrdtvsp_ps1_file_object.WriteLine("$DateFormat = ""yyyy-MM-dd"""
+	vrdtvsp_ps1_file_object.WriteLine("foreach ($FL_Item in $FileList) {"
+	vrdtvsp_ps1_file_object.WriteLine("	$fn = $FL_Item.FullName"
+	vrdtvsp_ps1_file_object.WriteLine("	#echo ""Processing Timestamp for 'fn'"" >>""$logFile"""
+	vrdtvsp_ps1_file_object.WriteLine("	$ixxx = $FL_Item.BaseName -match '(?<DateString>\d{4}-\d{2}-\d{2})'"
+	vrdtvsp_ps1_file_object.WriteLine("	if($ixxx){"
+	vrdtvsp_ps1_file_object.WriteLine("		$DateString = $Matches.DateString"
+	vrdtvsp_ps1_file_object.WriteLine("		$date_from_file = [datetime]::ParseExact($DateString, $DateFormat, $Null)"
+	vrdtvsp_ps1_file_object.WriteLine("	} else {"
+	vrdtvsp_ps1_file_object.WriteLine("		$date_from_file = $FL_Item.CreationTime.Date # .Date removes the time component"
+	vrdtvsp_ps1_file_object.WriteLine("	}"
+	vrdtvsp_ps1_file_object.WriteLine("	$FL_Item.CreationTime = $date_from_file"
+	vrdtvsp_ps1_file_object.WriteLine("	$FL_Item.LastWriteTime = $date_from_file"
+	vrdtvsp_ps1_file_object.WriteLine("	$df=$date_from_file.ToString()"
+	vrdtvsp_ps1_file_object.WriteLine("	$cd=$FL_Item.CreationTime.ToString()"
+	vrdtvsp_ps1_file_object.WriteLine("	$lw=$FL_Item.LastWriteTime.ToString()"
+	vrdtvsp_ps1_file_object.WriteLine("	echo ""Set '$df' as Creation-date: '$cd' Modification-Date: '$lw' on '$fn'"" >>""$logFile"""
+	vrdtvsp_ps1_file_object.WriteLine("}"
+	vrdtvsp_ps1_file_object.WriteLine("echo ""Set file date-time timestamps: FINISH in folder tree '$Folder' ..."" >>""$logFile"""
+	vrdtvsp_ps1_file_object.WriteLine("## regex [^a-zA-Z0-9-_. ]+"
+	vrdtvsp_ps1_file_object.WriteLine("## the leading hat ^ character means NOT in any of the set, trailing + means any number of matches in the set"
+	vrdtvsp_ps1_file_object.WriteLine("## a-z"
+	vrdtvsp_ps1_file_object.WriteLine("## A-Z"
+	vrdtvsp_ps1_file_object.WriteLine("## 0-9"
+	vrdtvsp_ps1_file_object.WriteLine("## - underscore . space"
+	vrdtvsp_ps1_file_object.Close
+	Set vrdtvsp_ps1_file_object = Nothing
+	'
+	' display the content of .ps1 powershell script
+	WScript.StdOut.WriteLine("Content of PowerShell .ps1 file """ & ftiaft_temp_powershell_filename & """ Below --------------------------------------------------------------------------------------------------------------------")
+	Set vrdtvsp_ps1_file_object = fso.OpenTextFile(ftiaft_temp_powershell_filename, ForReading)
+	Do Until vrdtvsp_ps1_file_object.AtEndOfStream
+		ftiaft_ps1_string = vrdtvsp_ps1_file_object.ReadLine
+		WScript.StdOut.WriteLine(ftiaft_ps1_string)
+	Loop			
+	vrdtvsp_ps1_file_object.Close
+	Set vrdtvsp_ps1_file_object = Nothing
+	WScript.StdOut.WriteLine("Content of PowerShell .ps1 file """ & ftiaft_temp_powershell_filename & """ Above --------------------------------------------------------------------------------------------------------------------")
+	'
+	' Run the .ps1 in a DOS box and print the results
+	ftiaft_ps1_cmd_string = "" ' use trailing spaces in strings below
+	ftiaft_ps1_cmd_string = ftiaft_ps1_cmd_string & "powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Normal "
+	ftiaft_ps1_cmd_string = ftiaft_ps1_cmd_string & "-File """ & ftiaft_temp_powershell_filename & """ "
+	If ftiaft_do_the_tree Then
+		ftiaft_ps1_cmd_string = ftiaft_ps1_cmd_string & "-Recurse:$True "
+	Else
+		ftiaft_ps1_cmd_string = ftiaft_ps1_cmd_string & "-Recurse:$False "
+	End If
+	ftiaft_ps1_cmd_string = ftiaft_ps1_cmd_string & "-Folder """ & ftiaft_path & """ "
+	WScript.StdOut.WriteLine("======================================================================================================================================================")
+	WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+	WScript.StdOut.WriteLine("******************** Start of run FIXING TIMESTAMPS """ & ftiaft_ps1_cmd_string & """ :")
+	WScript.StdOut.WriteLine("Doing FIXING TIMESTAMPS for """ & ftiaft_path & """ ... ")
+	WScript.StdOut.WriteLine("FIXING TIMESTAMPS command: " & ftiaft_ps1_cmd_string)
+	ReDim vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(0) ' base 0, so the dimension is always 1 less than the number of commands
+	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(0) = ftiaft_ps1_cmd_string
+	If vrdtvsp_DEVELOPMENT_NO_ACTIONS Then
+		ftiaft_status = 0
+		WScript.StdOut.WriteLine("DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV ---- DID NOT RUN FIXING TIMESTAMPS """ & ftiaft_ps1_cmd_string & """ :")
+	Else
+		ftiaft_status = vrdtvsp_Exec_in_a_DOS_BAT_file(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log - the safer way of doing it
+	End If
+	Erase vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array
+	WScript.StdOut.WriteLine("******************** Finished run FIXING TIMESTAMPS """ & ftiaft_ps1_cmd_string & """ :")
+	WScript.StdOut.WriteLine("Done FIXING TIMESTAMPS for """ & ftiaft_path & """ ... ")
+	WScript.StdOut.WriteLine("FIXING TIMESTAMPS command: " & ftiaft_ps1_cmd_string)
+	WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
+	WScript.StdOut.WriteLine("======================================================================================================================================================")
+	If ftiaft_status <> 0  Then
+		If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: ERROR vrdtvsp_fix_timestamps_in_a_folder_tree - Error - Failed to FIX TIMESTAMPS, ExitStatus=" & ftiaft_status & " """ & ftiaft_path & """ ftiaft_ps1_cmd_string=""" & ftiaft_ps1_cmd_string & """")
+		WScript.StdOut.WriteLine("VRDTVSP ERROR vrdtvsp_fix_timestamps_in_a_folder_tree - Error - Failed to FIX TIMESTAMPS, ExitStatus=" & ftiaft_status & " """ & ftiaft_path & """ ftiaft_ps1_cmd_string=""" & ftiaft_ps1_cmd_string & """")
+		If vrdtvsp_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
+			Wscript.Echo "Error 17 = cannot perform the requested operation"
+			On Error goto 0
+			WScript.Quit 17 ' Error 17 = cannot perform the requested operation
+		End If
+		vrdtvsp_fix_timestamps_in_a_folder_tree = ftiaft_status
+		Exit Function
+	End If
+	'
+	' Cleanup and exit
+	'ftiaft_exit_code = vrdtvsp_delete_a_file(ftiaft_temp_powershell_filename, True) ' True=silently delete it
+	vrdtvsp_fix_timestamps_in_a_folder_tree = 0
 End Function
-'
