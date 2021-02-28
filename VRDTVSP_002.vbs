@@ -5790,6 +5790,6 @@ Function vrdtvsp_fix_timestamps_in_a_folder_tree (byVal ftiaft_folder_name, byVa
 	End If
 	'
 	' Cleanup and exit
-	'ftiaft_exit_code = vrdtvsp_delete_a_file(ftiaft_temp_powershell_filename, True) ' True=silently delete it
+	ftiaft_exit_code = vrdtvsp_delete_a_file(ftiaft_temp_powershell_filename, True) ' True=silently delete it
 	vrdtvsp_fix_timestamps_in_a_folder_tree = 0
 End Function
