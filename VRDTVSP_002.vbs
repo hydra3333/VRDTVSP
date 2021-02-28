@@ -502,7 +502,7 @@ WScript.StdOut.WriteLine("======================================================
 WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
 WScript.StdOut.WriteLine("STARTED vrdtvsp_fix_timestamps_in_a_folder_tree on DESTINATION folder and subfolders")
 'If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: about to call vrdtvsp_fix_timestamps_in_a_folder_tree(""" & vrdtvsp_destination_mp4_Folder & """, False)")
-vrdtvsp_status = vrdtvsp_fix_timestamps_in_a_folder_tree(vrdtvsp_destination_mp4_Folder, False) ' False indicates to process only the top level folder with NO SUBFOLDERS
+vrdtvsp_status = vrdtvsp_fix_timestamps_in_a_folder_tree(vrdtvsp_destination_mp4_Folder, True) ' False indicates to process the folder with recursion
 If vrdtvsp_status <> 0 Then ' Something went wrong with processing files in the Destination folder ... check for 53 not found ?
 	If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: VRDTVSP ERROR - Error " & vrdtvsp_status & " from vrdtvsp_fix_timestamps_in_a_folder_tree in """ & vrdtvsp_destination_mp4_Folder & """... Aborting ...")
 	WScript.StdOut.WriteLine("VRDTVSP ERROR - Error " & vrdtvsp_status & " from vrdtvsp_fix_timestamps_in_a_folder_tree in """ & vrdtvsp_destination_mp4_Folder & """... Aborting ...")
@@ -5677,7 +5677,7 @@ Function vrdtvsp_fix_timestamps_in_a_folder_tree (byVal ftiaft_folder_name, byVa
 		set vrdtvsp_ps1_file_object = Nothing
 		WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 	End If
-	vrdtvsp_ps1_file_object.WriteLine("param ( [Parameter(Mandatory=$False)] [string]$Folder = """ & ftiaft_path & """ , [Parameter(Mandatory=$False)] [switch]$Recurse = $False )
+	vrdtvsp_ps1_file_object.WriteLine("param ( [Parameter(Mandatory=$False)] [string]$Folder = """ & ftiaft_path & """ , [Parameter(Mandatory=$False)] [switch]$Recurse = $False )" )
 	vrdtvsp_ps1_file_object.WriteLine("[console]::BufferWidth = 512")
 	vrdtvsp_ps1_file_object.WriteLine("echo '*** Ignore the error: Exception setting ""BufferWidth"": ""The handle is invalid.""' ")
 	vrdtvsp_ps1_file_object.WriteLine("#")
@@ -5688,10 +5688,10 @@ Function vrdtvsp_fix_timestamps_in_a_folder_tree (byVal ftiaft_folder_name, byVa
 	vrdtvsp_ps1_file_object.WriteLine("#set ""the_folder=G:\HDTV\000-TO-BE-PROCESSED""")
 	vrdtvsp_ps1_file_object.WriteLine("#set ""rightmost_character=!the_folder:~-1!""")
 	vrdtvsp_ps1_file_object.WriteLine("#if /I ""!rightmost_character!"" == ""\"" (set ""the_folder=!the_folder:~,-1!""")
-	vrdtvsp_ps1_file_object.WriteLine("#powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Normal -File ""G:\HDTV\000-TO-BE-PROCESSED\something.ps1"" -Recurse:$False -Folder ""G:\HDTV\000-TO-BE-PROCESSED""")
+	vrdtvsp_ps1_file_object.WriteLine("#powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Normal -File ""G:\HDTV\000-TO-BE-PROCESSED\something.ps1"" -Folder ""G:\HDTV\000-TO-BE-PROCESSED"" -Recurse")
 	vrdtvsp_ps1_file_object.WriteLine("#")
 	vrdtvsp_ps1_file_object.WriteLine("# The following checks are still necessary if an incoming foldername string STILL has a trailing \")
-	vrdtvsp_ps1_file_object.WriteLine("echo ""Rename files to remove special characters: Incoming Folder = '$Folder'"" ")
+	vrdtvsp_ps1_file_object.WriteLine("#echo ""Set file date-time timestamps: Incoming Folder = '$Folder'"" ")
 	vrdtvsp_ps1_file_object.WriteLine("if ($Folder.Substring($Folder.Length-2,2) -eq '"" ') {$Folder=$Folder -Replace ""..$""} # removes the last 2 characters")
 	vrdtvsp_ps1_file_object.WriteLine("if ($Folder.Substring($Folder.Length-2,2) -eq ' ""') {$Folder=$Folder -Replace ""..$""} # removes the last 2 characters")
 	vrdtvsp_ps1_file_object.WriteLine("if ($Folder.Substring($Folder.Length-2,2) -eq "" '"") {$Folder=$Folder -Replace ""..$""} # removes the last 2 characters")
@@ -5699,20 +5699,21 @@ Function vrdtvsp_fix_timestamps_in_a_folder_tree (byVal ftiaft_folder_name, byVa
 	vrdtvsp_ps1_file_object.WriteLine("if ($Folder.Substring(0,1) -eq ""'"" -And $Folder.Substring($Folder.Length-1,1) -eq ""'"") {$Folder=$Folder.Trim(""'"")} # removes the specified character ' from both ends of the string")
 	vrdtvsp_ps1_file_object.WriteLine("#")
 	vrdtvsp_ps1_file_object.WriteLine("# Now set the date-created and date-modified")
-	vrdtvsp_ps1_file_object.WriteLine("echo ""Set file date-time timestamps: START in folder tree '$Folder' ..."" ")
 	vrdtvsp_ps1_file_object.WriteLine("if ($Recurse) {")
-	vrdtvsp_ps1_file_object.WriteLine("	echo ""Set file date-time timestamps: RECURSE FOUND for tree '$Folder'"" ")
 	vrdtvsp_ps1_file_object.WriteLine("	# note we add -Recurse and leave ""\*"" off of the folder name")
+	vrdtvsp_ps1_file_object.WriteLine("	$ft_string=""tree"" ")
+	vrdtvsp_ps1_file_object.WriteLine("	echo ""Set file date-time timestamps: START WITH RECURSE for folder $ft_string '$Folder'"" ")
 	vrdtvsp_ps1_file_object.WriteLine("	$FileList = Get-ChildItem -Path ""$Folder"" -Recurse -File -Include '*.ts','*.mp4','*.mpg','*.vprj'")
 	vrdtvsp_ps1_file_object.WriteLine("} else {")
 	vrdtvsp_ps1_file_object.WriteLine("	# note we add ""\*"" to the folder name")
-	vrdtvsp_ps1_file_object.WriteLine("echo ""Set file date-time timestamps: NON RECURSE FOUND for only '$Folder'"" ")
-	vrdtvsp_ps1_file_object.WriteLine("$FileList = Get-ChildItem -Path ""$Folder\*"" -File -Include '*.ts','*.mp4','*.mpg','*.bprj','*.mp3','*.aac','*.mp2'")
+	vrdtvsp_ps1_file_object.WriteLine("	$ft_string="""" ")
+	vrdtvsp_ps1_file_object.WriteLine("	echo ""Set file date-time timestamps: START WITH NON-RECURSE for folder $ft_string '$Folder'"" ")
+	vrdtvsp_ps1_file_object.WriteLine("	$FileList = Get-ChildItem -Path ""$Folder\*"" -File -Include '*.ts','*.mp4','*.mpg','*.vprj'")
 	vrdtvsp_ps1_file_object.WriteLine("}")
 	vrdtvsp_ps1_file_object.WriteLine("$DateFormat = ""yyyy-MM-dd""")
 	vrdtvsp_ps1_file_object.WriteLine("foreach ($FL_Item in $FileList) {")
 	vrdtvsp_ps1_file_object.WriteLine("	$fn = $FL_Item.FullName")
-	vrdtvsp_ps1_file_object.WriteLine("	#echo ""Processing Timestamp for 'fn'"" ")
+	vrdtvsp_ps1_file_object.WriteLine("	#echo ""Set file date-time timestamps: Processing Timestamp for 'fn'"" ")
 	vrdtvsp_ps1_file_object.WriteLine("	$ixxx = $FL_Item.BaseName -match '(?<DateString>\d{4}-\d{2}-\d{2})'")
 	vrdtvsp_ps1_file_object.WriteLine("	if($ixxx){")
 	vrdtvsp_ps1_file_object.WriteLine("		$DateString = $Matches.DateString")
@@ -5725,9 +5726,9 @@ Function vrdtvsp_fix_timestamps_in_a_folder_tree (byVal ftiaft_folder_name, byVa
 	vrdtvsp_ps1_file_object.WriteLine("	$df=$date_from_file.ToString()")
 	vrdtvsp_ps1_file_object.WriteLine("	$cd=$FL_Item.CreationTime.ToString()")
 	vrdtvsp_ps1_file_object.WriteLine("	$lw=$FL_Item.LastWriteTime.ToString()")
-	vrdtvsp_ps1_file_object.WriteLine("	echo ""Set '$df' as Creation-date: '$cd' Modification-Date: '$lw' on '$fn'"" ")
+	vrdtvsp_ps1_file_object.WriteLine("	echo ""Set file date-time timestamps: Set '$df' as Creation-date: '$cd' Modification-Date: '$lw' on '$fn'"" ")
 	vrdtvsp_ps1_file_object.WriteLine("}")
-	vrdtvsp_ps1_file_object.WriteLine("echo ""Set file date-time timestamps: FINISH in folder tree '$Folder' ..."" ")
+	vrdtvsp_ps1_file_object.WriteLine("echo ""Set file date-time timestamps: FINISH in folder $ft_string '$Folder' ..."" ")
 	vrdtvsp_ps1_file_object.WriteLine("## regex [^a-zA-Z0-9-_. ]+")
 	vrdtvsp_ps1_file_object.WriteLine("## the leading hat ^ character means NOT in any of the set, trailing + means any number of matches in the set")
 	vrdtvsp_ps1_file_object.WriteLine("## a-z")
@@ -5753,9 +5754,9 @@ Function vrdtvsp_fix_timestamps_in_a_folder_tree (byVal ftiaft_folder_name, byVa
 	ftiaft_ps1_cmd_string = ftiaft_ps1_cmd_string & "powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Normal "
 	ftiaft_ps1_cmd_string = ftiaft_ps1_cmd_string & "-File """ & ftiaft_temp_powershell_filename & """ "
 	If ftiaft_do_the_tree Then
-		ftiaft_ps1_cmd_string = ftiaft_ps1_cmd_string & "-Recurse:$True "
+		ftiaft_ps1_cmd_string = ftiaft_ps1_cmd_string & "-Recurse "	' add "-Recurse " to the commandline if subfolders need to be processed as well
 	Else
-		ftiaft_ps1_cmd_string = ftiaft_ps1_cmd_string & "-Recurse:$False "
+		ftiaft_ps1_cmd_string = ftiaft_ps1_cmd_string & " "			' otherwise just leave off "-Recurse " since it defaults to False
 	End If
 	ftiaft_ps1_cmd_string = ftiaft_ps1_cmd_string & "-Folder """ & ftiaft_path & """ "
 	WScript.StdOut.WriteLine("======================================================================================================================================================")
