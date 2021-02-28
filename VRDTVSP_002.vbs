@@ -5677,63 +5677,63 @@ Function vrdtvsp_fix_timestamps_in_a_folder_tree (byVal ftiaft_folder_name, byVa
 		set vrdtvsp_ps1_file_object = Nothing
 		WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 	End If
-	vrdtvsp_ps1_file_object.WriteLine("param ( [Parameter(Mandatory=$False)] [string]$Folder = ""T:\HDTV\autoTVS-mpg\Converted"" , [Parameter(Mandatory=$False)] [switch]$Recurse = $False , [Parameter(Mandatory=$False)] [string]$logFile = ""G:\HDTV\Rename_fix_mp4_bprj_files_in_a_folder.vbs-2021.02.20.04.06.55.0064.log"")"
-	vrdtvsp_ps1_file_object.WriteLine("[console]::BufferWidth = 512  "
-	vrdtvsp_ps1_file_object.WriteLine("echo '*** Ignore the error: Exception setting ""BufferWidth"": ""The handle is invalid.""' >>""$logFile"""
-	vrdtvsp_ps1_file_object.WriteLine("#"
-	vrdtvsp_ps1_file_object.WriteLine("# Powershell script to make timestamps equal to the date in the filename itself"
-	vrdtvsp_ps1_file_object.WriteLine("# BEFORE this powershell script is invoked, ensure the incoming folder has no trailing ""\"""
-	vrdtvsp_ps1_file_object.WriteLine("# OTHERWISE the trailing double-quote "" becomes 'escaped', thus everything on the commandline after it gets included in that parameter value."
-	vrdtvsp_ps1_file_object.WriteLine("# eg in a .bat:#"
-	vrdtvsp_ps1_file_object.WriteLine("#set ""the_folder=G:\HDTV\000-TO-BE-PROCESSED"""
-	vrdtvsp_ps1_file_object.WriteLine("#set ""rightmost_character=!the_folder:~-1!"""
-	vrdtvsp_ps1_file_object.WriteLine("#if /I ""!rightmost_character!"" == ""\"" (set ""the_folder=!the_folder:~,-1!"""
-	vrdtvsp_ps1_file_object.WriteLine("#powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Normal -File ""G:\HDTV\000-TO-BE-PROCESSED\something.ps1"" -Recurse:$False -Folder ""G:\HDTV\000-TO-BE-PROCESSED"""
-	vrdtvsp_ps1_file_object.WriteLine("#"
-	vrdtvsp_ps1_file_object.WriteLine("# The following checks are still necessary if an incoming foldername string STILL has a trailing \"
-	vrdtvsp_ps1_file_object.WriteLine("echo ""Rename files to remove special characters: Incoming Folder = '$Folder'"" >>""$logFile"""
-	vrdtvsp_ps1_file_object.WriteLine("if ($Folder.Substring($Folder.Length-2,2) -eq '"" ') {$Folder=$Folder -Replace ""..$""} # removes the last 2 characters"
-	vrdtvsp_ps1_file_object.WriteLine("if ($Folder.Substring($Folder.Length-2,2) -eq ' ""') {$Folder=$Folder -Replace ""..$""} # removes the last 2 characters"
-	vrdtvsp_ps1_file_object.WriteLine("if ($Folder.Substring($Folder.Length-2,2) -eq "" '"") {$Folder=$Folder -Replace ""..$""} # removes the last 2 characters"
-	vrdtvsp_ps1_file_object.WriteLine("if ($Folder.Substring($Folder.Length-1,1) -eq ""\"")  {$Folder=$Folder -Replace "".$""}  # removes the last 1 character"
-	vrdtvsp_ps1_file_object.WriteLine("if ($Folder.Substring(0,1) -eq ""'"" -And $Folder.Substring($Folder.Length-1,1) -eq ""'"") {$Folder=$Folder.Trim(""'"")} # removes the specified character ' from both ends of the string"
-	vrdtvsp_ps1_file_object.WriteLine("#"
-	vrdtvsp_ps1_file_object.WriteLine("# Now set the date-created and date-modified"
-	vrdtvsp_ps1_file_object.WriteLine("echo ""Set file date-time timestamps: START in folder tree '$Folder' ..."" >>""$logFile"""
-	vrdtvsp_ps1_file_object.WriteLine("if ($Recurse) {"
-	vrdtvsp_ps1_file_object.WriteLine("	echo ""Set file date-time timestamps: RECURSE FOUND for tree '$Folder'"" >>""$logFile"""
-	vrdtvsp_ps1_file_object.WriteLine("	# note we add -Recurse and leave ""\*"" off of the folder name"
-	vrdtvsp_ps1_file_object.WriteLine("	$FileList = Get-ChildItem -Path ""$Folder"" -Recurse -File -Include '*.ts','*.mp4','*.mpg','*.bprj','*.vprj','*.mp3','*.aac','*.mp2'"
-	vrdtvsp_ps1_file_object.WriteLine("} else {"
-	vrdtvsp_ps1_file_object.WriteLine("	# note we add ""\*"" to the folder name"
-	vrdtvsp_ps1_file_object.WriteLine("echo ""Set file date-time timestamps: NON RECURSE FOUND for only '$Folder'"" >>""$logFile"""
-	vrdtvsp_ps1_file_object.WriteLine("$FileList = Get-ChildItem -Path ""$Folder\*"" -File -Include '*.ts','*.mp4','*.mpg','*.bprj','*.mp3','*.aac','*.mp2'"
-	vrdtvsp_ps1_file_object.WriteLine("}"
-	vrdtvsp_ps1_file_object.WriteLine("$DateFormat = ""yyyy-MM-dd"""
-	vrdtvsp_ps1_file_object.WriteLine("foreach ($FL_Item in $FileList) {"
-	vrdtvsp_ps1_file_object.WriteLine("	$fn = $FL_Item.FullName"
-	vrdtvsp_ps1_file_object.WriteLine("	#echo ""Processing Timestamp for 'fn'"" >>""$logFile"""
-	vrdtvsp_ps1_file_object.WriteLine("	$ixxx = $FL_Item.BaseName -match '(?<DateString>\d{4}-\d{2}-\d{2})'"
-	vrdtvsp_ps1_file_object.WriteLine("	if($ixxx){"
-	vrdtvsp_ps1_file_object.WriteLine("		$DateString = $Matches.DateString"
-	vrdtvsp_ps1_file_object.WriteLine("		$date_from_file = [datetime]::ParseExact($DateString, $DateFormat, $Null)"
-	vrdtvsp_ps1_file_object.WriteLine("	} else {"
-	vrdtvsp_ps1_file_object.WriteLine("		$date_from_file = $FL_Item.CreationTime.Date # .Date removes the time component"
-	vrdtvsp_ps1_file_object.WriteLine("	}"
-	vrdtvsp_ps1_file_object.WriteLine("	$FL_Item.CreationTime = $date_from_file"
-	vrdtvsp_ps1_file_object.WriteLine("	$FL_Item.LastWriteTime = $date_from_file"
-	vrdtvsp_ps1_file_object.WriteLine("	$df=$date_from_file.ToString()"
-	vrdtvsp_ps1_file_object.WriteLine("	$cd=$FL_Item.CreationTime.ToString()"
-	vrdtvsp_ps1_file_object.WriteLine("	$lw=$FL_Item.LastWriteTime.ToString()"
-	vrdtvsp_ps1_file_object.WriteLine("	echo ""Set '$df' as Creation-date: '$cd' Modification-Date: '$lw' on '$fn'"" >>""$logFile"""
-	vrdtvsp_ps1_file_object.WriteLine("}"
-	vrdtvsp_ps1_file_object.WriteLine("echo ""Set file date-time timestamps: FINISH in folder tree '$Folder' ..."" >>""$logFile"""
-	vrdtvsp_ps1_file_object.WriteLine("## regex [^a-zA-Z0-9-_. ]+"
-	vrdtvsp_ps1_file_object.WriteLine("## the leading hat ^ character means NOT in any of the set, trailing + means any number of matches in the set"
-	vrdtvsp_ps1_file_object.WriteLine("## a-z"
-	vrdtvsp_ps1_file_object.WriteLine("## A-Z"
-	vrdtvsp_ps1_file_object.WriteLine("## 0-9"
-	vrdtvsp_ps1_file_object.WriteLine("## - underscore . space"
+	vrdtvsp_ps1_file_object.WriteLine("param ( [Parameter(Mandatory=$False)] [string]$Folder = ""T:\HDTV\autoTVS-mpg\Converted"" , [Parameter(Mandatory=$False)] [switch]$Recurse = $False , [Parameter(Mandatory=$False)] [string]$logFile = ""G:\HDTV\Rename_fix_mp4_bprj_files_in_a_folder.vbs-2021.02.20.04.06.55.0064.log"")")
+	vrdtvsp_ps1_file_object.WriteLine("[console]::BufferWidth = 512")
+	vrdtvsp_ps1_file_object.WriteLine("echo '*** Ignore the error: Exception setting ""BufferWidth"": ""The handle is invalid.""' >>""$logFile""")
+	vrdtvsp_ps1_file_object.WriteLine("#")
+	vrdtvsp_ps1_file_object.WriteLine("# Powershell script to make timestamps equal to the date in the filename itself")
+	vrdtvsp_ps1_file_object.WriteLine("# BEFORE this powershell script is invoked, ensure the incoming folder has no trailing ""\""")
+	vrdtvsp_ps1_file_object.WriteLine("# OTHERWISE the trailing double-quote "" becomes 'escaped', thus everything on the commandline after it gets included in that parameter value.")
+	vrdtvsp_ps1_file_object.WriteLine("# eg in a .bat:#")
+	vrdtvsp_ps1_file_object.WriteLine("#set ""the_folder=G:\HDTV\000-TO-BE-PROCESSED""")
+	vrdtvsp_ps1_file_object.WriteLine("#set ""rightmost_character=!the_folder:~-1!""")
+	vrdtvsp_ps1_file_object.WriteLine("#if /I ""!rightmost_character!"" == ""\"" (set ""the_folder=!the_folder:~,-1!""")
+	vrdtvsp_ps1_file_object.WriteLine("#powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Normal -File ""G:\HDTV\000-TO-BE-PROCESSED\something.ps1"" -Recurse:$False -Folder ""G:\HDTV\000-TO-BE-PROCESSED""")
+	vrdtvsp_ps1_file_object.WriteLine("#")
+	vrdtvsp_ps1_file_object.WriteLine("# The following checks are still necessary if an incoming foldername string STILL has a trailing \")
+	vrdtvsp_ps1_file_object.WriteLine("echo ""Rename files to remove special characters: Incoming Folder = '$Folder'"" >>""$logFile""")
+	vrdtvsp_ps1_file_object.WriteLine("if ($Folder.Substring($Folder.Length-2,2) -eq '"" ') {$Folder=$Folder -Replace ""..$""} # removes the last 2 characters")
+	vrdtvsp_ps1_file_object.WriteLine("if ($Folder.Substring($Folder.Length-2,2) -eq ' ""') {$Folder=$Folder -Replace ""..$""} # removes the last 2 characters")
+	vrdtvsp_ps1_file_object.WriteLine("if ($Folder.Substring($Folder.Length-2,2) -eq "" '"") {$Folder=$Folder -Replace ""..$""} # removes the last 2 characters")
+	vrdtvsp_ps1_file_object.WriteLine("if ($Folder.Substring($Folder.Length-1,1) -eq ""\"")  {$Folder=$Folder -Replace "".$""}  # removes the last 1 character")
+	vrdtvsp_ps1_file_object.WriteLine("if ($Folder.Substring(0,1) -eq ""'"" -And $Folder.Substring($Folder.Length-1,1) -eq ""'"") {$Folder=$Folder.Trim(""'"")} # removes the specified character ' from both ends of the string")
+	vrdtvsp_ps1_file_object.WriteLine("#")
+	vrdtvsp_ps1_file_object.WriteLine("# Now set the date-created and date-modified")
+	vrdtvsp_ps1_file_object.WriteLine("echo ""Set file date-time timestamps: START in folder tree '$Folder' ..."" >>""$logFile""")
+	vrdtvsp_ps1_file_object.WriteLine("if ($Recurse) {")
+	vrdtvsp_ps1_file_object.WriteLine("	echo ""Set file date-time timestamps: RECURSE FOUND for tree '$Folder'"" >>""$logFile""")
+	vrdtvsp_ps1_file_object.WriteLine("	# note we add -Recurse and leave ""\*"" off of the folder name")
+	vrdtvsp_ps1_file_object.WriteLine("	$FileList = Get-ChildItem -Path ""$Folder"" -Recurse -File -Include '*.ts','*.mp4','*.mpg','*.vprj'")
+	vrdtvsp_ps1_file_object.WriteLine("} else {")
+	vrdtvsp_ps1_file_object.WriteLine("	# note we add ""\*"" to the folder name")
+	vrdtvsp_ps1_file_object.WriteLine("echo ""Set file date-time timestamps: NON RECURSE FOUND for only '$Folder'"" >>""$logFile""")
+	vrdtvsp_ps1_file_object.WriteLine("$FileList = Get-ChildItem -Path ""$Folder\*"" -File -Include '*.ts','*.mp4','*.mpg','*.bprj','*.mp3','*.aac','*.mp2'")
+	vrdtvsp_ps1_file_object.WriteLine("}")
+	vrdtvsp_ps1_file_object.WriteLine("$DateFormat = ""yyyy-MM-dd""")
+	vrdtvsp_ps1_file_object.WriteLine("foreach ($FL_Item in $FileList) {")
+	vrdtvsp_ps1_file_object.WriteLine("	$fn = $FL_Item.FullName")
+	vrdtvsp_ps1_file_object.WriteLine("	#echo ""Processing Timestamp for 'fn'"" >>""$logFile""")
+	vrdtvsp_ps1_file_object.WriteLine("	$ixxx = $FL_Item.BaseName -match '(?<DateString>\d{4}-\d{2}-\d{2})'")
+	vrdtvsp_ps1_file_object.WriteLine("	if($ixxx){")
+	vrdtvsp_ps1_file_object.WriteLine("		$DateString = $Matches.DateString")
+	vrdtvsp_ps1_file_object.WriteLine("		$date_from_file = [datetime]::ParseExact($DateString, $DateFormat, $Null)")
+	vrdtvsp_ps1_file_object.WriteLine("	} else {")
+	vrdtvsp_ps1_file_object.WriteLine("		$date_from_file = $FL_Item.CreationTime.Date # .Date removes the time component")
+	vrdtvsp_ps1_file_object.WriteLine("	}")
+	vrdtvsp_ps1_file_object.WriteLine("	$FL_Item.CreationTime = $date_from_file")
+	vrdtvsp_ps1_file_object.WriteLine("	$FL_Item.LastWriteTime = $date_from_file")
+	vrdtvsp_ps1_file_object.WriteLine("	$df=$date_from_file.ToString()")
+	vrdtvsp_ps1_file_object.WriteLine("	$cd=$FL_Item.CreationTime.ToString()")
+	vrdtvsp_ps1_file_object.WriteLine("	$lw=$FL_Item.LastWriteTime.ToString()")
+	vrdtvsp_ps1_file_object.WriteLine("	echo ""Set '$df' as Creation-date: '$cd' Modification-Date: '$lw' on '$fn'"" >>""$logFile""")
+	vrdtvsp_ps1_file_object.WriteLine("}")
+	vrdtvsp_ps1_file_object.WriteLine("echo ""Set file date-time timestamps: FINISH in folder tree '$Folder' ..."" >>""$logFile""")
+	vrdtvsp_ps1_file_object.WriteLine("## regex [^a-zA-Z0-9-_. ]+")
+	vrdtvsp_ps1_file_object.WriteLine("## the leading hat ^ character means NOT in any of the set, trailing + means any number of matches in the set")
+	vrdtvsp_ps1_file_object.WriteLine("## a-z")
+	vrdtvsp_ps1_file_object.WriteLine("## A-Z")
+	vrdtvsp_ps1_file_object.WriteLine("## 0-9")
+	vrdtvsp_ps1_file_object.WriteLine("## - underscore . space")
 	vrdtvsp_ps1_file_object.Close
 	Set vrdtvsp_ps1_file_object = Nothing
 	'
