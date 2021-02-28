@@ -3936,7 +3936,8 @@ IF V_INCOMING_BITRATE = 0  Then
 			If Ucase(A_Codec_legacy) = Ucase("AAC LC") Then
 				ff_cmd_string =	ff_cmd_string & "-c:a copy "
 			Else
-				ff_cmd_string =	ff_cmd_string & "-af ""adelay=delays=" & A_Audio_Delay_ms & "ms:all=1"" -c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 "
+				'ff_cmd_string =	ff_cmd_string & "-af ""adelay=delays=" & A_Audio_Delay_ms & "ms:all=1"" -c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 "
+				ff_cmd_string =	ff_cmd_string & "-af ""adelay=delays=" & A_Audio_Delay_ms & "ms:all=1"" -c:a libfdk_aac -cutoff 18000 -ab 256k -ar 48000 " ' reduce from 20000 to 18000 to improve overall quality
 			End If
 			ff_cmd_string =	ff_cmd_string & " -y """ & CF_TARGET_AbsolutePathName & """"
 							WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: ========== Created ffmpeg_cmd_string, hopefully Progressive/AVC vs file: " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
