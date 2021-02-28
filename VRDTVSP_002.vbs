@@ -5230,9 +5230,10 @@ End Function
 Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, byVAL riqowv_FILE_AbsolutePathName, byVAL riqowv_QSF_AbsolutePathName, byVAL riqowv_vrd6_profile_name)
 	' This script should ALWAYS be reconciled with that created by function vrdtvsp_create_custom_QSF_vbscript_vrd_5_AND_6
 	' Parameters: 
+	'				riqowv_vrd_version				is the version of vrd to be used
 	'				riqowv_FILE_AbsolutePathName	is path/name of output QSF'd file - a fully qualified path name
 	'				riqowv_QSF_AbsolutePathName		is input video file path - a fully qualified path name, eg a .TS file
-	'				riqowv_vrd6_profile_name		is name ofa valid  QSF Output Profile created in VRD v6
+	'				riqowv_vrd6_profile_name		is name of a valid  QSF Output Profile created in VRD v6
 	' Returns:
 	'				a dictionary object populated with key/item pairs of data about the resulting QSF file (see xml from VideoReDo.OutputGetCompletedInfo() below ; xml attributes are also added as well as xml items)
 	'
