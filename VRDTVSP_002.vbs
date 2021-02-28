@@ -3922,10 +3922,10 @@ IF V_INCOMING_BITRATE = 0  Then
 			vrdtvsp_create_VPY = False ' this is a NO-OP
 			vpy_denoise = ""								' flag no denoising for progressive AVC
 			vpy_dsharpen = ""								' flag no sharpening for progressive AVC
-			' probesize 120 Mb, analyzeduration 120 seconds 2021.02.17
+			' probesize 200 Mb, analyzeduration 200 seconds 2021.02.17
 			ff_cmd_string =	"""" & vrdtvsp_ffmpegexe64 & """ " &_
 							"-hide_banner -v verbose -nostats " &_
-							"-probesize 120M -analyzeduration 120M " &_
+							"-probesize 200M -analyzeduration 200M " &_
 							"-i """ & CF_QSF_AbsolutePathName & """ " &_
 							"-c:v copy " &_
 							"-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
@@ -3948,7 +3948,7 @@ IF V_INCOMING_BITRATE = 0  Then
 			ff_cmd_string =	"""" & vrdtvsp_ffmpegexe64 & """ " &_
 							"-hide_banner -v verbose -nostats " &_
 							"-f vapoursynth -i """ & CF_VPY_AbsolutePathName & """ " &_
-							"-probesize 120M -analyzeduration 120M " &_
+							"-probesize 200M -analyzeduration 200M " &_
 							it_video_delay &_
 							"-i """ & CF_QSF_AbsolutePathName & """ " &_
 							"-map 0:v:0 -map 1:a:0 " &_
@@ -3996,7 +3996,7 @@ IF V_INCOMING_BITRATE = 0  Then
 			ff_cmd_string =	"""" & vrdtvsp_ffmpegexe64 & """ " &_
 							"-hide_banner -v verbose -nostats " &_
 							"-f vapoursynth -i """ & CF_VPY_AbsolutePathName & """ " &_
-							"-probesize 120M -analyzeduration 120M " &_
+							"-probesize 200M -analyzeduration 200M " &_
 							it_video_delay &_
 							"-i """ & CF_QSF_AbsolutePathName & """ " &_
 							"-map 0:v:0 -map 1:a:0 " &_
@@ -4019,7 +4019,7 @@ IF V_INCOMING_BITRATE = 0  Then
 				ff_cmd_string =	"""" & vrdtvsp_ffmpegexe64 & """ " &_
 								"-hide_banner -v verbose -nostats " &_
 								"-f vapoursynth -i """ & CF_VPY_AbsolutePathName & """ " &_
-								"-probesize 120M -analyzeduration 120M " &_
+								"-probesize 200M -analyzeduration 200M " &_
 								it_video_delay &_
 								"-i """ & CF_QSF_AbsolutePathName & """ " &_
 								"-map 0:v:0 -map 1:a:0 " &_
@@ -4048,7 +4048,7 @@ IF V_INCOMING_BITRATE = 0  Then
 			ff_cmd_string =	"""" & vrdtvsp_ffmpegexe64 & """ " &_
 							"-hide_banner -v verbose -nostats " &_
 							"-f vapoursynth -i """ & CF_VPY_AbsolutePathName & """ " &_
-							"-probesize 120M -analyzeduration 120M " &_
+							"-probesize 200M -analyzeduration 200M " &_
 							it_video_delay &_
 							"-i """ & CF_QSF_AbsolutePathName & """ " &_
 							"-map 0:v:0 -map 1:a:0 " &_
