@@ -3668,7 +3668,10 @@ IF V_INCOMING_BITRATE = 0  Then
 	' +++++++++++++++++++++++++++ define initial FFMPEG video/audio conversion parameters +++++++++++++++++++++++++++
 	'
 	If Ucase(vrdtvsp_ComputerName) = Ucase("3900X") Then
-		vrdtvsp_final_RTX2060super_extra_flags = "-spatial-aq 1 -temporal-aq 1 -refs 3"
+		' -dpb_size 0		means automatic (default)
+		' -bf:v 3			means use 3 b-frames (dont use more than 3)
+		' -b_ref_mode 0		means B frames will not be used for reference
+		vrdtvsp_final_RTX2060super_extra_flags = "-spatial-aq 1 -temporal-aq 1 -dpb_size 0 -bf:v 3 -b_ref_mode:v 0"	'2021.02.28 "-refs 3" replaced by -dpb_size 0 -bf:v 3 -b_ref_mode:v 0 https://trac.ffmpeg.org/ticket/9130#comment:8 https://trac.ffmpeg.org/ticket/7303#comment:3
 	Else
 		vrdtvsp_final_RTX2060super_extra_flags = ""
 	End If
@@ -3951,7 +3954,7 @@ IF V_INCOMING_BITRATE = 0  Then
 							"-map 0:v:0 -map 1:a:0 " &_
 							"-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
 							"-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
-							"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 25 " &_
+							"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 25 -coder:v cabac " &_
 							vrdtvsp_final_RTX2060super_extra_flags & " " &_
 							"-rc:v vbr " &_
 							"-cq:v 0" & " " &_
@@ -3999,7 +4002,7 @@ IF V_INCOMING_BITRATE = 0  Then
 							"-map 0:v:0 -map 1:a:0 " &_
 							"-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
 							"-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
-							"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 25 " &_
+							"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 25 -coder:v cabac " &_
 							vrdtvsp_final_RTX2060super_extra_flags & " " &_
 							"-rc:v vbr " &_
 							vrdtvsp_final_cq_options & " " &_
@@ -4022,7 +4025,7 @@ IF V_INCOMING_BITRATE = 0  Then
 								"-map 0:v:0 -map 1:a:0 " &_
 								"-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
 								"-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
-								"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 50 " &_
+								"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 50 -coder:v cabac " &_
 								vrdtvsp_final_RTX2060super_extra_flags & " " &_
 								"-rc:v vbr " &_
 								vrdtvsp_final_cq_options & " " &_
@@ -4051,7 +4054,7 @@ IF V_INCOMING_BITRATE = 0  Then
 							"-map 0:v:0 -map 1:a:0 " &_
 							"-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
 							"-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
-							"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 25 " &_
+							"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 25 -coder:v cabac " &_
 							vrdtvsp_final_RTX2060super_extra_flags & " " &_
 							"-rc:v vbr " &_
 							vrdtvsp_final_cq_options & " " &_
