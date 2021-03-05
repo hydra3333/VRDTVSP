@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<VRDOutputProfile>
+	<Name>VRDTVS_ADSCAN_VRD6</Name>
+	<OutputMode>Smart</OutputMode>
+	<RecodeMode>Quality</RecodeMode>
+	<RecodeQualities>
+		<MPEG2>100</MPEG2>
+		<H264>100</H264>
+		<HEVC>100</HEVC>
+	</RecodeQualities>
+	<FileType>InteractiveAdScan</FileType>
+	<FileExt></FileExt>
+	<OutputLibrary>
+		<Program>None</Program>
+		<CustomPath></CustomPath>
+	</OutputLibrary>
+	<DefaultOutputDir></DefaultOutputDir>
+	<VideoAttributes>
+		<Encoder>Uncompressed</Encoder>
+		<AspectRatio>No Change</AspectRatio>
+		<AspectCorrection>None</AspectCorrection>
+		<EncodeDimensions>
+			<Width>0</Width>
+			<Height>0</Height>
+		</EncodeDimensions>
+		<EncodeBitrate>0</EncodeBitrate>
+		<HeaderBitrate>0</HeaderBitrate>
+		<MaxBitrate>0</MaxBitrate>
+		<EncodingMode>SP</EncodingMode>
+		<DeinterlaceMethod>None</DeinterlaceMethod>
+		<FrameRate>No Change</FrameRate>
+	</VideoAttributes>
+	<AudioAttributes>
+		<Encoder>Auto</Encoder>
+		<Bitrate>0</Bitrate>
+		<SampleRate>No Change</SampleRate>
+		<ChannelMode>Auto</ChannelMode>
+		<AllowMultiAudio>False</AllowMultiAudio>
+		<LPCMEndianess>Little</LPCMEndianess>
+	</AudioAttributes>
+	<AdScanParameters>
+		<UseBlackLevelDetection>1</UseBlackLevelDetection>
+		<ScanArea>
+			<Left>10</Left>
+			<Right>10</Right>
+			<Top>10</Top>
+			<Bottom>10</Bottom>
+			</ScanArea>
+		<BlackLevels>
+			<Average>35</Average>
+			<Peak>180</Peak>
+			<MaxContrast>5</MaxContrast>
+			<MinBlackFrames>3</MinBlackFrames>
+		</BlackLevels>
+		<AudioLevels>
+			<Average>0.000000</Average>
+			<Peak>0.000000</Peak>
+		</AudioLevels>
+		<MarkSilentAsAds>0</MarkSilentAsAds>
+		<MinSecsBetweenScenes>5</MinSecsBetweenScenes>
+		<MaxSecsForCommercialBlock>241</MaxSecsForCommercialBlock>
+		<MinSecsForCommercialBlock>10</MinSecsForCommercialBlock>
+		<ForceScenesToIFrames>0</ForceScenesToIFrames>
+		<PreserveStatsFile>0</PreserveStatsFile>
+		<UseSelectionMarkers>0</UseSelectionMarkers>
+		<InteractiveData>
+						<UseFastDetect>True</UseFastDetect>
+		</InteractiveData>
+	</AdScanParameters>
+</VRDOutputProfile>
