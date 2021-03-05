@@ -35,4 +35,3 @@ Dependencies:
 7. Donald Graft's Nvdia accelerated (NV) tools and DLL (non-free), in a folder under the Vapoursynth portable folder   
 8. mediainfo x64   
 9. a reasonable Nvidia card and latest Drivers, eg a 1050Ti upward eg an RTX2060Super   
-
