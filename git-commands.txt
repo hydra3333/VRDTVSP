@@ -1,0 +1,34 @@
+https://github.com/hydra3333/VRDTVSP.git
+
+
+To remove all history :-
+
+https://gist.github.com/heiswayi/350e2afda8cece810c0f6116dadbe651
+https://gist.github.com/stephenhardy/5470814
+
+note: 
+Deleting the .git folder may cause problems in your git repository. 
+If you want to delete all your commit history but keep the code in its current state, it is very safe to do it as in the following:
+
+# download a backup zip first !!!!
+# ensure a totally fresh copy
+rm -f -R -v VRDTVSP
+git clone hhttps://github.com/hydra3333/VRDTVSP.git
+cd VRDTVSP
+git config --global user.name "hydra3333"
+git config --global user.email "hydra3333@gmail.com"
+git config --global credential.helper store
+# Checkout to a branch named latest_branch which has no history
+git checkout --orphan latest_branch
+# Add all the files
+git add -A
+# Commit the changes
+git commit -am "committing an orphan branch"
+# Delete the master branch
+git branch -D main
+# Rename the branch latest_branch to master
+git branch -m main
+# Finally, force update your repository
+git push -f origin main  # Force push main branch to github
+# remove the old files (loose objects)
+git gc --aggressive --prune=all
