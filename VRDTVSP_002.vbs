@@ -1334,7 +1334,7 @@ Function vrdtvsp_ffiaft_pfis_Process_a_vprj (byVAL theOriginalParentFolderName, 
 			WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_pfis_Process_a_vprj: ********** found a matching .vprj file to autofix: """ & Original_vprj_AbsoluteFilename & """")
 		End If
 		If Original_vprj_AbsoluteFilename = Final_Renamed_vprj_AbsoluteFilename Then
-			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_ffiaft_pfis_Process_a_vprj same filenames, NOT RENAMING """ & Original_vprj_AbsoluteFilename & """ as it is fine already.")
+			'WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_ffiaft_pfis_Process_a_vprj same filenames, NOT RENAMING """ & Original_vprj_AbsoluteFilename & """ as it is fine already.")
 			If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_pfis_Process_a_vprj: same filenames, NOT RENAMING """ & Original_vprj_AbsoluteFilename & """ to """ & Final_Renamed_vprj_AbsoluteFilename & """")
 		Else
 			' a) rename the .vprj file to match the new BaseName of the media file ... abort on a failure to simply rename the .vprj file
