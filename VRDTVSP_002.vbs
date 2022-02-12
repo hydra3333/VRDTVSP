@@ -3,7 +3,7 @@ Option Explicit
 ' VRDTVSP - automatically parse, convert video/audio from TVSchedulerPro TV recordings, 
 ' and perhaps adscan them too. This looks only at .TS .MP4 .MPG files and autofixes associated .vprj files.
 '
-' Copyright hydra3333@gmail.com 2021
+' Copyright hydra3333@gmail.com 2021 2022
 '
 ' Invoke from a DOS commandline or a .bat, Interactively or in a Scheduled Task 
 ' using a single one-line commndline.
@@ -2136,8 +2136,8 @@ Function vrdtvsp_Move_Date_to_End_of_String(theOriginalString)
     Next
 	'If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Move_Date_to_End_of_String: is_a_date_there=" & is_a_date_there)
     Do While is_a_date_there ' loop forever ... setting up for cheeky way to exit all FOR loops at once
-		'for xyear = 2017 to 2040
-        for xyear = 2021 to 2021 ' FORCE DEBUG OUTSIDE OF REAL DEBUG
+		for xyear = 2017 to 2050
+        'for xyear = 2021 to 2021 ' FORCE DEBUG
 			'If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Move_Date_to_End_of_String: Start    processing Year " & xyear & " ... with original value """ & theOriginalString & """")
 	        for xmonth = 01 to 12
 	            for xday = 01 to 31
