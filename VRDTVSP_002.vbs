@@ -102,7 +102,7 @@ Dim file_count_checked, file_count_fixed
 Dim vrdtvsp_temp_powershell_filename, vrdtvsp_temp_powershell_cmd, vrdtvsp_temp_powershell_exe
 Dim vrdtvsp_saved_ffmpeg_commands_filename, vrdtvsp_saved_ffmpeg_commands_object
 Dim scratch_local_timerStart, scratch_local_timerEnd
-Dim vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array()	' then eg ReDim Dim vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(5) for 6 commands, 0..5), Use "Erase vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array" when finished
+Dim vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(), iii	' then eg ReDim Dim vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(5) for 6 commands, 0..5), Use "Erase vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array" when finished
 Set vrdtvsp_temp_powershell_exe = Nothing
 Set vrdtvsp_saved_ffmpeg_commands_object = Nothing
 '
@@ -765,8 +765,10 @@ Function vrdtvsp_move_files_to_folder (mf_source_path_wildcard, mv_destination_f
 	' THE NEW WAY OF DOING IT
 	'
 	mf_cmd = "MOVE /Y """ & mf_source_AbsolutePath & """ """ & mf_destination_AbsolutePath & """"
-	ReDim vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(0) ' base 0, so the dimension is always 1 less than the number of commands
-	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(0) = mf_cmd
+	ReDim vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(2) ' base 0, so the dimension is always 1 less than the number of commands
+	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(0) = "REM " & vrdtvsp_current_datetime_string()
+	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1) = "ECHO %DATE% %TIME%"
+	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(2) = mf_cmd
 	' deliberately no code for saving commands to move files
 	mf_status = vrdtvsp_Exec_in_a_DOS_BAT_file(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log
 	Erase vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array
@@ -3099,7 +3101,7 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	' the OLD way:
 	'	 CF_exe_status = vrdtvsp_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string) ????? do the QSF in the DOS batch file like adscan
 	' the NEW way:
-	'ReDim vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(2) ' base 0, so the dimension is always 1 less than the number of commands
+	'ReDim vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(4) ' base 0, so the dimension is always 1 less than the number of commands
 	'vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(0) = "DEL /F """ & CF_QSFxml_AbsolutePathName & """"
 	'vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1) = "DEL /F """ & CF_QSF_AbsolutePathName & """"
 	'vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(2) = CF_exe_cmd_string
@@ -3200,13 +3202,16 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Else
 		vrdtvsp_REM = "REM "
 	End If
-	ReDim vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1) ' base 0, so the dimension is always 1 less than the number of commands
-	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(0) = vrdtvsp_REM & """" & vrdtvsp_mediainfoexe64 & """ --Legacy """ & CF_FILE_AbsolutePathName & """"
-	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1) = vrdtvsp_REM & """" & vrdtvsp_mediainfoexe64 & """ --Legacy ""--Inform=Video;%FrameRate%\r\n"" """ & CF_FILE_AbsolutePathName & """"
-	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1) = Replace(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1), "%", "%%", 1, -1, vbTextCompare) ' just for the mediainfo command run from WITHIN in a .BAT file
+	ReDim vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(3) ' base 0, so the dimension is always 1 less than the number of commands
+	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(0) = "REM " & vrdtvsp_current_datetime_string()
+	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1) = "ECHO %DATE% %TIME%"
+	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(2) = vrdtvsp_REM & """" & vrdtvsp_mediainfoexe64 & """ --Legacy """ & CF_FILE_AbsolutePathName & """"
+	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(3) = vrdtvsp_REM & """" & vrdtvsp_mediainfoexe64 & """ --Legacy ""--Inform=Video;%FrameRate%\r\n"" """ & CF_FILE_AbsolutePathName & """"
+	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(3) = Replace(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1), "%", "%%", 1, -1, vbTextCompare) ' just for the mediainfo command run from WITHIN in a .BAT file
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
-	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(0))
-	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1))
+	for iii=0 to 3
+		CF_object_saved_ffmpeg_commands.WriteLine(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(iii))
+	next iii
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	If vrdtvsp_DEBUG OR vrdtvsp_show_mediainfo Then
 		CF_exe_status = vrdtvsp_Exec_in_a_DOS_BAT_file(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log
@@ -3220,13 +3225,16 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	Else
 		vrdtvsp_REM = "REM "
 	End If
-	ReDim vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1) ' base 0, so the dimension is always 1 less than the number of commands
-	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(0) = vrdtvsp_REM & """" & vrdtvsp_mediainfoexe64 & """ --Legacy """ & CF_QSF_AbsolutePathName & """"
-	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1) = vrdtvsp_REM & """" & vrdtvsp_mediainfoexe64 & """ --Legacy ""--Inform=Video;%FrameRate%\r\n"" """ & CF_QSF_AbsolutePathName & """"
-	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1) = Replace(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1), "%", "%%", 1, -1, vbTextCompare) ' just for the mediainfo command run from WITHIN in a .BAT file
+	ReDim vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(3) ' base 0, so the dimension is always 1 less than the number of commands
+	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(0) = "REM " & vrdtvsp_current_datetime_string()
+	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1) = "ECHO %DATE% %TIME%"
+	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(2) = vrdtvsp_REM & """" & vrdtvsp_mediainfoexe64 & """ --Legacy """ & CF_QSF_AbsolutePathName & """"
+	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(3) = vrdtvsp_REM & """" & vrdtvsp_mediainfoexe64 & """ --Legacy ""--Inform=Video;%FrameRate%\r\n"" """ & CF_QSF_AbsolutePathName & """"
+	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(3) = Replace(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1), "%", "%%", 1, -1, vbTextCompare) ' just for the mediainfo command run from WITHIN in a .BAT file
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
-	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(0))
-	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1))
+	for iii=0 to 3
+		CF_object_saved_ffmpeg_commands.WriteLine(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(iii))
+	next iii
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	If vrdtvsp_DEBUG OR vrdtvsp_show_mediainfo Then
 		CF_exe_status = vrdtvsp_Exec_in_a_DOS_BAT_file(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log
@@ -4220,11 +4228,13 @@ IF V_INCOMING_BITRATE = 0  Then
 	'	and then synchronously Run the .bat file
 	'	then examine the returned errorlevel and the logfile
 	'
-	ReDim vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(3) ' base 0, so the dimension is always 1 less than the number of commands
-	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(0) = "DEL /F """ & CF_TARGET_AbsolutePathName & """"
-	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1) = "REM """ & vrdtvsp_ffmpegexe64 & """ -hide_banner -v verbose -init_hw_device list"
-	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(2) = "REM """ & vrdtvsp_ffmpegexe64 & """ -hide_banner -v verbose -hide_banner -h encoder=hevc_nvenc"
-	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(3) = ff_cmd_string
+	ReDim vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(5) ' base 0, so the dimension is always 1 less than the number of commands
+	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(0) = "REM " & vrdtvsp_current_datetime_string()
+	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1) = "ECHO %DATE% %TIME%"
+	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(2) = "DEL /F """ & CF_TARGET_AbsolutePathName & """"
+	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(3) = "REM """ & vrdtvsp_ffmpegexe64 & """ -hide_banner -v verbose -init_hw_device list"
+	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(4) = "REM """ & vrdtvsp_ffmpegexe64 & """ -hide_banner -v verbose -hide_banner -h encoder=hevc_nvenc"
+	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(5) = ff_cmd_string
 	CF_exe_status = vrdtvsp_Exec_in_a_DOS_BAT_file(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log
 	Erase vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array
 	If (CF_exe_status <> 0) OR (NOT fso.FileExists(CF_TARGET_AbsolutePathName)) Then
@@ -4473,13 +4483,16 @@ IF V_INCOMING_BITRATE = 0  Then
 	Else
 		vrdtvsp_REM = "REM "
 	End If
-	ReDim vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1) ' base 0, so the dimension is always 1 less than the number of commands
-	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(0) = vrdtvsp_REM & """" & vrdtvsp_mediainfoexe64 & """ --Legacy """ & CF_TARGET_AbsolutePathName & """"
-	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1) = vrdtvsp_REM & """" & vrdtvsp_mediainfoexe64 & """ --Legacy ""--Inform=Video;%FrameRate%\r\n"" """ & CF_TARGET_AbsolutePathName & """"
-	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1) = Replace(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1), "%", "%%", 1, -1, vbTextCompare) ' just for the mediainfo command run from WITHIN in a .BAT file
+	ReDim vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(3) ' base 0, so the dimension is always 1 less than the number of commands
+	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(0) = "REM " & vrdtvsp_current_datetime_string()
+	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1) = "ECHO %DATE% %TIME%"
+	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(2) = vrdtvsp_REM & """" & vrdtvsp_mediainfoexe64 & """ --Legacy """ & CF_TARGET_AbsolutePathName & """"
+	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(3) = vrdtvsp_REM & """" & vrdtvsp_mediainfoexe64 & """ --Legacy ""--Inform=Video;%FrameRate%\r\n"" """ & CF_TARGET_AbsolutePathName & """"
+	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(3) = Replace(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1), "%", "%%", 1, -1, vbTextCompare) ' just for the mediainfo command run from WITHIN in a .BAT file
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
-	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(0))
-	CF_object_saved_ffmpeg_commands.WriteLine(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1))
+	for iii=0 to 3
+		CF_object_saved_ffmpeg_commands.WriteLine(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(iii))
+	next iii
 	CF_object_saved_ffmpeg_commands.WriteLine("REM")
 	If vrdtvsp_DEBUG OR vrdtvsp_show_mediainfo Then
 		CF_exe_status = vrdtvsp_Exec_in_a_DOS_BAT_file(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log
@@ -4525,9 +4538,11 @@ IF V_INCOMING_BITRATE = 0  Then
 		WScript.StdOut.WriteLine("ADSCAN command: " & CF_exe_cmd_string)
 		''' vrdtvsp_status = vrdtvsp_delete_a_file(CF_vprj_AbsolutePathName, True) ' True=silently delete it ' - the old way of doing it
 		''' CF_exe_status = vrdtvsp_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string) ' - the old way of doing it
-		ReDim vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1) ' base 0, so the dimension is always 1 less than the number of commands
-		vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(0) = "DEL /F """ & CF_vprj_AbsolutePathName & """"
-		vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1) = CF_exe_cmd_string
+		ReDim vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(3) ' base 0, so the dimension is always 1 less than the number of commands
+		vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(0) = "REM " & vrdtvsp_current_datetime_string()
+		vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1) = "ECHO %DATE% %TIME%"
+		vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(2) = "DEL /F """ & CF_vprj_AbsolutePathName & """"
+		vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(3) = CF_exe_cmd_string
 		CF_exe_status = vrdtvsp_Exec_in_a_DOS_BAT_file(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log - the safer way of doing it
 		Erase vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array
 		WScript.StdOut.WriteLine("******************** Finished run ADSCAN """ & CF_exe_cmd_string & """ :")
@@ -5768,8 +5783,10 @@ Function vrdtvsp_fix_timestamps_in_a_folder_tree (byVal ftiaft_folder_name, byVa
 	WScript.StdOut.WriteLine("******************** Start of run FIXING TIMESTAMPS """ & ftiaft_ps1_cmd_string & """ :")
 	WScript.StdOut.WriteLine("Doing FIXING TIMESTAMPS for """ & ftiaft_path & """ ... ")
 	WScript.StdOut.WriteLine("FIXING TIMESTAMPS command: " & ftiaft_ps1_cmd_string)
-	ReDim vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(0) ' base 0, so the dimension is always 1 less than the number of commands
-	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(0) = ftiaft_ps1_cmd_string
+	ReDim vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(2) ' base 0, so the dimension is always 1 less than the number of commands
+	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(0) = "REM " & vrdtvsp_current_datetime_string()
+	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1) = "ECHO %DATE% %TIME%"
+	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(2) = ftiaft_ps1_cmd_string
 	If vrdtvsp_DEVELOPMENT_NO_ACTIONS Then
 		ftiaft_status = 0
 		WScript.StdOut.WriteLine("DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV ---- DID NOT RUN FIXING TIMESTAMPS """ & ftiaft_ps1_cmd_string & """ :")
