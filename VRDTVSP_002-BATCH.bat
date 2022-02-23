@@ -97,7 +97,7 @@ SET vrdtvsp_CMD=cscript //nologo "!vrdtvsp_vbs_script!" ^
 /temp_path:"!scratch_Folder!" ^
 /vrd_version_for_qsf:6 ^
 /vrd_version_for_adscan:6 ^
-/do_adscan:True ^
+/do_adscan:False ^
 /do_audio_delay:True ^
 /show_mediainfo:False
 REM
