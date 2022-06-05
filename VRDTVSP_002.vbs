@@ -3792,7 +3792,7 @@ IF V_INCOMING_BITRATE = 0  Then
 		Footy_FF_V_Target_Minimum_BitRate = ROUND(Footy_FF_V_Target_BitRate * 0.20)
 		Footy_FF_V_Target_Maximum_BitRate = ROUND(Footy_FF_V_Target_BitRate * 2)
 		Footy_FF_V_Target_BufSize = ROUND(Footy_FF_V_Target_BitRate * 2)
-	Else ' default them back to non-footy settngs
+	Else ' default them back to non-footy settings
 		vrdtvsp_final_dg_deinterlace = 1	' set for normal single framerate deinterlace
 	'	Footy_FF_V_Target_BitRate = ROUND(FF_V_Target_BitRate)
 	'	Footy_FF_V_Target_Minimum_BitRate = ROUND(FF_V_Target_Minimum_BitRate)
@@ -4024,6 +4024,8 @@ IF V_INCOMING_BITRATE = 0  Then
 							" -y """ & CF_TARGET_AbsolutePathName & """"
 			If Footy_found Then	' Must be AVC Interlaced Footy to pass this test, USE DIFFERENT SETTINGS since we deinterlace with double framerate (and use -g 25)
 				' probesize 120 Mb, analyzeduration 120 seconds 2021.02.17
+				vpy_denoise  = "strength=0.06, cstrength=0.06"	' flag denoising  for footy interlaced avc, since it seems to be blurry nad noisy as at 2022.06
+				vpy_dsharpen = "strength=0.25"					' flag sharpening for footy interlaced avc, since it seems to be blurry nad noisy as at 2022.06
 				ff_cmd_string =	"""" & vrdtvsp_ffmpegexe64 & """ " &_
 								"-hide_banner -v verbose -nostats " &_
 								"-f vapoursynth -i """ & CF_VPY_AbsolutePathName & """ " &_
