@@ -3785,7 +3785,7 @@ IF V_INCOMING_BITRATE = 0  Then
 		End If
 	End If		
 	vrdtvsp_final_dg_deinterlace = 1	' set for normal single framerate deinterlace BY DEFAULT (I mucked it up a few versions ago)
-	If Footy_found Then ' bump up the bitrates due o double framerate deinterlacing
+	If Footy_found Then ' bump up the bitrates due to double framerate deinterlacing
 		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - FOOTY detected ... setting extended Footy_FF_V_* bitates for double-framerate conversion.")
 		vrdtvsp_final_dg_deinterlace = 2	' set for double framerate deinterlace
 		Footy_FF_V_Target_BitRate = ROUND(FF_V_Target_BitRate * 1.75)
