@@ -2558,7 +2558,7 @@ Function vrdtvsp_Convert_File (	byVal	CF_FILE_AbsolutePathName, _
 	'
 	Dim ff_cmd_string, ff_tmp_object, ff_tmp_string, ff_logfile, ff_batfile, ff_cmd_string_for_bat, ff_run_errorlevel
 	'
-	Dim CF_exe_cmd_string
+	Dim CF_exe_cmd_string_0, CF_exe_cmd_string
 	Dim CF_exe_object
 	Dim CF_exe_status
 	Dim CF_tmp, CF_val
@@ -3845,11 +3845,13 @@ IF V_INCOMING_BITRATE = 0  Then
 		If vrdtvsp_DEBUG Then 
 			WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_File - DGIndexNV is performed for NON-Progressive OR NON-AVC video")
 		End If
-		CF_exe_cmd_string = """" & vrdtvsp_dgindexNVexe64 & """ -i """ & CF_QSF_AbsolutePathName & """ -h -o """ & CF_DGI_AbsolutePathName & """"
 		CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_DGI_AbsolutePathName & """")
 		CF_object_saved_ffmpeg_commands.WriteLine("DEL /F """ & CF_DGIlog_AbsolutePathName & """")
 		CF_object_saved_ffmpeg_commands.WriteLine("REM ====================================================================================================================================================================")
 		CF_object_saved_ffmpeg_commands.WriteLine("ECHO !DATE! !TIME!")
+		CF_exe_cmd_string_0 = """" & vrdtvsp_dgindexNVexe64 & """ -version """
+		CF_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string_0) ' write the DGIndexNV String to be executed
+		CF_exe_cmd_string = """" & vrdtvsp_dgindexNVexe64 & """ -i """ & CF_QSF_AbsolutePathName & """ -h -o """ & CF_DGI_AbsolutePathName & """"
 		CF_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string) ' write the DGIndexNV String to be executed
 		CF_object_saved_ffmpeg_commands.WriteLine("ECHO !DATE! !TIME!")
 		CF_object_saved_ffmpeg_commands.WriteLine("REM ====================================================================================================================================================================")
@@ -3861,7 +3863,8 @@ IF V_INCOMING_BITRATE = 0  Then
 		WScript.StdOut.WriteLine("START RUN DGIndexNV " & vrdtvsp_current_datetime_string())
 		vrdtvsp_status = vrdtvsp_delete_a_file(CF_DGI_AbsolutePathName, True)		' Delete the DGI file to be created by DGIndexNV
 		vrdtvsp_status = vrdtvsp_delete_a_file(CF_DGIlog_AbsolutePathName, True)	' Delete the DGIlog file to be created by DGIndexNV
-		CF_exe_status = vrdtvsp_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string)
+		CF_exe_status = vrdtvsp_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string_0)	' defined above
+		CF_exe_status = vrdtvsp_exec_a_command_and_show_stdout_stderr(CF_exe_cmd_string)	' defined above
 		WScript.StdOut.WriteLine("FINISH RUN DGIndexNV " & vrdtvsp_current_datetime_string())
 		WScript.StdOut.WriteLine("======================================================================================================================================================")
 		If CF_exe_status <> 0 OR NOT fso.FileExists(CF_DGI_AbsolutePathName) Then
