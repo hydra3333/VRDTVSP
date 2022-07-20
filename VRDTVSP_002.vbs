@@ -2449,6 +2449,7 @@ Function vrdtvsp_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 End Function
 '
 Function vrdtvsp_exec_a_command_and_show_stdout_stderr (byVAL eac_command_string)
+	Cont sleep_amount = 1000	' 1 second = 1000 ms
 	Dim  eac_exe_cmd_string, eac_exe_object, eac_exe_status, eac_tmp
 	If eac_command_string = "" then
 		vrdtvsp_exec_a_command = 0
@@ -2467,9 +2468,8 @@ Function vrdtvsp_exec_a_command_and_show_stdout_stderr (byVAL eac_command_string
 	WScript.StdOut.WriteLine("EXEC command: " & eac_command_string)
 	set eac_exe_object = wso.Exec(eac_command_string)
 	Do While eac_exe_object.Status = 0 '0 is running and 1 is ending
-	 	Wscript.Sleep 100
-		 'Wscript.Echo "vrdtvsp_exec_a_command_and_show_stdout_stderr About to sleep for 5 seconds"
-		 'Wscript.Sleep 5000
+		Wscript.Echo "vrdtvsp_exec_a_command_and_show_stdout_stderr About to sleep for ' & sleep_amount & ' ms"
+	 	Wscript.Sleep sleep_amount
 	Loop
 	WScript.StdOut.WriteLine("START StdOut: ")
 	Do Until eac_exe_object.StdOut.AtEndOfStream
