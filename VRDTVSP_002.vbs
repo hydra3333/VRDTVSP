@@ -2470,7 +2470,7 @@ Function vrdtvsp_exec_a_command_and_show_stdout_stderr (byVAL eac_command_string
 	cumulative_sleep = 0
 	set eac_exe_object = wso.Exec(eac_command_string)
 	Do While eac_exe_object.Status = 0 '0 is running and 1 is ending
-		Wscript.Echo "vrdtvsp_exec_a_command_and_show_stdout_stderr About to sleep for " & sleep_amount & " ms (slept" & (cumulative_sleep/1000) & " seconds so far)"
+		Wscript.Echo "vrdtvsp_exec_a_command_and_show_stdout_stderr About to sleep for " & sleep_amount & " ms (slept " & (cumulative_sleep/1000) & " seconds so far)"
 	 	Wscript.Sleep sleep_amount
 		cumulative_sleep = cumulative_sleep + sleep_amount
 	Loop
