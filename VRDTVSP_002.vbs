@@ -2449,7 +2449,7 @@ Function vrdtvsp_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 End Function
 '
 Function vrdtvsp_exec_a_command_and_show_stdout_stderr (byVAL eac_command_string)
-	Cont sleep_amount = 1000	' 1 second = 1000 ms
+	Const sleep_amount = 1000	' 1 second = 1000 ms
 	Dim  eac_exe_cmd_string, eac_exe_object, eac_exe_status, eac_tmp
 	If eac_command_string = "" then
 		vrdtvsp_exec_a_command = 0
