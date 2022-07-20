@@ -3854,7 +3854,7 @@ IF V_INCOMING_BITRATE = 0  Then
 		CF_object_saved_ffmpeg_commands.WriteLine("ECHO !DATE! !TIME!")
 		CF_exe_cmd_string_0 = """" & vrdtvsp_dgindexNVexe64 & """ -version "
 		CF_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string_0) ' write the DGIndexNV String to be executed
-		CF_exe_cmd_string = """" & vrdtvsp_dgindexNVexe64 & """ -i """ & CF_QSF_AbsolutePathName & """ -h -o """ & CF_DGI_AbsolutePathName & """"
+		CF_exe_cmd_string = """" & vrdtvsp_dgindexNVexe64 & """ -i """ & CF_QSF_AbsolutePathName & """ -e -h -o """ & CF_DGI_AbsolutePathName & """"
 		CF_object_saved_ffmpeg_commands.WriteLine(CF_exe_cmd_string) ' write the DGIndexNV String to be executed
 		CF_object_saved_ffmpeg_commands.WriteLine("ECHO !DATE! !TIME!")
 		CF_object_saved_ffmpeg_commands.WriteLine("REM ====================================================================================================================================================================")
