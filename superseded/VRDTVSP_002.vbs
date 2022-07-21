@@ -2453,7 +2453,7 @@ Function vrdtvsp_exec_a_command_and_show_stdout_stderr (byVAL eac_command_string
 	Dim cumulative_sleep
 	Dim  eac_exe_cmd_string, eac_exe_object, eac_exe_status, eac_tmp
 	If eac_command_string = "" then
-		vrdtvsp_exec_a_command = 0
+		vrdtvsp_exec_a_command_and_show_stdout_stderr = 0
 		Exit Function
 	End If
 	WScript.StdOut.WriteLine("======================================================================================================================================================")
@@ -2498,7 +2498,7 @@ End Function
 Function vrdtvsp_exec_a_FFMPEG_command_and_show_stderr_only (byVAL eac_command_string)
 	Dim  eac_exe_cmd_string, eac_exe_object, eac_exe_status, eac_tmp
 	If eac_command_string = "" then
-		vrdtvsp_exec_a_command = 0
+		vrdtvsp_exec_a_FFMPEG_command_and_show_stderr_only = 0
 		Exit Function
 	End If
 	WScript.StdOut.WriteLine("======================================================================================================================================================")
