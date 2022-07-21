@@ -3890,7 +3890,7 @@ IF V_INCOMING_BITRATE = 0  Then
 		vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(5) = CF_exe_cmd_string		' for the final return status to be good, this must be the final command in the array
 		CF_exe_status = vrdtvsp_Exec_in_a_DOS_BAT_file(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log
 		Erase vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array
-		CF_tmp = vrdtvsp_exec_a_command_and_show_stdout_stderr("TYPE """ & CF_DGIlog_AbsolutePathName & """")
+		CF_tmp = vrdtvsp_exec_a_command_and_show_stdout_stderr("CMD /C ""TYPE " & CF_DGIlog_AbsolutePathName & """")
 		If CF_exe_status <> 0 OR NOT fso.FileExists(CF_DGI_AbsolutePathName) Then
 			If vrdtvsp_DEBUG Then 
 				WScript.StdOut.WriteLine("")
