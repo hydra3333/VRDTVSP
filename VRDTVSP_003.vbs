@@ -3999,7 +3999,7 @@ IF V_INCOMING_BITRATE = 0  Then
 							"-bufsize " & FF_V_Target_BufSize & " " &_
 							"-profile:v high -level 5.2 -movflags +faststart+write_colr " &_
 							af_audio_delay_filter &_
-							"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
+							"-c:a libfdk_aac -cutoff 18000 -ab 256k -ar 48000 " &_
 							" -y """ & CF_TARGET_AbsolutePathName & """"
 			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: ========== Created ffmpeg_cmd_string, hopefully Progressive/MPEG2 vs file: " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
 			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: ========== Created ffmpeg_cmd_string <" & ff_cmd_string & ">")
@@ -4047,7 +4047,7 @@ IF V_INCOMING_BITRATE = 0  Then
 							"-bufsize " & FF_V_Target_BufSize & " " &_
 							"-profile:v high -level 5.2 -movflags +faststart+write_colr " &_
 							af_audio_delay_filter &_
-							"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
+							"-c:a libfdk_aac -cutoff 18000 -ab 256k -ar 48000 " &_
 							" -y """ & CF_TARGET_AbsolutePathName & """"
 			If Footy_found Then	' Must be AVC Interlaced Footy to pass this test, USE DIFFERENT SETTINGS since we deinterlace with double framerate (and use -g 25)
 				' probesize 120 Mb, analyzeduration 120 seconds 2021.02.17
@@ -4072,7 +4072,7 @@ IF V_INCOMING_BITRATE = 0  Then
 								"-bufsize " & Footy_FF_V_Target_BufSize & " " &_
 								"-profile:v high -level 5.2 -movflags +faststart+write_colr " &_
 								af_audio_delay_filter &_
-								"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
+								"-c:a libfdk_aac -cutoff 18000 -ab 256k -ar 48000 " &_
 								" -y """ & CF_TARGET_AbsolutePathName & """"
 				WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: ========== FOOTY detected, hopefully Interlaced/AVC vs file: " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
 			End If
@@ -4101,7 +4101,7 @@ IF V_INCOMING_BITRATE = 0  Then
 							"-bufsize " & FF_V_Target_BufSize & " " &_
 							"-profile:v high -level 5.2 -movflags +faststart+write_colr " &_
 							af_audio_delay_filter &_
-							"-c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000 " &_
+							"-c:a libfdk_aac -cutoff 18000 -ab 256k -ar 48000 " &_
 							" -y """ & CF_TARGET_AbsolutePathName & """"
 			' Leave MPEG2 Interlaced Footy alone, as if it were a normal video file ... no code for MPEG2 Interlaced Footy in here
 			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: ========== Created ffmpeg_cmd_string, hopefully Interlaced/MPEG2 vs file: " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
