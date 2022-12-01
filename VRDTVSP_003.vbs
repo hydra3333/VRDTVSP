@@ -3963,7 +3963,7 @@ IF V_INCOMING_BITRATE = 0  Then
 							"-probesize 200M -analyzeduration 200M " &_
 							"-i """ & CF_QSF_AbsolutePathName & """ " &_
 							"-c:v copy " &_
-							"-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
+							"-fps_mode passthrough -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
 							"-movflags +faststart+write_colr "
 							' removed this line, since ffmpeg throws an error due to "-c:v copy" and this together: "-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
 							' removed this line since ffmpeg throws an error "-profile:v high -level 5.2 -movflags +faststart+write_colr " &_
@@ -3988,7 +3988,7 @@ IF V_INCOMING_BITRATE = 0  Then
 							"-i """ & CF_QSF_AbsolutePathName & """ " &_
 							"-map 0:v:0 -map 1:a:0 " &_
 							"-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
-							"-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
+							"-fps_mode passthrough -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
 							"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 25 -coder:v cabac " &_
 							vrdtvsp_final_RTX2060super_extra_flags & " " &_
 							"-rc:v vbr " &_
@@ -4036,7 +4036,7 @@ IF V_INCOMING_BITRATE = 0  Then
 							"-i """ & CF_QSF_AbsolutePathName & """ " &_
 							"-map 0:v:0 -map 1:a:0 " &_
 							"-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
-							"-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
+							"-fps_mode passthrough -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
 							"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 25 -coder:v cabac " &_
 							vrdtvsp_final_RTX2060super_extra_flags & " " &_
 							"-rc:v vbr " &_
@@ -4061,7 +4061,7 @@ IF V_INCOMING_BITRATE = 0  Then
 								"-i """ & CF_QSF_AbsolutePathName & """ " &_
 								"-map 0:v:0 -map 1:a:0 " &_
 								"-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
-								"-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
+								"-fps_mode passthrough -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
 								"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 50 -coder:v cabac " &_
 								vrdtvsp_final_RTX2060super_extra_flags & " " &_
 								"-rc:v vbr " &_
@@ -4090,7 +4090,7 @@ IF V_INCOMING_BITRATE = 0  Then
 							"-i """ & CF_QSF_AbsolutePathName & """ " &_
 							"-map 0:v:0 -map 1:a:0 " &_
 							"-vf ""setdar=" & V_DisplayAspectRatio_String_slash & """ " &_
-							"-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
+							"-fps_mode passthrough -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
 							"-c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 25 -coder:v cabac " &_
 							vrdtvsp_final_RTX2060super_extra_flags & " " &_
 							"-rc:v vbr " &_
