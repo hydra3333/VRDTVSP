@@ -1,18 +1,19 @@
-﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<VRDOutputProfileList version="2">
-
-<VRDOutputProfile>
-	<Name>VRDTVS-for-QSF-MPEG2_VRD6</Name>
+<VRDOutputProfile enabled="true">
+	<Name>VRDTVS-for-QSF-H264_VRD5</Name>
 	<OutputMode>Smart</OutputMode>
 	<MPEG2EncoderQuality>High</MPEG2EncoderQuality>
 <RecodeMode>Quality</RecodeMode>
-	<FileType>MPG</FileType>
+	<RecodeQualities>
+		<MPEG2>100</MPEG2>
+		<H264>100</H264>
+	</RecodeQualities>
+	<FileType>MP4</FileType>
 	<FileExt></FileExt>
 	<OutputLibrary>
 		<Program>None</Program>
 		<CustomPath></CustomPath>
 	</OutputLibrary>
-	<DefaultOutputDir></DefaultOutputDir>
+	<DefaultOutputDir>G:\HDTV</DefaultOutputDir>
 	<VideoAttributes>
 		<Encoder>Match</Encoder>
 		<AspectRatio>No Change</AspectRatio>
@@ -24,7 +25,7 @@
 		<EncodeBitrate>0</EncodeBitrate>
 		<HeaderBitrate>0</HeaderBitrate>
 		<MaxBitrate>0</MaxBitrate>
-		<EncodingMode>SP</EncodingMode>
+		<EncodingMode>DP</EncodingMode>
 		<DeinterlaceMethod>None</DeinterlaceMethod>
 		<FrameRate>No Change</FrameRate>
 		<ResizeQuality>High</ResizeQuality>
@@ -37,11 +38,4 @@
 		<AllowMultiAudio>False</AllowMultiAudio>
 		<LPCMEndianess>Little</LPCMEndianess>
 	</AudioAttributes>
-	<Transitions>
-		<Format>None</Format>
-		<Duration>0.000000</Duration>
-		<Midpoint>0.500000</Midpoint>
-	</Transitions>
 </VRDOutputProfile>
-
-</VRDOutputProfileList>
