@@ -2319,6 +2319,7 @@ Function vrdtvsp_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder             ""vrdtvsp_mediainfoexe64=" & vrdtvsp_mediainfoexe64 & """")
 		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder               ""vrdtvsp_ffprobeexe64=" & vrdtvsp_ffprobeexe64 & """")
 		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder                ""vrdtvsp_ffmpegexe64=" & vrdtvsp_ffmpegexe64 & """")
+		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder         ""vrdtvsp_ffmpegexe64_OpenCL=" & vrdtvsp_ffmpegexe64_OpenCL & """")
 		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder             ""vrdtvsp_dgindexNVexe64=" & vrdtvsp_dgindexNVexe64 & """")
 		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder              ""vrdtvsp_Insomniaexe64=" & vrdtvsp_Insomniaexe64 & """")
 		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder                 ""C_source_TS_Folder=" & C_source_TS_Folder & """")
@@ -2372,6 +2373,7 @@ Function vrdtvsp_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 	C_object_saved_ffmpeg_commands.WriteLine("Set ""vrdtvsp_mediainfoexe64=" & vrdtvsp_mediainfoexe64 & """")
 	C_object_saved_ffmpeg_commands.WriteLine("Set ""vrdtvsp_ffprobeexe64=" & vrdtvsp_ffprobeexe64 & """")
 	C_object_saved_ffmpeg_commands.WriteLine("Set ""vrdtvsp_ffmpegexe64=" & vrdtvsp_ffmpegexe64 & """")
+	C_object_saved_ffmpeg_commands.WriteLine("Set ""vrdtvsp_ffmpegexe64_OpenCL=" & vrdtvsp_ffmpegexe64_OpenCL & """")
 	C_object_saved_ffmpeg_commands.WriteLine("Set ""vrdtvsp_dgindexNVexe64=" & vrdtvsp_dgindexNVexe64 & """")
 	C_object_saved_ffmpeg_commands.WriteLine("Set ""vrdtvsp_Insomniaexe64=" & vrdtvsp_Insomniaexe64 & """")
 	C_object_saved_ffmpeg_commands.WriteLine("REM")
@@ -3958,7 +3960,7 @@ IF V_INCOMING_BITRATE = 0  Then
 			vpy_denoise = ""								' flag no denoising for progressive AVC
 			vpy_dsharpen = ""								' flag no sharpening for progressive AVC
 			' probesize 200 Mb, analyzeduration 200 seconds 2021.02.17
-			ff_cmd_string =	"""" & vrdtvsp_ffmpegexe64 & """ " &_
+			ff_cmd_string =	"""" & vrdtvsp_ffmpegexe64_OpenCL & """ " &_
 							"-hide_banner -v verbose -nostats " &_
 							"-probesize 200M -analyzeduration 200M " &_
 							"-i """ & CF_QSF_AbsolutePathName & """ " &_
@@ -3980,7 +3982,7 @@ IF V_INCOMING_BITRATE = 0  Then
 			vpy_denoise  = "strength=0.06, cstrength=0.06"	' flag denoising  for progressive mpeg2
 			vpy_dsharpen = "strength=0.3"					' flag sharpening for progressive mpeg2
 			' probesize 120 Mb, analyzeduration 120 seconds 2021.02.17
-			ff_cmd_string =	"""" & vrdtvsp_ffmpegexe64 & """ " &_
+			ff_cmd_string =	"""" & vrdtvsp_ffmpegexe64_OpenCL & """ " &_
 							"-hide_banner -v verbose -nostats " &_
 							"-f vapoursynth -i """ & CF_VPY_AbsolutePathName & """ " &_
 							"-probesize 200M -analyzeduration 200M " &_
@@ -4028,7 +4030,7 @@ IF V_INCOMING_BITRATE = 0  Then
 			vpy_denoise = ""								' flag no denoising for interlaced AVC
 			vpy_dsharpen = "strength=0.2"					' flag sharpening   for interlaced AVC
 			' probesize 120 Mb, analyzeduration 120 seconds 2021.02.17
-			ff_cmd_string =	"""" & vrdtvsp_ffmpegexe64 & """ " &_
+			ff_cmd_string =	"""" & vrdtvsp_ffmpegexe64_OpenCL & """ " &_
 							"-hide_banner -v verbose -nostats " &_
 							"-f vapoursynth -i """ & CF_VPY_AbsolutePathName & """ " &_
 							"-probesize 200M -analyzeduration 200M " &_
@@ -4053,7 +4055,7 @@ IF V_INCOMING_BITRATE = 0  Then
 				' probesize 120 Mb, analyzeduration 120 seconds 2021.02.17
 				vpy_denoise  = "strength=0.05, cstrength=0.05"	' flag denoising  for footy interlaced avc, since it seems to be blurry nad noisy as at 2022.06
 				vpy_dsharpen = "strength=0.25"					' flag sharpening for footy interlaced avc, since it seems to be blurry nad noisy as at 2022.06
-				ff_cmd_string =	"""" & vrdtvsp_ffmpegexe64 & """ " &_
+				ff_cmd_string =	"""" & vrdtvsp_ffmpegexe64_OpenCL & """ " &_
 								"-hide_banner -v verbose -nostats " &_
 								"-f vapoursynth -i """ & CF_VPY_AbsolutePathName & """ " &_
 								"-probesize 200M -analyzeduration 200M " &_
@@ -4082,7 +4084,7 @@ IF V_INCOMING_BITRATE = 0  Then
 			vpy_denoise = "strength=0.06, cstrength=0.06"	' flag denoising  for interlaced mpeg2
 			vpy_dsharpen = "strength=0.3"					' flag sharpening for interlaced mpeg2
 			' probesize 120 Mb, analyzeduration 120 seconds 2021.02.17
-			ff_cmd_string =	"""" & vrdtvsp_ffmpegexe64 & """ " &_
+			ff_cmd_string =	"""" & vrdtvsp_ffmpegexe64_OpenCL & """ " &_
 							"-hide_banner -v verbose -nostats " &_
 							"-f vapoursynth -i """ & CF_VPY_AbsolutePathName & """ " &_
 							"-probesize 200M -analyzeduration 200M " &_
@@ -4261,8 +4263,8 @@ IF V_INCOMING_BITRATE = 0  Then
 	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(0) = "REM " & vrdtvsp_current_datetime_string()
 	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1) = "ECHO !DATE! !TIME!"
 	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(2) = "DEL /F """ & CF_TARGET_AbsolutePathName & """"
-	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(3) = "REM """ & vrdtvsp_ffmpegexe64 & """ -hide_banner -v verbose -init_hw_device list"
-	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(4) = "REM """ & vrdtvsp_ffmpegexe64 & """ -hide_banner -v verbose -hide_banner -h encoder=hevc_nvenc"
+	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(3) = "REM """ & vrdtvsp_ffmpegexe64_OpenCL & """ -hide_banner -v verbose -init_hw_device list"
+	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(4) = "REM """ & vrdtvsp_ffmpegexe64_OpenCL & """ -hide_banner -v verbose -hide_banner -h encoder=hevc_nvenc"
 	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(5) = ff_cmd_string ' for the final return status to be good, this must be the final command in the array
 	CF_exe_status = vrdtvsp_Exec_in_a_DOS_BAT_file(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log 
 	Erase vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array
