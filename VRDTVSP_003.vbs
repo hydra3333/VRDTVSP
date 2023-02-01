@@ -30,6 +30,17 @@ Option Explicit
 '		there are a range of dependencies for locations of .exe files and whatnot, 
 '			including Vapoursynth and DG-tools and ffmpeg and ffprobe and mediainfo
 '
+' 2023.02.02 a MAJOR change due to SEVERE performance degradation with direct .vpy input to ffmpeg
+'	Use vspipe into ffmpeg instead of direct .vpy input to ffmpeg since having
+'	more than one filter SEVERELY degrades fps througput when going direct .vpy input to ffmpeg
+'		eg from 213 fps when using vspipe, down to 38 fps when going direct .vpy input to ffmpeg
+'	This performance degradation does NOT occur when using the vspipe approach.
+'	See from this post down:
+'	https://forum.videohelp.com/threads/397728-ffmpeg-accepting-vapoursynth-vpy-input-directly-and-gpu-accelerated-speed#post2679865
+'	and in particular this post: https://forum.videohelp.com/threads/397728-ffmpeg-accepting-vapoursynth-vpy-input-directly-and-gpu-accelerated-speed#post2679915
+'	Use vspipe like:
+'		"vspipe.exe" --container y4m "input.vpy" - | "ffmpeg.exe" -f yuv4mpegpipe -i pipe: 
+'
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' 1. Check and Exit if this .vbs isn't run under CSCRIPT (not WSCRIPT which is the default)
 '    NOTE:  For ANY of this to work, the vb script MUST be run under Cscript host - or, things like stdout fail to work.
