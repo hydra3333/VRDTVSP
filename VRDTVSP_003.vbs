@@ -3978,8 +3978,8 @@ IF V_INCOMING_BITRATE = 0  Then
 			' 2023.02.02 do not add vspipe here since we are doing -c:v copy without any .vpy involvement
 			ff_cmd_string =	"""" & vrdtvsp_ffmpegexe64_OpenCL & """ " &_
 							"-hide_banner -v verbose -nostats " &_
-							"-probesize 200M -analyzeduration 200M " &_
 							"-i """ & CF_QSF_AbsolutePathName & """ " &_
+							"-probesize 200M -analyzeduration 200M " &_
 							"-c:v copy " &_
 							"-fps_mode passthrough -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental " &_
 							"-movflags +faststart+write_colr "
@@ -4299,13 +4299,14 @@ IF V_INCOMING_BITRATE = 0  Then
 	'	and then synchronously Run the .bat file
 	'	then examine the returned errorlevel and the logfile
 	'
-	ReDim vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(5) ' base 0, so the dimension is always 1 less than the number of commands
+	ReDim vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(6) ' base 0, so the dimension is always 1 less than the number of commands
 	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(0) = "REM " & vrdtvsp_current_datetime_string()
 	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(1) = "ECHO !DATE! !TIME!"
 	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(2) = "DEL /F """ & CF_TARGET_AbsolutePathName & """"
 	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(3) = "REM """ & vrdtvsp_ffmpegexe64_OpenCL & """ -hide_banner -v verbose -init_hw_device list"
 	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(4) = "REM """ & vrdtvsp_ffmpegexe64_OpenCL & """ -hide_banner -v verbose -hide_banner -h encoder=hevc_nvenc"
-	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(5) = ff_cmd_string ' for the final return status to be good, this must be the final command in the array
+	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(5) = "REM """ & vrdtvsp_vspipeexe64 & """ --progress --filter-time --container y4m """ & CF_VPY_AbsolutePathName & """ - >NUL"	' 2023.02.02 add vspipe
+	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(6) = ff_cmd_string ' for the final return status to be good, this must be the final command in the array
 	CF_exe_status = vrdtvsp_Exec_in_a_DOS_BAT_file(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log 
 	Erase vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array
 	If (CF_exe_status <> 0) OR (NOT fso.FileExists(CF_TARGET_AbsolutePathName)) Then
