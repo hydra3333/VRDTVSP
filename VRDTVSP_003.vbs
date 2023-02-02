@@ -2481,7 +2481,7 @@ Function vrdtvsp_exec_a_command_and_show_stdout_stderr (byVAL eac_command_string
 	'		eac_exe_cmd_string = "Taskkill ""something"""
 	'		eac_exe_cmd_string = "Taskkill ""something"" 2>&1"
 	If vrdtvsp_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
-		eac_exe_object = "REM " & eac_command_string ' comment out any action
+		eac_command_string = "REM " & vrdtvsp_dos_escape_string(eac_command_string) ' comment out any action ' 2023.02.02 dos escape the string for a REM and for an ECHO
 	End If
 	WScript.StdOut.WriteLine("EXEC command: " & eac_command_string)
 	cumulative_sleep = 0
@@ -2521,7 +2521,7 @@ Function vrdtvsp_exec_a_FFMPEG_command_and_show_stderr_only (byVAL eac_command_s
 	WScript.StdOut.WriteLine("======================================================================================================================================================")
 	WScript.StdOut.WriteLine("vrdtvsp_exec_a_FFMPEG_command_and_show_stderr_only " & vrdtvsp_current_datetime_string())
 	If vrdtvsp_DEVELOPMENT_NO_ACTIONS Then ' DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV DEV 
-		eac_exe_object = "REM " & eac_command_string ' comment out any action
+		eac_command_string = "REM " & vrdtvsp_dos_escape_string(eac_command_string) ' comment out any action
 	End If
 	WScript.StdOut.WriteLine("EXEC command: " & eac_command_string)
 	set eac_exe_object = wso.Exec(eac_command_string)
@@ -4305,7 +4305,7 @@ IF V_INCOMING_BITRATE = 0  Then
 	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(2) = "DEL /F """ & CF_TARGET_AbsolutePathName & """"
 	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(3) = "REM """ & vrdtvsp_ffmpegexe64_OpenCL & """ -hide_banner -v verbose -init_hw_device list"
 	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(4) = "REM """ & vrdtvsp_ffmpegexe64_OpenCL & """ -hide_banner -v verbose -hide_banner -h encoder=hevc_nvenc"
-	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(5) = "REM """ & vrdtvsp_vspipeexe64 & """ --progress --filter-time --container y4m """ & CF_VPY_AbsolutePathName & """ - >NUL"	' 2023.02.02 add vspipe
+	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(5) = vrdtvsp_dos_escape_string("REM """ & vrdtvsp_vspipeexe64 & """ --progress --filter-time --container y4m """ & CF_VPY_AbsolutePathName & """ - >NUL")	' 2023.02.02 add vspipe
 	vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array(6) = ff_cmd_string ' for the final return status to be good, this must be the final command in the array
 	CF_exe_status = vrdtvsp_Exec_in_a_DOS_BAT_file(vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array, True, True) ' print .bat, do the commands, print .log 
 	Erase vrdtvsp_Exec_in_a_DOS_BAT_file_cmd_array
@@ -4679,6 +4679,17 @@ IF V_INCOMING_BITRATE = 0  Then
 	vrdtvsp_Convert_File = 0	
 End Function
 '
+Function vrdtvsp_dos_escape_string(a_string)
+	Dim escaped_string
+	escaped_string = a_string
+	escaped_string = Replace(escaped_string, "(", "^(", 1, -1, vbTextCompare)
+	escaped_string = Replace(escaped_string, ")", "^)", 1, -1, vbTextCompare)
+	escaped_string = Replace(escaped_string, "<", "^<", 1, -1, vbTextCompare)
+	escaped_string = Replace(escaped_string, ">", "^>", 1, -1, vbTextCompare)
+	escaped_string = Replace(escaped_string, "|", "^|", 1, -1, vbTextCompare)
+	vrdtvsp_dos_escape_string = escaped_string
+End Function
+'
 Function vrdtvsp_writeline_for_vpy (vpy_filename_object, bat_filename_object, a_vpy_statement, prepend_string, append_string)
 	' Write vpy statements to a "normal" .vpy file and ".BAT-escaped" to the batch file used to re-create the .vpy file
 	' Parameters
@@ -4691,11 +4702,7 @@ Function vrdtvsp_writeline_for_vpy (vpy_filename_object, bat_filename_object, a_
 		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_writeline_for_vpy about to writeline vpy_filename_object       a_vpy_statement" & Space(Len(prepend_string)) & "=<" & a_vpy_statement & ">")
 	End If
 	vpy_filename_object.WriteLine(a_vpy_statement)
-	escaped_vpy_statement = a_vpy_statement
-	escaped_vpy_statement = Replace(escaped_vpy_statement, "(", "^(", 1, -1, vbTextCompare)
-	escaped_vpy_statement = Replace(escaped_vpy_statement, ")", "^)", 1, -1, vbTextCompare)
-	escaped_vpy_statement = Replace(escaped_vpy_statement, "<", "^<", 1, -1, vbTextCompare)
-	escaped_vpy_statement = Replace(escaped_vpy_statement, ">", "^>", 1, -1, vbTextCompare)
+	escaped_vpy_statement = vrdtvsp_dos_escape_string(a_vpy_statement)
 	escaped_vpy_statement = prepend_string & escaped_vpy_statement & append_string
 	If vrdtvsp_DEBUG Then
 		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_writeline_for_vpy about to writeline bat_filename_object escaped_vpy_statement=<" & escaped_vpy_statement & ">")
@@ -4735,7 +4742,7 @@ Function vrdtvsp_Exec_in_a_DOS_BAT_file (byVAL eiadbf_cmd_string_array, byVAL ei
 	'eiadbf_batfilename_object.WriteLine("ECHO !DATE! !TIME! STARTED *************************************************************************** >>""" & eiadbf_logfilename & """ 2>&1")
 	for i = eiadbf_lbound to eiadbf_ubound STEP 1
 		'eiadbf_batfilename_object.WriteLine("ECHO !DATE! !TIME! ------------------------" & " >>""" & eiadbf_logfilename & """ 2>&1")	' redirect both stdout and stderr to the logfile
-		eiadbf_batfilename_object.WriteLine("ECHO " & eiadbf_cmd_string_array(i) & " >>""" & eiadbf_logfilename & """ 2>&1")			' redirect both stdout and stderr to the logfile
+		eiadbf_batfilename_object.WriteLine("ECHO " & vrdtvsp_dos_escape_string(eiadbf_cmd_string_array(i)) & " >>""" & eiadbf_logfilename & """ 2>&1")			' redirect both stdout and stderr to the logfile
 		eiadbf_batfilename_object.WriteLine(eiadbf_cmd_string_array(i) & " >>""" & eiadbf_logfilename & """ 2>&1")						' redirect both stdout and stderr to the logfile
 		eiadbf_batfilename_object.WriteLine("Set EL=%ERRORLEVEL%" & " >>""" & eiadbf_logfilename & """ 2>&1")							' redirect both stdout and stderr to the logfile
 		'eiadbf_batfilename_object.WriteLine("ECHO that returned Errorlevel=%EL%" & " >>""" & eiadbf_logfilename & """ 2>&1")			' redirect both stdout and stderr to the logfile
