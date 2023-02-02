@@ -39,7 +39,7 @@ Option Explicit
 '	https://forum.videohelp.com/threads/397728-ffmpeg-accepting-vapoursynth-vpy-input-directly-and-gpu-accelerated-speed#post2679865
 '	and in particular this post: https://forum.videohelp.com/threads/397728-ffmpeg-accepting-vapoursynth-vpy-input-directly-and-gpu-accelerated-speed#post2679915
 '	Use vspipe like:
-'		"vspipe.exe" --container y4m "input.vpy" - | "ffmpeg.exe" -f yuv4mpegpipe -i pipe: 
+'		"vspipe.exe" --container y4m "input.vpy" - | "ffmpeg.exe" -f yuv4mpegpipe -i pipe: ...
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' 1. Check and Exit if this .vbs isn't run under CSCRIPT (not WSCRIPT which is the default)
@@ -134,6 +134,7 @@ Dim vapoursynth_root
 Dim vrdtvsp_mp4boxexex64
 Dim vrdtvsp_mediainfoexe64
 Dim vrdtvsp_ffprobeexe64
+Dim vrdtvsp_vspipeexe64	' 2023.02.02 add vspipe
 Dim vrdtvsp_ffmpegexe64
 Dim vrdtvsp_ffmpegexe64_OpenCL
 Dim vrdtvsp_dgindexNVexe64
@@ -145,6 +146,7 @@ vapoursynth_root = fso.GetAbsolutePathName("C:\SOFTWARE\Vapoursynth-x64\")
 vrdtvsp_mp4boxexex64 = fso.GetAbsolutePathName(fso.BuildPath("C:\SOFTWARE\ffmpeg\0-homebuilt-x64\","MP4Box.exe"))
 vrdtvsp_mediainfoexe64 = fso.GetAbsolutePathName(fso.BuildPath("C:\SOFTWARE\MediaInfo\","MediaInfo.exe"))
 vrdtvsp_ffprobeexe64 = fso.GetAbsolutePathName(fso.BuildPath(vapoursynth_root,"ffprobe.exe"))
+vrdtvsp_vspipeexe64 = fso.GetAbsolutePathName(fso.BuildPath(vapoursynth_root,"vspipe.exe"))	' 2023.02.02 add vspipe
 vrdtvsp_ffmpegexe64 = fso.GetAbsolutePathName(fso.BuildPath(vapoursynth_root,"ffmpeg.exe"))
 vrdtvsp_ffmpegexe64_OpenCL = fso.GetAbsolutePathName(fso.BuildPath(vapoursynth_root,"ffmpeg_OpenCL.exe"))
 vrdtvsp_dgindexNVexe64 = fso.GetAbsolutePathName(fso.BuildPath(vapoursynth_root,"DGIndex\DGIndexNV.exe"))
@@ -2329,6 +2331,7 @@ Function vrdtvsp_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder               ""vrdtvsp_mp4boxexex64=" & vrdtvsp_mp4boxexex64 & """")
 		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder             ""vrdtvsp_mediainfoexe64=" & vrdtvsp_mediainfoexe64 & """")
 		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder               ""vrdtvsp_ffprobeexe64=" & vrdtvsp_ffprobeexe64 & """")
+		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder                ""vrdtvsp_vspipeexe64=" & vrdtvsp_vspipeexe64 & """")	' 2023.02.02 add vspipe
 		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder                ""vrdtvsp_ffmpegexe64=" & vrdtvsp_ffmpegexe64 & """")
 		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder         ""vrdtvsp_ffmpegexe64_OpenCL=" & vrdtvsp_ffmpegexe64_OpenCL & """")
 		WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_files_in_a_folder             ""vrdtvsp_dgindexNVexe64=" & vrdtvsp_dgindexNVexe64 & """")
@@ -2383,6 +2386,7 @@ Function vrdtvsp_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 	C_object_saved_ffmpeg_commands.WriteLine("Set ""vrdtvsp_mp4boxexex64=" & vrdtvsp_mp4boxexex64 & """")
 	C_object_saved_ffmpeg_commands.WriteLine("Set ""vrdtvsp_mediainfoexe64=" & vrdtvsp_mediainfoexe64 & """")
 	C_object_saved_ffmpeg_commands.WriteLine("Set ""vrdtvsp_ffprobeexe64=" & vrdtvsp_ffprobeexe64 & """")
+	C_object_saved_ffmpeg_commands.WriteLine("Set ""vrdtvsp_vspipeexe64=" & vrdtvsp_vspipeexe64 & """")	' 2023.02.02 add vspipe
 	C_object_saved_ffmpeg_commands.WriteLine("Set ""vrdtvsp_ffmpegexe64=" & vrdtvsp_ffmpegexe64 & """")
 	C_object_saved_ffmpeg_commands.WriteLine("Set ""vrdtvsp_ffmpegexe64_OpenCL=" & vrdtvsp_ffmpegexe64_OpenCL & """")
 	C_object_saved_ffmpeg_commands.WriteLine("Set ""vrdtvsp_dgindexNVexe64=" & vrdtvsp_dgindexNVexe64 & """")
@@ -3971,6 +3975,7 @@ IF V_INCOMING_BITRATE = 0  Then
 			vpy_denoise = ""								' flag no denoising for progressive AVC
 			vpy_dsharpen = ""								' flag no sharpening for progressive AVC
 			' probesize 200 Mb, analyzeduration 200 seconds 2021.02.17
+			' 2023.02.02 do not add vspipe here since we are doing -c:v copy without any .vpy involvement
 			ff_cmd_string =	"""" & vrdtvsp_ffmpegexe64_OpenCL & """ " &_
 							"-hide_banner -v verbose -nostats " &_
 							"-probesize 200M -analyzeduration 200M " &_
@@ -3993,9 +3998,15 @@ IF V_INCOMING_BITRATE = 0  Then
 			vpy_denoise  = "strength=0.06, cstrength=0.06"	' flag denoising  for progressive mpeg2
 			vpy_dsharpen = "strength=0.3"					' flag sharpening for progressive mpeg2
 			' probesize 120 Mb, analyzeduration 120 seconds 2021.02.17
-			ff_cmd_string =	"""" & vrdtvsp_ffmpegexe64_OpenCL & """ " &_
+			' 2023.02.02 add vspipe like "vspipe.exe" --container y4m "input.vpy" - | "ffmpeg.exe" -f yuv4mpegpipe -i pipe: ...
+			' it was
+			'	ff_cmd_string =	"""" & vrdtvsp_ffmpegexe64_OpenCL & """ " &_
+			'					"-hide_banner -v verbose -nostats " &_
+			'					"-f vapoursynth -i """ & CF_VPY_AbsolutePathName & """ " &_
+			ff_cmd_string =	"""" & vrdtvsp_vspipeexe64 & """ --container y4m """ & CF_VPY_AbsolutePathName & """ - | " &_
+							"""" & vrdtvsp_ffmpegexe64_OpenCL & """ " &_
 							"-hide_banner -v verbose -nostats " &_
-							"-f vapoursynth -i """ & CF_VPY_AbsolutePathName & """ " &_
+							"-f yuv4mpegpipe -i pipe: " &_
 							"-probesize 200M -analyzeduration 200M " &_
 							it_video_delay &_
 							"-i """ & CF_QSF_AbsolutePathName & """ " &_
@@ -4041,9 +4052,15 @@ IF V_INCOMING_BITRATE = 0  Then
 			vpy_denoise = ""								' flag no denoising for interlaced AVC
 			vpy_dsharpen = "strength=0.2"					' flag sharpening   for interlaced AVC
 			' probesize 120 Mb, analyzeduration 120 seconds 2021.02.17
-			ff_cmd_string =	"""" & vrdtvsp_ffmpegexe64_OpenCL & """ " &_
+			' 2023.02.02 add vspipe like "vspipe.exe" --container y4m "input.vpy" - | "ffmpeg.exe" -f yuv4mpegpipe -i pipe: ...
+			' it was
+			'	ff_cmd_string =	"""" & vrdtvsp_ffmpegexe64_OpenCL & """ " &_
+			'					"-hide_banner -v verbose -nostats " &_
+			'					"-f vapoursynth -i """ & CF_VPY_AbsolutePathName & """ " &_
+			ff_cmd_string =	"""" & vrdtvsp_vspipeexe64 & """ --container y4m """ & CF_VPY_AbsolutePathName & """ - | " &_
+							"""" & vrdtvsp_ffmpegexe64_OpenCL & """ " &_
 							"-hide_banner -v verbose -nostats " &_
-							"-f vapoursynth -i """ & CF_VPY_AbsolutePathName & """ " &_
+							"-f yuv4mpegpipe -i pipe: " &_
 							"-probesize 200M -analyzeduration 200M " &_
 							it_video_delay &_
 							"-i """ & CF_QSF_AbsolutePathName & """ " &_
@@ -4066,9 +4083,15 @@ IF V_INCOMING_BITRATE = 0  Then
 				' probesize 120 Mb, analyzeduration 120 seconds 2021.02.17
 				vpy_denoise  = "strength=0.05, cstrength=0.05"	' flag denoising  for footy interlaced avc, since it seems to be blurry nad noisy as at 2022.06
 				vpy_dsharpen = "strength=0.25"					' flag sharpening for footy interlaced avc, since it seems to be blurry nad noisy as at 2022.06
-				ff_cmd_string =	"""" & vrdtvsp_ffmpegexe64_OpenCL & """ " &_
+				' 2023.02.02 add vspipe like "vspipe.exe" --container y4m "input.vpy" - | "ffmpeg.exe" -f yuv4mpegpipe -i pipe: ...
+				' it was
+				'	ff_cmd_string =	"""" & vrdtvsp_ffmpegexe64_OpenCL & """ " &_
+				'					"-hide_banner -v verbose -nostats " &_
+				'					"-f vapoursynth -i """ & CF_VPY_AbsolutePathName & """ " &_
+				ff_cmd_string =	"""" & vrdtvsp_vspipeexe64 & """ --container y4m """ & CF_VPY_AbsolutePathName & """ - | " &_
+								"""" & vrdtvsp_ffmpegexe64_OpenCL & """ " &_
 								"-hide_banner -v verbose -nostats " &_
-								"-f vapoursynth -i """ & CF_VPY_AbsolutePathName & """ " &_
+								"-f yuv4mpegpipe -i pipe: " &_
 								"-probesize 200M -analyzeduration 200M " &_
 								it_video_delay &_
 								"-i """ & CF_QSF_AbsolutePathName & """ " &_
@@ -4095,9 +4118,15 @@ IF V_INCOMING_BITRATE = 0  Then
 			vpy_denoise = "strength=0.06, cstrength=0.06"	' flag denoising  for interlaced mpeg2
 			vpy_dsharpen = "strength=0.3"					' flag sharpening for interlaced mpeg2
 			' probesize 120 Mb, analyzeduration 120 seconds 2021.02.17
-			ff_cmd_string =	"""" & vrdtvsp_ffmpegexe64_OpenCL & """ " &_
+			' 2023.02.02 add vspipe like "vspipe.exe" --container y4m "input.vpy" - | "ffmpeg.exe" -f yuv4mpegpipe -i pipe: ...
+			' it was
+			'		ff_cmd_string =	"""" & vrdtvsp_ffmpegexe64_OpenCL & """ " &_
+			'				"-hide_banner -v verbose -nostats " &_
+			'				"-f vapoursynth -i """ & CF_VPY_AbsolutePathName & """ " &_
+			ff_cmd_string =	"""" & vrdtvsp_vspipeexe64 & """ --container y4m """ & CF_VPY_AbsolutePathName & """ - | " &_
+							"""" & vrdtvsp_ffmpegexe64_OpenCL & """ " &_
 							"-hide_banner -v verbose -nostats " &_
-							"-f vapoursynth -i """ & CF_VPY_AbsolutePathName & """ " &_
+							"-f yuv4mpegpipe -i pipe: " &_
 							"-probesize 200M -analyzeduration 200M " &_
 							it_video_delay &_
 							"-i """ & CF_QSF_AbsolutePathName & """ " &_
