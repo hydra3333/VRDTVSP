@@ -3,7 +3,7 @@ Option Explicit
 ' VRDTVSP - automatically parse, convert video/audio from TVSchedulerPro TV recordings, 
 ' and perhaps adscan them too. This looks only at .TS .VOB .MP4 .MPG files and autofixes associated .vprj files.
 '
-' Copyright hydra3333@gmail.com 2021 2022
+' Copyright hydra3333@gmail.com 2021 2022 2023 2024
 '
 ' Invoke from a DOS commandline or a .bat, Interactively or in a Scheduled Task 
 ' using a single one-line commndline.
