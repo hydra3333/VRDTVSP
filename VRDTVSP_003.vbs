@@ -3715,10 +3715,17 @@ IF V_INCOMING_BITRATE = 0  Then
 		FF_V_Target_BufSize = ROUND(FF_V_Target_BitRate * 2)			' double
 	Else ' by  the time it gets here it must be MPEG2 flagged as V_IsMPEG2
 		'REM is MPEG2 input, so GUESS at reasonable H.264 TARGET BITRATE
-		FF_V_Target_BitRate = ROUND(2000000)
-		FF_V_Target_Minimum_BitRate = ROUND(100000)
-		FF_V_Target_Maximum_BitRate = ROUND(FF_V_Target_BitRate * 2)
-		FF_V_Target_BufSize = ROUND(FF_V_Target_BitRate * 2)
+		If Ucase(CF_FILE_Ext) = Ucase("vob") OR Ucase(CF_FILE_Ext) = Ucase("mpg") Then
+			FF_V_Target_BitRate = ROUND(4000000)
+			FF_V_Target_Minimum_BitRate = ROUND(200000)
+			FF_V_Target_Maximum_BitRate = ROUND(FF_V_Target_BitRate * 2)
+			FF_V_Target_BufSize = ROUND(FF_V_Target_BitRate * 2)
+		else
+			FF_V_Target_BitRate = ROUND(2000000)
+			FF_V_Target_Minimum_BitRate = ROUND(100000)
+			FF_V_Target_Maximum_BitRate = ROUND(FF_V_Target_BitRate * 2)
+			FF_V_Target_BufSize = ROUND(FF_V_Target_BitRate * 2)
+		End If
 	End If
 	'
 	' NOTE:	After testing, it has been found that ffprobe can mis-report bitrates in the QSF'd file by about double.
