@@ -3707,14 +3707,14 @@ IF V_INCOMING_BITRATE = 0  Then
 	' Calculate the target minimum_bitrate, target_bitrate, maximum_bitrate, buffer size
 	' Note that the only reliable variable obtained from the QSF file is Q_V_BitRate
 	If V_IsAVC Then ' Ucase(Q_V_Codec_legacy) = Ucase("AVC")
-		REM CALCULATE H.264 TARGET BITRATES FROM THE INCOMING BITRATE
-		REM ffmpeg nvenc typically seems to undershoot the target bitrate, so bump it up.
+		'REM CALCULATE H.264 TARGET BITRATES FROM THE INCOMING BITRATE
+		'REM ffmpeg nvenc typically seems to undershoot the target bitrate, so bump it up.
 		FF_V_Target_BitRate = ROUND(V_INCOMING_BITRATE * 1.05)			' + 5%
 		FF_V_Target_Minimum_BitRate = ROUND(V_INCOMING_BITRATE * 0.20)	' 20%
 		FF_V_Target_Maximum_BitRate = ROUND(FF_V_Target_BitRate * 2)	' double
 		FF_V_Target_BufSize = ROUND(FF_V_Target_BitRate * 2)			' double
 	Else ' by  the time it gets here it must be MPEG2 flagged as V_IsMPEG2
-		REM is MPEG2 input, so GUESS at reasonable H.264 TARGET BITRATE
+		'REM is MPEG2 input, so GUESS at reasonable H.264 TARGET BITRATE
 		FF_V_Target_BitRate = ROUND(2000000)
 		FF_V_Target_Minimum_BitRate = ROUND(100000)
 		FF_V_Target_Maximum_BitRate = ROUND(FF_V_Target_BitRate * 2)
