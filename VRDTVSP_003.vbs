@@ -1,7 +1,7 @@
 Option Explicit
 '
 ' VRDTVSP - automatically parse, convert video/audio from TVSchedulerPro TV recordings, 
-' and perhaps adscan them too. This looks only at .TS .MP4 .MPG files and autofixes associated .vprj files.
+' and perhaps adscan them too. This looks only at .TS .VOB .MP4 .MPG files and autofixes associated .vprj files.
 '
 ' Copyright hydra3333@gmail.com 2021 2022
 '
@@ -406,13 +406,14 @@ WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
 WScript.StdOut.WriteLine("======================================================================================================================================================")
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
-' Move .ts .mp4 .mpg .brpj files from the Source Folder to the source folder sincethat is where we process from
+' Move .ts .vob .mp4 .mpg .brpj files from the Source Folder to the source folder sincethat is where we process from
 '
 If vrdtvsp_CAPTURE_TS_Folder <> "" Then
 	WScript.StdOut.WriteLine("======================================================================================================================================================")
 	WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
 	WScript.StdOut.WriteLine("STARTED VRDTVSP Moving SOURCE files from CAPTURE_TS folder """ & vrdtvsp_CAPTURE_TS_Folder & """ to SOURCE_TS folder """ & vrdtvsp_source_TS_Folder & """ ...")
     vrdtvsp_status = vrdtvsp_move_files_to_folder(vrdtvsp_CAPTURE_TS_Folder & "\*.ts", vrdtvsp_source_TS_Folder & "\")    ' ignore any status
+    vrdtvsp_status = vrdtvsp_move_files_to_folder(vrdtvsp_CAPTURE_TS_Folder & "\*.vob", vrdtvsp_source_TS_Folder & "\")    ' ignore any status
     vrdtvsp_status = vrdtvsp_move_files_to_folder(vrdtvsp_CAPTURE_TS_Folder & "\*.mp4", vrdtvsp_source_TS_Folder & "\")   ' ignore any status
     vrdtvsp_status = vrdtvsp_move_files_to_folder(vrdtvsp_CAPTURE_TS_Folder & "\*.mpg", vrdtvsp_source_TS_Folder & "\")   ' ignore any status
     vrdtvsp_status = vrdtvsp_move_files_to_folder(vrdtvsp_CAPTURE_TS_Folder & "\*.vprj", vrdtvsp_source_TS_Folder & "\")  ' ignore any status '.vprj are associated with .mp4 of the same BaseName
@@ -423,8 +424,8 @@ End If
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' In Top Level Folders: Source
-' (the function filters for file Extensions: .ts .mp4 .mpg, and autofixes .vprj which are associated with .mpg and .mp4 and should have the same BaseName)
-'   a) Remove special characters in filenames for file Extensions: .ts .mp4 .mpg and autofix .vprj
+' (the function filters for file Extensions: .ts .vob .mp4 .mpg, and autofixes .vprj which are associated with .mpg and .mp4 and should have the same BaseName)
+'   a) Remove special characters in filenames for file Extensions: .ts .vob .mp4 .mpg and autofix .vprj
 '   b) Modify the filenames based on the filename content including reformatting the date in the filename
 '	c) Also Modily content of associated .vprj files (they are .xml content) to link to the new media filename since we are modifying the pair
 '
@@ -449,9 +450,9 @@ WScript.StdOut.WriteLine("======================================================
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Convert Video files and create the associated .vprj files by running adscan on the media file
-' The function filters for file Extensions: .ts .mp4 .mpg and creates .vprj
+' The function filters for file Extensions: .ts .vob .mp4 .mpg and creates .vprj
 '
-'.................. START video processing for the FULL SOURCE TS folder (not tree) - the function has a big loop - converts .TS .mp4 .mpg Source files then moves them to Done or Failed
+'.................. START video processing for the FULL SOURCE TS folder (not tree) - the function has a big loop - converts .TS .vob .mp4 .mpg Source files then moves them to Done or Failed
 ' ***** Rely on these already being defined/set Globally BEFORE invoking the conversion function
 ' ***** 	vrdtvsp_DEBUG
 ' ***** 	vrdtvsp_DEVELOPMENT_NO_ACTIONS
@@ -484,8 +485,8 @@ WScript.StdOut.WriteLine("======================================================
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' In Top Level Folders: Destination 
-' (the function filters for file Extensions: .ts .mp4 .mpg, and autofixes .vprj which are associated with .mpg and .mp4 and should have the same BaseName)
-'   a) Remove special characters in filenames for file Extensions: .ts .mp4 .mpg and autofix .vprj
+' (the function filters for file Extensions: .ts .vob .mp4 .mpg, and autofixes .vprj which are associated with .mpg and .mp4 and should have the same BaseName)
+'   a) Remove special characters in filenames for file Extensions: .ts .vob .mp4 .mpg and autofix .vprj
 '   b) Modify the filenames based on the filename content including reformatting the date in the filename
 '	c) Also Modily content of associated .vprj files (they are .xml content) to link to the new media filename since we are modifying the pair
 '
@@ -509,7 +510,7 @@ WScript.StdOut.WriteLine("======================================================
 '
 '----------------------------------------------------------------------------------------------------------------------------------------
 ' Fix the DateCreated and DateModified timestamps based on the date in the filename (a PowerShell command ... learn how to do that on the commandline)
-' in Top Level Folders and Subfolders: Source and Destination (the function filters for file Extensions: .ts .mp4 .mpg but NOT .vprj)
+' in Top Level Folders and Subfolders: Source and Destination (the function filters for file Extensions: .ts .vob .mp4 .mpg but NOT .vprj)
 '
 WScript.StdOut.WriteLine("======================================================================================================================================================")
 WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
@@ -1042,8 +1043,8 @@ End Function
 '****************************************************************************************************************************************
 '
 Function vrdtvsp_fix_filenames_in_a_folder_tree (the_folder_tree, do_subfolders_as_well, byRef ffiaft_count_checked, byRef ffiaft_count_fixed) 
-	' Function to traverse a folder tree ( a called function filters for file Extensions: .ts .mp4 .mpg)
-	'   a) Remove special characters in filenames for file Extensions: .ts .mp4 .mpg and autofixes associated .vprj
+	' Function to traverse a folder tree ( a called function filters for file Extensions: .ts .vob .mp4 .mpg)
+	'   a) Remove special characters in filenames for file Extensions: .ts .vob .mp4 .mpg and autofixes associated .vprj
 	'   b) modify the filenames based on the filename content including reformatting the date in the filename
 	' rely on global variable "fso"
     ' Parameters:
@@ -1086,8 +1087,8 @@ Function vrdtvsp_fix_filenames_in_a_folder_tree (the_folder_tree, do_subfolders_
 End Function
 '
 Sub vrdtvsp_ffiaft_Process_Files_In_Subfolders (objSpecifiedFolder, do_subfolders_as_well, byRef vrdtvsp_ffiaft_count_checked, byRef vrdtvsp_ffiaft_count_fixed) ' Process all files in specified folder tree
-	' Function to Process all files in specified folder tree OBJECT with file Extensions: .ts .mp4 .mpg
-	'   a) Remove special characters in filenames for file Extensions: .ts .mp4 .mpg and autofixes associated .vprj
+	' Function to Process all files in specified folder tree OBJECT with file Extensions: .ts .vob .mp4 .mpg
+	'   a) Remove special characters in filenames for file Extensions: .ts .vob .mp4 .mpg and autofixes associated .vprj
 	'   b) modify the filenames based on the filename content including reformatting the date in the filename
 	'   c) *** NOT THIS, do it outside : fix the file DateCreated and DateModified timestamps based on the date in the filename (a PowerShell command ... since DateCreated can't be modified in vbscript)
     ' rely on global variable "fso"
@@ -1108,7 +1109,7 @@ Sub vrdtvsp_ffiaft_Process_Files_In_Subfolders (objSpecifiedFolder, do_subfolder
 		If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_Process_Files_In_Subfolders: found File in collection=""" & objFile.Path & """")
         ext = UCase(fso.GetExtensionName(objFile.name))
         '********* FILTER BY FILE EXTENSION *********
-		If ext = Ucase("ts") OR ext = Ucase("mp4") OR ext = Ucase("mpg") Then ' ********** only process specific file extensions
+		If ext = Ucase("ts") OR ext = Ucase("vob") OR ext = Ucase("mp4") OR ext = Ucase("mpg") Then ' ********** only process specific file extensions
 			tmp_no_fixed = 0
 			vrdtvsp_ffiaft_count_checked = vrdtvsp_ffiaft_count_checked + 1
 			If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_ffiaft_Process_Files_In_Subfolders: recognised Extension of file in collection=""" & objFile.Path & """ and about to call vrdtvsp_ffiaft_pfis_Rename_a_File")
@@ -2280,15 +2281,15 @@ Function vrdtvsp_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 											byVal	C_saved_ffmpeg_commands_filename, _
 											byVal	C_do_Adscan, _
 											byVal	C_do_audio_delay )
-	' Loop and convert .TS .mp4 .mpg Source files in a folder into acceptable avc/aac .mp4 Destination files 
+	' Loop and convert .TS .vob .mp4 .mpg Source files in a folder into acceptable avc/aac .mp4 Destination files 
     ' Parameters: see below
 	' NOTES: 
 	'	Rely on these already being set Globally to True or False BEFORE invoking the conversion function: vrdtvsp_DEBUG, vrdtvsp_DEVELOPMENT_NO_ACTIONS, wso, fso, vrdtvsp_status
 	'	Check for C_source_TS_Folder = C_destination_mp4_Folder since we don't permit that
-	'	Convert .TS and .MP4 and .MPG files in the C_source_TS_Folder and create adscan .vprj files
+	'	Convert .TS and .VOB and .MP4 and .MPG files in the C_source_TS_Folder and create adscan .vprj files
 	'	Resulting .mp4 and .vprj goes into C_destination_mp4_Folder
-	'	Successfilly completed .TS and .MP4 and .MPG files (and associated .vprj, if any) goes into C_done_TS_Folder 
-	'	Failed-to-convert .TS and .MP4 files (and associated .vprj, if any) goes into C_failed_conversion_TS_Folder 
+	'	Successfilly completed .TS and .VOB and .MP4 and .MPG files (and associated .vprj, if any) goes into C_done_TS_Folder 
+	'	Failed-to-convert .TS and VOB and .MP4 files (and associated .vprj, if any) goes into C_failed_conversion_TS_Folder 
 	'	Use a scratch folder (on an SSD) in C_temp_path
 	'	Create file C_saved_ffmpeg_commands_filename to store commands/data used for: qsf, dgindex, .vpy, ffmpeg, adscan
 	'
@@ -2413,7 +2414,7 @@ Function vrdtvsp_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 	C_object_saved_ffmpeg_commands.WriteLine("Set ""C_do_audio_delay=" & C_do_audio_delay & """")
 	C_object_saved_ffmpeg_commands.WriteLine("REM")
 	C_object_saved_ffmpeg_commands.WriteLine("REM NO FILES WILL BE MOVED between folders ")
-	C_object_saved_ffmpeg_commands.WriteLine("REM the SOURCE      .TS and .mp4 and .mpg media files MUST already exist in folder: """ & C_source_TS_Folder & """")
+	C_object_saved_ffmpeg_commands.WriteLine("REM the SOURCE      .TS and .vob and .mp4 and .mpg media files MUST already exist in folder: """ & C_source_TS_Folder & """")
 	C_object_saved_ffmpeg_commands.WriteLine("REM the DESTINATION .mp4 and .vprj files will be created (overwritten) in folder  : """ & C_destination_mp4_Folder & """")
 	C_object_saved_ffmpeg_commands.WriteLine("REM NO FILES WILL BE MOVED between folders ")
 	C_object_saved_ffmpeg_commands.WriteLine("REM")
@@ -2427,14 +2428,14 @@ Function vrdtvsp_Convert_files_in_a_folder(	byVal	C_source_TS_Folder, _
 		C_FILE_BaseName = fso.GetBaseName(C_FILE_AbsolutePathName)
 		C_FILE_Ext = fso.GetExtensionName(C_FILE_AbsolutePathName)
         '********* FILTER BY FILE EXTENSION *********
-		If Ucase(C_FILE_Ext) = Ucase("ts") OR Ucase(C_FILE_Ext) = Ucase("mp4") OR Ucase(C_FILE_Ext) = Ucase("mpg") OR Ucase(C_FILE_Ext) = Ucase("vprj") Then ' ********** only process specific file extensions
+		If Ucase(C_FILE_Ext) = Ucase("ts") OR Ucase(C_FILE_Ext) = Ucase("vob") OR Ucase(C_FILE_Ext) = Ucase("mp4") OR Ucase(C_FILE_Ext) = Ucase("mpg") OR Ucase(C_FILE_Ext) = Ucase("vprj") Then ' ********** only process specific file extensions
 			WScript.StdOut.WriteLine("======================================================================================================================================================")
 			WScript.StdOut.WriteLine("#################### PROCESSING file C_FILE_AbsolutePathName=""" & C_FILE_AbsolutePathName & """ ========== " &  vrdtvsp_current_datetime_string())
 			WScript.StdOut.WriteLine("#################### PROCESSING file C_FILE_AbsolutePathName=""" & C_FILE_AbsolutePathName & """ ========== " &  vrdtvsp_current_datetime_string())
 			WScript.StdOut.WriteLine(" ")
 			Select Case Ucase(C_FILE_Ext)
 			Case Ucase("vprj") 										' it's in the source folder, ignore it
-			Case Ucase("ts"), Ucase("mp4"), Ucase("mpg")			' if it's one of these then convert it
+			Case Ucase("ts"),  Ucase("vob"), Ucase("mp4"), Ucase("mpg")			' if it's one of these then convert it
 				vrdtvsp_status = vrdtvsp_Convert_File(	C_FILE_AbsolutePathName, _
 														C_object_saved_ffmpeg_commands, _
 														C_source_TS_Folder, _
@@ -5801,12 +5802,12 @@ Function vrdtvsp_fix_timestamps_in_a_folder_tree (byVal ftiaft_folder_name, byVa
 	vrdtvsp_ps1_file_object.WriteLine("	# note we add -Recurse and leave ""\*"" off of the folder name")
 	vrdtvsp_ps1_file_object.WriteLine("	$ft_string=""tree"" ")
 	vrdtvsp_ps1_file_object.WriteLine("	echo ""Set file date-time timestamps: START WITH RECURSE for folder $ft_string '$Folder'"" ")
-	vrdtvsp_ps1_file_object.WriteLine("	$FileList = Get-ChildItem -Path ""$Folder"" -Recurse -File -Include '*.ts','*.mp4','*.mpg','*.vprj'")
+	vrdtvsp_ps1_file_object.WriteLine("	$FileList = Get-ChildItem -Path ""$Folder"" -Recurse -File -Include '*.ts','*.vob','*.mp4','*.mpg','*.vprj'")
 	vrdtvsp_ps1_file_object.WriteLine("} else {")
 	vrdtvsp_ps1_file_object.WriteLine("	# note we add ""\*"" to the folder name")
 	vrdtvsp_ps1_file_object.WriteLine("	$ft_string="""" ")
 	vrdtvsp_ps1_file_object.WriteLine("	echo ""Set file date-time timestamps: START WITH NON-RECURSE for folder $ft_string '$Folder'"" ")
-	vrdtvsp_ps1_file_object.WriteLine("	$FileList = Get-ChildItem -Path ""$Folder\*"" -File -Include '*.ts','*.mp4','*.mpg','*.vprj'")
+	vrdtvsp_ps1_file_object.WriteLine("	$FileList = Get-ChildItem -Path ""$Folder\*"" -File -Include '*.ts','*.vob','*.mp4','*.mpg','*.vprj'")
 	vrdtvsp_ps1_file_object.WriteLine("}")
 	vrdtvsp_ps1_file_object.WriteLine("$DateFormat = ""yyyy-MM-dd""")
 	vrdtvsp_ps1_file_object.WriteLine("foreach ($FL_Item in $FileList) {")
