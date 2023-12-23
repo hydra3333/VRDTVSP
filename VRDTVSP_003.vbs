@@ -5550,9 +5550,21 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 		'end if
 		'Wscript.StdOut.Write(" " & percent & "% ")
 		Wscript.StdOut.Write( "." & OutputGetState)
-		on error goto 0
+		' 2023.12.23 Changed to continue processing if error (new error has started popping up: Error # 462 The remote server machine does not exist or is unavailable)
+		Err.Clear
+		on error resume Next
+		'on error goto 0
 		Wscript.Sleep wait_ms
 		OutputGetState = VideoRedo.OutputGetState()
+		if Err.Number <> 0 Then
+			Wscript.StdOut.WriteLine("")
+			Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: File " & riqowv_QSF_AbsolutePathName & " : Error #" & CStr(Err.Number) & " " & Err.Description)
+			Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: Error #" & CStr(Err.Number) & " " & Err.Description & " at: " & vrdtvsp_current_datetime_string())
+			set vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 = Nothing
+			Err.Clear
+			exit function
+			'WScript.Quit Err.Number
+		end if
 	Wend
 	Wscript.StdOut.WriteLine( "." & OutputGetState & ".")
 	'
