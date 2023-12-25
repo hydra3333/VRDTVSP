@@ -5568,14 +5568,53 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 	Wend
 	Wscript.StdOut.WriteLine( "." & OutputGetState & ".")
 	'
-	' Grab the *Actual* info about the "VRD latest save" and hope it is the QSF file)
+	' Grab the *Actual* info about the "VRD latest save" and hope it is the current QSF file)
 	'	
+	Wscript.StdOut.WriteLine("QSF 100% Completed: " & vrdtvsp_current_datetime_string())
+	Wscript.StdOut.WriteLine("Using VideoReDo.OutputGetCompletedInfo() TRY #1 to Grab the *Actual* info about the 'VRD latest save' and hope it is the current QSF file)")
+    Wscript.Sleep 100
 	'on error resume Next
 	on error goto 0
 	xml_string_completedfile = "" 
 	xml_string_completedfile = VideoReDo.OutputGetCompletedInfo() ' which is the most recently completed output file (hopefully the QSF file) https://www.videoredo.com/TVSuite_Application_Notes/output_complete_info_xml_forma.html" 
 	on error goto 0
-	Wscript.StdOut.WriteLine("QSF 100% Completed: " & vrdtvsp_current_datetime_string())
+	Wscript.StdOut.WriteLine("QSF xml_string_completedfile='" & xml_string_completedfile & "'")
+	if xml_string_completedfile = "" Then	' 2023.12.23 ' re-try to grab xml file Try #2
+		Wscript.StdOut.WriteLine("Using VideoReDo.OutputGetCompletedInfo() TRY #2 to Grab the *Actual* info about the 'VRD latest save' and hope it is the current QSF file)")
+	    Wscript.Sleep 100
+		'on error resume Next
+		on error goto 0
+		xml_string_completedfile = "" 
+		xml_string_completedfile = VideoReDo.OutputGetCompletedInfo() ' which is the most recently completed output file (hopefully the QSF file) https://www.videoredo.com/TVSuite_Application_Notes/output_complete_info_xml_forma.html" 
+		on error goto 0
+	end if
+	if xml_string_completedfile = "" Then	' 2023.12.23 ' re-try to grab xml file Try #3
+		Wscript.StdOut.WriteLine("Using VideoReDo.OutputGetCompletedInfo() TRY #3 to Grab the *Actual* info about the 'VRD latest save' and hope it is the current QSF file)")
+	    Wscript.Sleep 100
+		'on error resume Next
+		on error goto 0
+		xml_string_completedfile = "" 
+		xml_string_completedfile = VideoReDo.OutputGetCompletedInfo() ' which is the most recently completed output file (hopefully the QSF file) https://www.videoredo.com/TVSuite_Application_Notes/output_complete_info_xml_forma.html" 
+		on error goto 0
+	end if
+	if xml_string_completedfile = "" Then	' 2023.12.23 ' re-try to grab xml file Try #4
+		Wscript.StdOut.WriteLine("Using VideoReDo.OutputGetCompletedInfo() TRY #4 to Grab the *Actual* info about the 'VRD latest save' and hope it is the current QSF file)")
+	    Wscript.Sleep 100
+		'on error resume Next
+		on error goto 0
+		xml_string_completedfile = "" 
+		xml_string_completedfile = VideoReDo.OutputGetCompletedInfo() ' which is the most recently completed output file (hopefully the QSF file) https://www.videoredo.com/TVSuite_Application_Notes/output_complete_info_xml_forma.html" 
+		on error goto 0
+	end if
+	if xml_string_completedfile = "" Then	' 2023.12.23 ' re-try to grab xml file Try #5
+		Wscript.StdOut.WriteLine("Using VideoReDo.OutputGetCompletedInfo() TRY #6 to Grab the *Actual* info about the 'VRD latest save' and hope it is the current QSF file)")
+	    Wscript.Sleep 100
+		'on error resume Next
+		on error goto 0
+		xml_string_completedfile = "" 
+		xml_string_completedfile = VideoReDo.OutputGetCompletedInfo() ' which is the most recently completed output file (hopefully the QSF file) https://www.videoredo.com/TVSuite_Application_Notes/output_complete_info_xml_forma.html" 
+		on error goto 0
+	end if
 	closeflag = VideoReDo.FileClose()
 	'on error resume Next
 	on error goto 0
@@ -5583,8 +5622,6 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 	on error goto 0
 	Set VideoReDo = Nothing
  	Set VideoReDoSilent = Nothing
-	Wscript.StdOut.WriteLine("QSF xml_string_completedfile=") 
-	Wscript.StdOut.WriteLine(xml_string_completedfile) 
 	'
 	' Get some of the data obtained during the QSF process and populate a Dict object to return
 	'
@@ -5613,7 +5650,8 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 		'WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 	End If
 	'
-	'Call vrdtvs_DumpNodes_from_xml(xmlDoc.childNodes, 0)	' PRINT INTERESTING INFORMATION FORM WITH THE XML DOCUMENT
+	' 2023.112.26 re-enable dump
+	Call vrdtvs_DumpNodes_from_xml(xmlDoc.childNodes, 0)	' PRINT INTERESTING INFORMATION FORM WITH THE XML DOCUMENT
 	'
 	xmlDict.Add "outputFile", gimme_xml_named_attribute(xmlDoc, "//VRDOutputInfo", "outputFile")
 	xmlDict.Add "OutputType", gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/OutputType")
@@ -5623,6 +5661,7 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 	xmlDict.Add "OutputSceneCount", gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/OutputSceneCount")
 	xmlDict.Add "VideoOutputFrameCount", gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/VideoOutputFrameCount")
 	xmlDict.Add "AudioOutputFrameCount", gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/AudioOutputFrameCount")
+	' 2023.12.26 Rarely, there is text in the supposedlynueric field "//VRDOutputInfo/ActualVideoBitrate"
 	xmlDict.Add "ActualVideoBitrate", CLng(CDbl(gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/ActualVideoBitrate")) * CDbl(1000000.0)) ' convert from dedcimal Mpbs to bps
 	If NOT xmlDict.Exists("outputFile") Then 
 		Set xmlDoc = Nothing
