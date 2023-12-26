@@ -5762,18 +5762,20 @@ Sub vrdtvs_DumpNodes_from_xml(dnfx_Nodes, dnfx_Indent_Size)
 			Case 1:   ' NODE_ELEMENT
 				If dnfx_xNode.nodeName <> "#document" Then ' looks like a hack for the top level
 					' change "vrdtvs_DisplayAttributes_from_xml_node(dnfx_xNode, dnfx_Indent_Size + 2)" to "vrdtvs_DisplayAttributes_from_xml_node(dnfx_xNode, 0)" to see inline attributes rather than indented
-					WScript.Echo String(dnfx_Indent_Size," ") & "<" & dnfx_xNode.nodeName & vrdtvs_DisplayAttributes_from_xml_node(dnfx_xNode, dnfx_Indent_Size + 2) & ">" ' this is the nodename and note attributes THE START OF THE NODE
+					WScript.StdOut.WriteLine(String(dnfx_Indent_Size," ") & "<" & dnfx_xNode.nodeName & vrdtvs_DisplayAttributes_from_xml_node(dnfx_xNode, dnfx_Indent_Size + 2) & ">") ' this is the nodename and note attributes THE START OF THE NODE
 					If dnfx_xNode.hasChildNodes Then
-					Call DisplayNode_from_xml(dnfx_xNode.childNodes, dnfx_Indent_Size + 2)	' THIS IS THE CHILD NODES OF THE CURRENT NODE
+						'Call DisplayNode_from_xml(dnfx_xNode.childNodes, dnfx_Indent_Size + 2)	' THIS IS THE CHILD NODES OF THE CURRENT NODE
+						Call vrdtvs_DumpNodes_from_xml(dnfx_xNode.childNodes, dnfx_Indent_Size + 2)	' THIS IS THE CHILD NODES OF THE CURRENT NODE
 					End If
-					WScript.Echo String(dnfx_Indent_Size," ") & "</" & dnfx_xNode.nodeName & ">"	' THIS IS THE END OF THE NODE 
+					WScript.StdOut.WriteLine(String(dnfx_Indent_Size," ") & "</" & dnfx_xNode.nodeName & ">")	' THIS IS THE END OF THE NODE 
 				Else 'NODENAME =  "#document" 		' looks like a hack for the top level
 					If dnfx_xNode.hasChildNodes Then
-						Call DisplayNode_from_xml(dnfx_xNode.childNodes, dnfx_Indent_Size + 2)
+						'Call DisplayNode_from_xml(dnfx_xNode.childNodes, dnfx_Indent_Size + 2)
+						Call vrdtvs_DumpNodes_from_xml(dnfx_xNode.childNodes, dnfx_Indent_Size + 2)
 					End If
 				End If
 			Case 3:   ' value                       
-				WScript.Echo String(dnfx_Indent_Size," ") & "" & dnfx_xNode.nodeValue ' this is the value of the node ' <-- THIS IS THE VALUE
+				WScript.StdOut.WriteLine(String(dnfx_Indent_Size," ") & "" & dnfx_xNode.nodeValue) ' this is the value of the node ' <-- THIS IS THE VALUE
 		End Select
 	Next
 End Sub
