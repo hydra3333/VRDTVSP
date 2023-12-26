@@ -5662,7 +5662,16 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 	xmlDict.Add "VideoOutputFrameCount", gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/VideoOutputFrameCount")
 	xmlDict.Add "AudioOutputFrameCount", gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/AudioOutputFrameCount")
 	' 2023.12.26 Rarely, there is text in the supposedlynueric field "//VRDOutputInfo/ActualVideoBitrate"
-	xmlDict.Add "ActualVideoBitrate", CLng(CDbl(gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/ActualVideoBitrate")) * CDbl(1000000.0)) ' convert from dedcimal Mpbs to bps
+	x = gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/ActualVideoBitrate")
+	if IsNumeric(x) Then
+		xmlDict.Add "ActualVideoBitrate", CLng(CDbl(x) * CDbl(1000000.0)) ' convert from dedcimal Mpbs to bps
+	else
+		if gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/OutputType") = Ucase("MP4") Then
+			xmlDict.Add "ActualVideoBitrate", 4000000	' assume h.264
+		else
+			xmlDict.Add "ActualVideoBitrate", 2000000	' assume mpeg2
+		end if
+	end if
 	If NOT xmlDict.Exists("outputFile") Then 
 		Set xmlDoc = Nothing
 		WScript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: ABORTING: outputFile string from VideoReDo.OutputGetCompletedInfo() not in Dict, xml_string_completedfile=" & xml_string_completedfile)
