@@ -5650,7 +5650,7 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 		'WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 	End If
 	'
-	' 2023.112.26 re-enable dump
+	' 2023.12.26 re-enable dump
 	Call vrdtvs_DumpNodes_from_xml(xmlDoc.childNodes, 0)	' PRINT INTERESTING INFORMATION FORM WITH THE XML DOCUMENT
 	'
 	xmlDict.Add "outputFile", gimme_xml_named_attribute(xmlDoc, "//VRDOutputInfo", "outputFile")
