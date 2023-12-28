@@ -5410,6 +5410,7 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 	'
 	Dim actual_outputFile, actual_VideoOutputFrameCount, actual_ActualVideoBitrate
 	Dim estimated_outputFile, estimated_VideoOutputFrameCount, estimated_ActualVideoBitrate
+	Dim x
 	'
 	two_hours_in_ms = CLng( 2 * 60 * 60 * 1000 )
 	one_hour_in_ms = ROUND(two_hours_in_ms / 2)
