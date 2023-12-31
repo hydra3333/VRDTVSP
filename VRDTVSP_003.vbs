@@ -5496,7 +5496,17 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 	' Open the Input file and QSF SaveAs to the output file
 	'
 	Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: Commencing WITH SPECIFIED VRD VERSION : " & riqowv_vrd_version & " at: " & vrdtvsp_current_datetime_string())
+	on error resume next
 	openflag = VideoReDo.FileOpen(riqowv_FILE_AbsolutePathName, True) ' True means QSF mode
+	if Err.Number <> 0 Then
+		Wscript.StdOut.WriteLine("")
+		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: VideoReDo.FileOpen File " & riqowv_QSF_AbsolutePathName & " : Error #" & CStr(Err.Number) & " " & Err.Description)
+		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: VideoReDo.FileOpen Error #" & CStr(Err.Number) & " " & Err.Description & " at: " & vrdtvsp_current_datetime_string())
+		set vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 = Nothing
+		Err.Clear
+		openflag  = False
+	End If
+	on error goto 0
 	If openflag = False Then
 		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: ERROR: VideoReDo failed to open file: """ & riqowv_FILE_AbsolutePathName & """")
 		'on error resume Next
@@ -5563,6 +5573,7 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 			Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: Error #" & CStr(Err.Number) & " " & Err.Description & " at: " & vrdtvsp_current_datetime_string())
 			set vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 = Nothing
 			Err.Clear
+			on error goto 0
 			exit function
 			'WScript.Quit Err.Number
 		end if
