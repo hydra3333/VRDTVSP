@@ -5509,10 +5509,11 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 	on error goto 0
 	If openflag = False Then
 		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: ERROR: VideoReDo failed to open file: """ & riqowv_FILE_AbsolutePathName & """")
-		'on error resume Next
-		on error goto 0
+		'on error goto 0
+		on error resume Next
 		VideoReDo.ProgramExit()
 		' change hard fail to a soft fail so this source file can be ignored and moved and the process continue with the Next source file
+		Err.Clear
 		on error goto 0
 		set vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 = Nothing
 		exit function
