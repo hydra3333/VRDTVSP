@@ -5495,6 +5495,7 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 	' 
 	' Open the Input file and QSF SaveAs to the output file
 	'
+	Err.Clear
 	Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: Commencing WITH SPECIFIED VRD VERSION : " & riqowv_vrd_version & " at: " & vrdtvsp_current_datetime_string())
 	on error resume next
 	openflag = VideoReDo.FileOpen(riqowv_FILE_AbsolutePathName, True) ' True means QSF mode
