@@ -5521,13 +5521,16 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 		'Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: Exiting with errorlevel code 5")
 		'Wscript.Quit 5
 	End If
+	on error resume next
 	outputOK = VideoReDo.FileSaveAs(riqowv_QSF_AbsolutePathName, riqowv_vrd6_profile_name) ' save the QSF file using the specified QSF profile
 	If NOT outputOK = True Then
 		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: ERROR: VideoReDo failed to create QSF file: """ & riqowv_QSF_AbsolutePathName & """ using profile:""" & riqowv_vrd6_profile_name & """")
-		'on error resume Next
-		on error goto 0
+		on error resume Next
+		'on error goto 0
 		closeflag = VideoReDo.FileClose()
+		Err.Clear
 		VideoReDo.ProgramExit()
+		Err.Clear
 		' change hard fail to a soft fail so this source file can be ignored and moved and the process continue with the Next source file
 		on error goto 0
 		set vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 = Nothing
