@@ -5418,7 +5418,7 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 	quarter_hour_in_ms = ROUND(half_hour_in_ms / 2)
 	ten_minutes_in_ms = ROUND(two_hours_in_ms / 6)
 	dot_count_linebreak_interval = CLng(CLng(120) * CLng(1000) / CLng(wait_ms))		' for 2000 ms, this is 120 seconds worth of intervals
-	giveup_interval_count = CLng( CLng(one_hour_in_ms) / CLng( wait_ms ) )	' an hour worth of intervals
+	giveup_interval_count = CLng( CDbl(1.5) * CDbl(CDbl(CDbl(one_hour_in_ms) / CDbl(wait_ms) )))	' 1.5 hours worth of intervals
 	'
 	riqowv_FILE_AbsolutePathName = fso.GetAbsolutePathName(riqowv_FILE_AbsolutePathName)		' was passed byVal
 	riqowv_QSF_AbsolutePathName = fso.GetAbsolutePathName(riqowv_QSF_AbsolutePathName)			' was passed byVal
