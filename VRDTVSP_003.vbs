@@ -4003,8 +4003,12 @@ IF V_INCOMING_BITRATE = 0  Then
 							WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: ========== Created ffmpeg_cmd_string, hopefully Progressive/AVC vs file: " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
 			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: ========== Created ffmpeg_cmd_string <" & ff_cmd_string & ">")
 		ElseIf V_IsMPEG2 Then 'Ucase(Q_V_Codec_legacy) = Ucase("MPEG2-2V")
-			vpy_denoise  = "strength=0.06, cstrength=0.06"	' flag denoising  for progressive mpeg2
-			vpy_dsharpen = "strength=0.3"					' flag sharpening for progressive mpeg2
+			' 2024.03.17 use new CudaSynth parameters in DGSource instead of separate functions
+			'vpy_denoise  = "strength=0.06, cstrength=0.06"	' flag denoising  for progressive mpeg2
+			'vpy_dsharpen = "strength=0.3"					' flag sharpening for progressive mpeg2
+			' see DGDecodeNVManual.html ... use temporal denoising
+			vpy_denoise  = " , dn_enable=3, dn_quality="best", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0 "	' flag denoising for progressive mpeg2
+			vpy_dsharpen = " , sh_enable=1, sh_strength=0.3 "																		' flag sharpening for progressive mpeg2
 			' probesize 120 Mb, analyzeduration 120 seconds 2021.02.17
 			' 2023.02.02 add vspipe like "vspipe.exe" --container y4m "input.vpy" - | "ffmpeg.exe" -f yuv4mpegpipe -i pipe: ...
 			' it was
@@ -4057,8 +4061,12 @@ IF V_INCOMING_BITRATE = 0  Then
 		End If
 	ElseIf V_IsInterlaced Then
 		if V_IsAVC Then
-			vpy_denoise = ""								' flag no denoising for interlaced AVC
-			vpy_dsharpen = "strength=0.2"					' flag sharpening   for interlaced AVC
+			' 2024.03.17 use new CudaSynth parameters in DGSource instead of separate functions
+			'vpy_denoise = ""								' flag no denoising for interlaced AVC
+			'vpy_dsharpen = "strength=0.2"					' flag sharpening   for interlaced AVC
+			' see DGDecodeNVManual.html ... use temporal denoising
+			vpy_denoise  = " , dn_enable=3, dn_quality="best", dn_strength=0.01, dn_cstrength=0.01, dn_tthresh=75.0, dn_show=0 "	' flag denoising for interlaced AVC
+			vpy_dsharpen = " , sh_enable=1, sh_strength=0.2 "																		' flag sharpening for interlaced AVC
 			' probesize 120 Mb, analyzeduration 120 seconds 2021.02.17
 			' 2023.02.02 add vspipe like "vspipe.exe" --container y4m "input.vpy" - | "ffmpeg.exe" -f yuv4mpegpipe -i pipe: ...
 			' it was
@@ -4088,9 +4096,13 @@ IF V_INCOMING_BITRATE = 0  Then
 							"-c:a libfdk_aac -cutoff 18000 -ab 256k -ar 48000 " &_
 							" -y """ & CF_TARGET_AbsolutePathName & """"
 			If Footy_found Then	' Must be AVC Interlaced Footy to pass this test, USE DIFFERENT SETTINGS since we deinterlace with double framerate (and use -g 25)
+				' 2024.03.17 use new CudaSynth parameters in DGSource instead of separate functions
+				'vpy_denoise  = "strength=0.05, cstrength=0.05"	' flag denoising  for footy interlaced avc, since it seems to be blurry and noisy as at 2022.06
+				'vpy_dsharpen = "strength=0.25"					' flag sharpening for footy interlaced avc, since it seems to be blurry and noisy as at 2022.06
+				' see DGDecodeNVManual.html ... use temporal denoising
+				vpy_denoise  = " , dn_enable=3, dn_quality="best", dn_strength=0.04, dn_cstrength=0.04, dn_tthresh=75.0, dn_show=0 "	' flag denoising  for footy interlaced avc, since it seems to be blurry and noisy as at 2022.06
+				vpy_dsharpen = " , sh_enable=1, sh_strength=0.25 "																		' flag denoising  for footy interlaced avc, since it seems to be blurry and noisy as at 2022.06
 				' probesize 120 Mb, analyzeduration 120 seconds 2021.02.17
-				vpy_denoise  = "strength=0.05, cstrength=0.05"	' flag denoising  for footy interlaced avc, since it seems to be blurry nad noisy as at 2022.06
-				vpy_dsharpen = "strength=0.25"					' flag sharpening for footy interlaced avc, since it seems to be blurry nad noisy as at 2022.06
 				' 2023.02.02 add vspipe like "vspipe.exe" --container y4m "input.vpy" - | "ffmpeg.exe" -f yuv4mpegpipe -i pipe: ...
 				' it was
 				'	ff_cmd_string =	"""" & vrdtvsp_ffmpegexe64_OpenCL & """ " &_
@@ -4123,8 +4135,12 @@ IF V_INCOMING_BITRATE = 0  Then
 			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: ========== Created ffmpeg_cmd_string, hopefully Interlaced/AVC vs file: " & V_ScanType & " " & V_ScanOrder & " """ & V_Codec_legacy & """/""" & A_Codec_legacy & """")
 			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: ========== Created ffmpeg_cmd_string <" & ff_cmd_string & ">")
 		ElseIf V_IsMPEG2 Then
-			vpy_denoise = "strength=0.06, cstrength=0.06"	' flag denoising  for interlaced mpeg2
-			vpy_dsharpen = "strength=0.3"					' flag sharpening for interlaced mpeg2
+			' 2024.03.17 use new CudaSynth parameters in DGSource instead of separate functions
+			'vpy_denoise = "strength=0.06, cstrength=0.06"	' flag denoising  for interlaced mpeg2
+			'vpy_dsharpen = "strength=0.3"					' flag sharpening for interlaced mpeg2
+			' see DGDecodeNVManual.html ... use temporal denoising
+			vpy_denoise  = " , dn_enable=3, dn_quality="best", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0 "	' flag denoising  for interlaced mpeg2
+			vpy_dsharpen = " , sh_enable=1, sh_strength=0.3 "																		' flag denoising  for interlaced mpeg2
 			' probesize 120 Mb, analyzeduration 120 seconds 2021.02.17
 			' 2023.02.02 add vspipe like "vspipe.exe" --container y4m "input.vpy" - | "ffmpeg.exe" -f yuv4mpegpipe -i pipe: ...
 			' it was
@@ -4235,17 +4251,19 @@ IF V_INCOMING_BITRATE = 0  Then
 		CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "core.std.LoadPlugin(r'" & vapoursynth_root & "\DGIndex\DGDecodeNV.dll') # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "core.avs.LoadPlugin(r'" & vapoursynth_root & "\DGIndex\DGDecodeNV.dll') # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "# NOTE: deinterlace=" & vrdtvsp_final_dg_deinterlace & ", use_top_field=" & vrdtvsp_final_dg_tff & " for """ & V_ScanType & """/""" & V_ScanOrder & """ """ & V_Codec_legacy & """/""" & A_Codec_legacy & """", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "video = core.dgdecodenv.DGSource(r'" & CF_DGI_AbsolutePathName & "', deinterlace=" & vrdtvsp_final_dg_deinterlace & ", use_top_field=" & vrdtvsp_final_dg_tff & ", use_pf=False)", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "# DGDecNV changes -", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "# 2020.10.21 Added new parameters cstrength and cblend to independently control the chroma denoising.", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "# 2020.11.07 Revised DGDenoise parameters. The 'chroma' option is removed.", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "#            Now, if 'strength' is set to 0.0 then luma denoising is disabled,", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "#            and if cstrength is set to 0.0 then chroma denoising is disabled.", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "#            'cstrength' is now defaulted to 0.0, and 'searchw' is defaulted to 9.", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "# example: video = core.avs.DGDenoise(video, strength=0.06, cstrength=0.06) # replaced chroma=True", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		If vpy_denoise <> "" Then CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "video = core.avs.DGDenoise(video, " & vpy_denoise & ") # replaced chroma=True", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "# example: video = core.avs.DGSharpen(video, strength=0.3)", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
-		If vpy_dsharpen <> "" Then CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "video = core.avs.DGSharpen(video, " & vpy_dsharpen & ")", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		' 2024.03.17 use new CudaSynth parameters in DGSource instead of separate functions
+		CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "video = core.dgdecodenv.DGSource(r'" & CF_DGI_AbsolutePathName & "', deinterlace=" & vrdtvsp_final_dg_deinterlace & ", use_top_field=" & vrdtvsp_final_dg_tff & ", use_pf=False " & vpy_denoise & " " & vpy_dsharpen & " )", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		'CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "video = core.dgdecodenv.DGSource(r'" & CF_DGI_AbsolutePathName & "', deinterlace=" & vrdtvsp_final_dg_deinterlace & ", use_top_field=" & vrdtvsp_final_dg_tff & ", use_pf=False)", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		'CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "# DGDecNV changes -", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		'CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "# 2020.10.21 Added new parameters cstrength and cblend to independently control the chroma denoising.", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		'CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "# 2020.11.07 Revised DGDenoise parameters. The 'chroma' option is removed.", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		'CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "#            Now, if 'strength' is set to 0.0 then luma denoising is disabled,", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		'CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "#            and if cstrength is set to 0.0 then chroma denoising is disabled.", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		'CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "#            'cstrength' is now defaulted to 0.0, and 'searchw' is defaulted to 9.", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		'CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "# example: video = core.avs.DGDenoise(video, strength=0.06, cstrength=0.06) # replaced chroma=True", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		'If vpy_denoise <> "" Then CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "video = core.avs.DGDenoise(video, " & vpy_denoise & ") # replaced chroma=True", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		'CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "# example: video = core.avs.DGSharpen(video, strength=0.3)", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
+		'If vpy_dsharpen <> "" Then CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "video = core.avs.DGSharpen(video, " & vpy_dsharpen & ")", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		'If vrdtvsp_DEBUG Then 
 		'	CF_status = vrdtvsp_writeline_for_vpy (CF_VPY_object, CF_object_saved_ffmpeg_commands, "video = vs.core.text.ClipInfo(video)", "ECHO ", " >> ""!_VPY_file!"" 2>&1")
 		'Else
