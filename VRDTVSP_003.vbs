@@ -4007,7 +4007,7 @@ IF V_INCOMING_BITRATE = 0  Then
 			'vpy_denoise  = "strength=0.06, cstrength=0.06"	' flag denoising  for progressive mpeg2
 			'vpy_dsharpen = "strength=0.3"					' flag sharpening for progressive mpeg2
 			' see DGDecodeNVManual.html ... use temporal denoising
-			vpy_denoise  = " , dn_enable=3, dn_quality="best", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0 "	' flag denoising for progressive mpeg2
+			vpy_denoise  = " , dn_enable=3, dn_quality=""best"", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0 "	' flag denoising for progressive mpeg2
 			vpy_dsharpen = " , sh_enable=1, sh_strength=0.3 "																		' flag sharpening for progressive mpeg2
 			' probesize 120 Mb, analyzeduration 120 seconds 2021.02.17
 			' 2023.02.02 add vspipe like "vspipe.exe" --container y4m "input.vpy" - | "ffmpeg.exe" -f yuv4mpegpipe -i pipe: ...
@@ -4065,7 +4065,7 @@ IF V_INCOMING_BITRATE = 0  Then
 			'vpy_denoise = ""								' flag no denoising for interlaced AVC
 			'vpy_dsharpen = "strength=0.2"					' flag sharpening   for interlaced AVC
 			' see DGDecodeNVManual.html ... use temporal denoising
-			vpy_denoise  = " , dn_enable=3, dn_quality="best", dn_strength=0.01, dn_cstrength=0.01, dn_tthresh=75.0, dn_show=0 "	' flag denoising for interlaced AVC
+			vpy_denoise  = " , dn_enable=3, dn_quality=""best"", dn_strength=0.01, dn_cstrength=0.01, dn_tthresh=75.0, dn_show=0 "	' flag denoising for interlaced AVC
 			vpy_dsharpen = " , sh_enable=1, sh_strength=0.2 "																		' flag sharpening for interlaced AVC
 			' probesize 120 Mb, analyzeduration 120 seconds 2021.02.17
 			' 2023.02.02 add vspipe like "vspipe.exe" --container y4m "input.vpy" - | "ffmpeg.exe" -f yuv4mpegpipe -i pipe: ...
@@ -4100,7 +4100,7 @@ IF V_INCOMING_BITRATE = 0  Then
 				'vpy_denoise  = "strength=0.05, cstrength=0.05"	' flag denoising  for footy interlaced avc, since it seems to be blurry and noisy as at 2022.06
 				'vpy_dsharpen = "strength=0.25"					' flag sharpening for footy interlaced avc, since it seems to be blurry and noisy as at 2022.06
 				' see DGDecodeNVManual.html ... use temporal denoising
-				vpy_denoise  = " , dn_enable=3, dn_quality="best", dn_strength=0.04, dn_cstrength=0.04, dn_tthresh=75.0, dn_show=0 "	' flag denoising  for footy interlaced avc, since it seems to be blurry and noisy as at 2022.06
+				vpy_denoise  = " , dn_enable=3, dn_quality=""best"", dn_strength=0.04, dn_cstrength=0.04, dn_tthresh=75.0, dn_show=0 "	' flag denoising  for footy interlaced avc, since it seems to be blurry and noisy as at 2022.06
 				vpy_dsharpen = " , sh_enable=1, sh_strength=0.25 "																		' flag denoising  for footy interlaced avc, since it seems to be blurry and noisy as at 2022.06
 				' probesize 120 Mb, analyzeduration 120 seconds 2021.02.17
 				' 2023.02.02 add vspipe like "vspipe.exe" --container y4m "input.vpy" - | "ffmpeg.exe" -f yuv4mpegpipe -i pipe: ...
@@ -4139,7 +4139,7 @@ IF V_INCOMING_BITRATE = 0  Then
 			'vpy_denoise = "strength=0.06, cstrength=0.06"	' flag denoising  for interlaced mpeg2
 			'vpy_dsharpen = "strength=0.3"					' flag sharpening for interlaced mpeg2
 			' see DGDecodeNVManual.html ... use temporal denoising
-			vpy_denoise  = " , dn_enable=3, dn_quality="best", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0 "	' flag denoising  for interlaced mpeg2
+			vpy_denoise  = " , dn_enable=3, dn_quality=""best"", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0 "	' flag denoising  for interlaced mpeg2
 			vpy_dsharpen = " , sh_enable=1, sh_strength=0.3 "																		' flag denoising  for interlaced mpeg2
 			' probesize 120 Mb, analyzeduration 120 seconds 2021.02.17
 			' 2023.02.02 add vspipe like "vspipe.exe" --container y4m "input.vpy" - | "ffmpeg.exe" -f yuv4mpegpipe -i pipe: ...
