@@ -481,7 +481,6 @@ REM echo "BEFORE the_folder='!the_folder!' source_TS_Folder='!source_TS_Folder!'
 set "rightmost_character=!the_folder:~-1!" >> "!vrdlog!" 2>&1
 if /I "!rightmost_character!" == "\" (set "the_folder=!the_folder:~,-1!") >> "!vrdlog!" 2>&1
 REM echo "AFTER  the_folder='!the_folder!' source_TS_Folder='!source_TS_Folder!'" >> "!vrdlog!" 2>&1
-
 echo. >> "!vrdlog!" 2>&1
 ECHO powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Minimized -File "!Path_to_PS1_to_enforcevalidfilenames!" -Recurse -Folder "!the_folder!" >> "!vrdlog!" 2>&1
 set "start_date_time=!date! !time!"
@@ -489,8 +488,7 @@ powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowSty
 set "end_date_time=!date! !time!"
 powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Minimized -File "!Path_to_PS1_to_Calculate_Duration!" -start_date_time "!start_date_time!" -end_date_time "!end_date_time!" -prefix_id "Enforce_Valid_Filenames_Source" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! --- END Enforce Valid Filenames on '!source_TS_Folder!' enforce validity  i.e. no special characters >> "!vrdlog!" 2>&1
-
-ECHO ***** >> "!vrdlog!" 2>&
+ECHO ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! --- START Enforce Valid Filenames on '!destination_mp4_Folder!' enforce validity  i.e. no special characters >> "!vrdlog!" 2>&1
 REM when calling powershell, we must remove any trailing "\" from the folder name in quotes
 REM otherwise the damn thing "encodes" the following end-quote on the filename string and everything after it
@@ -507,7 +505,6 @@ powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowSty
 set "end_date_time=!date! !time!"
 powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Minimized -File "!Path_to_PS1_to_Calculate_Duration!" -start_date_time "!start_date_time!" -end_date_time "!end_date_time!" -prefix_id "Enforce_Valid_Filenames_Destination" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! --- END Enforce Valid Filenames on '!destination_mp4_Folder!' enforce validity  i.e. no special characters >> "!vrdlog!" 2>&1
-
 ECHO ***** >> "!vrdlog!" 2>&1
 REM DEL /F "!Path_to_PS1_to_enforcevalidfilenames!" > NUL: 2>&1
 ECHO !DATE! !TIME! --- END   Enforce Valid Filenames on '!source_TS_Folder!' enforce validity  i.e. no special characters >> "!vrdlog!" 2>&1
@@ -517,10 +514,6 @@ ECHO ***** >> "!vrdlog!" 2>&1
 ECHO ***** >> "!vrdlog!" 2>&1
 ECHO ***** >> "!vrdlog!" 2>&1
 REM --------- End Run the PS1 to modify the filenames to enforce validity  i.e. no special characters ---------
-
-
-
-
 
 REM --------- Start Loop through the SOURCE files ---------
 set "loop_Start_date_time=!date! !time!"
@@ -615,7 +608,7 @@ POPD >> "!vrdlog!" 2>&1
 CD >> "!vrdlog!" 2>&1
 REM --------- Swap back to original folder ---------
 
-%xPAUSE%
+!xPAUSE!
 exit
 
 REM
@@ -1006,7 +999,7 @@ IF /I "!V_Codec_legacy!" == "MPEG-2V" (
 	) ELSE (
 		ECHO "VRD Version must be set to 5 or 6 not '!_vrd_version!' ... EXITING"
 		ECHO "VRD Version must be set to 5 or 6 not '!_vrd_version!' ... EXITING" >> "%vrdlog%" 2>&1
-		%xpause%
+		!xPAUSE!
 		exit
 	)
 ) ELSE IF /I "!V_Codec_legacy!" == "AVC" (
@@ -1018,7 +1011,7 @@ IF /I "!V_Codec_legacy!" == "MPEG-2V" (
 	) ELSE (
 		ECHO "VRD Version must be set to 5 or 6 not '!_vrd_version!' ... EXITING"
 		ECHO "VRD Version must be set to 5 or 6 not '!_vrd_version!' ... EXITING" >> "%vrdlog%" 2>&1
-		%xpause%
+		!xPAUSE!
 		exit
 	)
 ) ELSE (
@@ -1098,7 +1091,7 @@ IF /I "!_vrd_version!" == "5" (
 ) ELSE (
    ECHO "VRD Version must be set to 5 or 6 not '!_vrd_version!' ... EXITING"
    ECHO "VRD Version must be set to 5 or 6 not '!_vrd_version!' ... EXITING" >> "%vrdlog%" 2>&1
-   %xpause%
+   !xPAUSE!
    exit
 )
 REM
@@ -1287,7 +1280,7 @@ IF /I NOT "!V_ScanType!" == "!Q_V_ScanType!" (
 	ECHO "Q_V_ScanOrder=!Q_V_ScanOrder!" >> "!vrdlog!" 2>&1
 	ECHO file="%~f1"
 	ECHO QSF_file="!scratch_file_qsf!"
-	%xPAUSE%
+	!xPAUSE!
 	exit
 )
 IF /I NOT "!V_ScanOrder!" == "!Q_V_ScanOrder!" (
@@ -1303,7 +1296,7 @@ IF /I NOT "!V_ScanOrder!" == "!Q_V_ScanOrder!" (
 	ECHO "Q_V_ScanOrder=!Q_V_ScanOrder!" >> "!vrdlog!" 2>&1
 	ECHO file="%~f1"
 	ECHO QSF_file="!scratch_file_qsf!"
-	%xPAUSE%
+	!xPAUSE!
 	exit
 )
 REM
@@ -1416,7 +1409,7 @@ IF /I "!EL!" NEQ "0" (
    ECHO !DATE! !TIME! *********  loudnorm scan Error !EL! was found >> "%vrdlog%" 2>&1
    ECHO !DATE! !TIME! *********  ABORTING ...
    ECHO !DATE! !TIME! *********  ABORTING ... >> "%vrdlog%" 2>&1
-   %xpause%
+   !xPAUSE!
    EXIT !EL!
 )
 ECHO TYPE "%jsonFile%"
@@ -2286,7 +2279,7 @@ IF /I "%~1" == "6" (
 ) ELSE (
    ECHO "VRD Version must be set to 5 or 6 not '%~1' (_vrd_version_primary=!_vrd_version_primary! _vrd_version_fallback=!_vrd_version_fallback!)... EXITING"
    ECHO "VRD Version must be set to 5 or 6 not '%~1' (_vrd_version_primary=!_vrd_version_primary! _vrd_version_fallback=!_vrd_version_fallback!)... EXITING"
-   %xpause%
+   !xPAUSE!
    exit
 )
 goto :eof
