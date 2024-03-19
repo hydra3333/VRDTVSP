@@ -116,13 +116,13 @@ set "_vrd_version_fallback=5"
 call :set_vrd_qsf_paths "!_vrd_version_primary!"
 REM --------- setup vrd paths filenames ----------------------------
 
-REM --------- setup .VBS and .PS1 and .PY paths to pre-created files which rename and re-timestamp resulting filenames etc ---------
+REM --------- setup .VBS and .PS1 and .PY filly qualified filenames to pre-created files which rename and re-timestamp filenames etc ---------
 set Path_to_PS1_to_enforcevalidfilenames=!too1!Enforce-Valid_Filenames!.ps1
 set Path_to_PS1_to_Calculate_Duration=!root!Calculate_Duration.ps1
 REM
 set Path_to_VBS_to_rename_files=!root!Rename_fix_mp4_bprj_files_in_a_folder.vbs
 set Path_to_PS1_to_retimestamp=!root!Modify_File_Date_Timestamps.ps1
-REM --------- setup VBS and PS paths to rename and re-timestamp resulting filenames etc ---------
+REM --------- setup .VBS and .PS1 and .PY filly qualified filenames to pre-created files which rename and re-timestamp filenames etc ---------
 
 REM --------- Start Summarize ---------
 ECHO !DATE! !TIME! --------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
@@ -185,60 +185,46 @@ ECHO !DATE! !TIME! -------------------------------------------------------------
 REM setup the OpenCL device strings 
 set ff_ffmpeg_device=0.0
 SET ff_OpenCL_device_init=-init_hw_device opencl=ocl:!ff_ffmpeg_device! -filter_hw_device ocl
-REM
 REM ECHO !DATE! !TIME! ff_ffmpeg_device="!ff_ffmpeg_device!" >> "!vrdlog!"
 REM ECHO !DATE! !TIME! ff_OpenCL_device_init="!ff_OpenCL_device_init!" >> "!vrdlog!"
 REM Display ffmpeg features for the current ffmpeg.exe
-REM ECHO !DATE! !TIME! -------------------------------------- >> "%vrdlog%" 2>&1
 REM ECHO !DATE! !TIME! 1. "!ffmpegexe64_OpenCL!" -hide_banner -v debug -init_hw_device list >> "%vrdlog%" 2>&1
 REM "!ffmpegexe64_OpenCL!" -hide_banner -v debug -init_hw_device list >> "%vrdlog%" 2>&1
-REM ECHO !DATE! !TIME! -------------------------------------- >> "%vrdlog%" 2>&1
-REM
-REM ECHO !DATE! !TIME! -------------------------------------- >> "%vrdlog%" 2>&1
 REM ECHO !DATE! !TIME! 2. "!ffmpegexe64_OpenCL!" -hide_banner -v debug -init_hw_device opencl >> "%vrdlog%" 2>&1
 REM "!ffmpegexe64_OpenCL!" -hide_banner -v debug -init_hw_device opencl >> "%vrdlog%" 2>&1
-REM ECHO !DATE! !TIME! -------------------------------------- >> "%vrdlog%" 2>&1
-REM
-REM ECHO !DATE! !TIME! -------------------------------------- >> "%vrdlog%" 2>&1
 REM ECHO !DATE! !TIME! 3. "!ffmpegexe64_OpenCL!" -hide_banner -v debug -init_hw_device opencl:!ff_ffmpeg_device!  >> "%vrdlog%" 2>&1
 REM "!ffmpegexe64_OpenCL!" -hide_banner -v debug -init_hw_device opencl:!ff_ffmpeg_device!  >> "%vrdlog%" 2>&1
-REM ECHO !DATE! !TIME! -------------------------------------- >> "%vrdlog%" 2>&1
-REM
-ECHO !DATE! !TIME! -------------------------------------- >> "%vrdlog%" 2>&1
-ECHO !DATE! !TIME! 4 "!ffmpegexe64!" -hide_banner -h encoder=h264_nvenc  >> "%vrdlog%" 2>&1
-"!ffmpegexe64!" -hide_banner -h encoder=h264_nvenc  >> "%vrdlog%" 2>&1
-ECHO !DATE! !TIME! -------------------------------------- >> "%vrdlog%" 2>&1
-REM
-ECHO !DATE! !TIME! -------------------------------------- >> "%vrdlog%" 2>&1
-ECHO !DATE! !TIME! 5 "!ffmpegexe64!" -hide_banner -h encoder=hevc_nvenc >> "!vrdlog!" 2>&1
-"!ffmpegexe64!" -hide_banner -h encoder=hevc_nvenc >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! -------------------------------------- >> "%vrdlog%" 2>&1
-REM
-ECHO !DATE! !TIME! -------------------------------------- >> "%vrdlog%" 2>&1
-ECHO !DATE! !TIME! 6 "!ffmpegexe64!" -hide_banner -h filter=yadif  >> "%vrdlog%" 2>&1
-"!ffmpegexe64!" -hide_banner -h filter=yadif  >> "%vrdlog%" 2>&1
-ECHO !DATE! !TIME! -------------------------------------- >> "%vrdlog%" 2>&1
-REM
-REM ECHO !DATE! !TIME! -------------------------------------- >> "%vrdlog%" 2>&1
+REM ECHO !DATE! !TIME! 4 "!ffmpegexe64!" -hide_banner -h encoder=h264_nvenc  >> "%vrdlog%" 2>&1
+REM "!ffmpegexe64!" -hide_banner -h encoder=h264_nvenc  >> "%vrdlog%" 2>&1
+REM ECHO !DATE! !TIME! 5 "!ffmpegexe64!" -hide_banner -h encoder=hevc_nvenc >> "!vrdlog!" 2>&1
+REM "!ffmpegexe64!" -hide_banner -h encoder=hevc_nvenc >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! 6 "!ffmpegexe64!" -hide_banner -h filter=yadif  >> "%vrdlog%" 2>&1
+REM "!ffmpegexe64!" -hide_banner -h filter=yadif  >> "%vrdlog%" 2>&1
 REM ECHO !DATE! !TIME! 7 "!ffmpegexe64_OpenCL!" -hide_banner -h filter=unsharp_opencl  >> "%vrdlog%" 2>&1
 REM "!ffmpegexe64_OpenCL!" -hide_banner -h filter=unsharp_opencl  >> "%vrdlog%" 2>&1
 REM ECHO !DATE! !TIME! -------------------------------------- >> "%vrdlog%" 2>&1
-REM
-ECHO !DATE! !TIME! -------------------------------------- >> "%vrdlog%" 2>&1
-ECHO !DATE! !TIME! 8 "!mediainfoexe64!" --Info-Parameters  >> "%vrdlog%" 2>&1
-"!mediainfoexe64!" --Info-Parameters  >> "%vrdlog%" 2>&1
-ECHO !DATE! !TIME! -------------------------------------- >> "%vrdlog%" 2>&1
-REM
-REM ECHO !DATE! !TIME! -------------------------------------- >> "%vrdlog%" 2>&1
-REM ECHO !DATE! !TIME! 9 "!mediainfoexe64!" --help  >> "%vrdlog%" 2>&1
+REM ECHO !DATE! !TIME! 8 "!mediainfoexe64!" --help  >> "%vrdlog%" 2>&1
 REM "!mediainfoexe64!" --help  >> "%vrdlog%" 2>&1
-REM ECHO !DATE! !TIME! -------------------------------------- >> "%vrdlog%" 2>&1
+ECHO !DATE! !TIME! ---------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
+ECHO !DATE! !TIME! "!mediainfoexe64!" --Info-Parameters  >> "%vrdlog%" 2>&1
+"!mediainfoexe64!" --Info-Parameters  >> "%vrdlog%" 2>&1
+ECHO !DATE! !TIME! ---------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
+ECHO !DATE! !TIME! ---------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
+ECHO !DATE! !TIME! "!mediainfoexe64!"  --Legacy --Info-Parameters  >> "%vrdlog%" 2>&1
+"!mediainfoexe64!"  --Legacy --Info-Parameters  >> "%vrdlog%" 2>&1
+ECHO !DATE! !TIME! ---------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! --------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
 
 REM 
-REM 
-REM WE WILL REPLACE THIS .PS1 FROM WHATEVER IS IN   VRDTVSP_003.vbs
-REM 
+REM WE WILL REPLACE THIS .PS1 FROM WHATEVER IS IN THE VBS   VRDTVSP_003.vbs
+REM WE WILL REPLACE THIS .PS1 FROM WHATEVER IS IN THE VBS   VRDTVSP_003.vbs
+REM WE WILL REPLACE THIS .PS1 FROM WHATEVER IS IN THE VBS   VRDTVSP_003.vbs
+REM WE WILL REPLACE THIS .PS1 FROM WHATEVER IS IN THE VBS   VRDTVSP_003.vbs
+REM WE WILL REPLACE THIS .PS1 FROM WHATEVER IS IN THE VBS   VRDTVSP_003.vbs
+REM WE WILL REPLACE THIS .PS1 FROM WHATEVER IS IN THE VBS   VRDTVSP_003.vbs
+REM WE WILL REPLACE THIS .PS1 FROM WHATEVER IS IN THE VBS   VRDTVSP_003.vbs
+REM WE WILL REPLACE THIS .PS1 FROM WHATEVER IS IN THE VBS   VRDTVSP_003.vbs
+REM WE WILL REPLACE THIS .PS1 FROM WHATEVER IS IN THE VBS   VRDTVSP_003.vbs
 REM 
 
 REM --------- setup the .PS1 to calculate elapsed-time durations ---------
@@ -341,7 +327,6 @@ ECHO !DATE! !TIME! TYPE "!Path_to_PS1_to_enforcevalidfilenames!" >> "!vrdlog!" 2
 TYPE "!Path_to_PS1_to_enforcevalidfilenames!" >> "!vrdlog!" 2>&1
 REM --------- setup the .PS1 to ensure valid filenames by stripping bad characters ---------
 
-
 REM --------- setup the .PS1 to re-timestamp files based on filename dates  ---------
 DEL /F "!Path_to_PS1_to_retimestamp!" > NUL 2>&1
 ECHO param ^( [Parameter^(Mandatory=$False^)] [string]$Folder="G:\HDTV\000-TO-BE-PROCESSED", [Parameter^(Mandatory=$False^)] [switch]$Recurse = $False ^)  >> "!Path_to_PS1_to_retimestamp!" 2>&1
@@ -404,8 +389,6 @@ TYPE "!Path_to_PS1_to_retimestamp!" >> "!vrdlog!" 2>&1
 REM --------- setup the .PS1 to re-timestamp files based on filename dates  ---------
 
 
-
-
 REM ***** PREVENT PC FROM GOING TO SLEEP *****
 set iFile=Insomnia-!header!.exe
 ECHO copy "C:\SOFTWARE\Insomnia\32-bit\Insomnia.exe" "!source_TS_Folder!!iFile!" >> "!vrdlog!" 2>&1
@@ -420,75 +403,49 @@ PUSHD "!source_TS_Folder!" >> "!vrdlog!" 2>&1
 CD >> "!vrdlog!" 2>&1
 REM --------- Swap to source folder and save old folder using PUSHD ---------
 
-
-
-REM --------- Move outstanding source files form the capture folder to the ready-for-processing folder ---------
-ECHO --------- Start move .TS .MP4 .MPG files from capture folder "!capture_TS_folder!" to "!source_TS_Folder!" --------- >> "!vrdlog!" 2>&1
+REM --------- Start move .TS .MP4 .MPG .VOB files from capture folder to source folder
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO --------- Start move .TS .MP4 .MPG .VOB files from capture folder "!capture_TS_folder!" to "!source_TS_Folder!" --------- >> "!vrdlog!" 2>&1
 set "start_date_time=!date! !time!"
-REM
 ECHO MOVE /Y "!capture_TS_folder!*.TS" "!source_TS_Folder!" >> "!vrdlog!" 2>&1
 MOVE /Y "!capture_TS_folder!*.TS" "!source_TS_Folder!" >> "!vrdlog!" 2>&1
-REM
 ECHO MOVE /Y "!capture_TS_folder!*.MP4" "!source_TS_Folder!" >> "!vrdlog!" 2>&1
 MOVE /Y "!capture_TS_folder!*.MP4" "!source_TS_Folder!" >> "!vrdlog!" 2>&1
-REM
 ECHO MOVE /Y "!capture_TS_folder!*.MPG" "!source_TS_Folder!" >> "!vrdlog!" 2>&1
 MOVE /Y "!capture_TS_folder!*.MPG" "!source_TS_Folder!" >> "!vrdlog!" 2>&1
-REM
+ECHO MOVE /Y "!capture_TS_folder!*.VOB" "!source_TS_Folder!" >> "!vrdlog!" 2>&1
+MOVE /Y "!capture_TS_folder!*.VOB" "!source_TS_Folder!" >> "!vrdlog!" 2>&1
 set "end_date_time=!date! !time!"
 powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Minimized -File "!Path_to_PS1_to_Calculate_Duration!" -start_date_time "!start_date_time!" -end_date_time "!end_date_time!" -prefix_id "MoveFiles" >> "!vrdlog!" 2>&1
-ECHO --------- End   move .TS .MP4 .MPG files from capture folder "!capture_TS_folder!" to "!source_TS_Folder!" --------- >> "!vrdlog!" 2>&1
-REM --------- Move outstanding source files form the capture folder to the ready-for-processing folder ---------
-
-
+ECHO --------- End   move .TS .MP4 .MPG .BOB files from capture folder "!capture_TS_folder!" to "!source_TS_Folder!" --------- >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+REM --------- End move .TS .MP4 .MPG .VOB files from capture folder to source folder
 
 REM --------- Start Run the PS1 to modify the filenames to enforce validity  i.e. no special characters ---------
-
-REM 
-REM WE WILL REPLACE THIS .PS1 FROM WHATEVER IS IN   VRDTVSP_003.vbs
-REM 
-
-REM 
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 REM GRRR - sometimes left and right parentheses etc are seem in filenames of the media files ... 
 REM Check if filenames are a "safe string" without special characters like !~`!@#$%^&*()+=[]{}\|:;'"<>,?/
 REM If a filename isn't "safe" then rename it so it really is safe
 REM Allowed only characters a-z,A-Z,0-9,-,_,.,space
-REM
-ECHO ***** >> "!vrdlog!" 2>&1
-ECHO ***** >> "!vrdlog!" 2>&1
-ECHO ***** >> "!vrdlog!" 2>&1
-ECHO ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! --- START Enforce Valid Filenames on '!source_TS_Folder!' enforce validity  i.e. no special characters >> "!vrdlog!" 2>&1
-REM
-REM when calling powershell, we must remove any trailing "\" from the folder name in quotes
-REM otherwise the damn thing "encodes" the following end-quote on the filename string and everything after it
-echo. >> "!vrdlog!" 2>&1
-SET "the_folder=!source_TS_Folder!"
-echo. >> "!vrdlog!" 2>&1
-REM echo "BEFORE the_folder='!the_folder!' source_TS_Folder='!source_TS_Folder!'" >> "!vrdlog!" 2>&1
-set "rightmost_character=!the_folder:~-1!" >> "!vrdlog!" 2>&1
-if /I "!rightmost_character!" == "\" (set "the_folder=!the_folder:~,-1!") >> "!vrdlog!" 2>&1
-REM echo "AFTER  the_folder='!the_folder!' source_TS_Folder='!source_TS_Folder!'" >> "!vrdlog!" 2>&1
-ECHO ***** >> "!vrdlog!" 2>&1
-REM when calling powershell, we must remove any trailing "\" from the folder name in quotes
-REM when calling powershell, we must remove any trailing "\" from the folder name in quotes
-REM when calling powershell, we must remove any trailing "\" from the folder name in quotes
 REM when calling powershell, we must remove any trailing "\" from the folder name in quotes
 REM otherwise the damn thing "encodes" the following end-quote on the filename string and everything after it
 SET "the_folder=!source_TS_Folder!"
-echo. >> "!vrdlog!" 2>&1
-REM echo "BEFORE the_folder='!the_folder!' source_TS_Folder='!source_TS_Folder!'" >> "!vrdlog!" 2>&1
-set "rightmost_character=!the_folder:~-1!" >> "!vrdlog!" 2>&1
-if /I "!rightmost_character!" == "\" (set "the_folder=!the_folder:~,-1!") >> "!vrdlog!" 2>&1
-REM echo "AFTER  the_folder='!the_folder!' source_TS_Folder='!source_TS_Folder!'" >> "!vrdlog!" 2>&1
+Call :remove_trailing_backslash_into_variable "!source_TS_Folder!" "the_folder"
 echo. >> "!vrdlog!" 2>&1
 ECHO powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Minimized -File "!Path_to_PS1_to_enforcevalidfilenames!" -Recurse -Folder "!the_folder!" >> "!vrdlog!" 2>&1
 set "start_date_time=!date! !time!"
 powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Minimized -File "!Path_to_PS1_to_enforcevalidfilenames!" -Recurse -Folder "!the_folder!" >> "!vrdlog!" 2>&1
 set "end_date_time=!date! !time!"
 powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Minimized -File "!Path_to_PS1_to_Calculate_Duration!" -start_date_time "!start_date_time!" -end_date_time "!end_date_time!" -prefix_id "Enforce_Valid_Filenames_Source" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! --- END Enforce Valid Filenames on '!source_TS_Folder!' enforce validity  i.e. no special characters >> "!vrdlog!" 2>&1
-ECHO ***** >> "!vrdlog!" 2>&1
+echo. >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! --- START Enforce Valid Filenames on '!destination_mp4_Folder!' enforce validity  i.e. no special characters >> "!vrdlog!" 2>&1
 REM when calling powershell, we must remove any trailing "\" from the folder name in quotes
 REM otherwise the damn thing "encodes" the following end-quote on the filename string and everything after it
@@ -505,19 +462,19 @@ powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowSty
 set "end_date_time=!date! !time!"
 powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Minimized -File "!Path_to_PS1_to_Calculate_Duration!" -start_date_time "!start_date_time!" -end_date_time "!end_date_time!" -prefix_id "Enforce_Valid_Filenames_Destination" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! --- END Enforce Valid Filenames on '!destination_mp4_Folder!' enforce validity  i.e. no special characters >> "!vrdlog!" 2>&1
-ECHO ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 REM DEL /F "!Path_to_PS1_to_enforcevalidfilenames!" > NUL: 2>&1
 ECHO !DATE! !TIME! --- END   Enforce Valid Filenames on '!source_TS_Folder!' enforce validity  i.e. no special characters >> "!vrdlog!" 2>&1
-ECHO ***** >> "!vrdlog!" 2>&1
-ECHO ***** >> "!vrdlog!" 2>&1
-ECHO ***** >> "!vrdlog!" 2>&1
-ECHO ***** >> "!vrdlog!" 2>&1
-ECHO ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 REM --------- End Run the PS1 to modify the filenames to enforce validity  i.e. no special characters ---------
 
 REM --------- Start Loop through the SOURCE files ---------
-set "loop_Start_date_time=!date! !time!"
-REM for %%f in ("!source_TS_Folder!*.TS") do (
+ECHO !DATE! !TIME! --- END   Enforce Valid Filenames on '!source_TS_Folder!' enforce validity  i.e. no special characters >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1set "loop_Start_date_time=!date! !time!"
 for %%f in ("!source_TS_Folder!*.TS", "!source_TS_Folder!*.MPG", "!source_TS_Folder!*.MP4", "!source_TS_Folder!*.VOB") do (
 	set "iloop_start_date_time=!date! !time!"
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
@@ -532,16 +489,19 @@ for %%f in ("!source_TS_Folder!*.TS", "!source_TS_Folder!*.MPG", "!source_TS_Fol
 ECHO File Processing Loop elapsed time :" >> "!vrdlog!" 2>&1
 set "loop_end_date_time=!date! !time!"
 powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Minimized -File "!Path_to_PS1_to_Calculate_Duration!" -start_date_time "!loop_start_date_time!" -end_date_time "!loop_end_date_time!" -prefix_id "Loop_Processing_Files" >> "!vrdlog!" 2>&1
-REM --------- End   Loop through the .TS files ---------
+REM --------- End   Loop through the .TS fiECHO !DATE! !TIME! --- END   Enforce Valid Filenames on '!source_TS_Folder!' enforce validity  i.e. no special characters >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1les ---------
 :after_main_loop
 
 
 
-ECHO ***** >> "!vrdlog!" 2>&1
-ECHO ***** >> "!vrdlog!" 2>&1
-ECHO ***** >> "!vrdlog!" 2>&1
-ECHO ***** >> "!vrdlog!" 2>&1
-ECHO ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 
 REM --------- Start Run the VBS to modify the filenames based on the filename content including reformatting the date ---------
 ECHO !DATE! !TIME! --- START Modify Filenames on "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
@@ -565,10 +525,10 @@ ECHO !DATE! !TIME! --- END Modify Filenames on "!destination_mp4_Folder!" >> "!v
 REM --------- End Run the VBS to modify the filenames based on the date in the filename eg 2020-06-03 ---------
 
 REM --------- Start Run the PS1 to modify the filename timestamps filenames based on the date in the filename eg 2020-06-03 ---------
-ECHO ***** >> "!vrdlog!" 2>&1
-ECHO ***** >> "!vrdlog!" 2>&1
-ECHO ***** >> "!vrdlog!" 2>&1
-ECHO ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 
 ECHO !DATE! !TIME! --- START Modify DateCreated and DateModified Timestamps on "!destination_mp4_Folder! >> "!vrdlog!" 2>&1
 REM when calling powershell, we must remove any trailing "\" from the folder name in quotes
@@ -589,11 +549,11 @@ REM DEL /F "!Path_to_PS1_to_retimestamp!" > NUL: 2>&1
 ECHO !DATE! !TIME! --- END Modify DateCreated and DateModified Timestamps on "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
 REM --------- End Run the PS1 to modify the filename timestamps filenames based on the date in the filename eg 2020-06-03 ---------
 
-ECHO ***** >> "!vrdlog!" 2>&1
-ECHO ***** >> "!vrdlog!" 2>&1
-ECHO ***** >> "!vrdlog!" 2>&1
-ECHO ***** >> "!vrdlog!" 2>&1
-ECHO ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 REM ***** ALLOW PC TO GO TO SLEEP AGAIN *****
 REM "C:\000-PStools\pskill.exe" -t -nobanner "%iFile%" >> "!vrdlog!" 2>&1
 echo taskkill /t /f /im "%iFile%" >> "!vrdlog!" 2>&1
@@ -2333,7 +2293,7 @@ REM and the first audio stream should be the one we need.
 REM Set /p from an input file reads the first line.
 "!mediainfoexe64!" "--Inform=!mi_Section!;%%!mi_Parameter!%%\r\n" "!mi_Filename!" > "!tempfile!"
 set /p mi_var=<"!tempfile!"
-set !mi_Variable!=!mi_var!
+set "!mi_Variable!=!mi_var!"
 REM ECHO !DATE! !TIME! "!mi_Variable!=!mi_var!" from "!mi_Section!" "!mi_Parameter!"
 DEL /F "!tempfile!" >NUL 2>&1
 goto :eof
@@ -2392,7 +2352,7 @@ REM and the first audio stream should be the one we need.
 REM Set /p from an input file reads the first line.
 "!mediainfoexe64!" --Legacy "--Inform=!mi_Section!;%%!mi_Parameter!%%\r\n" "!mi_Filename!" > "!tempfile!"
 set /p mi_var=<"!tempfile!"
-set !mi_Variable!=!mi_var!
+set "!mi_Variable!=!mi_var!"
 REM ECHO !DATE! !TIME! "!mi_Variable!=!mi_var!" from Legacy "!mi_Section!" "!mi_Parameter!"
 DEL /F "!tempfile!" >NUL 2>&1
 goto :eof
@@ -2538,4 +2498,18 @@ call :get_date_time_string "date_time_string"
 set "!header_variable_name!=!date_time_string!-!COMPUTERNAME!"
 goto :eof
 
-
+REM -------------------------------------------------------------------------------------------------------------------------------------
+REM -------------------------------------------------------------------------------------------------------------------------------------
+REM -------------------------------------------------------------------------------------------------------------------------------------
+REM -------------------------------------------------------------------------------------------------------------------------------------
+REM -------------------------------------------------------------------------------------------------------------------------------------
+:remove_trailing_backslash_into_variable
+REM remove trailing backslash from p1 "!source_TS_Folder!" into p2 "the_folder"
+set "rtbiv_path=%~1"
+set "rtbiv_variable=%~2"
+if /I "!rtbiv_path:~-1!" == "\" (
+	set "!rtbiv_variable!=!rtbiv_path:~,-1!"
+) ELSE (
+	set "!rtbiv_variable!=!rtbiv_path!"
+)
+goto :eof
