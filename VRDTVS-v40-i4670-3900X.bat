@@ -450,12 +450,7 @@ ECHO !DATE! !TIME! --- START Enforce Valid Filenames on '!destination_mp4_Folder
 REM when calling powershell, we must remove any trailing "\" from the folder name in quotes
 REM otherwise the damn thing "encodes" the following end-quote on the filename string and everything after it
 set "the_folder=!destination_mp4_Folder!"
-echo. >> "!vrdlog!" 2>&1
-REM echo "BEFORE the_folder='!the_folder!' destination_mp4_Folder='!destination_mp4_Folder!'" >> "!vrdlog!" 2>&1
-set "rightmost_character=%the_folder:~-1%" >> "!vrdlog!" 2>&1
-if /I "!rightmost_character!" == "\" (set "the_folder=%the_folder:~,-1%") >> "!vrdlog!" 2>&1
-REM echo "AFTER  the_folder='!the_folder!' destination_mp4_Folder='!destination_mp4_Folder!'" >> "!vrdlog!" 2>&1
-echo. >> "!vrdlog!" 2>&1
+Call :remove_trailing_backslash_into_variable "!destination_mp4_Folder!" "the_folder"
 ECHO powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Minimized -File "!Path_to_PS1_to_enforcevalidfilenames!" -Recurse -Folder "!the_folder!" >> "!vrdlog!" 2>&1
 set "start_date_time=!date! !time!"
 powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Minimized -File "!Path_to_PS1_to_enforcevalidfilenames!" -Recurse -Folder "!the_folder!" >> "!vrdlog!" 2>&1
@@ -470,11 +465,13 @@ ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 REM --------- End Run the PS1 to modify the filenames to enforce validity  i.e. no special characters ---------
 
+:before_main_loop
 REM --------- Start Loop through the SOURCE files ---------
 ECHO !DATE! !TIME! --- END   Enforce Valid Filenames on '!source_TS_Folder!' enforce validity  i.e. no special characters >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1set "loop_Start_date_time=!date! !time!"
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+set "loop_Start_date_time=!date! !time!"
 for %%f in ("!source_TS_Folder!*.TS", "!source_TS_Folder!*.MPG", "!source_TS_Folder!*.MP4", "!source_TS_Folder!*.VOB") do (
 	set "iloop_start_date_time=!date! !time!"
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
@@ -489,31 +486,21 @@ for %%f in ("!source_TS_Folder!*.TS", "!source_TS_Folder!*.MPG", "!source_TS_Fol
 ECHO File Processing Loop elapsed time :" >> "!vrdlog!" 2>&1
 set "loop_end_date_time=!date! !time!"
 powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Minimized -File "!Path_to_PS1_to_Calculate_Duration!" -start_date_time "!loop_start_date_time!" -end_date_time "!loop_end_date_time!" -prefix_id "Loop_Processing_Files" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 REM --------- End   Loop through the .TS fiECHO !DATE! !TIME! --- END   Enforce Valid Filenames on '!source_TS_Folder!' enforce validity  i.e. no special characters >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1les ---------
 :after_main_loop
 
-
-
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-
 REM --------- Start Run the VBS to modify the filenames based on the filename content including reformatting the date ---------
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! --- START Modify Filenames on "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
 REM when calling powershell, we must remove any trailing "\" from the folder name in quotes
 REM otherwise the damn thing "encodes" the following end-quote on the filename string
 SET "the_folder=!destination_mp4_Folder!"
-echo.>> "!vrdlog!" 2>&1
-echo "BEFORE the_folder='!the_folder!' destination_mp4_Folder='!destination_mp4_Folder!'">> "!vrdlog!" 2>&1
-set "rightmost_character=%the_folder:~-1%"
-if /I "!rightmost_character!" == "\" (set "the_folder=%the_folder:~,-1%")
-echo "AFTER  the_folder='!the_folder!' destination_mp4_Folder='!destination_mp4_Folder!'">> "!vrdlog!" 2>&1
-echo.>> "!vrdlog!" 2>&1
+Call :remove_trailing_backslash_into_variable "!destination_mp4_Folder!" "the_folder"
 REM in the call below, p1=y to fix timestamps, p2=the log filename for powershell to append to, p3=root(s) of folder tree(s) to process
 ECHO !DATE! !TIME! cscript //Nologo "G:\HDTV\Rename_fix_mp4_bprj_files_in_a_folder.vbs" "n" "!PSlog!-vbs.log" "!the_folder!"
 ECHO !DATE! !TIME! cscript //Nologo "G:\HDTV\Rename_fix_mp4_bprj_files_in_a_folder.vbs" "n" "!PSlog!-vbs.log" "!the_folder!" >> "!vrdlog!" 2>&1
@@ -522,6 +509,9 @@ cscript //Nologo "!Path_to_VBS_to_rename_files!" "y" "!PSlog!-vbs.log" "!the_fol
 set "end_date_time=!date! !time!"
 powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Minimized -File "!Path_to_PS1_to_Calculate_Duration!" -start_date_time "!start_date_time!" -end_date_time "!end_date_time!" -prefix_id "Rename_VBS" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! --- END Modify Filenames on "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 REM --------- End Run the VBS to modify the filenames based on the date in the filename eg 2020-06-03 ---------
 
 REM --------- Start Run the PS1 to modify the filename timestamps filenames based on the date in the filename eg 2020-06-03 ---------
@@ -529,17 +519,11 @@ ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-
 ECHO !DATE! !TIME! --- START Modify DateCreated and DateModified Timestamps on "!destination_mp4_Folder! >> "!vrdlog!" 2>&1
 REM when calling powershell, we must remove any trailing "\" from the folder name in quotes
 REM otherwise the damn thing "encodes" the following end-quote on the filename string and everything after it
 SET "the_folder=!destination_mp4_Folder!"
-echo. >> "!vrdlog!" 2>&1
-REM echo "BEFORE the_folder='!the_folder!' destination_mp4_Folder='!destination_mp4_Folder!'">> "!vrdlog!" 2>&1
-set "rightmost_character=%the_folder:~-1%"
-if /I "!rightmost_character!" == "\" (set "the_folder=%the_folder:~,-1%")
-REM echo "AFTER  the_folder='!the_folder!' destination_mp4_Folder='!destination_mp4_Folder!'" >> "!vrdlog!" 2>&1
-echo. >> "!vrdlog!" 2>&1
+Call :remove_trailing_backslash_into_variable "!destination_mp4_Folder!" "the_folder"
 ECHO powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Minimized -File "!Path_to_PS1_to_retimestamp!" -Recurse -Folder "!the_folder!" >> "!vrdlog!" 2>&1
 set "start_date_time=!date! !time!"
 powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Minimized -File "!Path_to_PS1_to_retimestamp!" -Recurse -Folder "!the_folder!" >> "!vrdlog!" 2>&1
@@ -547,13 +531,11 @@ set "end_date_time=!date! !time!"
 powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Minimized -File "!Path_to_PS1_to_Calculate_Duration!" -start_date_time "!start_date_time!" -end_date_time "!end_date_time!" -prefix_id "ReTimestamp" >> "!vrdlog!" 2>&1
 REM DEL /F "!Path_to_PS1_to_retimestamp!" > NUL: 2>&1
 ECHO !DATE! !TIME! --- END Modify DateCreated and DateModified Timestamps on "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 REM --------- End Run the PS1 to modify the filename timestamps filenames based on the date in the filename eg 2020-06-03 ---------
 
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 REM ***** ALLOW PC TO GO TO SLEEP AGAIN *****
 REM "C:\000-PStools\pskill.exe" -t -nobanner "%iFile%" >> "!vrdlog!" 2>&1
 echo taskkill /t /f /im "%iFile%" >> "!vrdlog!" 2>&1
