@@ -469,7 +469,6 @@ REM echo "BEFORE the_folder='!the_folder!' source_TS_Folder='!source_TS_Folder!'
 set "rightmost_character=!the_folder:~-1!" >> "!vrdlog!" 2>&1
 if /I "!rightmost_character!" == "\" (set "the_folder=!the_folder:~,-1!") >> "!vrdlog!" 2>&1
 REM echo "AFTER  the_folder='!the_folder!' source_TS_Folder='!source_TS_Folder!'" >> "!vrdlog!" 2>&1
-
 ECHO ***** >> "!vrdlog!" 2>&1
 REM when calling powershell, we must remove any trailing "\" from the folder name in quotes
 REM when calling powershell, we must remove any trailing "\" from the folder name in quotes
@@ -489,22 +488,25 @@ set "start_date_time=!date! !time!"
 powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Minimized -File "!Path_to_PS1_to_enforcevalidfilenames!" -Recurse -Folder "!the_folder!" >> "!vrdlog!" 2>&1
 set "end_date_time=!date! !time!"
 powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Minimized -File "!Path_to_PS1_to_Calculate_Duration!" -start_date_time "!start_date_time!" -end_date_time "!end_date_time!" -prefix_id "Enforce_Valid_Filenames_Source" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! --- END Enforce Valid Filenames on '!source_TS_Folder!' enforce validity  i.e. no special characters >> "!vrdlog!" 2>&1
 
-ECHO ***** >> "!vrdlog!" 2>&1
+ECHO ***** >> "!vrdlog!" 2>&
+ECHO !DATE! !TIME! --- START Enforce Valid Filenames on '!destination_mp4_Folder!' enforce validity  i.e. no special characters >> "!vrdlog!" 2>&1
 REM when calling powershell, we must remove any trailing "\" from the folder name in quotes
 REM otherwise the damn thing "encodes" the following end-quote on the filename string and everything after it
 set "the_folder=!destination_mp4_Folder!"
 echo. >> "!vrdlog!" 2>&1
-echo "BEFORE the_folder='!the_folder!' destination_mp4_Folder='!destination_mp4_Folder!'" >> "!vrdlog!" 2>&1
+REM echo "BEFORE the_folder='!the_folder!' destination_mp4_Folder='!destination_mp4_Folder!'" >> "!vrdlog!" 2>&1
 set "rightmost_character=%the_folder:~-1%" >> "!vrdlog!" 2>&1
 if /I "!rightmost_character!" == "\" (set "the_folder=%the_folder:~,-1%") >> "!vrdlog!" 2>&1
-echo "AFTER  the_folder='!the_folder!' destination_mp4_Folder='!destination_mp4_Folder!'" >> "!vrdlog!" 2>&1
+REM echo "AFTER  the_folder='!the_folder!' destination_mp4_Folder='!destination_mp4_Folder!'" >> "!vrdlog!" 2>&1
 echo. >> "!vrdlog!" 2>&1
 ECHO powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Minimized -File "!Path_to_PS1_to_enforcevalidfilenames!" -Recurse -Folder "!the_folder!" >> "!vrdlog!" 2>&1
 set "start_date_time=!date! !time!"
 powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Minimized -File "!Path_to_PS1_to_enforcevalidfilenames!" -Recurse -Folder "!the_folder!" >> "!vrdlog!" 2>&1
 set "end_date_time=!date! !time!"
 powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Minimized -File "!Path_to_PS1_to_Calculate_Duration!" -start_date_time "!start_date_time!" -end_date_time "!end_date_time!" -prefix_id "Enforce_Valid_Filenames_Destination" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! --- END Enforce Valid Filenames on '!destination_mp4_Folder!' enforce validity  i.e. no special characters >> "!vrdlog!" 2>&1
 
 ECHO ***** >> "!vrdlog!" 2>&1
 REM DEL /F "!Path_to_PS1_to_enforcevalidfilenames!" > NUL: 2>&1
@@ -549,7 +551,6 @@ ECHO ***** >> "!vrdlog!" 2>&1
 ECHO ***** >> "!vrdlog!" 2>&1
 
 REM --------- Start Run the VBS to modify the filenames based on the filename content including reformatting the date ---------
-ECHO !DATE! !TIME! --- START Modify Filenames on "!destination_mp4_Folder!"
 ECHO !DATE! !TIME! --- START Modify Filenames on "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
 REM when calling powershell, we must remove any trailing "\" from the folder name in quotes
 REM otherwise the damn thing "encodes" the following end-quote on the filename string
@@ -567,8 +568,7 @@ set "Start_date_time=!date! !time!"
 cscript //Nologo "!Path_to_VBS_to_rename_files!" "y" "!PSlog!-vbs.log" "!the_folder!" >> "!vrdlog!" 2>&1
 set "end_date_time=!date! !time!"
 powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Minimized -File "!Path_to_PS1_to_Calculate_Duration!" -start_date_time "!start_date_time!" -end_date_time "!end_date_time!" -prefix_id "Rename_VBS" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! --- END Modify Filenames
-ECHO !DATE! !TIME! --- END Modify Filenames >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! --- END Modify Filenames on "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
 REM --------- End Run the VBS to modify the filenames based on the date in the filename eg 2020-06-03 ---------
 
 REM --------- Start Run the PS1 to modify the filename timestamps filenames based on the date in the filename eg 2020-06-03 ---------
@@ -576,11 +576,8 @@ ECHO ***** >> "!vrdlog!" 2>&1
 ECHO ***** >> "!vrdlog!" 2>&1
 ECHO ***** >> "!vrdlog!" 2>&1
 ECHO ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! --- START Modify DateCreated and DateModified Timestamps
-ECHO !DATE! !TIME! --- START Modify DateCreated and DateModified Timestamps >> "!vrdlog!" 2>&1
 
-
-
+ECHO !DATE! !TIME! --- START Modify DateCreated and DateModified Timestamps on "!destination_mp4_Folder! >> "!vrdlog!" 2>&1
 REM when calling powershell, we must remove any trailing "\" from the folder name in quotes
 REM otherwise the damn thing "encodes" the following end-quote on the filename string and everything after it
 SET "the_folder=!destination_mp4_Folder!"
@@ -596,7 +593,6 @@ powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowSty
 set "end_date_time=!date! !time!"
 powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Minimized -File "!Path_to_PS1_to_Calculate_Duration!" -start_date_time "!start_date_time!" -end_date_time "!end_date_time!" -prefix_id "ReTimestamp" >> "!vrdlog!" 2>&1
 REM DEL /F "!Path_to_PS1_to_retimestamp!" > NUL: 2>&1
-ECHO !DATE! !TIME! --- END Modify DateCreated and DateModified Timestamps on "!destination_mp4_Folder!"
 ECHO !DATE! !TIME! --- END Modify DateCreated and DateModified Timestamps on "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
 REM --------- End Run the PS1 to modify the filename timestamps filenames based on the date in the filename eg 2020-06-03 ---------
 
@@ -607,6 +603,7 @@ ECHO ***** >> "!vrdlog!" 2>&1
 ECHO ***** >> "!vrdlog!" 2>&1
 REM ***** ALLOW PC TO GO TO SLEEP AGAIN *****
 REM "C:\000-PStools\pskill.exe" -t -nobanner "%iFile%" >> "!vrdlog!" 2>&1
+echo taskkill /t /f /im "%iFile%" >> "!vrdlog!" 2>&1
 taskkill /t /f /im "%iFile%" >> "!vrdlog!" 2>&1
 DEL /F "!source_TS_Folder!!iFile!" >> "!vrdlog!" 2>&1
 REM ***** ALLOW PC TO GO TO SLEEP AGAIN *****
