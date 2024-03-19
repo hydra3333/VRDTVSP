@@ -3,6 +3,9 @@
 ### NOTHING WORKS FOR THE TIME BEING
 #### REDEVEOPMENT IN PROGRESS .vbs -> .bat/.py/.ps1
 
+
+
+
 ### built primarily with vbscript in 1970's coding style   
 
 #### ONLY works on a Win10x64 PC with    
