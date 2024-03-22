@@ -21,4 +21,4 @@ if __name__ == "__main__":
     hours, remainder = divmod(duration.seconds, 3600)
     minutes, seconds = divmod(remainder, 60)
     microseconds = duration.microseconds
-    print(f"\n{args.prefix_id} DURATION: {days} days {hours} hours {minutes} minutes {seconds}.{microseconds:0{6}} seconds\n")
+    print(f"\n\n{args.prefix_id} DURATION: {days} days {hours} hours {minutes} minutes {seconds}.{microseconds:0{6}} seconds\n\n")

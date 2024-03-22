@@ -783,7 +783,7 @@ if __name__ == "__main__":
     recurse = args.recurse
     valid_suffixes = ('.ts', '.mp4', '.mpg', '.vob', '.bprj')    # , '.mp3', '.aac', '.mp2')
 
-    print(f"STARTED Rename Fix Filenames by removing special characters and adjusting titles and moving date in every {valid_suffixes} {folder}")
+    print(f"\n\nSTARTED Rename Fix Filenames by removing special characters and adjusting titles and moving date in every {valid_suffixes} {folder}")
     print(f"This will ONLY work when the calling dos commandline specifies a folder with DOUBLE backslashes like this:")
     print(f"   \"python3.exe\" \"Enforce_Valid_filenames.py\" --folder \"t:\\\\HDTV\\\\\" --recurse")
     print(f"Incoming Folder='{folder}' Recurse={recurse}")
@@ -816,4 +816,4 @@ if __name__ == "__main__":
             new_filename_without_extension, new_filename_with_extension, new_full_filename = rename_to_adjusted_filename(old_full_filename, old_filename_without_extension, new_filename_without_extension, new_filename_with_extension, new_full_filename, old_file_extension)
         else:
             print(f"Left alone: '{old_full_filename}'")
-    print(f"FINISHED Rename Fix Filenames by removing special characters and adjusting titles and moving date in every {valid_suffixes} {folder}")
+    print(f"FINISHED Rename Fix Filenames by removing special characters and adjusting titles and moving date in every {valid_suffixes} {folder}\n\n")

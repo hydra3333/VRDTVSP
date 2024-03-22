@@ -7,7 +7,7 @@ from datetime import datetime
 #
 
 if __name__ == "__main__":
-    print(f"STARTED Set file date-time timestamps")
+    print(f"\n\nSTARTED Set file date-time timestamps")
     print(f"This will ONLY work when the calling dos commandline specifies a folder with DOUBLE backslashes like this:")
     print(f"   \"python3.exe\" \"Modify_File_Date_Timestamps.py\" --folder \"t:\\\\HDTV\\\\\" --recurse")
     parser = argparse.ArgumentParser(description="Set file date-time timestamps")
@@ -55,4 +55,4 @@ if __name__ == "__main__":
         # Set both creation and modification date timestamps based on the date in the string
         os.utime(old_full_filename, (date_from_file.timestamp(), date_from_file.timestamp()))
         print(f"Set {fs} '{date_from_file}' into creation and modification dates on '{old_full_filename}'")
-    print(f"FINISHED Set file date-time timestamps in every {valid_suffixes} filename by Matching them with a regex match in Python ...")
+    print(f"FINISHED Set file date-time timestamps in every {valid_suffixes} filename by Matching them with a regex match in Python ...\n\n")
