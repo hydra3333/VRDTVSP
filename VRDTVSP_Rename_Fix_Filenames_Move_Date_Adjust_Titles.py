@@ -743,7 +743,7 @@ def rename_to_adjusted_filename(old_full_filename, old_filename_without_extensio
         try:
             if rename_retry_count > 1:
                 print(f"Rename retry #{rename_retry_count}: Renaming: '{old_full_filename}' to '{new_full_filename}")
-            name(old_full_filename, new_full_filename)
+            os.rename(old_full_filename, new_full_filename)
         except Exception as e:
             error_number = e.errno
             if error_number is None:
