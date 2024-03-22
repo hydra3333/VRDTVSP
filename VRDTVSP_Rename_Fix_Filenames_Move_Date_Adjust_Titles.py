@@ -727,7 +727,7 @@ def fix_xml_document_content_inside_bprj(file_path, old_basename, new_basename):
         print("Update xml node before:", txtbefore)
         print("                after:", filename_node.text)
         # Save the updated XML back to the file
-        #####tree.write(file_path)
+        tree.write(file_path)
         return True
     except Exception as e:
         print(f"Error occurred while fixing XML document content in '{file_path}': Error number: {e.errno}, Error message: {e}")
@@ -743,7 +743,7 @@ def rename_to_adjusted_filename(old_full_filename, old_filename_without_extensio
         try:
             if rename_retry_count > 1:
                 print(f"Rename retry #{rename_retry_count}: Renaming: '{old_full_filename}' to '{new_full_filename}")
-            #####os.rename(old_full_filename, new_full_filename)
+            name(old_full_filename, new_full_filename)
         except Exception as e:
             error_number = e.errno
             if error_number is None:

@@ -44,13 +44,10 @@ if __name__ == "__main__":
         match = re.search(date_pattern, filename)
         if match:
             date_string = match.group()
-            #date_from_file = datetime.strptime(date_string, "%Y-%m-%d").date()
             date_from_file = datetime.strptime(date_string, "%Y-%m-%d") # Convert to datetime object
-            #print(f"Date string detected in filename string, using date {date_from_file} from {old_full_filename}")
             fs = "filename-date"
         else:
             date_from_file = datetime.fromtimestamp(os.path.getctime(old_full_filename)).date()
-            #print(f"No date string detected in filename, using creation-date {date_from_file} of file {old_full_filename}")
             fs = "creaton-date"
         # Set both creation and modification date timestamps based on the date in the string
         os.utime(old_full_filename, (date_from_file.timestamp(), date_from_file.timestamp()))
