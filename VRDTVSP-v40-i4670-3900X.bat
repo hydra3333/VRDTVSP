@@ -107,7 +107,7 @@ DEL /F "!PSlog!" >> "%vrdlog%" 2>&1
 
 SET tempfile=!scratch_Folder!%~n0-!header!-temp.txt
 ECHO !DATE! !TIME! DEL /F "!tempfile!" >> "%vrdlog%" 2>&1
- DEL /F "!tempfile!" >> "%vrdlog%" 2>&1
+DEL /F "!tempfile!" >> "%vrdlog%" 2>&1
 REM --------- setup LOG file and TEMP filenames ----------------------------
 
 REM --------- setup vrd paths filenames ----------------------------
@@ -116,17 +116,13 @@ set "_vrd_version_fallback=5"
 call :set_vrd_qsf_paths "!_vrd_version_primary!"
 REM --------- setup vrd paths filenames ----------------------------
 
+REM --------- setup .PY fully qualified filenames to pre-created files which rename and re-timestamp filenames etc ---------
+set "Path_to_py_VRDTVSP_Calculate_Duration=!root!VRDTVSP_Calculate_Duration.py"
+set "Path_to_py_VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles=!root!VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles.py"
+set "Path_to_py_VRDTVSP_Modify_File_Date_Timestamps=!root!VRDTVSP_Modify_File_Date_Timestamps.py"
 REM --------- setup .VBS and .PS1 and .PY fully qualified filenames to pre-created files which rename and re-timestamp filenames etc ---------
-
-set "Path_to_py_enforce_valid_filenames=!root!VRDTVSP-Enforce_Valid_filenames.py"
-set "Path_to_py_modify_file_date_timestamps=!root!VRDTVSP-Modify_File_Date_Timestamps.py"
-set "Path_to_py_calculate_duration=!root!VRDTVSP-Calculate_Duration.py"
-set "Path_to_vbs_rename_fix_mp4_bprj_files_in_a_folder=!root!Rename_fix_mp4_bprj_files_in_a_folder.vbs"
-REM --------- setup .VBS and .PS1 and .PY fully qualified filenames to pre-created files which rename and re-timestamp filenames etc ---------
-
 
 call :get_date_time_string "TOTAL_start_date_time"
-
 
 REM --------- Start Initial Summarize ---------
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
@@ -175,10 +171,9 @@ ECHO !DATE! !TIME! profile_name_for_qsf_mpeg2="!profile_name_for_qsf_mpeg2!" >> 
 ECHO !DATE! !TIME! profile_name_for_qsf_h264="!profile_name_for_qsf_h264!" >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! profile_name_for_qsf_h265="!profile_name_for_qsf_h265!" >> "%vrdlog%" 2>&1
 
-ECHO !DATE! !TIME! Path_to_VBS_to_rename_files="!Path_to_VBS_to_rename_files!" >> "%vrdlog%" 2>&1
-ECHO !DATE! !TIME! Path_to_py_enforce_valid_filenames="!Path_to_py_enforce_valid_filenames!" >> "%vrdlog%" 2>&1
-ECHO !DATE! !TIME! Path_to_py_modify_file_date_timestamps="!Path_to_py_modify_file_date_timestamps!" >> "%vrdlog%" 2>&1
-ECHO !DATE! !TIME! Path_to_py_calculate_duration="!Path_to_py_calculate_duration!" >> "%vrdlog%" 2>&1
+ECHO !DATE! !TIME! Path_to_py_VRDTVSP_Calculate_Duration="!Path_to_py_VRDTVSP_Calculate_Duration!" >> "%vrdlog%" 2>&1
+ECHO !DATE! !TIME! Path_to_py_VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles="!Path_to_py_VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles!" >> "%vrdlog%" 2>&1
+ECHO !DATE! !TIME! Path_to_py_VRDTVSP_Modify_File_Date_Timestamps="!Path_to_py_VRDTVSP_Modify_File_Date_Timestamps!" >> "%vrdlog%" 2>&1
 
 ECHO !DATE! !TIME! End summary of Initialised paths etc ... >> "!vrdlog!"
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
@@ -253,8 +248,8 @@ MOVE /Y "!capture_TS_folder!*.MPG" "!source_TS_Folder!" >> "!vrdlog!" 2>&1
 ECHO MOVE /Y "!capture_TS_folder!*.VOB" "!source_TS_Folder!" >> "!vrdlog!" 2>&1
 MOVE /Y "!capture_TS_folder!*.VOB" "!source_TS_Folder!" >> "!vrdlog!" 2>&1
 call :get_date_time_string "end_date_time"
-echo "!py_exe!" !Path_to_py_calculate_duration! --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "MoveFiles" >> "!vrdlog!" 2>&1
-"!py_exe!" !Path_to_py_calculate_duration! --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "MoveFiles" >> "!vrdlog!" 2>&1
+echo "!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "MoveFiles" >> "!vrdlog!" 2>&1
+"!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "MoveFiles" >> "!vrdlog!" 2>&1
 ECHO --------- End   move .TS .MP4 .MPG .VOB files from capture folder "!capture_TS_folder!" to "!source_TS_Folder!" --------- >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
@@ -278,40 +273,27 @@ call :get_date_time_string "start_date_time"
 set "the_folder=!source_TS_Folder!" 
 call :make_double_backslashes_into_variable "!source_TS_Folder!" "the_folder"
 REM call :remove_trailing_backslash_into_variable "!the_folder!" "the_folder"
-echo "!py_exe!" "!Path_to_py_enforce_valid_filenames!" --folder "!the_folder!" --recurse >> "!vrdlog!" 2>&1
-"!py_exe!" "!Path_to_py_enforce_valid_filenames!" --folder "!the_folder!" --recurse >> "!vrdlog!" 2>&1
+echo "!py_exe!" "!Path_to_py_VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles!" --folder "!the_folder!" --recurse >> "!vrdlog!" 2>&1
+"!py_exe!" "!Path_to_py_VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles!" --folder "!the_folder!" --recurse >> "!vrdlog!" 2>&1
 call :get_date_time_string "end_date_time"
-echo "!py_exe!" "!Path_to_py_calculate_duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "enforce_valid_filenames_source_TS_Folder" >> "!vrdlog!" 2>&1
-"!py_exe!" "!Path_to_py_calculate_duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "enforce_valid_filenames_source_TS_Folder" >> "!vrdlog!" 2>&1
+echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles !the_folder!" >> "!vrdlog!" 2>&1
+"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles !the_folder!" >> "!vrdlog!" 2>&1
 REM
-REM ENFORCE VALID FILENAMES on the destination_mp4_Folder
-echo. >> "!vrdlog!" 2>&1
-call :get_date_time_string "start_date_time"
-set "the_folder=!destination_mp4_Folder!" 
-call :make_double_backslashes_into_variable "!destination_mp4_Folder!" "the_folder"
-REM call :remove_trailing_backslash_into_variable "!the_folder!" "the_folder"
-echo "!py_exe!" !Path_to_py_enforce_valid_filenames! --folder "!the_folder!" --recurse >> "!vrdlog!" 2>&1
-"!py_exe!" "!Path_to_py_enforce_valid_filenames!" --folder "!the_folder!" --recurse >> "!vrdlog!" 2>&1
-call :get_date_time_string "end_date_time"
-echo "!py_exe!" "!Path_to_py_calculate_duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "enforce_valid_filenames_destination_mp4_Folder" >> "!vrdlog!" 2>&1
-"!py_exe!" "!Path_to_py_calculate_duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "enforce_valid_filenames_destination_mp4_Folder" >> "!vrdlog!" 2>&1
-REM
+call :get_date_time_string "loop_start_date_time"
+ECHO !DATE! !TIME! --- END   Enforce Valid Filenames on '!source_TS_Folder!' enforce validity  i.e. no special characters >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
 REM --------- End Run the py to modify the filenames to enforce validity  i.e. no special characters ---------
+echo. >> "!vrdlog!" 2>&1
 
 :before_main_loop
-echo. >> "!vrdlog!" 2>&1
-call :get_date_time_string "loop_start_date_time"
 REM --------- Start Loop through the SOURCE files ---------
-ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
-ECHO !DATE! !TIME! --- END   Enforce Valid Filenames on '!source_TS_Folder!' enforce validity  i.e. no special characters >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-set "loop_Start_date_time=!date! !time!"
+call :get_date_time_string "loop_start_date_time"
 for %%f in ("!source_TS_Folder!*.TS", "!source_TS_Folder!*.MPG", "!source_TS_Folder!*.MP4", "!source_TS_Folder!*.VOB") do (
 	call :get_date_time_string "iloop_start_date_time"
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
@@ -321,12 +303,12 @@ for %%f in ("!source_TS_Folder!*.TS", "!source_TS_Folder!*.MPG", "!source_TS_Fol
 	REM no - MOVE "%%f" "!done_TS_Folder!" - INSTREAD do the RENAME/MOVE as a part of the CALL above, depending on whether it's been propcessed correctly
 	ECHO !DATE! !TIME! END ------------------ %%f >> "!vrdlog!" 2>&1
 	call :get_date_time_string "iloop_end_date_time"
-	echo "!py_exe!" "!Path_to_py_calculate_duration!" --start_datetime "!iloop_start_date_time!" --end_datetime "!iloop_end_date_time!" --prefix_id ":::::::::: iloop %%f " >> "!vrdlog!" 2>&1
-	"!py_exe!" "!Path_to_py_calculate_duration!" --start_datetime "!iloop_start_date_time!" --end_datetime "!iloop_end_date_time!" --prefix_id ":::::::::: iloop %%f " >> "!vrdlog!" 2>&1
+	echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!iloop_start_date_time!" --end_datetime "!iloop_end_date_time!" --prefix_id ":::::::::: iloop %%f " >> "!vrdlog!" 2>&1
+	"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!iloop_start_date_time!" --end_datetime "!iloop_end_date_time!" --prefix_id ":::::::::: iloop %%f " >> "!vrdlog!" 2>&1
 )
 call :get_date_time_string "loop_end_date_time"
-echo "!py_exe!" "!Path_to_py_calculate_duration!" --start_datetime "!iloop_start_date_time!" --end_datetime "!iloop_end_date_time!" --prefix_id "Loop_Processing_Files" >> "!vrdlog!" 2>&1
-"!py_exe!" "!Path_to_py_calculate_duration!" --start_datetime "!iloop_start_date_time!" --end_datetime "!iloop_end_date_time!" --prefix_id "Loop_Processing_Files" >> "!vrdlog!" 2>&1
+echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!loop_start_date_time!" --end_datetime "!loop_end_date_time!" --prefix_id "Loop_Processing_Files" >> "!vrdlog!" 2>&1
+"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!loop_start_date_time!" --end_datetime "!loop_end_date_time!" --prefix_id "Loop_Processing_Files" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
@@ -334,32 +316,38 @@ REM --------- End Loop through the SOURCE files ---------
 echo. >> "!vrdlog!" 2>&1
 :after_main_loop
 
-
-REM --------- Start Run the VBS to modify the filenames based on the filename content including reformatting the date ---------
+REM --------- Start Run the py to modify the filenames to enforce validity  i.e. no special characters ---------
+ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! --- START Modify Filenames on "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
-REM when calling powershell, we must remove any trailing "\" from the folder name in quotes
-REM otherwise the damn thing "encodes" the following end-quote on the filename string
+REM GRRR - sometimes left and right parentheses etc are seem in filenames of the media files ... 
+REM Check if filenames are a "safe string" without special characters like !~`!@#$%^&*()+=[]{}\|:;'"<>,?/
+REM If a filename isn't "safe" then rename it so it really is safe
+REM Allowed only characters a-z,A-Z,0-9,-,_,.,space
+REM
+REM ENFORCE VALID FILENAMES on the destination_mp4_Folder
+echo. >> "!vrdlog!" 2>&1
 call :get_date_time_string "start_date_time"
-SET "the_folder=!destination_mp4_Folder!"
-Rem Call :remove_trailing_backslash_into_variable "!destination_mp4_Folder!" "the_folder"
+set "the_folder=!destination_mp4_Folder!" 
 call :make_double_backslashes_into_variable "!destination_mp4_Folder!" "the_folder"
-REM in the call below, p1=y to fix timestamps, p2=the log filename for powershell to append to, p3=root(s) of folder tree(s) to process
-ECHO !DATE! !TIME! cscript //Nologo "G:\HDTV\Rename_fix_mp4_bprj_files_in_a_folder.vbs" "n" "!PSlog!-vbs.log" "!the_folder!" >> "!vrdlog!" 2>&1
-cscript //Nologo "!Path_to_VBS_to_rename_files!" "y" "!PSlog!-vbs.log" "!the_folder!" >> "!vrdlog!" 2>&1
+REM call :remove_trailing_backslash_into_variable "!the_folder!" "the_folder"
+echo "!py_exe!" "!Path_to_py_VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles!" --folder "!the_folder!" --recurse >> "!vrdlog!" 2>&1
+"!py_exe!" "!Path_to_py_VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles!" --folder "!the_folder!" --recurse >> "!vrdlog!" 2>&1
 call :get_date_time_string "end_date_time"
-echo "!py_exe!" !Path_to_py_calculate_duration! --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "Modify_Filenames" >> "!vrdlog!" 2>&1
-"!py_exe!" !Path_to_py_calculate_duration! --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "Modify_Filenames" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! --- END Modify Filenames on "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
+echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles !the_folder!" >> "!vrdlog!" 2>&1
+"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles !the_folder!" >> "!vrdlog!" 2>&1
+REM
+call :get_date_time_string "loop_start_date_time"
+ECHO !DATE! !TIME! --- END   Enforce Valid Filenames on '!destination_mp4_Folder!' enforce validity  i.e. no special characters >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
-REM --------- End Run the VBS to modify the filenames based on the date in the filename eg 2020-06-03 ---------
+REM --------- End Run the py to modify the filenames to enforce validity  i.e. no special characters ---------
 
-REM --------- Start Run the PS1 to modify the filename timestamps filenames based on the date in the filename eg 2020-06-03 ---------
+
+REM --------- Start Run the py to modify the filename timestamps filenames based on the date in the filename eg 2020-06-03 ---------
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
@@ -370,17 +358,17 @@ call :get_date_time_string "start_date_time"
 set "the_folder=!destination_mp4_Folder!" 
 call :make_double_backslashes_into_variable "!destination_mp4_Folder!" "the_folder"
 REM call :remove_trailing_backslash_into_variable "!the_folder!" "the_folder"
-echo "!py_exe!" "!Path_to_py_modify_file_date_timestamps!" --folder "!the_folder!" --recurse >> "!vrdlog!" 2>&1
-"!py_exe!" "!Path_to_py_modify_file_date_timestamps!" --folder "!the_folder!" --recurse >> "!vrdlog!" 2>&1
+echo "!py_exe!" "!Path_to_py_VRDTVSP_Modify_File_Date_Timestamps!" --folder "!the_folder!" --recurse >> "!vrdlog!" 2>&1
+"!py_exe!" "!Path_to_py_VRDTVSP_Modify_File_Date_Timestamps!" --folder "!the_folder!" --recurse >> "!vrdlog!" 2>&1
 call :get_date_time_string "end_date_time"
-echo "!py_exe!" !Path_to_py_calculate_duration! --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "ReTimestamp" >> "!vrdlog!" 2>&1
-"!py_exe!" !Path_to_py_calculate_duration! --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "ReTimestamp" >> "!vrdlog!" 2>&1
+echo "!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "ReTimestamp" >> "!vrdlog!" 2>&1
+"!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "ReTimestamp" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! --- END Modify DateCreated and DateModified Timestamps on "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
-REM --------- End Run the PS1 to modify the filename timestamps filenames based on the date in the filename eg 2020-06-03 ---------
+REM --------- End Run the py to modify the filename timestamps filenames based on the date in the filename eg 2020-06-03 ---------
 
 REM ***** ALLOW PC TO GO TO SLEEP AGAIN *****
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
@@ -402,11 +390,12 @@ REM --------- Swap back to original folder ---------
 
 
 call :get_date_time_string "TOTAL_end_date_time"
-echo "!py_exe!" "!Path_to_py_calculate_duration!" --start_datetime "!TOTAL_start_date_time!" --end_datetime "!TOTAL_end_date_time!" --prefix_id "TOTAL" >> "!vrdlog!" 2>&1
-"!py_exe!" "!Path_to_py_calculate_duration!" --start_datetime "!TOTAL_start_date_time!" --end_datetime "!TOTAL_end_date_time!" --prefix_id "TOTAL" >> "!vrdlog!" 2>&1
+echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!TOTAL_start_date_time!" --end_datetime "!TOTAL_end_date_time!" --prefix_id "TOTAL" >> "!vrdlog!" 2>&1
+"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!TOTAL_start_date_time!" --end_datetime "!TOTAL_end_date_time!" --prefix_id "TOTAL" >> "!vrdlog!" 2>&1
 
 !xPAUSE!
 exit
+
 
 REM
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -826,7 +815,7 @@ IF /I "!V_Codec_legacy!" == "MPEG-2V" (
 	goto :eof
 )
 REM
-set scratch_file_qsf=!scratch_Folder!%~n1.VRDTVS.qsf.!VRDTVSP_qsf_extension!
+set scratch_file_qsf=!scratch_Folder!%~n1.vrdtvsp.qsf.!VRDTVSP_qsf_extension!
 DEL /F "!scratch_file_qsf!" >NUL 2>&1
 DEL /F "G:\HDTV\VideoReDo-5_*.Log" >NUL 2>&1
 DEL /F "G:\HDTV\VideoReDo6_*.Log" >NUL 2>&1
@@ -836,7 +825,7 @@ ECHO cscript //Nologo "!Path_to_vrd_vp_vbs!" "%~f1" "!scratch_file_qsf!" /qsf /p
 set "qsf_start_date_time=!date! !time!"
 cscript //Nologo "!Path_to_vrd_vp_vbs!" "%~f1"  "!scratch_file_qsf!" /qsf /p %VRDTVSP_qsf_profile% /q /na >> "%vrdlog%" 2>&1
 set "qsf_end_date_time=!date! !time!"
-powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Minimized -File "!Path_to_py_calculate_duration!" -start_date_time "!qsf_start_date_time!" -end_date_time "!qsf_end_date_time!" -prefix_id "QSF" >> "!vrdlog!" 2>&1
+powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Minimized -File "!Path_to_py_VRDTVSP_Calculate_Duration!" -start_date_time "!qsf_start_date_time!" -end_date_time "!qsf_end_date_time!" -prefix_id "QSF" >> "!vrdlog!" 2>&1
 if NOT exist "!scratch_file_qsf!" ( 
 	set failed_qsf_file=%~f1.TS.VRDTVSP_failed_qsf
 	ECHO !DATE! !TIME!
@@ -855,10 +844,10 @@ REM $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 REM Extract the "Actual Bitrate" VRD's QSF found and published in the QSF log.
 REM The line in the QSF log looks like this without the quotes
 REM '       Actual Video Bitrate: 3.35 Mbps'
-set this_QSF_log5=!scratch_Folder!%~n1.VRDTVS.qsf-5.log
-set this_QSF_log6=!scratch_Folder!%~n1.VRDTVS.qsf-6.log
-set this_QSF_log5_bitstring_log=!scratch_Folder!%~n1.VRDTVS.qsf-5.actual_bitstring-log.log
-set this_QSF_log6_bitstring_log=!scratch_Folder!%~n1.VRDTVS.qsf-6.actual_bitstring-log.log
+set this_QSF_log5=!scratch_Folder!%~n1.vrdtvsp.qsf-5.log
+set this_QSF_log6=!scratch_Folder!%~n1.vrdtvsp.qsf-6.log
+set this_QSF_log5_bitstring_log=!scratch_Folder!%~n1.vrdtvsp.qsf-5.actual_bitstring-log.log
+set this_QSF_log6_bitstring_log=!scratch_Folder!%~n1.vrdtvsp.qsf-6.actual_bitstring-log.log
 REM
 REM 1. locate the bitrate string in the log file and extract it
 REM DIR "G:\HDTV\VideoReDo-5_*.Log"
@@ -944,8 +933,8 @@ ECHO !DATE! !TIME! "Calculated Q_ACTUAL_QSF_LOG_BITRATE='!Q_ACTUAL_QSF_LOG_BITRA
 ECHO !DATE! !TIME! "Calculated Q_ACTUAL_QSF_LOG_BITRATE='!Q_ACTUAL_QSF_LOG_BITRATE!'"
 ECHO !DATE! !TIME! "Calculated Q_ACTUAL_QSF_LOG_BITRATE_UNITS='!Q_ACTUAL_QSF_LOG_BITRATE_UNITS!'" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! "Calculated Q_ACTUAL_QSF_LOG_BITRATE_UNITS='!Q_ACTUAL_QSF_LOG_BITRATE_UNITS!'"
-DEL /F "!scratch_Folder!%~n1.VRDTVS.qsf-5.log" >NUL 2>&1
-DEL /F "!scratch_Folder!%~n1.VRDTVS.qsf-6.log" >NUL 2>&1
+DEL /F "!scratch_Folder!%~n1.vrdtvsp.qsf-5.log" >NUL 2>&1
+DEL /F "!scratch_Folder!%~n1.vrdtvsp.qsf-6.log" >NUL 2>&1
 REM $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 REM
 Call :get_mediainfo_parameter_legacy "Video" "Codec" "Q_V_Codec_legacy" "!scratch_file_qsf!"
@@ -1479,7 +1468,7 @@ ECHO !DATE! !TIME! >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! "????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????" >> "%vrdlog%" 2>&1
 REM +++++++++++++++++++++++++
 REM
-REM set destination_file_FF=!destination_mp4_Folder!%~n1.mp4.VRDTVS.z-from_qsf_via_ffmpeg_copy.mp4
+REM set destination_file_FF=!destination_mp4_Folder!%~n1.mp4.vrdtvsp.z-from_qsf_via_ffmpeg_copy.mp4
 REM set destination_file_FF=!destination_mp4_Folder!%~n1.mp4.cq_!x_cq!.mp4
 REM
 set _VPY_file=!scratch_Folder!%~n1.VPY
@@ -1532,7 +1521,7 @@ IF /I "!V_ScanType!" == "Progressive" (
 		set "start_date_time=!date! !time!"
 		"%VSdgindexNVexe64%" -i "!scratch_file_qsf!" -h -o "!_DGI_file!" -e >> "%vrdlog%" 2>&1
 		set "end_date_time=!date! !time!"
-		powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Minimized -File "!Path_to_py_calculate_duration!" -start_date_time "!start_date_time!" -end_date_time "!end_date_time!" -prefix_id "VSdgindexNVexe64" >> "!vrdlog!" 2>&1		
+		powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Minimized -File "!Path_to_py_VRDTVSP_Calculate_Duration!" -start_date_time "!start_date_time!" -end_date_time "!end_date_time!" -prefix_id "VSdgindexNVexe64" >> "!vrdlog!" 2>&1		
 		REM ECHO TYPE "!_DGI_file!" >> "%vrdlog%" 2>&1
 		REM TYPE "!_DGI_file!" >> "%vrdlog%" 2>&1
 		REM ECHO TYPE "!_DGI_file!"
@@ -1595,7 +1584,7 @@ IF /I "!V_ScanType!" == "Progressive" (
 	set "start_date_time=!date! !time!"
 	"%VSdgindexNVexe64%" -i "!scratch_file_qsf!" -h -o "!_DGI_file!" -e >> "%vrdlog%" 2>&1
 	set "end_date_time=!date! !time!"
-	powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Minimized -File "!Path_to_py_calculate_duration!" -start_date_time "!start_date_time!" -end_date_time "!end_date_time!" -prefix_id "VSdgindexNVexe64" >> "!vrdlog!" 2>&1		
+	powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Minimized -File "!Path_to_py_VRDTVSP_Calculate_Duration!" -start_date_time "!start_date_time!" -end_date_time "!end_date_time!" -prefix_id "VSdgindexNVexe64" >> "!vrdlog!" 2>&1		
 	REM ECHO TYPE "!_DGI_file!" >> "%vrdlog%" 2>&1
 	REM TYPE "!_DGI_file!" >> "%vrdlog%" 2>&1
 	REM ECHO TYPE "!_DGI_file!"
@@ -1772,7 +1761,7 @@ set "ff_start_date_time=!date! !time!"
 !ff_cmd! >> "%vrdlog%" 2>&1
 SET EL=!ERRORLEVEL!
 set "ff_end_date_time=!date! !time!"
-powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Minimized -File "!Path_to_py_calculate_duration!" -start_date_time "!ff_start_date_time!" -end_date_time "!ff_end_date_time!" -prefix_id ":::::::::: ff" >> "!vrdlog!" 2>&1
+powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -WindowStyle Minimized -File "!Path_to_py_VRDTVSP_Calculate_Duration!" -start_date_time "!ff_start_date_time!" -end_date_time "!ff_end_date_time!" -prefix_id ":::::::::: ff" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! +++++++++++++++++++++++++
 ECHO !DATE! !TIME! +++++++++++++++++++++++++ >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! +++++++++++++++++++++++++

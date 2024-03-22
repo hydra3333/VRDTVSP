@@ -3,13 +3,13 @@ import re
 import argparse
 from datetime import datetime
 from pathlib import Path
+import xml.etree.ElementTree as ET
 
 def remove_special_characters(source_string):
     # remove special characters in a filename by Matching them with a regex match in Python
     # Regex for removing special characters
     regex = re.compile(r'[^a-zA-Z0-9\-_. ]+')
-    source_string = regex.sub('.', source_string)
-    return  source_string
+    return regex.sub('.', source_string)
 
 def recognize_and_move_date_string_to_end(source_string):
     # eg source_string test cases
@@ -28,7 +28,6 @@ def recognize_and_move_date_string_to_end(source_string):
     #    "2024- 3- 2-mno",
     #    "2024- 3- 2",
     #    "2024-03-02"
-    #
     date_pattern = r'(\d{4})-\s?(\d{1,2})-\s?(\d{1,2})'
     preceding_trailing_characters = ['-', '_', '.', ' ']
     common_characters = '[' + ''.join(preceding_trailing_characters) + ']'
@@ -367,7 +366,7 @@ def change_filename_layout(new_basename):
     new_basename = case_insensitive_replace(new_basename, "Utopia_", "Utopia-")
     new_basename = case_insensitive_replace(new_basename, "The_X-Files_", "The_X-Files-")
 
-    if "-Movie-" in new_basename:
+    if "-Movie-".lower() in new_basename.lower():
         new_basename = "Movie-" + case_insensitive_replace(new_basename, "-Movie-", "-") # Move "Movie" to the front of the string
 
     new_basename = case_insensitive_replace(new_basename, "Adventure-Nature_", "")
@@ -675,7 +674,7 @@ def change_filename_layout(new_basename):
     new_basename = case_insensitive_replace(new_basename, "Adventure-Lifestyle_", "")
     new_basename = case_insensitive_replace(new_basename, "Adventure-Lifestyle-", "")
     new_basename = case_insensitive_replace(new_basename, "Adventure-", "")
-	
+    
     new_basename = case_insensitive_replace(new_basename, "Crime_Mystery_", "")
     new_basename = case_insensitive_replace(new_basename, "Crime_Mystery-", "")
     new_basename = case_insensitive_replace(new_basename, "Crime-Mystery_", "")
@@ -710,58 +709,111 @@ def change_filename_layout(new_basename):
     new_basename = case_insensitive_replace(new_basename, "$", "_")
     return new_basename
 
+def fix_xml_document_content_inside_bprj(file_path, old_basename, new_basename):
+    print(f"Error occurred while fixing XML document content in '{file_path}': Error number: {e.errno}, Error message: {e}")
+    try:
+        tree = ET.parse(file_path)
+        root = tree.getroot()
+        # Locate the desired node using XPath
+        filename_node = root.find(".//Filename")
+        if filename_node is None:
+            print("Aborted. Could not find XML node //Filename in file", file_path)
+            return False
+        txtbefore = filename_node.text
+        # Replace the old basename with the new basename
+        txtafter = txtbefore.replace(old_basename, new_basename)
+        # Update the text of the Filename node
+        filename_node.text = txtafter
+        print("Update xml node before:", txtbefore)
+        print("                after:", filename_node.text)
+        # Save the updated XML back to the file
+        #####tree.write(file_path)
+        return True
+    except Exception as e:
+        print(f"Error occurred while fixing XML document content in '{file_path}': Error number: {e.errno}, Error message: {e}")
+        return False
+    return True
+
+def rename_to_adjusted_filename(old_full_filename, old_filename_without_extension, new_filename_without_extension, new_filename_with_extension, new_full_filename, old_file_extension):
+    base_new_filename_without_extension = new_filename_without_extension
+    error_number = -1
+    rename_retry_count = 0
+    while (error_number != 0) and (rename_retry_count < 1000):
+        rename_retry_count = rename_retry_count + 1
+        try:
+            if rename_retry_count > 1:
+                print(f"Rename retry #{rename_retry_count}: Renaming: '{old_full_filename}' to '{new_full_filename}")
+            #####os.rename(old_full_filename, new_full_filename)
+        except Exception as e:
+            error_number = e.errno
+            if error_number is None:
+                error_number = 17   # Error number for "File exists"
+            print(f"Error occurred while renaming the file: Error number: {e.errno}, Error message: {e}")
+            new_filename_without_extension = base_new_filename_without_extension + "_" + rename_retry_count.zfill(4)
+            new_filename_with_extension = new_filename_without_extension + old_file_extension
+            new_full_filename = os.path.join(os.path.dirname(old_full_filename), new_filename_with_extension)
+        else:
+            error_number = 0
+            #print("File renamed successfully.")
+    if error_number != 0:
+        print(f"GAVE UP ATTEMPTING RENAME after {rename_retry_count} retries, leaving '{old_full_filename}' alone.")
+        return 1
+    #
+    # After the rename, process the .bprj xml document so it's content likely matches the matching media file's new filename ... 
+    #
+    if old_file_extension.lower() == ".bprj".lower():
+        result = fix_xml_document_content_inside_bprj(new_filename_with_extension)
+        if result:
+            print(f"Fixed .bprj XML document content in '{new_filename_with_extension}'")
+        else:
+            print(f"WARNING: continuing after failed to fix .bprj XML document content in '{new_filename_with_extension}'")
+    return new_filename_without_extension, new_filename_with_extension, new_full_filename
 #
 # THIS WILL ONLY WORK if the calling CMD commandline specifies a folder with DOUBLE backslashes
 #
-def main(folder, recurse):
-    file_list = []
-    valid_suffixes = ('.ts', '.mp4', '.mpg', '.vob', '.bprj', '.mp3', '.aac', '.mp2')
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Rename Fix Filenames by adjusting titles")
+    parser.add_argument("--folder", type=str, default="G:\\HDTV\\000-TO-BE-PROCESSED", help="Folder to process")
+    parser.add_argument("--recurse", action="store_true", help="Recursively process subdirectories")
+    args = parser.parse_args()
 
     # Handling trailing spaces and backslashes, removing trailing ones too
     # The double backslashes below are because python uses backslash as an escaping character
-    folder = folder.replace("\\\\", "\\").rstrip("\\").rstrip(" ")
-    print(f"Incoming Folder='{folder}'")
-    print(f"Recurse: {recurse}")
-    print(f"Valid suffixes: {valid_suffixes}")
+    folder = args.folder.replace("\\\\", "\\").rstrip("\\").rstrip(" ")
+    recurse = args.recurse
+    valid_suffixes = ('.ts', '.mp4', '.mpg', '.vob', '.bprj')    # , '.mp3', '.aac', '.mp2')
+
+    print(f"STARTED Rename Fix Filenames by removing special characters and adjusting titles and moving date in every {valid_suffixes} {folder}")
+    print(f"This will ONLY work when the calling dos commandline specifies a folder with DOUBLE backslashes like this:")
+    print(f"   \"python3.exe\" \"Enforce_Valid_filenames.py\" --folder \"t:\\\\HDTV\\\\\" --recurse")
+    print(f"Incoming Folder='{folder}' Recurse={recurse}")
+    print(f"Valid suffixes='{valid_suffixes}'")
+    file_list = []
     if recurse:
         print(f"Gathering filenames with RECURSE for '{folder}'")
         for root, _, files in os.walk(folder):
             for file in files:
-                if file.endswith(valid_suffixes):
+                if any(file.lower().endswith(suffix.lower()) for suffix in valid_suffixes):
                     file_list.append(os.path.join(root, file))
     else:
         print(f"Gathering filenames without RECURSE for '{folder}'")
         for file in os.listdir(folder):
-            if os.path.isfile(os.path.join(folder, file)) and file.endswith(valid_suffixes):
+            if os.path.isfile(os.path.join(folder, file)) and any(file.lower().endswith(suffix.lower()) for suffix in valid_suffixes):
                 file_list.append(os.path.join(folder, file))
-
-    print(f"STARTING Rename Fix Filenames by adjusting titles in every {valid_suffixes} filename ...")
     for old_full_filename in file_list:
         old_filename_without_extension = Path(old_full_filename).stem
         old_file_extension = Path(old_full_filename).suffix
         new_filename_without_extension = old_filename_without_extension
         #
         new_filename_without_extension = remove_special_characters(new_filename_without_extension)
-        #
         new_filename_without_extension = recognize_and_move_date_string_to_end(new_filename_without_extension)
-        #
         new_filename_without_extension = change_filename_layout(new_filename_without_extension)
         #
         new_filename_with_extension = new_filename_without_extension + old_file_extension
+        new_full_filename = os.path.join(os.path.dirname(old_full_filename), new_filename_with_extension)
         if old_filename_without_extension != new_filename_without_extension:
-            print(f"Renaming: '{old_full_filename}' to '{os.path.join(os.path.dirname(old_full_filename), new_filename_with_extension)}'")
-            #os.rename(old_full_filename, os.path.join(os.path.dirname(old_full_filename), new_filename_with_extension))
+            print(f"Renaming: '{old_full_filename}' to '{new_full_filename}'")
+            new_filename_without_extension, new_filename_with_extension, new_full_filename = rename_to_adjusted_filename(old_full_filename, old_filename_without_extension, new_filename_without_extension, new_filename_with_extension, new_full_filename, old_file_extension)
         else:
             print(f"Left alone: '{old_full_filename}'")
-    print(f"FINISHED Rename Fix Filenames by adjusting titles in every {valid_suffixes} filename ...")
-    
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Rename Fix Filenames by adjusting titles")
-    parser.add_argument("--folder", type=str, default="G:\\HDTV\\000-TO-BE-PROCESSED", help="Folder to process")
-    parser.add_argument("--recurse", action="store_true", help="Recursively process subdirectories")
-    args = parser.parse_args()
-    print(f"STARTED Rename Fix files by adjusting titles")
-    print(f"This will ONLY work when the calling dos commandline specifies a folder with DOUBLE backslashes like this:")
-    print(f"   \"python3.exe\" \"Enforce_Valid_filenames.py\" --folder \"t:\\\\HDTV\\\\\" --recurse")
-    main(args.folder, args.recurse)
-    print(f"FINISHED Rename Fix Filenames by adjusting titles")
+    print(f"FINISHED Rename Fix Filenames by removing special characters and adjusting titles and moving date in every {valid_suffixes} {folder}")
