@@ -748,8 +748,8 @@ def rename_to_adjusted_filename(old_full_filename, old_filename_without_extensio
             error_number = e.errno
             if error_number is None:
                 error_number = 17   # Error number for "File exists"
-            print(f"Error occurred while renaming the file: Error number: {e.errno}, Error message: {e}")
-            new_filename_without_extension = base_new_filename_without_extension + "_" + rename_retry_count.zfill(4)
+            #print(f"Error occurred while renaming the file: Error number: {e.errno}, Error message: {e}")
+            new_filename_without_extension = base_new_filename_without_extension + "_" + str(rename_retry_count).zfill(4)
             new_filename_with_extension = new_filename_without_extension + old_file_extension
             new_full_filename = os.path.join(os.path.dirname(old_full_filename), new_filename_with_extension)
         else:
