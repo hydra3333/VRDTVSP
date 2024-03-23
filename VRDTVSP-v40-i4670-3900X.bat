@@ -268,7 +268,6 @@ REM If a filename isn't "safe" then rename it so it really is safe
 REM Allowed only characters a-z,A-Z,0-9,-,_,.,space
 REM
 REM ENFORCE VALID FILENAMES on the source_TS_Folder
-echo. >> "!vrdlog!" 2>&1
 call :get_date_time_string "start_date_time"
 set "the_folder=!source_TS_Folder!" 
 call :make_double_backslashes_into_variable "!source_TS_Folder!" "the_folder"
@@ -280,13 +279,11 @@ echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!sta
 "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles !the_folder!" >> "!vrdlog!" 2>&1
 REM
 call :get_date_time_string "loop_start_date_time"
-ECHO !DATE! !TIME! --- END   Enforce Valid Filenames on '!source_TS_Folder!' enforce validity  i.e. no special characters >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
 REM --------- End Run the py to modify the filenames to enforce validity  i.e. no special characters ---------
-echo. >> "!vrdlog!" 2>&1
 
 :before_main_loop
 REM --------- Start Loop through the SOURCE files ---------
@@ -313,7 +310,6 @@ ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 REM --------- End Loop through the SOURCE files ---------
-echo. >> "!vrdlog!" 2>&1
 :after_main_loop
 
 REM --------- Start Run the py to modify the filenames to enforce validity  i.e. no special characters ---------
@@ -327,7 +323,6 @@ REM If a filename isn't "safe" then rename it so it really is safe
 REM Allowed only characters a-z,A-Z,0-9,-,_,.,space
 REM
 REM ENFORCE VALID FILENAMES on the destination_mp4_Folder
-echo. >> "!vrdlog!" 2>&1
 call :get_date_time_string "start_date_time"
 set "the_folder=!destination_mp4_Folder!" 
 call :make_double_backslashes_into_variable "!destination_mp4_Folder!" "the_folder"
@@ -339,7 +334,6 @@ echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!sta
 "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles !the_folder!" >> "!vrdlog!" 2>&1
 REM
 call :get_date_time_string "loop_start_date_time"
-ECHO !DATE! !TIME! --- END   Enforce Valid Filenames on '!destination_mp4_Folder!' enforce validity  i.e. no special characters >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
@@ -1395,21 +1389,21 @@ set "PROPOSED_x_cq_options=!x_cq_options!"
 set "Footy_found=FALSE"
 IF /I NOT "!V_ScanType!" == "Progressive" (
 	set "Footy_found=FALSE"
-	echo.!DATE! !TIME! Checking for a footy file, by looking at the filename '%~n1'
-	echo.!DATE! !TIME! Checking for a footy file, by looking at the filename '%~n1' >> "!vrdlog!" 2>&1
-	echo.'%~n1'|findstr /i /c:"AFL" >> "!vrdlog!" 2>&1
+	echo !DATE! !TIME! Checking for a footy file, by looking at the filename '%~n1'
+	echo !DATE! !TIME! Checking for a footy file, by looking at the filename '%~n1' >> "!vrdlog!" 2>&1
+	echo '%~n1'|findstr /i /c:"AFL" >> "!vrdlog!" 2>&1
 	IF !errorlevel! EQU 0 (
 		ECHO !DATE! !TIME! Footy File: string 'AFL' found in filename '%~n1'
 		ECHO !DATE! !TIME! Footy File: string 'AFL' found in filename '%~n1' >> "!vrdlog!" 2>&1
 		set "Footy_found=TRUE"
 	)
-	echo.'%~n1'|findstr /i /c:"SANFL" >> "!vrdlog!" 2>&1
+	echo '%~n1'|findstr /i /c:"SANFL" >> "!vrdlog!" 2>&1
 	IF !errorlevel! EQU 0 (
 		ECHO !DATE! !TIME! Footy File: string 'SANFL' found in filename '%~n1'
 		ECHO !DATE! !TIME! Footy File: string 'SANFL' found in filename '%~n1' >> "!vrdlog!" 2>&1
 		set "Footy_found=TRUE"
 	)
-	echo.'%~n1'|findstr /i /c:"Adelaide Crows" >> "!vrdlog!" 2>&1
+	echo '%~n1'|findstr /i /c:"Adelaide Crows" >> "!vrdlog!" 2>&1
 	IF !errorlevel! EQU 0 (
 		ECHO !DATE! !TIME! Footy File: string 'Adelaide Crows' found in filename '%~n1'
 		ECHO !DATE! !TIME! Footy File: string 'Adelaide Crows' found in filename '%~n1' >> "!vrdlog!" 2>&1

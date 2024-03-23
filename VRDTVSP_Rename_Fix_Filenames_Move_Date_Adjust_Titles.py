@@ -757,7 +757,7 @@ def rename_to_adjusted_filename(old_full_filename, old_filename_without_extensio
             #print("File renamed successfully.")
     if error_number != 0:
         print(f"GAVE UP ATTEMPTING RENAME after {rename_retry_count} retries, leaving '{old_full_filename}' alone.")
-        return 1
+        return None, None, None
     #
     # After the rename, process the .bprj xml document so it's content likely matches the matching media file's new filename ... 
     #
