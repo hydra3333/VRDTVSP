@@ -45,7 +45,7 @@ REM -- Header ------------------------------------------------------------------
 
 REM -- Prepare the log file ---------------------------------------------------------------------
 SET vrdlog=!root!%~n0-vrdlog-!header!.log
-ECHO !DATE! !TIME! DEL /F "!vrdlog!"
+REM ECHO !DATE! !TIME! DEL /F "!vrdlog!"
 DEL /F "!vrdlog!" >NUL 2>&1
 REM -- Prepare the log file ---------------------------------------------------------------------
 
@@ -162,7 +162,7 @@ ECHO !DATE! !TIME! extension_h265="!extension_h265!" >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! VRDTVSP_QSF_VBS_SCRIPT="!VRDTVSP_QSF_VBS_SCRIPT!" >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! Path_to_vrd6="!Path_to_vrd6!" >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! Path_to_vp_vbs_vrd6="!Path_to_vp_vbs_vrd6!" >> "%vrdlog%" 2>&1
-ECHO !DATE! !TIME! Path_to_vrd5="!Path_to_vrd5! >> "%vrdlog%" 2>&1
+ECHO !DATE! !TIME! Path_to_vrd5="!Path_to_vrd5!" >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! Path_to_vp_vbs_vrd5="!Path_to_vp_vbs_vrd5!" >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! Set VRD paths for version "!_vrd_version_primary!" >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! Path_to_vrd="!Path_to_vrd!" >> "%vrdlog%" 2>&1
@@ -209,12 +209,12 @@ ECHO !DATE! !TIME! "!mediainfoexe64!" --Info-Parameters  >> "%vrdlog%" 2>&1
 ECHO "!mediainfoexe64!" --Info-Parameters  >> "%vrdlog%" 2>&1
 "!mediainfoexe64!" --Info-Parameters  >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! ---------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
-ECHO !DATE! !TIME! ---------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
-ECHO !DATE! !TIME! "!mediainfoexe64!"  --Legacy --Info-Parameters  >> "%vrdlog%" 2>&1
-ECHO "!mediainfoexe64!"  --Legacy --Info-Parameters  >> "%vrdlog%" 2>&1
-echo REM "!mediainfoexe64!"  --Legacy --Info-Parameters  >> "%vrdlog%" 2>&1
-ECHO !DATE! !TIME! ---------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
-ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
+REM ECHO !DATE! !TIME! ---------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
+REM ECHO !DATE! !TIME! "!mediainfoexe64!"  --Legacy --Info-Parameters  >> "%vrdlog%" 2>&1
+REM ECHO "!mediainfoexe64!"  --Legacy --Info-Parameters  >> "%vrdlog%" 2>&1
+REM "!mediainfoexe64!"  --Legacy --Info-Parameters  >> "%vrdlog%" 2>&1
+REM ECHO !DATE! !TIME! ---------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
+REM ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
 
 REM ***** PREVENT PC FROM GOING TO SLEEP *****
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
@@ -435,27 +435,26 @@ REM %~nx1  -  expands %1 to a file name and extension only
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Start collecting .TS mediainfo variables ... "%~f1" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-Call :get_mediainfo_parameter "Video" "CodecID" "V_CodecID" "%~f1" 
-Call :get_mediainfo_parameter "Video" "CodecID/String" "V_CodecID_String" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Format" "V_Format" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Format/String" "V_Format_String" "%~f1" 
 REM
-Call :get_mediainfo_parameter "Audio" "CodecID" "V_CodecID" "%~f1" 
-Call :get_mediainfo_parameter "Audio" "CodecID/String" "V_CodecID_String" "%~f1" 
-Call :get_mediainfo_parameter "Audio" "Format" "V_Format" "%~f1" 
-Call :get_mediainfo_parameter "Audio" "Format/String" "V_Format_String" "%~f1" 
-REM
-Call :get_mediainfo_parameter "Audio" "Video_Delay" "A_Video_Delay_ms" "%~f1" 
-Call :get_mediainfo_parameter "Audio" "Video_Delay/String" "A_Video_Delay_ms_String" "%~f1" 
-ECHO !DATE! !TIME! "Original A_Video_Delay_ms=!A_Video_Delay_ms! A_Video_Delay_ms_String=!A_Video_Delay_ms_String!" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! "Original A_Video_Delay_ms_String=!A_Video_Delay_ms_String!" >> "!vrdlog!" 2>&1
-IF /I "!A_Video_Delay_ms!" == "" (
-	set /a "A_Audio_Delay_ms=0"
-) ELSE (
-	set /a "A_Audio_Delay_ms=0 - !A_Video_Delay_ms!"
-)
-ECHO !DATE! !TIME! "A_Video_Delay_ms=!A_Video_Delay_ms!" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! "A_Audio_Delay_ms=!A_Audio_Delay_ms!" Calculated >> "!vrdlog!" 2>&1
+REM a few Deprecated video settings first
+Call :get_mediainfo_parameter "Video" "Codec "V_Codec" "%~f1"
+Call :get_mediainfo_parameter "Video" "Codec/String" "V_Codec_String" "%~f1"
+Call :get_mediainfo_parameter "Video" "Codec/Family" "V_Codec_Family" "%~f1"
+Call :get_mediainfo_parameter "Video" "Codec/Info" "V_Codec_Info" "%~f1"
+Call :get_mediainfo_parameter "Video" "Codec/Url" "V_Codec_Url" "%~f1"
+Call :get_mediainfo_parameter "Video" "Codec/CC" "V_Codec_CC" "%~f1"
+Call :get_mediainfo_parameter "Video" "Codec_Profile" "V_Codec_Profile" "%~f1"
+Call :get_mediainfo_parameter "Video" "Codec_Description" "V_Codec_Description" "%~f1"
+Call :get_mediainfo_parameter "Video" "Codec_Settings" "V_Codec_Settings" "%~f1"
+Call :get_mediainfo_parameter "Video" "Codec_Settings_PacketBitS" "V_Codec_Settings_PacketBitS" "%~f1"
+Call :get_mediainfo_parameter "Video" "Codec_Settings_BVOP" "V_Codec_Settings_BVOP" "%~f1"
+Call :get_mediainfo_parameter "Video" "Codec_Settings_QPel" "V_Codec_Settings_QPel" "%~f1"
+Call :get_mediainfo_parameter "Video" "Codec_Settings_GMC" "V_Codec_Settings_GMC" "%~f1"
+Call :get_mediainfo_parameter "Video" "Codec_Settings_GMC/String" "V_Codec_Settings_GMC_String" "%~f1"
+Call :get_mediainfo_parameter "Video" "Codec_Settings_Matrix" "V_Codec_Settings_Matrix" "%~f1"
+Call :get_mediainfo_parameter "Video" "Codec_Settings_Matrix_Data" "V_Codec_Settings_Matrix_Data" "%~f1"
+Call :get_mediainfo_parameter "Video" "Codec_Settings_CABAC" "V_Codec_Settings_CABAC" "%~f1"
+Call :get_mediainfo_parameter "Video" "Codec_Settings_RefFrames" "V_Codec_Settings_RefFrames" "%~f1"
 REM
 Call :get_mediainfo_parameter "General" "VideoCount" "G_VideoCount" "%~f1" 
 Call :get_mediainfo_parameter "General" "AudioCount" "G_AudioCount" "%~f1" 
@@ -630,13 +629,8 @@ Call :get_ffprobe_video_stream_parameter "duration" "V_Duration_s_FF" "%~f1"
 Call :get_ffprobe_video_stream_parameter "bit_rate" "V_BitRate_FF" "%~f1" 
 Call :get_ffprobe_video_stream_parameter "max_bit_rate" "V_BitRate_Maximum_FF" "%~f1"
 REM
-Call :get_mediainfo_parameter "Audio" "Video_Delay/String" "A_Video_Delay_String" "%~f1" 
-Call :get_mediainfo_parameter "Audio" "Video_Delay/String1" "A_Video_Delay_String1" "%~f1" 
-Call :get_mediainfo_parameter "Audio" "Video_Delay/String2" "A_Video_Delay_String2" "%~f1" 
-Call :get_mediainfo_parameter "Audio" "Video_Delay/String3" "A_Video_Delay_String3" "%~f1" 
-Call :get_mediainfo_parameter "Audio" "Video_Delay/String4" "A_Video_Delay_String4" "%~f1" 
-Call :get_mediainfo_parameter "Audio" "Video_Delay/String5" "A_Video_Delay_String5" "%~f1" 
-Call :get_mediainfo_parameter "Audio" "InternetMediaType" "A_InternetMediaType" "%~f1" 
+Call :get_mediainfo_parameter "Audio" "CodecID" "A_CodecID" "%~f1" 
+Call :get_mediainfo_parameter "Audio" "CodecID/String" "A_CodecID_String" "%~f1" 
 Call :get_mediainfo_parameter "Audio" "Format" "A_Format" "%~f1" 
 Call :get_mediainfo_parameter "Audio" "Format/String" "A_Format_String" "%~f1" 
 Call :get_mediainfo_parameter "Audio" "Format/Info" "A_Format_Info" "%~f1" 
@@ -646,14 +640,53 @@ Call :get_mediainfo_parameter "Audio" "Format_Version" "A_Format_Version" "%~f1"
 Call :get_mediainfo_parameter "Audio" "Format_Profile" "A_Format_Profile" "%~f1" 
 Call :get_mediainfo_parameter "Audio" "Format_Level" "A_Format_Level" "%~f1" 
 Call :get_mediainfo_parameter "Audio" "Format_Compression" "A_Format_Compression" "%~f1" 
+Call :get_mediainfo_parameter "Audio" "InternetMediaType" "A_InternetMediaType" "%~f1" 
 Call :get_mediainfo_parameter "Audio" "Channel(s)" "A_Channels" "%~f1" 
 Call :get_mediainfo_parameter "Audio" "Channel(s)/String" "A_Channels_String" "%~f1" 
+REM
+Call :get_mediainfo_parameter "Audio" "Video_Delay" "A_Video_Delay_ms" "%~f1" 
+Call :get_mediainfo_parameter "Audio" "Video_Delay/String" "A_Video_Delay_ms_String" "%~f1" 
+ECHO !DATE! !TIME! "Original A_Video_Delay_ms=!A_Video_Delay_ms! A_Video_Delay_ms_String=!A_Video_Delay_ms_String!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! "Original A_Video_Delay_ms_String=!A_Video_Delay_ms_String!" >> "!vrdlog!" 2>&1
+IF /I "!A_Video_Delay_ms!" == "" (
+	set /a "A_Audio_Delay_ms=0"
+) ELSE (
+	set /a "A_Audio_Delay_ms=0 - !A_Video_Delay_ms!"
+)
+Call :get_mediainfo_parameter "Audio" "Video_Delay/String" "A_Video_Delay_String" "%~f1" 
+Call :get_mediainfo_parameter "Audio" "Video_Delay/String1" "A_Video_Delay_String1" "%~f1" 
+Call :get_mediainfo_parameter "Audio" "Video_Delay/String2" "A_Video_Delay_String2" "%~f1" 
+Call :get_mediainfo_parameter "Audio" "Video_Delay/String3" "A_Video_Delay_String3" "%~f1" 
+Call :get_mediainfo_parameter "Audio" "Video_Delay/String4" "A_Video_Delay_String4" "%~f1" 
+Call :get_mediainfo_parameter "Audio" "Video_Delay/String5" "A_Video_Delay_String5" "%~f1" 
+
+REM
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Finished collecting .TS mediainfo variables ... "%~f1" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Start of Important Parameters Collected ... "%~f1" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+REM a few depracated video settings first
+echo "(deprecated) V_Codec=!V_Codec!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_String=!V_Codec_String!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_Family=!V_Codec_Family!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_Info=!V_Codec_Info!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_Url=!V_Codec_Url!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_CC=!V_Codec_CC!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_Profile=!V_Codec_Profile!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_Description=!V_Codec_Description!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_Settings=!V_Codec_Settings!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_Settings_PacketBitS=!V_Codec_Settings_PacketBitS!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_Settings_BVOP=!V_Codec_Settings_BVOP!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_Settings_QPel=!V_Codec_Settings_QPel!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_Settings_GMC=!V_Codec_Settings_GMC!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_Settings_GMC_String=!V_Codec_Settings_GMC_String!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_Settings_Matrix=!V_Codec_Settings_Matrix!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_Settings_Matrix_Data=!V_Codec_Settings_Matrix_Data!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_Settings_CABAC=!V_Codec_Settings_CABAC!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_Settings_RefFrames=!V_Codec_Settings_RefFrames!" >> "!vrdlog!" 2>&1
+REM 
 ECHO "V_CodecID=!V_CodecID!" >> "!vrdlog!" 2>&1
 ECHO "V_CodecID_String=!V_CodecID_String!" >> "!vrdlog!" 2>&1
 ECHO "V_Format=!V_Format!" >> "!vrdlog!" 2>&1
@@ -665,7 +698,8 @@ ECHO "A_Format=!A_Format!" >> "!vrdlog!" 2>&1
 ECHO "A_Format_String=!A_Format_String!" >> "!vrdlog!" 2>&1
 REM
 ECHO "A_Video_Delay_ms=!A_Video_Delay_ms!" >> "!vrdlog!" 2>&1
-ECHO "A_Audio_Delay_ms=!A_Audio_Delay_ms!" >> "!vrdlog!" 2>&1
+ECHO "A_Audio_Delay_ms=!A_Audio_Delay_ms!" (Calculated) >> "!vrdlog!" 2>&1
+REM
 ECHO "G_Duration_ms=!G_Duration_ms!" >> "!vrdlog!" 2>&1
 ECHO "G_Duration_String=!G_Duration_String!" >> "!vrdlog!" 2>&1
 ECHO "G_Duration_String3=!G_Duration_String3!" >> "!vrdlog!" 2>&1
@@ -707,8 +741,8 @@ ECHO "A_Format_Profile=!A_Format_Profile!" >> "!vrdlog!" 2>&1
 ECHO "A_Channels=!A_Channels!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! =============================================
 
-echo "!mediainfoexe64!" --full "%~f1" >> "%vrdlog%" 2>&1
-"!mediainfoexe64!" --full "%~f1" >> "%vrdlog%" 2>&1
+echo "!mediainfoexe64!" --full "%~f1" --full >> "%vrdlog%" 2>&1
+"!mediainfoexe64!" --full "%~f1" --full >> "%vrdlog%" 2>&1
 
 ========================================================================================================= >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! End of Important Parameters Collected ... "%~f1" >> "!vrdlog!" 2>&1
