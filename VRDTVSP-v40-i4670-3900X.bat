@@ -347,12 +347,20 @@ ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! --- START Modify DateCreated and DateModified Timestamps on "!destination_mp4_Folder! >> "!vrdlog!" 2>&1
+
+echo DEBUG: BEFORE:  >> "!vrdlog!" 2>&1
+dir "!destination_mp4_Folder! >> "!vrdlog!" 2>&1
+
 call :get_date_time_string "start_date_time"
 set "the_folder=!destination_mp4_Folder!" 
 call :make_double_backslashes_into_variable "!destination_mp4_Folder!" "the_folder"
 REM call :remove_trailing_backslash_into_variable "!the_folder!" "the_folder"
 echo "!py_exe!" "!Path_to_py_VRDTVSP_Modify_File_Date_Timestamps!" --folder "!the_folder!" --recurse >> "!vrdlog!" 2>&1
 "!py_exe!" "!Path_to_py_VRDTVSP_Modify_File_Date_Timestamps!" --folder "!the_folder!" --recurse >> "!vrdlog!" 2>&1
+
+echo DEBUG: AFTER: >> "!vrdlog!" 2>&1
+dir "!destination_mp4_Folder! >> "!vrdlog!" 2>&1
+
 call :get_date_time_string "end_date_time"
 echo "!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "ReTimestamp" >> "!vrdlog!" 2>&1
 "!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "ReTimestamp" >> "!vrdlog!" 2>&1

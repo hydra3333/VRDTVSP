@@ -2,6 +2,10 @@ import os
 import re
 import argparse
 from datetime import datetime
+import ctypes
+from pathlib import Path
+import xml.etree.ElementTree as ET
+
 #
 # THIS WILL ONLY WORK if the calling CMD commandline specifies dates in the right format "YYYY-MM-DD HH.MM.SS.hhh"
 #

@@ -2,6 +2,10 @@ import os
 import re
 import argparse
 from datetime import datetime
+import ctypes
+from ctypes import wintypes
+from pathlib import Path
+import xml.etree.ElementTree as ET
 #
 # THIS WILL ONLY WORK if the calling CMD commandline specifies a folder with DOUBLE backslashes
 #
@@ -18,7 +22,7 @@ if __name__ == "__main__":
     recurse = args.recurse
     file_list = []
     valid_suffixes = ('.ts', '.mp4', '.mpg', '.vob', '.bprj')    #, '.mp3', '.aac', '.mp2')
-    # Handling trailing spaces and backslashes, tremoving trailing ones too
+    # Handling trailing spaces and backslashes, removing trailing ones too
     # The double backslashes below are because python uses backslash as an escaping character
     folder = folder.replace("\\\\", "\\").rstrip("\\").rstrip(" ")
     print(f"Incoming Folder='{folder}'")
@@ -46,12 +50,25 @@ if __name__ == "__main__":
             date_string = match.group()
             date_from_file = datetime.strptime(date_string, "%Y-%m-%d") # Convert to datetime object
             fs = "filename-date"
-            print(f"DEBUG: date pattern match found in filename: {date_from_file}"
+            #print(f"DEBUG: date pattern match found in filename: {date_from_file}")
         else:
             date_from_file = datetime.fromtimestamp(os.path.getctime(old_full_filename)).date()
             fs = "creaton-date"
-            print(f"DEBUG: date pattern match NOT found in filename, using creation date of the file instead: {date_from_file}"
-        # Set both creation and modification date timestamps based on the date in the string
-        os.utime(old_full_filename, (date_from_file.timestamp(), date_from_file.timestamp()))
-        print(f"Set {fs} '{date_from_file}' into creation and modification dates on '{old_full_filename}'")
+            #print(f"DEBUG: date pattern match NOT found in filename, using creation date of the file instead: {date_from_file}")
+        # Set only modification date timestamp based on the date in the string. 
+        # Python cannot set creation time.
+        #    Usage: os.utime(filename, access_time, modification_time)
+        #os.utime(old_full_filename, (date_from_file.timestamp(), date_from_file.timestamp()))
+        #---
+        # Set BOTH creation and modification date timestamp based on the date in the string.
+        # Convert datetime object to Windows FILETIME format
+        time_windows = int((date_from_file - datetime(1601, 1, 1)).total_seconds() * 10**7)
+        # Open the file
+        handle = ctypes.windll.kernel32.CreateFileW(old_full_filename, ctypes.wintypes.DWORD(256), 0, None, ctypes.wintypes.DWORD(3), 0, None)
+        # Change BOTH creation and modification times
+        ctypes.windll.kernel32.SetFileTime(handle, ctypes.byref(ctypes.c_ulonglong(time_windows)), None, ctypes.byref(ctypes.c_ulonglong(time_windows)))
+        # Close the file handle
+        ctypes.windll.kernel32.CloseHandle(handle)
+        #---
+        print(f"Set {fs} '{date_from_file}' into creation-date and modification-date on '{old_full_filename}'")
     print(f"FINISHED Set file date-time timestamps in every {valid_suffixes} filename by Matching them with a regex match in Python ...\n\n")

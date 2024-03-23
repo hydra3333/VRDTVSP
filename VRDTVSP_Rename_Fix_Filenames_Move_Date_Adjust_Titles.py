@@ -2,6 +2,7 @@ import os
 import re
 import argparse
 from datetime import datetime
+import ctypes
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
