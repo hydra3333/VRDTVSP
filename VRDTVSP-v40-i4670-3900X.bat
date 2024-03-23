@@ -206,11 +206,11 @@ REM ECHO !DATE! !TIME! 8 "!mediainfoexe64!" --help  >> "%vrdlog%" 2>&1
 REM "!mediainfoexe64!" --help  >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! ---------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! "!mediainfoexe64!" --Info-Parameters  >> "%vrdlog%" 2>&1
-"!mediainfoexe64!" --Info-Parameters  >> "%vrdlog%" 2>&1
+ECHO "!mediainfoexe64!" --Info-Parameters  >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! ---------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! ---------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! "!mediainfoexe64!"  --Legacy --Info-Parameters  >> "%vrdlog%" 2>&1
-"!mediainfoexe64!"  --Legacy --Info-Parameters  >> "%vrdlog%" 2>&1
+ECHO "!mediainfoexe64!"  --Legacy --Info-Parameters  >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! ---------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
 
