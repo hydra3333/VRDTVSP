@@ -46,9 +46,11 @@ if __name__ == "__main__":
             date_string = match.group()
             date_from_file = datetime.strptime(date_string, "%Y-%m-%d") # Convert to datetime object
             fs = "filename-date"
+            print(f"DEBUG: date pattern match found in filename: {date_from_file}"
         else:
             date_from_file = datetime.fromtimestamp(os.path.getctime(old_full_filename)).date()
             fs = "creaton-date"
+            print(f"DEBUG: date pattern match NOT found in filename, using creation date of the file instead: {date_from_file}"
         # Set both creation and modification date timestamps based on the date in the string
         os.utime(old_full_filename, (date_from_file.timestamp(), date_from_file.timestamp()))
         print(f"Set {fs} '{date_from_file}' into creation and modification dates on '{old_full_filename}'")
