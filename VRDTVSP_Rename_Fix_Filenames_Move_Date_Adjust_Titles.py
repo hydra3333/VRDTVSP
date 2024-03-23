@@ -737,9 +737,8 @@ def fix_xml_document_content_inside_bprj(file_path, old_basename, new_basename):
 def rename_to_adjusted_filename(old_full_filename, old_filename_without_extension, new_filename_without_extension, new_filename_with_extension, new_full_filename, old_file_extension):
     base_new_filename_without_extension = new_filename_without_extension
     error_number = -1
-    rename_retry_count = -1
+    rename_retry_count = 0
     while (error_number != 0) and (rename_retry_count < 90):
-        rename_retry_count = rename_retry_count + 1
         try:
             if rename_retry_count > 0:
                 print(f"Rename retry #{rename_retry_count}: Renaming: '{old_full_filename}' to '{new_full_filename}")
@@ -749,6 +748,7 @@ def rename_to_adjusted_filename(old_full_filename, old_filename_without_extensio
             if error_number is None:
                 error_number = 17   # Error number for "File exists"
             #print(f"Error occurred while renaming the file: Error number: {e.errno}, Error message: {e}")
+            rename_retry_count = rename_retry_count + 1
             new_filename_without_extension = base_new_filename_without_extension + "_" + str(rename_retry_count).zfill(2)
             new_filename_with_extension = new_filename_without_extension + old_file_extension
             new_full_filename = os.path.join(os.path.dirname(old_full_filename), new_filename_with_extension)
