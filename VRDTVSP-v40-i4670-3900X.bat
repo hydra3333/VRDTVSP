@@ -1,4 +1,4 @@
-@ECHO on
+@ECHO off
 @setlocal ENABLEDELAYEDEXPANSION
 @setlocal enableextensions
 
@@ -207,10 +207,12 @@ REM "!mediainfoexe64!" --help  >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! ---------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! "!mediainfoexe64!" --Info-Parameters  >> "%vrdlog%" 2>&1
 ECHO "!mediainfoexe64!" --Info-Parameters  >> "%vrdlog%" 2>&1
+"!mediainfoexe64!" --Info-Parameters  >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! ---------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! ---------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! "!mediainfoexe64!"  --Legacy --Info-Parameters  >> "%vrdlog%" 2>&1
 ECHO "!mediainfoexe64!"  --Legacy --Info-Parameters  >> "%vrdlog%" 2>&1
+"!mediainfoexe64!"  --Legacy --Info-Parameters  >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! ---------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
 
@@ -413,12 +415,8 @@ REM
 :QSFandCONVERT
 @setlocal ENABLEDELAYEDEXPANSION
 @setlocal enableextensions
-
-goto :eof
-
-
-REM 
 REM parameter 1 = input filename (.TS file)
+REM NOTES:
 REM %~1  -  expands %1 removing any surrounding quotes (") 
 REM %~f1  -  expands %1 to a fully qualified path name 
 REM %~d1  -  expands %1 to a drive letter only 
@@ -432,7 +430,312 @@ REM %~z1  -  expands %1 to size of file
 REM The modifiers can be combined to get compound results:
 REM %~dp1  -  expands %1 to a drive letter and path only 
 REM %~nx1  -  expands %1 to a file name and extension only 
+
+
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! Start collecting .TS mediainfo variables ... "%~f1" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+Call :get_mediainfo_parameter "Video" "CodecID" "V_CodecID" "%~f1" 
+Call :get_mediainfo_parameter "Video" "CodecID/String" "V_CodecID_String" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Format" "V_Format" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Format/String" "V_Format_String" "%~f1" 
 REM
+Call :get_mediainfo_parameter "Audio" "CodecID" "V_CodecID" "%~f1" 
+Call :get_mediainfo_parameter "Audio" "CodecID/String" "V_CodecID_String" "%~f1" 
+Call :get_mediainfo_parameter "Audio" "Format" "V_Format" "%~f1" 
+Call :get_mediainfo_parameter "Audio" "Format/String" "V_Format_String" "%~f1" 
+REM
+Call :get_mediainfo_parameter "Audio" "Video_Delay" "A_Video_Delay_ms" "%~f1" 
+Call :get_mediainfo_parameter "Audio" "Video_Delay/String" "A_Video_Delay_ms_String" "%~f1" 
+ECHO !DATE! !TIME! "Original A_Video_Delay_ms=!A_Video_Delay_ms! A_Video_Delay_ms_String=!A_Video_Delay_ms_String!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! "Original A_Video_Delay_ms_String=!A_Video_Delay_ms_String!" >> "!vrdlog!" 2>&1
+IF /I "!A_Video_Delay_ms!" == "" (
+	set /a "A_Audio_Delay_ms=0"
+) ELSE (
+	set /a "A_Audio_Delay_ms=0 - !A_Video_Delay_ms!"
+)
+ECHO !DATE! !TIME! "A_Video_Delay_ms=!A_Video_Delay_ms!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! "A_Audio_Delay_ms=!A_Audio_Delay_ms!" Calculated >> "!vrdlog!" 2>&1
+REM
+Call :get_mediainfo_parameter "General" "VideoCount" "G_VideoCount" "%~f1" 
+Call :get_mediainfo_parameter "General" "AudioCount" "G_AudioCount" "%~f1" 
+Call :get_mediainfo_parameter "General" "Duration" "G_Duration_ms" "%~f1" 
+Call :get_mediainfo_parameter "General" "Duration/String" "G_Duration_String" "%~f1" 
+Call :get_mediainfo_parameter "General" "Duration/String1" "G_Duration_String1" "%~f1" 
+Call :get_mediainfo_parameter "General" "Duration/String2" "G_Duration_String2" "%~f1" 
+Call :get_mediainfo_parameter "General" "Duration/String3" "G_Duration_String3" "%~f1" 
+Call :get_mediainfo_parameter "General" "Duration/String4" "G_Duration_String4" "%~f1" 
+Call :get_mediainfo_parameter "General" "Duration/String5" "G_Duration_String5" "%~f1" 
+Call :get_mediainfo_parameter "General" "Duration_Start" "G_Start" "%~f1" 
+Call :get_mediainfo_parameter "General" "Duration_End" "G_End" "%~f1" 
+REM
+Call :get_mediainfo_parameter "Video" "CodecID" "V_CodecID" "%~f1" 
+Call :get_mediainfo_parameter "Video" "CodecID/String" "V_CodecID_String" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Format" "V_Format" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Format/String" "V_Format_string" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Format_Version" "V_Format_Version" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Format_Profile" "V_Format_Profile" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Format_Level" "V_Format_Level" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Format_Tier" "V_Format_Tier" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Format_Compression" "V_Format_Compression" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Format_Commercial" "V_Format_Commercial" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Format_Commercial_IfAny" "V_Format_Commercial_IfAny" "%~f1" 
+Call :get_mediainfo_parameter "Video" "StreamKind" "V_StreamKind" "%~f1" 
+Call :get_mediainfo_parameter "Video" "StreamKind/String" "V_StreamKind_String" "%~f1" 
+Call :get_mediainfo_parameter "Video" "InternetMediaType" "V_InternetMediaType" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Duration" "V_Duration_ms" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Duration/String" "V_Duration_ms_String" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Duration/String1" "V_Duration_ms_String1" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Duration/String2" "V_Duration_ms_String2" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Duration/String3" "V_Duration_ms_String3" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Duration/String4" "V_Duration_ms_String4" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Duration/String5" "V_Duration_ms_String5" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Duration_Start" "V_Duration_Start" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Duration_End" "V_Duration_End" "%~f1" 
+REM
+Call :get_mediainfo_parameter "Video" "Source_Duration" "V_Source_Duration_ms" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Source_Duration/String" "V_Source_Duration_ms_String" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Source_Duration/String1" "V_Source_Duration_ms_String1" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Source_Duration/String2" "V_Source_Duration_ms_String2" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Source_Duration/String3" "V_Source_Duration_ms_String3" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Source_Duration/String4" "V_Source_Duration_ms_String4" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Source_Duration/String5" "V_Source_Duration_ms_String5" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Source_Duration_Start" "V_Source_Duration_Start" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Source_Duration_End" "V_Source_Duration_End" "%~f1" 
+REM
+Call :get_mediainfo_parameter "Video" "BitRate_Mode" "V_BitRate_Mode" "%~f1" 
+Call :get_mediainfo_parameter "Video" "BitRate_Mode/String" "V_BitRate_Mode_String" "%~f1" 
+Call :get_mediainfo_parameter "Video" "BitRate" "V_BitRate" "%~f1" 
+Call :get_mediainfo_parameter "Video" "BitRate/String" "V_BitRate_String" "%~f1" 
+Call :get_mediainfo_parameter "Video" "BitRate_Minimum" "V_BitRate_Minimum" "%~f1" 
+Call :get_mediainfo_parameter "Video" "BitRate_Minimum/String" "V_BitRate_Minimum_String" "%~f1" 
+Call :get_mediainfo_parameter "Video" "BitRate_Maximum" "V_BitRate_Maximum" "%~f1" 
+Call :get_mediainfo_parameter "Video" "BitRate_Maximum/String" "V_BitRate_Maximum_String" "%~f1" 
+Call :get_mediainfo_parameter "Video" "BufferSize" "V_BufferSize" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Bits-(Pixel*Frame)" "V_Bits_Pixel_Frame" "%~f1" 
+Call :get_mediainfo_parameter "Video" "BitDepth" "V_BitDepth" "%~f1" 
+Call :get_mediainfo_parameter "Video" "BitDepth/String" "V_BitDepth_String" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Width" "V_Width" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Height" "V_Height" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Stored_Width" "V_Stored_Width" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Stored_Height" "V_Stored_Height" "%~f1" 
+Call :get_mediainfo_parameter "Video" "PixelAspectRatio" "V_PixelAspectRatio" "%~f1" 
+Call :get_mediainfo_parameter "Video" "PixelAspectRatio/String" "V_PixelAspectRatio_String" "%~f1" 
+Call :get_mediainfo_parameter "Video" "PixelAspectRatio_Original" "V_PixelAspectRatio_Original" "%~f1" 
+Call :get_mediainfo_parameter "Video" "PixelAspectRatio_Original/String" "V_PixelAspectRatio_Original_String" "%~f1" 
+Call :get_mediainfo_parameter "Video" "DisplayAspectRatio" "V_DisplayAspectRatio" "%~f1" 
+Call :get_mediainfo_parameter "Video" "DisplayAspectRatio/String" "V_DisplayAspectRatio_String" "%~f1" 
+set "V_DisplayAspectRatio_String_slash=!V_DisplayAspectRatio_String::=/!"
+set "V_DisplayAspectRatio_String_slash=!V_DisplayAspectRatio_String_slash:\=/!"
+Call :get_mediainfo_parameter "Video" "DisplayAspectRatio_Original" "V_DisplayAspectRatio_Original" "%~f1" 
+Call :get_mediainfo_parameter "Video" "DisplayAspectRatio_Original/String" "V_DisplayAspectRatio_Original_String" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Rotation" "V_Rotation" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Rotation/String" "V_Rotation_String" "%~f1" 
+Call :get_mediainfo_parameter "Video" "FrameRate_Mode" "V_FrameRate_Mode" "%~f1" 
+Call :get_mediainfo_parameter "Video" "FrameRate_Mode/String" "V_FrameRate_Mode_String" "%~f1" 
+Call :get_mediainfo_parameter "Video" "FrameRate_Mode_Original" "V_FrameRate_Mode_Original" "%~f1" 
+Call :get_mediainfo_parameter "Video" "FrameRate_Mode_Original/String" "V_FrameRate_Mode_Original_String" "%~f1" 
+Call :get_mediainfo_parameter "Video" "FrameRate" "V_FrameRate" "%~f1" 
+Call :get_mediainfo_parameter "Video" "FrameRate/String" "V_FrameRate_String" "%~f1" 
+Call :get_mediainfo_parameter "Video" "FrameRate_Minimum" "V_FrameRate_Minimum" "%~f1" 
+Call :get_mediainfo_parameter "Video" "FrameRate_Minimum/String" "V_FrameRate_Minimum_String" "%~f1" 
+Call :get_mediainfo_parameter "Video" "FrameRate_Nominal" "V_FrameRate_Nominal" "%~f1" 
+Call :get_mediainfo_parameter "Video" "FrameRate_Nominal/String" "V_FrameRate_Nominal_String" "%~f1" 
+Call :get_mediainfo_parameter "Video" "FrameRate_Maximum" "V_FrameRate_Maximum" "%~f1" 
+Call :get_mediainfo_parameter "Video" "FrameRate_Maximum/String" "V_FrameRate_Maximum_String" "%~f1" 
+Call :get_mediainfo_parameter "Video" "FrameRate_Original" "V_FrameRate_Original" "%~f1" 
+Call :get_mediainfo_parameter "Video" "FrameRate_Original/String" "V_FrameRate_Original_String" "%~f1" 
+Call :get_mediainfo_parameter "Video" "FrameRate_Num" "V_FrameRate_Num" "%~f1" 
+Call :get_mediainfo_parameter "Video" "FrameRate_Den" "V_FrameRate_Den" "%~f1" 
+Call :get_mediainfo_parameter "Video" "FrameRate_Original_Num" "V_FrameRate_Original_Num" "%~f1" 
+Call :get_mediainfo_parameter "Video" "FrameRate_Original_Den" "V_FrameRate_Original_Den" "%~f1" 
+REM
+Call :get_mediainfo_parameter "Video" "FrameCount" "V_FrameCount" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Source_FrameCount" "V_Source_FrameCount" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Standard" "V_Standard" "%~f1" 
+REM
+Call :get_mediainfo_parameter "Video" "ColorSpace" "V_ColorSpace" "%~f1" 
+Call :get_mediainfo_parameter "Video" "ChromaSubsampling" "V_ChromaSubsampling" "%~f1" 
+Call :get_mediainfo_parameter "Video" "ChromaSubsampling/String" "V_ChromaSubsampling_String" "%~f1" 
+Call :get_mediainfo_parameter "Video" "ChromaSubsampling_Position" "V_ChromaSubsampling_Position" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Gop_OpenClosed" "V_Gop_OpenClosed" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Gop_OpenClosed/String" "V_Gop_OpenClosed_String" "%~f1" 
+REM
+Call :get_mediainfo_parameter "Video" "ScanType" "V_ScanType" "%~f1" 
+Call :get_mediainfo_parameter "Video" "ScanType/String" "V_ScanType_String" "%~f1" 
+Call :get_mediainfo_parameter "Video" "ScanType_Original" "V_ScanType_Original" "%~f1" 
+Call :get_mediainfo_parameter "Video" "ScanType_Original/String" "V_ScanType_Original_String" "%~f1" 
+Call :get_mediainfo_parameter "Video" "ScanType_StoreMethod" "V_ScanType_StoreMethod" "%~f1" 
+Call :get_mediainfo_parameter "Video" "ScanType_StoreMethod_FieldsPerBlock" "V_ScanType_StoreMethod_FieldsPerBlock" "%~f1" 
+Call :get_mediainfo_parameter "Video" "ScanType_StoreMethod/String" "V_ScanType_StoreMethod_String" "%~f1" 
+IF /I "!V_ScanType!" == "" (
+	ECHO !DATE! !TIME! "V_ScanType blank, setting V_ScanType=Progressive" >> "!vrdlog!" 2>&1
+	set "V_ScanType=Progressive"
+)
+IF /I "!V_ScanType!" == "MBAFF" (
+	ECHO !DATE! !TIME! "V_ScanType blank, setting V_ScanType=Interlaced" >> "!vrdlog!" 2>&1
+	set "V_ScanType=Interlaced"
+)
+Call :get_mediainfo_parameter "Video" "ScanOrder" "V_ScanOrder" "%~f1" 
+Call :get_mediainfo_parameter "Video" "ScanOrder/String" "V_ScanOrder_String" "%~f1" 
+Call :get_mediainfo_parameter "Video" "ScanOrder_Stored" "V_ScanOrder_Stored" "%~f1" 
+Call :get_mediainfo_parameter "Video" "ScanOrder_Stored/String" "V_ScanOrder_Stored_String" "%~f1" 
+Call :get_mediainfo_parameter "Video" "ScanOrder_StoredDisplayedInverted" "V_ScanOrder_StoredDisplayedInverted" "%~f1" 
+Call :get_mediainfo_parameter "Video" "ScanOrder_Original" "V_ScanOrder_Original" "%~f1" 
+Call :get_mediainfo_parameter "Video" "ScanOrder_Original/String" "V_ScanOrder_Original_String" "%~f1" 
+IF /I "!V_ScanOrder!" == "" (
+	ECHO !DATE! !TIME! "V_ScanOrder blank, setting V_ScanOrder=TFF" >> "!vrdlog!" 2>&1
+	set "V_ScanOrder=TFF"
+)
+Call :get_mediainfo_parameter "Video" "HDR_Format" "V_HDR_Format" "%~f1" 
+Call :get_mediainfo_parameter "Video" "HDR_Format/String" "V_HDR_Format_String" "%~f1" 
+Call :get_mediainfo_parameter "Video" "HDR_Format_Commercial" "V_HDR_Format_Commercial" "%~f1" 
+Call :get_mediainfo_parameter "Video" "HDR_Format_Version" "V_HDR_Format_Version" "%~f1" 
+Call :get_mediainfo_parameter "Video" "HDR_Format_Profile" "V_HDR_Format_Profile" "%~f1" 
+Call :get_mediainfo_parameter "Video" "HDR_Format_Level" "V_HDR_Format_Level" "%~f1" 
+Call :get_mediainfo_parameter "Video" "HDR_Format_Settings" "V_HDR_Format_Settings" "%~f1" 
+Call :get_mediainfo_parameter "Video" "HDR_Format_Compatibility" "V_HDR_Format_Compatibility" "%~f1" 
+REM
+Call :get_mediainfo_parameter "Video" "colour_description_presence" "V_colour_description_presence" "%~f1" 
+Call :get_mediainfo_parameter "Video" "colour_range" "V_colour_range" "%~f1" 
+Call :get_mediainfo_parameter "Video" "colour_range_Source" "V_colour_range_Source" "%~f1" 
+Call :get_mediainfo_parameter "Video" "colour_range_Original" "V_colour_range_Original" "%~f1" 
+Call :get_mediainfo_parameter "Video" "colour_range_Original_Source" "V_colour_range_Original_Source" "%~f1" 
+Call :get_mediainfo_parameter "Video" "colour_primaries" "V_colour_primaries" "%~f1" 
+Call :get_mediainfo_parameter "Video" "colour_primaries_Source" "V_colour_primaries_Source" "%~f1" 
+Call :get_mediainfo_parameter "Video" "colour_primaries_Original" "V_colour_primaries_Original" "%~f1" 
+Call :get_mediainfo_parameter "Video" "colour_primaries_Original_Source" "V_colour_primaries_Original_Source" "%~f1" 
+Call :get_mediainfo_parameter "Video" "transfer_characteristics" "V_transfer_characteristics" "%~f1" 
+Call :get_mediainfo_parameter "Video" "transfer_characteristics_Source" "V_transfer_characteristics_Source" "%~f1" 
+Call :get_mediainfo_parameter "Video" "matrix_coefficients" "V_matrix_coefficients" "%~f1" 
+Call :get_mediainfo_parameter "Video" "matrix_coefficients_Source" "V_matrix_coefficients_Source" "%~f1" 
+Call :get_mediainfo_parameter "Video" "MasteringDisplay_ColorPrimaries" "V_MasteringDisplay_ColorPrimaries" "%~f1" 
+Call :get_mediainfo_parameter "Video" "MasteringDisplay_ColorPrimaries_Source" "V_MasteringDisplay_ColorPrimaries_Source" "%~f1" 
+Call :get_mediainfo_parameter "Video" "MasteringDisplay_Luminance" "V_MasteringDisplay_Luminance" "%~f1" 
+Call :get_mediainfo_parameter "Video" "MasteringDisplay_Luminance_Source" "V_MasteringDisplay_Luminance_Source" "%~f1" 
+Call :get_mediainfo_parameter "Video" "MaxCLL" "V_MaxCLL" "%~f1" 
+Call :get_mediainfo_parameter "Video" "MaxCLL_Source" "V_MaxCLL_Source" "%~f1" 
+Call :get_mediainfo_parameter "Video" "MaxCLL_Original" "V_MaxCLL_Original" "%~f1" 
+Call :get_mediainfo_parameter "Video" "MaxCLL_Original_Source" "V_MaxCLL_Original_Source" "%~f1" 
+Call :get_mediainfo_parameter "Video" "MaxFALL" "V_MaxFALL" "%~f1" 
+Call :get_mediainfo_parameter "Video" "MaxFALL_Source" "V_MaxFALL_Source" "%~f1" 
+Call :get_mediainfo_parameter "Video" "MaxFALL_Original" "V_MaxFALL_Original" "%~f1" 
+Call :get_mediainfo_parameter "Video" "MaxFALL_Original_Source" "V_MaxFALL_Original_Source" "%~f1" 
+REM
+Call :get_ffprobe_video_stream_parameter "codec_name" "V_CodecID_FF" "%~f1" 
+Call :get_ffprobe_video_stream_parameter "codec_tag_string" "V_CodecID_String_FF" "%~f1" 
+Call :get_ffprobe_video_stream_parameter "width" "V_Width_FF" "%~f1" 
+Call :get_ffprobe_video_stream_parameter "height" "V_Height_FF" "%~f1" 
+Call :get_ffprobe_video_stream_parameter "duration" "V_Duration_s_FF" "%~f1" 
+Call :get_ffprobe_video_stream_parameter "bit_rate" "V_BitRate_FF" "%~f1" 
+Call :get_ffprobe_video_stream_parameter "max_bit_rate" "V_BitRate_Maximum_FF" "%~f1"
+REM
+Call :get_mediainfo_parameter "Audio" "Video_Delay/String" "A_Video_Delay_String" "%~f1" 
+Call :get_mediainfo_parameter "Audio" "Video_Delay/String1" "A_Video_Delay_String1" "%~f1" 
+Call :get_mediainfo_parameter "Audio" "Video_Delay/String2" "A_Video_Delay_String2" "%~f1" 
+Call :get_mediainfo_parameter "Audio" "Video_Delay/String3" "A_Video_Delay_String3" "%~f1" 
+Call :get_mediainfo_parameter "Audio" "Video_Delay/String4" "A_Video_Delay_String4" "%~f1" 
+Call :get_mediainfo_parameter "Audio" "Video_Delay/String5" "A_Video_Delay_String5" "%~f1" 
+Call :get_mediainfo_parameter "Audio" "InternetMediaType" "A_InternetMediaType" "%~f1" 
+Call :get_mediainfo_parameter "Audio" "Format" "A_Format" "%~f1" 
+Call :get_mediainfo_parameter "Audio" "Format/String" "A_Format_String" "%~f1" 
+Call :get_mediainfo_parameter "Audio" "Format/Info" "A_Format_Info" "%~f1" 
+Call :get_mediainfo_parameter "Audio" "Format_Commercial" "A_Format_Commercial" "%~f1" 
+Call :get_mediainfo_parameter "Audio" "Format_Commercial_IfAny" "A_Format_Commercial_IfAny" "%~f1" 
+Call :get_mediainfo_parameter "Audio" "Format_Version" "A_Format_Version" "%~f1" 
+Call :get_mediainfo_parameter "Audio" "Format_Profile" "A_Format_Profile" "%~f1" 
+Call :get_mediainfo_parameter "Audio" "Format_Level" "A_Format_Level" "%~f1" 
+Call :get_mediainfo_parameter "Audio" "Format_Compression" "A_Format_Compression" "%~f1" 
+Call :get_mediainfo_parameter "Audio" "Channel(s)" "A_Channels" "%~f1" 
+Call :get_mediainfo_parameter "Audio" "Channel(s)/String" "A_Channels_String" "%~f1" 
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! Finished collecting .TS mediainfo variables ... "%~f1" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! Start of Important Parameters Collected ... "%~f1" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+ECHO "V_CodecID=!V_CodecID!" >> "!vrdlog!" 2>&1
+ECHO "V_CodecID_String=!V_CodecID_String!" >> "!vrdlog!" 2>&1
+ECHO "V_Format=!V_Format!" >> "!vrdlog!" 2>&1
+ECHO "V_Format_String=!V_Format_String!" >> "!vrdlog!" 2>&1
+REM
+ECHO "A_CodecID=!A_CodecID!" >> "!vrdlog!" 2>&1
+ECHO "A_CodecID_String=!A_CodecID_String!" >> "!vrdlog!" 2>&1
+ECHO "A_Format=!A_Format!" >> "!vrdlog!" 2>&1
+ECHO "A_Format_String=!A_Format_String!" >> "!vrdlog!" 2>&1
+REM
+ECHO "A_Video_Delay_ms=!A_Video_Delay_ms!" >> "!vrdlog!" 2>&1
+ECHO "A_Audio_Delay_ms=!A_Audio_Delay_ms!" >> "!vrdlog!" 2>&1
+ECHO "G_Duration_ms=!G_Duration_ms!" >> "!vrdlog!" 2>&1
+ECHO "G_Duration_String=!G_Duration_String!" >> "!vrdlog!" 2>&1
+ECHO "G_Duration_String3=!G_Duration_String3!" >> "!vrdlog!" 2>&1
+ECHO "V_Format=!V_Format!" >> "!vrdlog!" 2>&1
+ECHO "V_Width=!V_Width!" >> "!vrdlog!" 2>&1
+ECHO "V_Height=!V_Height!" >> "!vrdlog!" 2>&1
+ECHO "V_FrameRate=!V_FrameRate!" >> "!vrdlog!" 2>&1
+ECHO "V_BitDepth=!V_BitDepth!" >> "!vrdlog!" 2>&1
+ECHO "V_BitRate_Mode=!V_BitRate_Mode!" >> "!vrdlog!" 2>&1
+ECHO "V_BitRate=!V_BitRate!" >> "!vrdlog!" 2>&1
+ECHO "V_BitRate_String=!V_BitRate_String!" >> "!vrdlog!" 2>&1
+ECHO "V_BitRate_Minimum=!V_BitRate_Minimum!" >> "!vrdlog!" 2>&1
+ECHO "V_BitRate_Minimum_String=!V_BitRate_Minimum_String!" >> "!vrdlog!" 2>&1
+ECHO "V_BitRate_Maximum=!V_BitRate_Maximum!" >> "!vrdlog!" 2>&1
+ECHO "V_BitRate_Maximum_String=!V_BitRate_Maximum_String!" >> "!vrdlog!" 2>&1
+ECHO "V_BufferSize=!V_BufferSize!" >> "!vrdlog!" 2>&1
+ECHO "V_CodecID_FF=!V_CodecID_FF!" >> "!vrdlog!" 2>&1
+ECHO "V_CodecID_String_FF=!V_CodecID_String_FF!" >> "!vrdlog!" 2>&1
+ECHO "V_Width_FF=!V_Width_FF!" >> "!vrdlog!" 2>&1
+ECHO "V_Height_FF=!V_Height_FF!" >> "!vrdlog!" 2>&1
+ECHO "V_Duration_s_FF=!V_Duration_s_FF!" >> "!vrdlog!" 2>&1
+ECHO "V_BitRate_FF=!V_BitRate_FF!" >> "!vrdlog!" 2>&1
+ECHO "V_BitRate_Maximum_FF=!V_BitRate_Maximum_FF!" >> "!vrdlog!" 2>&1
+ECHO "V_PixelAspectRatio=!V_PixelAspectRatio!" >> "!vrdlog!" 2>&1
+ECHO "V_PixelAspectRatio_String=!V_PixelAspectRatio_String!" >> "!vrdlog!" 2>&1
+ECHO "V_DisplayAspectRatio=!V_DisplayAspectRatio!" >> "!vrdlog!" 2>&1
+ECHO "V_DisplayAspectRatio_String=!V_DisplayAspectRatio_String!"  >> "!vrdlog!" 2>&1
+ECHO "V_DisplayAspectRatio_String_slash=!V_DisplayAspectRatio_String_slash!"  >> "!vrdlog!" 2>&1
+ECHO "V_FrameCount=!V_FrameCount!" >> "!vrdlog!" 2>&1
+ECHO "V_ScanType=!V_ScanType!" >> "!vrdlog!" 2>&1
+ECHO "V_ScanOrder=!V_ScanOrder!" >> "!vrdlog!" 2>&1
+ECHO "V_Standard=!V_Standard!" >> "!vrdlog!" 2>&1
+ECHO "V_ColorSpace=!V_ColorSpace!" >> "!vrdlog!" 2>&1
+ECHO "V_Duration_ms=!V_Duration_ms!" >> "!vrdlog!" 2>&1
+ECHO "V_Duration_ms_String3=!V_Duration_ms_String3!" >> "!vrdlog!" 2>&1
+ECHO "V_ChromaSubsampling=!V_ChromaSubsampling!" >> "!vrdlog!" 2>&1
+ECHO "V_HDR_Format=!V_HDR_Format!" >> "!vrdlog!" 2>&1
+ECHO "A_Format_Profile=!A_Format_Profile!" >> "!vrdlog!" 2>&1
+ECHO "A_Channels=!A_Channels!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! End of Important Parameters Collected ... "%~f1" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+goto :eof
+
+
+
 ECHO !DATE! !TIME! ***************************** start SUBROUTINE :QSFandCONVERT ***************************** >> "!vrdlog!" 2>&1
 REM
 REM ------------------------------ determine video/audio characteristics ------------------------------ 
