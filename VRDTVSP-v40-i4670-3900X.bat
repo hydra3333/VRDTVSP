@@ -1,10 +1,10 @@
-@ECHO off
+@ECHO on
 @setlocal ENABLEDELAYEDEXPANSION
 @setlocal enableextensions
 
 REM --------- set whether pause statements take effect ----------------------------
 REM SET xPAUSE=REM
-SET xPAUSE=PAUSE
+SET "xPAUSE=PAUSE"
 REM --------- set whether pause statements take effect ----------------------------
 
 REM --------- setup paths and exe filenames ----------------------------
@@ -204,11 +204,11 @@ REM "!ffmpegexe64_OpenCL!" -hide_banner -h filter=unsharp_opencl  >> "%vrdlog%" 
 REM ECHO !DATE! !TIME! -------------------------------------- >> "%vrdlog%" 2>&1
 REM ECHO !DATE! !TIME! 8 "!mediainfoexe64!" --help  >> "%vrdlog%" 2>&1
 REM "!mediainfoexe64!" --help  >> "%vrdlog%" 2>&1
-ECHO !DATE! !TIME! ---------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
-ECHO !DATE! !TIME! "!mediainfoexe64!" --Info-Parameters  >> "%vrdlog%" 2>&1
-ECHO "!mediainfoexe64!" --Info-Parameters  >> "%vrdlog%" 2>&1
-"!mediainfoexe64!" --Info-Parameters  >> "%vrdlog%" 2>&1
-ECHO !DATE! !TIME! ---------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
+REM ECHO !DATE! !TIME! ---------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
+REM ECHO !DATE! !TIME! "!mediainfoexe64!" --Info-Parameters  >> "%vrdlog%" 2>&1
+REM ECHO "!mediainfoexe64!" --Info-Parameters  >> "%vrdlog%" 2>&1
+REM "!mediainfoexe64!" --Info-Parameters  >> "%vrdlog%" 2>&1
+REM ECHO !DATE! !TIME! ---------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
 REM ECHO !DATE! !TIME! ---------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
 REM ECHO !DATE! !TIME! "!mediainfoexe64!"  --Legacy --Info-Parameters  >> "%vrdlog%" 2>&1
 REM ECHO "!mediainfoexe64!"  --Legacy --Info-Parameters  >> "%vrdlog%" 2>&1
@@ -437,24 +437,24 @@ ECHO !DATE! !TIME! Start collecting .TS mediainfo variables ... "%~f1" >> "!vrdl
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 REM
 REM a few Deprecated video settings first
-Call :get_mediainfo_parameter "Video" "Codec "V_Codec" "%~f1"
-Call :get_mediainfo_parameter "Video" "Codec/String" "V_Codec_String" "%~f1"
-Call :get_mediainfo_parameter "Video" "Codec/Family" "V_Codec_Family" "%~f1"
-Call :get_mediainfo_parameter "Video" "Codec/Info" "V_Codec_Info" "%~f1"
-Call :get_mediainfo_parameter "Video" "Codec/Url" "V_Codec_Url" "%~f1"
-Call :get_mediainfo_parameter "Video" "Codec/CC" "V_Codec_CC" "%~f1"
-Call :get_mediainfo_parameter "Video" "Codec_Profile" "V_Codec_Profile" "%~f1"
-Call :get_mediainfo_parameter "Video" "Codec_Description" "V_Codec_Description" "%~f1"
-Call :get_mediainfo_parameter "Video" "Codec_Settings" "V_Codec_Settings" "%~f1"
-Call :get_mediainfo_parameter "Video" "Codec_Settings_PacketBitS" "V_Codec_Settings_PacketBitS" "%~f1"
-Call :get_mediainfo_parameter "Video" "Codec_Settings_BVOP" "V_Codec_Settings_BVOP" "%~f1"
-Call :get_mediainfo_parameter "Video" "Codec_Settings_QPel" "V_Codec_Settings_QPel" "%~f1"
-Call :get_mediainfo_parameter "Video" "Codec_Settings_GMC" "V_Codec_Settings_GMC" "%~f1"
-Call :get_mediainfo_parameter "Video" "Codec_Settings_GMC/String" "V_Codec_Settings_GMC_String" "%~f1"
-Call :get_mediainfo_parameter "Video" "Codec_Settings_Matrix" "V_Codec_Settings_Matrix" "%~f1"
-Call :get_mediainfo_parameter "Video" "Codec_Settings_Matrix_Data" "V_Codec_Settings_Matrix_Data" "%~f1"
-Call :get_mediainfo_parameter "Video" "Codec_Settings_CABAC" "V_Codec_Settings_CABAC" "%~f1"
-Call :get_mediainfo_parameter "Video" "Codec_Settings_RefFrames" "V_Codec_Settings_RefFrames" "%~f1"
+Call :get_mediainfo_parameter_legacy "Video" "Codec" "V_Codec_legacy" "%~f1"
+Call :get_mediainfo_parameter_legacy "Video" "Codec/String" "V_Codec_String_legacy" "%~f1"
+Call :get_mediainfo_parameter_legacy "Video" "Codec/Family" "V_Codec_Family_legacy" "%~f1"
+Call :get_mediainfo_parameter_legacy "Video" "Codec/Info" "V_Codec_Info_legacy" "%~f1"
+Call :get_mediainfo_parameter_legacy "Video" "Codec/Url" "V_Codec_Url_legacy" "%~f1"
+Call :get_mediainfo_parameter_legacy "Video" "Codec/CC" "V_Codec_CC_legacy" "%~f1"
+Call :get_mediainfo_parameter_legacy "Video" "Codec_Profile" "V_Codec_Profile_legacy" "%~f1"
+Call :get_mediainfo_parameter_legacy "Video" "Codec_Description" "V_Codec_Description_legacy" "%~f1"
+Call :get_mediainfo_parameter_legacy "Video" "Codec_Settings" "V_Codec_Settings_legacy" "%~f1"
+Call :get_mediainfo_parameter_legacy "Video" "Codec_Settings_PacketBitS" "V_Codec_Settings_PacketBitS_legacy" "%~f1"
+Call :get_mediainfo_parameter_legacy "Video" "Codec_Settings_BVOP" "V_Codec_Settings_BVOP_legacy" "%~f1"
+Call :get_mediainfo_parameter_legacy "Video" "Codec_Settings_QPel" "V_Codec_Settings_QPel_legacy" "%~f1"
+Call :get_mediainfo_parameter_legacy "Video" "Codec_Settings_GMC" "V_Codec_Settings_GMC_legacy" "%~f1"
+Call :get_mediainfo_parameter_legacy "Video" "Codec_Settings_GMC/String" "V_Codec_Settings_GMC_String_legacy" "%~f1"
+Call :get_mediainfo_parameter_legacy "Video" "Codec_Settings_Matrix" "V_Codec_Settings_Matrix_legacy" "%~f1"
+Call :get_mediainfo_parameter_legacy "Video" "Codec_Settings_Matrix_Data" "V_Codec_Settings_Matrix_Data_legacy" "%~f1"
+Call :get_mediainfo_parameter_legacy "Video" "Codec_Settings_CABAC" "V_Codec_Settings_CABAC_legacy" "%~f1"
+Call :get_mediainfo_parameter_legacy "Video" "Codec_Settings_RefFrames" "V_Codec_Settings_RefFrames_legacy" "%~f1"
 REM
 Call :get_mediainfo_parameter "General" "VideoCount" "G_VideoCount" "%~f1" 
 Call :get_mediainfo_parameter "General" "AudioCount" "G_AudioCount" "%~f1" 
@@ -567,11 +567,11 @@ Call :get_mediainfo_parameter "Video" "ScanType_Original/String" "V_ScanType_Ori
 Call :get_mediainfo_parameter "Video" "ScanType_StoreMethod" "V_ScanType_StoreMethod" "%~f1" 
 Call :get_mediainfo_parameter "Video" "ScanType_StoreMethod_FieldsPerBlock" "V_ScanType_StoreMethod_FieldsPerBlock" "%~f1" 
 Call :get_mediainfo_parameter "Video" "ScanType_StoreMethod/String" "V_ScanType_StoreMethod_String" "%~f1" 
+set "V_ScanType_original=!V_ScanType!"
 IF /I "!V_ScanType!" == "" (
 	ECHO !DATE! !TIME! "V_ScanType blank, setting V_ScanType=Progressive" >> "!vrdlog!" 2>&1
 	set "V_ScanType=Progressive"
-)
-IF /I "!V_ScanType!" == "MBAFF" (
+) ELSE IF /I "!V_ScanType!" == "MBAFF" (
 	ECHO !DATE! !TIME! "V_ScanType blank, setting V_ScanType=Interlaced" >> "!vrdlog!" 2>&1
 	set "V_ScanType=Interlaced"
 )
@@ -582,6 +582,7 @@ Call :get_mediainfo_parameter "Video" "ScanOrder_Stored/String" "V_ScanOrder_Sto
 Call :get_mediainfo_parameter "Video" "ScanOrder_StoredDisplayedInverted" "V_ScanOrder_StoredDisplayedInverted" "%~f1" 
 Call :get_mediainfo_parameter "Video" "ScanOrder_Original" "V_ScanOrder_Original" "%~f1" 
 Call :get_mediainfo_parameter "Video" "ScanOrder_Original/String" "V_ScanOrder_Original_String" "%~f1" 
+set "V_ScanOrder_original=!V_ScanOrder!"
 IF /I "!V_ScanOrder!" == "" (
 	ECHO !DATE! !TIME! "V_ScanOrder blank, setting V_ScanOrder=TFF" >> "!vrdlog!" 2>&1
 	set "V_ScanOrder=TFF"
@@ -668,24 +669,24 @@ ECHO !DATE! !TIME! =============================================================
 ECHO !DATE! !TIME! Start of Important Parameters Collected ... "%~f1" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 REM a few depracated video settings first
-echo "(deprecated) V_Codec=!V_Codec!" >> "!vrdlog!" 2>&1
-echo "(deprecated) V_Codec_String=!V_Codec_String!" >> "!vrdlog!" 2>&1
-echo "(deprecated) V_Codec_Family=!V_Codec_Family!" >> "!vrdlog!" 2>&1
-echo "(deprecated) V_Codec_Info=!V_Codec_Info!" >> "!vrdlog!" 2>&1
-echo "(deprecated) V_Codec_Url=!V_Codec_Url!" >> "!vrdlog!" 2>&1
-echo "(deprecated) V_Codec_CC=!V_Codec_CC!" >> "!vrdlog!" 2>&1
-echo "(deprecated) V_Codec_Profile=!V_Codec_Profile!" >> "!vrdlog!" 2>&1
-echo "(deprecated) V_Codec_Description=!V_Codec_Description!" >> "!vrdlog!" 2>&1
-echo "(deprecated) V_Codec_Settings=!V_Codec_Settings!" >> "!vrdlog!" 2>&1
-echo "(deprecated) V_Codec_Settings_PacketBitS=!V_Codec_Settings_PacketBitS!" >> "!vrdlog!" 2>&1
-echo "(deprecated) V_Codec_Settings_BVOP=!V_Codec_Settings_BVOP!" >> "!vrdlog!" 2>&1
-echo "(deprecated) V_Codec_Settings_QPel=!V_Codec_Settings_QPel!" >> "!vrdlog!" 2>&1
-echo "(deprecated) V_Codec_Settings_GMC=!V_Codec_Settings_GMC!" >> "!vrdlog!" 2>&1
-echo "(deprecated) V_Codec_Settings_GMC_String=!V_Codec_Settings_GMC_String!" >> "!vrdlog!" 2>&1
-echo "(deprecated) V_Codec_Settings_Matrix=!V_Codec_Settings_Matrix!" >> "!vrdlog!" 2>&1
-echo "(deprecated) V_Codec_Settings_Matrix_Data=!V_Codec_Settings_Matrix_Data!" >> "!vrdlog!" 2>&1
-echo "(deprecated) V_Codec_Settings_CABAC=!V_Codec_Settings_CABAC!" >> "!vrdlog!" 2>&1
-echo "(deprecated) V_Codec_Settings_RefFrames=!V_Codec_Settings_RefFrames!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_legacy=!V_Codec_legacy!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_String_legacy=!V_Codec_String_legacy!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_Family_legacy=!V_Codec_Family_legacy!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_Info_legacy=!V_Codec_Info_legacy!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_Url_legacy=!V_Codec_Url_legacy!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_CC_legacy=!V_Codec_CC_legacy!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_Profile_legacy=!V_Codec_Profile_legacy!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_Description_legacy=!V_Codec_Description_legacy!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_Settings_legacy=!V_Codec_Settings_legacy!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_Settings_PacketBitS_legacy=!V_Codec_Settings_PacketBitS_legacy!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_Settings_BVOP_legacy=!V_Codec_Settings_BVOP_legacy!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_Settings_QPel_legacy=!V_Codec_Settings_QPel_legacy!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_Settings_GMC_legacy=!V_Codec_Settings_GMC_legacy!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_Settings_GMC_String_legacy=!V_Codec_Settings_GMC_String_legacy!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_Settings_Matrix_legacy=!V_Codec_Settings_Matrix_legacy!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_Settings_Matrix_Data_legacy=!V_Codec_Settings_Matrix_Data_legacy!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_Settings_CABAC_legacy=!V_Codec_Settings_CABAC_legacy!" >> "!vrdlog!" 2>&1
+echo "(deprecated) V_Codec_Settings_RefFrames_legacy=!V_Codec_Settings_RefFrames_legacy!" >> "!vrdlog!" 2>&1
 REM 
 ECHO "V_CodecID=!V_CodecID!" >> "!vrdlog!" 2>&1
 ECHO "V_CodecID_String=!V_CodecID_String!" >> "!vrdlog!" 2>&1
@@ -729,7 +730,9 @@ ECHO "V_DisplayAspectRatio=!V_DisplayAspectRatio!" >> "!vrdlog!" 2>&1
 ECHO "V_DisplayAspectRatio_String=!V_DisplayAspectRatio_String!"  >> "!vrdlog!" 2>&1
 ECHO "V_DisplayAspectRatio_String_slash=!V_DisplayAspectRatio_String_slash!"  >> "!vrdlog!" 2>&1
 ECHO "V_FrameCount=!V_FrameCount!" >> "!vrdlog!" 2>&1
+ECHO "V_ScanType_original=!V_ScanType_original!" >> "!vrdlog!" 2>&1
 ECHO "V_ScanType=!V_ScanType!" >> "!vrdlog!" 2>&1
+ECHO "V_ScanOrder_original=!V_ScanOrder_original!" >> "!vrdlog!" 2>&1
 ECHO "V_ScanOrder=!V_ScanOrder!" >> "!vrdlog!" 2>&1
 ECHO "V_Standard=!V_Standard!" >> "!vrdlog!" 2>&1
 ECHO "V_ColorSpace=!V_ColorSpace!" >> "!vrdlog!" 2>&1
@@ -741,31 +744,12 @@ ECHO "A_Format_Profile=!A_Format_Profile!" >> "!vrdlog!" 2>&1
 ECHO "A_Channels=!A_Channels!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! =============================================
 
-echo "!mediainfoexe64!" --full "%~f1" --full >> "%vrdlog%" 2>&1
-"!mediainfoexe64!" --full "%~f1" --full >> "%vrdlog%" 2>&1
+echo "!mediainfoexe64!" "%~f1" --full >> "%vrdlog%" 2>&1
+"!mediainfoexe64!" "%~f1" --full >> "%vrdlog%" 2>&1
 
-========================================================================================================= >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! End of Important Parameters Collected ... "%~f1" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1087,6 +1071,18 @@ REM ----------------------------------------------------------------------------
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
 REM
+
+
+
+
+
+
+
+
+
+
+
+
 REM Let's do the QSF 
 REM The VRD profiles use SAS (same as source) resolution
 REM	QSF seems to removes audio delay
