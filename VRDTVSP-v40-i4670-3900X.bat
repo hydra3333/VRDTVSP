@@ -212,7 +212,7 @@ ECHO !DATE! !TIME! -------------------------------------------------------------
 ECHO !DATE! !TIME! ---------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! "!mediainfoexe64!"  --Legacy --Info-Parameters  >> "%vrdlog%" 2>&1
 ECHO "!mediainfoexe64!"  --Legacy --Info-Parameters  >> "%vrdlog%" 2>&1
-"!mediainfoexe64!"  --Legacy --Info-Parameters  >> "%vrdlog%" 2>&1
+echo REM "!mediainfoexe64!"  --Legacy --Info-Parameters  >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! ---------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
 
@@ -705,7 +705,12 @@ ECHO "V_ChromaSubsampling=!V_ChromaSubsampling!" >> "!vrdlog!" 2>&1
 ECHO "V_HDR_Format=!V_HDR_Format!" >> "!vrdlog!" 2>&1
 ECHO "A_Format_Profile=!A_Format_Profile!" >> "!vrdlog!" 2>&1
 ECHO "A_Channels=!A_Channels!" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! =============================================
+
+echo "!mediainfoexe64!" --full "%~f1" >> "%vrdlog%" 2>&1
+"!mediainfoexe64!" --full "%~f1" >> "%vrdlog%" 2>&1
+
+========================================================================================================= >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! End of Important Parameters Collected ... "%~f1" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 
