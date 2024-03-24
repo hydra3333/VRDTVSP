@@ -34,7 +34,7 @@ def set_env_variable(key, value):
     if not result:
         error_code = ctypes.get_last_error()
         print(f"Failed to set environment variable '{key}' to '{value}': Error code {error_code}")
-		exit(1)
+        exit(1)
 
 def escape_special_chars(text):
     # Replace special characters with underscores.
@@ -50,8 +50,8 @@ def process_stream(stream, prefix):
         value = escape_special_chars(value)
         print(f"DEBUG: do set_env_variable '{key}'] = '{value}'")
         #os.environ[key] = value    # Because os.environ() ONLY set/get environment variables within the life of the PYTHON process
-		set_env_variable(key, value)
-		debug_value = get_env_variable(key)
+        set_env_variable(key, value)
+        debug_value = get_env_variable(key)
         print(f"DEBUG: after set_env_variable '{key}'] = '{debug_value}'")
 
 def process_general_section(general_info, prefix):
