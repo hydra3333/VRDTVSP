@@ -70,6 +70,9 @@ if __name__ == "__main__":
     # FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=")
     # python.exe --mediainfo_dos_variablename "mediainfo_dos_variablename" --mediafile "!source_mediafile!" --prefix "!prefix!" --section "General"
     # set !prefix!
+    TERMINAL_WIDTH = 250
+    objPrettyPrint = pprint.PrettyPrinter(width=TERMINAL_WIDTH, compact=False, sort_dicts=False)	# facilitates formatting 
+	#print(f"DEBUG: {objPrettyPrint.pformat(a_list)}")
 
     parser = argparse.ArgumentParser(description="Parse media file with MediaInfo and create DOS variables.")
     parser.add_argument("--mediainfo_dos_variablename", help="Name of DOS variable for fully qualified MediaInfo path", required=True)
@@ -101,11 +104,13 @@ if __name__ == "__main__":
     #if os.path.exists(mediainfo_json_file):
     #    os.remove(mediainfo_json_file)
     mediainfo_subprocess_command = [mediainfo_path, '--Full', '--Output=JSON', '--BOM', mediafile ]
-    print(f"DEBUG: issuing subprocess command: {mediainfo_subprocess_command}")
+    #print(f"DEBUG: issuing subprocess command: {mediainfo_subprocess_command}")
     mediainfo_output = subprocess.check_output(mediainfo_subprocess_command).decode('utf-8', 'ignore')
-    print(f"DEBUG: returned output string: {mediainfo_output}")
+    #print(f"DEBUG: returned output string: {mediainfo_output}")
 
     json_data = json.loads(mediainfo_output)
+    print(f"DEBUG: json_data:\n{objPrettyPrint.pformat(json_data)}")
+
     # Check if the JSON file exists and load it then delete the file
     #if os.path.exists(mediainfo_json_file):
     #    with open(mediainfo_json_file, 'r') as j:
