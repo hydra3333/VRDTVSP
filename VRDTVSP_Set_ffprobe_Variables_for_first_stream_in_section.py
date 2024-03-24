@@ -17,6 +17,8 @@ def escape_special_chars(text):
 def process_stream(stream, prefix):
     # Create or overwrite environment variables with key/value pairs
     for key, value in stream.items():
+        if not isinstance(value, str):
+            value = str(value)
         key = escape_special_chars(prefix + key)
         value = escape_special_chars(value)
         os.environ[key] = value

@@ -18,6 +18,8 @@ def escape_special_chars(text):
 def process_stream(stream, prefix):
     # Create or overwrite DOS environment variables with key/value pairs
     for child in stream:
+        if not isinstance(value, str):
+            value = str(value)
         key = escape_special_chars(prefix + child.tag)
         value = escape_special_chars(child.text.strip())
         os.environ[key] = value
@@ -27,6 +29,8 @@ def process_section(section_name_capitalize, section, prefix):
     if section.tag.lower() == "general":
         print(f"Processing General section...")
         for element in section:
+            if not isinstance(value, str):
+                value = str(value)
             key = escape_special_chars(prefix + element.tag)
             value = escape_special_chars(element.text.strip())
             os.environ[key] = value
