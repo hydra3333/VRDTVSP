@@ -445,8 +445,8 @@ echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_s
 
 echo set SRC_FF_ >> "!vrdlog!" 2>&1
 set SRC_FF_ >> "!vrdlog!" 2>&1
-echo set >> "!vrdlog!" 2>&1
-set >> "!vrdlog!" 2>&1
+REM echo set >> "!vrdlog!" 2>&1
+REM set >> "!vrdlog!" 2>&1
 pause
 
 echo set "prefix=SRC_FF_A_" >> "!vrdlog!" 2>&1
@@ -458,8 +458,8 @@ echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_s
 
 echo set SRC_FF_ >> "!vrdlog!" 2>&1
 set SRC_FF_ >> "!vrdlog!" 2>&1
-echo set >> "!vrdlog!" 2>&1
-set >> "!vrdlog!" 2>&1
+REM echo set >> "!vrdlog!" 2>&1
+REM set >> "!vrdlog!" 2>&1
 pause
 
 echo set "prefix=SRC_FF_G_" >> "!vrdlog!" 2>&1
@@ -471,8 +471,8 @@ echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_s
 
 echo set SRC_FF_ >> "!vrdlog!" 2>&1
 set SRC_FF_ >> "!vrdlog!" 2>&1
-echo set >> "!vrdlog!" 2>&1
-set >> "!vrdlog!" 2>&1
+REM echo set >> "!vrdlog!" 2>&1
+REM set >> "!vrdlog!" 2>&1
 pause
 
 REM ---
@@ -485,8 +485,8 @@ echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in
 
 echo set SRC_MI_ >> "!vrdlog!" 2>&1
 set SRC_MI_ >> "!vrdlog!" 2>&1
-echo set >> "!vrdlog!" 2>&1
-set >> "!vrdlog!" 2>&1
+REM echo set >> "!vrdlog!" 2>&1
+REM set >> "!vrdlog!" 2>&1
 pause
 
 echo set "prefix=SRC_MI_A_" >> "!vrdlog!" 2>&1
@@ -498,8 +498,8 @@ echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in
 
 echo set SRC_MI_ >> "!vrdlog!" 2>&1
 set SRC_MI_ >> "!vrdlog!" 2>&1
-echo set >> "!vrdlog!" 2>&1
-set >> "!vrdlog!" 2>&1
+REM echo set >> "!vrdlog!" 2>&1
+REM set >> "!vrdlog!" 2>&1
 pause
 
 echo set "prefix=SRC_MI_G_" >> "!vrdlog!" 2>&1
@@ -511,8 +511,8 @@ echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in
 
 echo set SRC_MI_ >> "!vrdlog!" 2>&1
 set SRC_MI_ >> "!vrdlog!" 2>&1
-echo set >> "!vrdlog!" 2>&1
-set >> "!vrdlog!" 2>&1
+REM echo set >> "!vrdlog!" 2>&1
+REM set >> "!vrdlog!" 2>&1
 pause
 
 REM ---
