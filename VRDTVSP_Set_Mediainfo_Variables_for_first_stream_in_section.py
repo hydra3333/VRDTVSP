@@ -80,7 +80,8 @@ if __name__ == "__main__":
     if section_name.lower() == "General".lower():
         media_info = MediaInfo.parse(mediafile, parse_speed=1)    # ,full=True ,output="JSON" returns a string
         general_track = media_info.general_tracks[0]
-        #print("DEBUG: General Information:")
+        print("DEBUG: General Information:")
+        print(f"DEBUG: {objPrettyPrint.pformat(general_track)}")
         #for key, value in general_track.items():
         #for key in sorted(general_track.to_data().keys()):
         for key,value in general_track.to_data().items():
@@ -95,7 +96,8 @@ if __name__ == "__main__":
         media_info = MediaInfo.parse(mediafile, parse_speed=1)    # ,full=True ,output="JSON" returns a string
         video_track = media_info.video_tracks[0]
         #for key, value in video_track.items():
-        #print("DEBUG: Video Information:")
+        print("DEBUG: Video Information:")
+        print(f"DEBUG: {objPrettyPrint.pformat(video_track)}")
         #for key, value in video_track.items():
         #for key in sorted(video_track.to_data().keys()):
         for key,value in video_track.to_data().items():
@@ -110,7 +112,8 @@ if __name__ == "__main__":
         media_info = MediaInfo.parse(mediafile, parse_speed=1)    # ,full=True ,output="JSON" returns a string
         audio_track = media_info.audio_tracks[0]
         #for key, value in audio_track.items():
-        #print("DEBUG: Audio Information:")
+        print("DEBUG: Audio Information:")
+        print(f"DEBUG: {objPrettyPrint.pformat(audio_track)}")
         #for key, value in audio_track.items():
         #for key in sorted(audio_track.to_data().keys()):
         for key,value in audio_track.to_data().items():
