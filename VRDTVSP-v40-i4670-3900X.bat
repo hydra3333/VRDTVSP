@@ -795,6 +795,16 @@ ECHO !DATE! !TIME! =============================================
 echo "!mediainfoexe64!" "%~f1" --full >> "%vrdlog%" 2>&1
 "!mediainfoexe64!" "%~f1" --full >> "%vrdlog%" 2>&1
 
+ECHO !DATE! !TIME! =============================================
+
+echo "!ffprobeexe64!" -v verbose -select_streams v:0 -show_entries stream -of default "%~f1" >> "%vrdlog%" 2>&1
+"!ffprobeexe64!" -v verbose -select_streams v:0 -show_entries stream -of default "%~f1" >> "%vrdlog%" 2>&1
+
+ECHO !DATE! !TIME! =============================================
+
+echo "!ffprobeexe64!" -v verbose -select_streams a:0 -show_entries stream -of default "%~f1" >> "%vrdlog%" 2>&1
+"!ffprobeexe64!" -v verbose -select_streams a:0 -show_entries stream -of default "%~f1" >> "%vrdlog%" 2>&1
+
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! End of Important Parameters Collected ... "%~f1" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
