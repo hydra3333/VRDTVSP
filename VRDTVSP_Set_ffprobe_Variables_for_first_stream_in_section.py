@@ -4,11 +4,16 @@ import argparse
 from datetime import datetime
 import ctypes
 from ctypes import wintypes
+from ctypes import *        # for mediainfo ... load via ctypes.CDLL(r'.\MediaInfo.dll')
+from typing import Union    # for mediainfo
 from pathlib import Path
 import json
 import xml.etree.ElementTree as ET
 import subprocess
 import pprint
+#from MediaInfoDLL3 import MediaInfo, Stream, Info, InfoOption
+from pymediainfo import MediaInfo
+
 
 def add_variable_to_list(key, value, set_cmd_list):
     set_cmd_list.append(f'SET "{key}={value}"')

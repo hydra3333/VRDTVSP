@@ -20,7 +20,7 @@ def add_variable_to_list(key, value, set_cmd_list):
 def escape_special_chars(text):
     # Replace special characters with underscores.
     special_chars = r'<>|&"?*()\' '    # leave : and / alone
-    return re.sub(r'[%s]' % re.escape(special_chars), '_', text)
+    return re.sub(r'[%s]' % re.escape(special_chars), '_', str(text))
 
 if __name__ == "__main__":
     # eg clear, set with python3, then show

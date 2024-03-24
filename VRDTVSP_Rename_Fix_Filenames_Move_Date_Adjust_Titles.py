@@ -4,10 +4,15 @@ import argparse
 from datetime import datetime
 import ctypes
 from ctypes import wintypes
+from ctypes import *        # for mediainfo ... load via ctypes.CDLL(r'.\MediaInfo.dll')
+from typing import Union    # for mediainfo
 from pathlib import Path
 import json
 import xml.etree.ElementTree as ET
 import subprocess
+import pprint
+#from MediaInfoDLL3 import MediaInfo, Stream, Info, InfoOption
+from pymediainfo import MediaInfo
 
 def remove_special_characters(source_string):
     # remove special characters in a filename by Matching them with a regex match in Python
