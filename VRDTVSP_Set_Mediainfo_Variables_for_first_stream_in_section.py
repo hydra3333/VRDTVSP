@@ -76,13 +76,13 @@ if __name__ == "__main__":
     if section_name.lower() == "General".lower():
         media_info = MediaInfo.parse(mediafile, parse_speed=1)    # ,full=True ,output="JSON" returns a string
         general_track = media_info.general_tracks[0]
-        print("DEBUG: General Information:")
+        #print("DEBUG: General Information:")
         #for key, value in general_track.items():
         #for key in sorted(general_track.to_data().keys()):
         for key,value in general_track.to_data().items():
             item_key = escape_special_chars(prefix + key)
             item_value =  escape_special_chars(value)
-            print(f"DEBUG: General {item_key}: {item_value}")
+            #print(f"DEBUG: General {item_key}: {item_value}")
             os.environ[item_key] = item_value    # Because os.environ() ONLY set/get environment variables within the life of the PYTHON process
             #debug_value = os.environ[item_key]
             #print(f"DEBUG: after set_env_variable '{item_key}' = '{debug_value}'")
@@ -91,13 +91,13 @@ if __name__ == "__main__":
         media_info = MediaInfo.parse(mediafile, parse_speed=1)    # ,full=True ,output="JSON" returns a string
         video_track = media_info.video_tracks[0]
         #for key, value in video_track.items():
-        print("DEBUG: Video Information:")
+        #print("DEBUG: Video Information:")
         #for key, value in video_track.items():
         #for key in sorted(video_track.to_data().keys()):
         for key,value in video_track.to_data().items():
             item_key = escape_special_chars(prefix + key)
             item_value =  escape_special_chars(value)
-            print(f"DEBUG: Video {item_key}: {item_value}")
+            #print(f"DEBUG: Video {item_key}: {item_value}")
             os.environ[item_key] = item_value    # Because os.environ() ONLY set/get environment variables within the life of the PYTHON process
             #debug_value = os.environ[item_key]
             #print(f"DEBUG: after set_env_variable '{item_key}' = '{debug_value}'")
@@ -106,13 +106,13 @@ if __name__ == "__main__":
         media_info = MediaInfo.parse(mediafile, parse_speed=1)    # ,full=True ,output="JSON" returns a string
         audio_track = media_info.audio_tracks[0]
         #for key, value in audio_track.items():
-        print("DEBUG: Audio Information:")
+        #print("DEBUG: Audio Information:")
         #for key, value in audio_track.items():
         #for key in sorted(audio_track.to_data().keys()):
         for key,value in audio_track.to_data().items():
             item_key = escape_special_chars(prefix + key)
             item_value =  escape_special_chars(value)
-            print(f"DEBUG: Audio {item_key}: {item_value}")
+            #print(f"DEBUG: Audio {item_key}: {item_value}")
             os.environ[item_key] = item_value    # Because os.environ() ONLY set/get environment variables within the life of the PYTHON process
             #debug_value = os.environ[item_key]
             #print(f"DEBUG: after set_env_variable '{item_key}' = '{debug_value}'")
