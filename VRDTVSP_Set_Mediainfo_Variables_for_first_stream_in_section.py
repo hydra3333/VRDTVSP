@@ -95,12 +95,24 @@ if __name__ == "__main__":
         print(f"Error: Media file does not exist at path {mediafile}.")
         exit(1)
 
-    # Run MediaInfo command to generate JSON output into a string
-    mediainfo_subprocess_command = [mediainfo_path, "--Output=JSON", mediafile]
-    #print(f"DEBUG: issuing subprocess command: {mediainfo_subprocess_command}")
+    # Run MediaInfo command to generate JSON output
+    mediainfo_json_file = mediafile + ".mediainfo.json"
+    if os.path.exists(mediainfo_json_file):
+        os.remove(mediainfo_json_file)
+    mediainfo_subprocess_command = [mediainfo_path, '--Full', '--Output=JSON', '--BOM', mediafile, '--LogFile="' + mediainfo_json_file + '"' ]
+    print(f"DEBUG: issuing subprocess command: {mediainfo_subprocess_command}")
     mediainfo_output = subprocess.check_output(mediainfo_subprocess_command).decode()
-    #print(f"DEBUG: returned output string: {mediainfo_output}")
-    json_data = json.loads(mediainfo_output)
+    print(f"DEBUG: returned output string: {mediainfo_output}")
+
+    # Check if the JSON file exists and load it then delete the file
+    if os.path.exists(mediainfo_json_file):
+        with open(mediainfo_json_file, 'r') as j:
+            json_data = json.load(j)
+    else:
+        print(f"Error: MediaInfo JSON file does not exist at path '{mediainfo_json_file}'")
+        exit(1)
+    if os.path.exists(mediainfo_json_file):
+        os.remove(mediainfo_json_file)
 
     # Find the specified section in the MediaInfo output
     section_name_capitalize = section_name.capitalize()
