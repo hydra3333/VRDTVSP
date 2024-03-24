@@ -15,7 +15,7 @@ def get_env_variable(key):
     # Depends Windows stuff being setup globally in __main__
     buffer_size = 32767  # Maximum size of environment variable value
     buffer = ctypes.create_unicode_buffer(buffer_size)
-    result = GetEnvironmentVariableW(key, buffer, buffer_size)
+    result = ctypes.windll.kernel32.GetEnvironmentVariableW(key, buffer, buffer_size)
     if result == 0:
         error_code = ctypes.get_last_error()
         if error_code == 203:  # ERROR_ENVVAR_NOT_FOUND
@@ -30,7 +30,8 @@ def set_env_variable(key, value):
     # Function to set environment variable
     # Because os.environ() ONLY set/get environment variables within the life of the PYTHON process
     # Depends Windows stuff being setup globally in __main__
-    result = SetEnvironmentVariableW(key, value)
+    #result = SetEnvironmentVariableW(key, value)
+    result = ctypes.windll.kernel32.SetEnvironmentVariableW(key, value)
     if not result:
         error_code = ctypes.get_last_error()
         print(f"Failed to set environment variable '{key}' to '{value}': Error code {error_code}")
@@ -52,7 +53,7 @@ def process_stream(stream, prefix):
         #os.environ[key] = value    # Because os.environ() ONLY set/get environment variables within the life of the PYTHON process
         set_env_variable(key, value)
         debug_value = get_env_variable(key)
-        print(f"DEBUG: after set_env_variable '{key}'] = '{debug_value}'")
+        print(f"DEBUG: after set_env_variable '{key}' = '{debug_value}'")
 
 def process_general_section(general_info, prefix):
     # Process general section
@@ -108,17 +109,17 @@ if __name__ == "__main__":
     kernel32 = ctypes.WinDLL('kernel32', use_last_error=True)
     user32 = ctypes.WinDLL('user32', use_last_error=True)
     # Define the SetEnvironmentVariable function from kernel32.dll
-    SetEnvironmentVariableW = kernel32.SetEnvironmentVariableW
-    SetEnvironmentVariableW.argtypes = (LPWSTR, LPWSTR)
-    SetEnvironmentVariableW.restype = wintypes.BOOL
+    #SetEnvironmentVariableW = kernel32.SetEnvironmentVariableW
+    #SetEnvironmentVariableW.argtypes = (LPWSTR, LPWSTR)
+    #SetEnvironmentVariableW.restype = wintypes.BOOL
     # Define the GetEnvironmentVariable function from kernel32.dll
-    GetEnvironmentVariableW = kernel32.GetEnvironmentVariableW
-    GetEnvironmentVariableW.argtypes = (LPWSTR, LPWSTR, wintypes.DWORD)
-    GetEnvironmentVariableW.restype = wintypes.DWORD
+    #GetEnvironmentVariableW = kernel32.GetEnvironmentVariableW
+    #GetEnvironmentVariableW.argtypes = (LPWSTR, LPWSTR, wintypes.DWORD)
+    #GetEnvironmentVariableW.restype = wintypes.DWORD
     # Define the SendMessageTimeoutW function from user32.dll
-    SendMessageTimeoutW = user32.SendMessageTimeoutW
-    SendMessageTimeoutW.argtypes = (wintypes.HWND, wintypes.UINT, wintypes.LPARAM, LPWSTR, wintypes.UINT, wintypes.UINT, wintypes.DWORD)
-    SendMessageTimeoutW.restype = wintypes.LPARAM
+    #SendMessageTimeoutW = user32.SendMessageTimeoutW
+    #SendMessageTimeoutW.argtypes = (wintypes.HWND, wintypes.UINT, wintypes.LPARAM, LPWSTR, wintypes.UINT, wintypes.UINT, wintypes.DWORD)
+    #SendMessageTimeoutW.restype = wintypes.LPARAM
     #***************************************************************************************************
 
     # Retrieve the name of the DOS variable for MediaInfo path from command-line arguments
