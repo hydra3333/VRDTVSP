@@ -89,31 +89,32 @@ if __name__ == "__main__":
     mediainfo_path = os.environ.get(mediainfo_dos_variablename)
     if not mediainfo_path or not os.path.exists(mediainfo_path):
         print(f"Error: MediaInfo path not specified or does not exist for variable {mediainfo_dos_variablename}.")
-        exit(1)
+        sys.exit(1)
 
     # Check if media file exists
     if not os.path.exists(mediafile):
         print(f"Error: Media file does not exist at path {mediafile}.")
-        exit(1)
+        sys.exit(1)
 
     # Run MediaInfo command to generate JSON output
-    mediainfo_json_file = mediafile + ".mediainfo.json"
-    if os.path.exists(mediainfo_json_file):
-        os.remove(mediainfo_json_file)
-    mediainfo_subprocess_command = [mediainfo_path, '--Full', '--Output=JSON', '--BOM', '--LogFile="' + mediainfo_json_file + '"', mediafile ]
+    #mediainfo_json_file = mediafile + ".mediainfo.json"
+    #if os.path.exists(mediainfo_json_file):
+    #    os.remove(mediainfo_json_file)
+    mediainfo_subprocess_command = [mediainfo_path, '--Full', '--Output=JSON', '--BOM', mediafile ]
     print(f"DEBUG: issuing subprocess command: {mediainfo_subprocess_command}")
     mediainfo_output = subprocess.check_output(mediainfo_subprocess_command).decode('utf-8', 'ignore')
     print(f"DEBUG: returned output string: {mediainfo_output}")
 
+    json_data = json.loads(mediainfo_output)
     # Check if the JSON file exists and load it then delete the file
-    if os.path.exists(mediainfo_json_file):
-        with open(mediainfo_json_file, 'r') as j:
-            json_data = json.load(j)
-    else:
-        print(f"Error: MediaInfo JSON file does not exist at path '{mediainfo_json_file}'")
-        exit(1)
-    if os.path.exists(mediainfo_json_file):
-        os.remove(mediainfo_json_file)
+    #if os.path.exists(mediainfo_json_file):
+    #    with open(mediainfo_json_file, 'r') as j:
+    #        json_data = json.load(j)
+    #else:
+    #    print(f"Error: MediaInfo JSON file does not exist at path '{mediainfo_json_file}'")
+    #    sys.exit(1)
+    #if os.path.exists(mediainfo_json_file):
+    #    os.remove(mediainfo_json_file)
 
     # Find the specified section in the MediaInfo output
     section_name_capitalize = section_name.capitalize()
@@ -122,7 +123,7 @@ if __name__ == "__main__":
         process_section(section_name_capitalize, section, prefix, set_cmd_list)
     else:
         print(f"Error: Invalid MediaInfo section '{section_name_capitalize}' processing {mediafile}\nPlease specify a valid section (e.g., Video, Audio, General).")
-        exit(1)
+        sys.exit(1)
     set_cmd_list.append(f'goto :eof')
     #print(f"DEBUG: set_cmd_list=\n{objPrettyPrint.pformat(set_cmd_list)}")
 

@@ -99,12 +99,12 @@ if __name__ == "__main__":
     ffprobe_path = os.environ.get(ffprobe_dos_variablename)
     if not ffprobe_path or not os.path.exists(ffprobe_path):
         print(f"Error: ffprobe path not specified or does not exist for variable {ffprobe_dos_variablename}.")
-        exit(1)
+        sys.exit(1)
 
     # Check if media file exists
     if not os.path.exists(mediafile):
         print(f"Error: Media file does not exist: {mediafile}")
-        exit(1)
+        sys.exit(1)
 
     # Run ffprobe command to get JSON output
     ffprobe_subprocess_command = [ffprobe_path, "-v", "quiet", "-print_format", "json", "-show_format", "-show_streams", mediafile]
@@ -125,7 +125,7 @@ if __name__ == "__main__":
         process_section(section_name, streams, prefix, set_cmd_list)
     else:
         print(f"Error: Invalid ffprobe section '{section_name}' processing {mediafile}\nPlease specify a valid section (e.g., Video, Audio, General).")
-        exit(1)
+        sys.exit(1)
     set_cmd_list.append(f'goto :eof')
     #print(f"DEBUG: set_cmd_list=\n{objPrettyPrint.pformat(set_cmd_list)}")
 
