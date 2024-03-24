@@ -1,4 +1,5 @@
 import os
+import sys
 import re
 import argparse
 from datetime import datetime
@@ -99,9 +100,9 @@ if __name__ == "__main__":
     mediainfo_json_file = mediafile + ".mediainfo.json"
     if os.path.exists(mediainfo_json_file):
         os.remove(mediainfo_json_file)
-    mediainfo_subprocess_command = [mediainfo_path, '--Full', '--Output=JSON', '--BOM', mediafile, '--LogFile="' + mediainfo_json_file + '"' ]
+    mediainfo_subprocess_command = [mediainfo_path, '--Full', '--Output=JSON', '--BOM', '--LogFile="' + mediainfo_json_file + '"', mediafile ]
     print(f"DEBUG: issuing subprocess command: {mediainfo_subprocess_command}")
-    mediainfo_output = subprocess.check_output(mediainfo_subprocess_command).decode()
+    mediainfo_output = subprocess.check_output(mediainfo_subprocess_command).decode('utf-8', 'ignore')
     print(f"DEBUG: returned output string: {mediainfo_output}")
 
     # Check if the JSON file exists and load it then delete the file

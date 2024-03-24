@@ -436,9 +436,10 @@ REM The modifiers can be combined to get compound results:
 REM %~dp1  -  expands %1 to a drive letter and path only 
 REM %~nx1  -  expands %1 to a file name and extension only 
 
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! Start collecting .TS ffprobe and mediainfo variables ... "%~f1" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 REM ---
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 echo set "prefix=SRC_FF_V_" >> "!vrdlog!" 2>&1
 set "prefix=SRC_FF_V_" >> "!vrdlog!" 2>&1
 echo FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
@@ -548,15 +549,59 @@ REM echo ### "!prefix!" >> "!vrdlog!" 2>&1
 REM echo set !prefix! >> "!vrdlog!" 2>&1
 REM set !prefix! >> "!vrdlog!" 2>&1
 
+pause
+exit
+
+
+
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+
+
+
+
+
+??????????????????????????????
+
+
+
+set "V_DisplayAspectRatio_String_slash=!V_DisplayAspectRatio_String::=/!"
+set "V_DisplayAspectRatio_String_slash=!V_DisplayAspectRatio_String_slash:\=/!"
+
+set "V_ScanType_original=!V_ScanType!"
+IF /I "!V_ScanType!" == "" (
+	ECHO !DATE! !TIME! "V_ScanType blank, setting V_ScanType=Progressive" >> "!vrdlog!" 2>&1
+	set "V_ScanType=Progressive"
+) ELSE IF /I "!V_ScanType!" == "MBAFF" (
+	ECHO !DATE! !TIME! "V_ScanType blank, setting V_ScanType=Interlaced" >> "!vrdlog!" 2>&1
+	set "V_ScanType=Interlaced"
+)
+
+set "V_ScanOrder_original=!V_ScanOrder!"
+IF /I "!V_ScanOrder!" == "" (
+	ECHO !DATE! !TIME! "V_ScanOrder blank, setting V_ScanOrder=TFF" >> "!vrdlog!" 2>&1
+	set "V_ScanOrder=TFF"
+)
+
+
+ECHO !DATE! !TIME! "Original A_Video_Delay_ms=!A_Video_Delay_ms! A_Video_Delay_ms_String=!A_Video_Delay_ms_String!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! "Original A_Video_Delay_ms_String=!A_Video_Delay_ms_String!" >> "!vrdlog!" 2>&1
+IF /I "!A_Video_Delay_ms!" == "" (
+	set /a "A_Audio_Delay_ms=0"
+) ELSE (
+	set /a "A_Audio_Delay_ms=0 - !A_Video_Delay_ms!"
+)
+
+
+
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! List All SRC_MI_ variables  >> "!vrdlog!" 2>&1
 echo set SRC_MI_ >> "!vrdlog!" 2>&1
 set SRC_MI_ >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-pause
+ECHO !DATE! !TIME! End collecting .TS ffprobe and mediainfo variables ... "%~f1" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 
-exit
-
+goto :after_old_TS_variable_collection
 
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Start collecting .TS mediainfo variables ... "%~f1" >> "!vrdlog!" 2>&1
@@ -936,7 +981,7 @@ ECHO !DATE! !TIME! End of Important Parameters Collected ... "%~f1" >> "!vrdlog!
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 
 
-
+:after_old_TS_variable_collection
 
 
 goto :eof
