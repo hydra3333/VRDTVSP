@@ -106,7 +106,7 @@ if __name__ == "__main__":
     if section_name.lower() == "general":
         process_general_section(ffprobe_data["format"], prefix)
     elif "streams" in ffprobe_data:
-        streams = [s for s in ffprobe_data["streams"] if s["codec_type"] == section_name]    # eg "video", "audio"
+        streams = [s for s in ffprobe_data["streams"] if "codec_type" in s and s["codec_type"] == section_name]    # eg "video", "audio"
         process_section(section_name, streams, prefix)
     else:
         print(f"Error: Invalid ffprobe section '{section_name}'. Please specify a valid section (e.g., Video, Audio, General).")
