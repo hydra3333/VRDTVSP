@@ -3,8 +3,11 @@ import re
 import argparse
 from datetime import datetime
 import ctypes
+from ctypes import wintypes
 from pathlib import Path
+import json
 import xml.etree.ElementTree as ET
+import subprocess
 
 def remove_special_characters(source_string):
     # remove special characters in a filename by Matching them with a regex match in Python

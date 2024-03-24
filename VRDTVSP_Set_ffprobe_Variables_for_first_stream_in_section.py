@@ -1,7 +1,13 @@
 import os
-import subprocess
-import json
+import re
 import argparse
+from datetime import datetime
+import ctypes
+from ctypes import wintypes
+from pathlib import Path
+import json
+import xml.etree.ElementTree as ET
+import subprocess
 
 def escape_special_chars(text):
     # Replace special characters with underscores.

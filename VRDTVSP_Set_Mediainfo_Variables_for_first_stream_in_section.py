@@ -1,8 +1,13 @@
 import os
 import re
-import subprocess
-import xml.etree.ElementTree as ET
 import argparse
+from datetime import datetime
+import ctypes
+from ctypes import wintypes
+from pathlib import Path
+import json
+import xml.etree.ElementTree as ET
+import subprocess
 
 def escape_special_chars(text):
     # Replace DOS special characters with underscores.

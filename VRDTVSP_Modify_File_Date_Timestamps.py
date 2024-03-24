@@ -5,7 +5,9 @@ from datetime import datetime
 import ctypes
 from ctypes import wintypes
 from pathlib import Path
+import json
 import xml.etree.ElementTree as ET
+import subprocess
 #
 # THIS WILL ONLY WORK if the calling CMD commandline specifies a folder with DOUBLE backslashes
 #
