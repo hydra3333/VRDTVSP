@@ -22,17 +22,13 @@ def escape_special_chars(text):
     special_chars = r'<>|&"?*()\' '    # leave : and / alone
     return re.sub(r'[%s]' % re.escape(special_chars), '_', text)
 
-def process_stream(stream, prefix, set_cmd_list):
-    # Create or overwrite DOS environment variables with key/value pairs
-    for child in stream:
+def process_section(section_name_capitalize, section, prefix, set_cmd_list):
+    for child in section:
         if not isinstance(value, str):
             value = str(value)
         key = escape_special_chars(prefix + child.tag)
         value = escape_special_chars(child.text.strip())
-        #print(f"DEBUG: do set_env_variable '{key}'] = '{value}'")
-        os.environ[key] = value    # Because os.environ() ONLY set/get environment variables within the life of the PYTHON process
-        #debug_value = os.environ[key]
-        #print(f"DEBUG: after set_env_variable '{key}' = '{debug_value}'")
+        os.environ[key] = value
         add_variable_to_list(key, value, set_cmd_list)
 
 def process_section(section_name_capitalize, section, prefix, set_cmd_list):
@@ -55,6 +51,7 @@ def process_section(section_name_capitalize, section, prefix, set_cmd_list):
             process_stream(first_track, prefix, set_cmd_list)
         else:
             print(f"No track found in section: {section_name_capitalize} ... tag={section.tag} for {mediafile}")
+
 if __name__ == "__main__":
     # eg clear, set with python3, then show
     # set "prefix=SRC_MI_V_"
@@ -98,22 +95,16 @@ if __name__ == "__main__":
         print(f"Error: Media file does not exist at path {mediafile}.")
         exit(1)
 
-    # Run MediaInfo command to generate XML output into a string
-    mediainfo_subprocess_command = [mediainfo_path, "--Output=XML", mediafile]
+    # Run MediaInfo command to generate JSON output into a string
+    mediainfo_subprocess_command = [mediainfo_path, "--Output=JSON", mediafile]
     #print(f"DEBUG: issuing subprocess command: {mediainfo_subprocess_command}")
     mediainfo_output = subprocess.check_output(mediainfo_subprocess_command).decode()
     #print(f"DEBUG: returned output string: {mediainfo_output}")
-
-    # Parse MediaInfo XML output in the string
-    set_cmd_list = [ f'echo prefix = "{prefix}"' ]
-    set_cmd_list.append(f'REM List of DOS SET commands to define DOS variables')
-    set_cmd_list.append(f'REM First, clear the variables with the chosen prefix')
-    set_cmd_list.append(f'FOR /F "tokens=1,* delims==" %%G IN (\'SET !prefix!\') DO (SET "%%G=")')
-    root = ET.fromstring(mediainfo_output)
+    json_data = json.loads(mediainfo_output)
 
     # Find the specified section in the MediaInfo output
     section_name_capitalize = section_name.capitalize()
-    section = root.find(f"./{section_name_capitalize}")  # Find section in correct case
+    section = json_data.get(section_name_capitalize)
     if section:
         process_section(section_name_capitalize, section, prefix, set_cmd_list)
     else:
