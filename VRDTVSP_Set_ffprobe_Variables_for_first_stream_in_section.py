@@ -9,6 +9,33 @@ import json
 import xml.etree.ElementTree as ET
 import subprocess
 
+def get_env_variable(key):
+    # Function to get environment variable
+    # Because os.environ() ONLY set/get environment variables within the life of the PYTHON process
+    # Depends Windows stuff being setup globally in __main__
+    buffer_size = 32767  # Maximum size of environment variable value
+    buffer = ctypes.create_unicode_buffer(buffer_size)
+    result = GetEnvironmentVariableW(key, buffer, buffer_size)
+    if result == 0:
+        error_code = ctypes.get_last_error()
+        if error_code == 203:  # ERROR_ENVVAR_NOT_FOUND
+            print(f"Environment variable '{key}' not found.")
+        else:
+            print(f"Failed to get environment variable '{key}': Error code {error_code}")
+        return None
+    else:
+        return buffer.value
+
+def set_env_variable(key, value):
+    # Function to set environment variable
+    # Because os.environ() ONLY set/get environment variables within the life of the PYTHON process
+    # Depends Windows stuff being setup globally in __main__
+    result = SetEnvironmentVariableW(key, value)
+    if not result:
+        error_code = ctypes.get_last_error()
+        print(f"Failed to set environment variable '{key}' to '{value}': Error code {error_code}")
+		exit(1)
+
 def escape_special_chars(text):
     # Replace special characters with underscores.
     special_chars = r'<>|&"?*()\' '    # leave : and / alone
@@ -21,9 +48,11 @@ def process_stream(stream, prefix):
             value = str(value)
         key = escape_special_chars(prefix + key)
         value = escape_special_chars(value)
-        os.environ[key] = value
-        print(f"DEBUG: do setting os.environ['{key}'] = '{value}'")
-        print(f"DEBUG: after, os.environ['{key}'] = '{os.environ[key]}'")
+        print(f"DEBUG: do set_env_variable '{key}'] = '{value}'")
+        #os.environ[key] = value    # Because os.environ() ONLY set/get environment variables within the life of the PYTHON process
+		set_env_variable(key, value)
+		debug_value = get_env_variable(key)
+        print(f"DEBUG: after set_env_variable '{key}'] = '{debug_value}'")
 
 def process_general_section(general_info, prefix):
     # Process general section
@@ -70,6 +99,27 @@ if __name__ == "__main__":
     parser.add_argument("--prefix", help="Prefix for environment variable keys", required=True)
     parser.add_argument("--section", help="ffprobe section to process (e.g., Video, Audio, General)", required=True)
     args = parser.parse_args()
+
+    #***************************************************************************************************
+    # Setup Windows stuff to read/write environment variables
+    # Because os.environ() ONLY set/get environment variables within the life of the PYTHON process
+    # Define necessary constants and types
+    LPWSTR = ctypes.POINTER(wintypes.WCHAR)
+    kernel32 = ctypes.WinDLL('kernel32', use_last_error=True)
+    user32 = ctypes.WinDLL('user32', use_last_error=True)
+    # Define the SetEnvironmentVariable function from kernel32.dll
+    SetEnvironmentVariableW = kernel32.SetEnvironmentVariableW
+    SetEnvironmentVariableW.argtypes = (LPWSTR, LPWSTR)
+    SetEnvironmentVariableW.restype = wintypes.BOOL
+    # Define the GetEnvironmentVariable function from kernel32.dll
+    GetEnvironmentVariableW = kernel32.GetEnvironmentVariableW
+    GetEnvironmentVariableW.argtypes = (LPWSTR, LPWSTR, wintypes.DWORD)
+    GetEnvironmentVariableW.restype = wintypes.DWORD
+    # Define the SendMessageTimeoutW function from user32.dll
+    SendMessageTimeoutW = user32.SendMessageTimeoutW
+    SendMessageTimeoutW.argtypes = (wintypes.HWND, wintypes.UINT, wintypes.LPARAM, LPWSTR, wintypes.UINT, wintypes.UINT, wintypes.DWORD)
+    SendMessageTimeoutW.restype = wintypes.LPARAM
+    #***************************************************************************************************
 
     # Retrieve the name of the DOS variable for MediaInfo path from command-line arguments
     ffprobe_dos_variablename = args.ffprobe_dos_variablename
