@@ -22,38 +22,29 @@ def process_stream(stream, prefix):
         key = escape_special_chars(prefix + key)
         value = escape_special_chars(value)
         os.environ[key] = value
+        print(f"DEBUG: do setting os.environ['{key}'] = '{value}'")
+        print(f"DEBUG: after, os.environ['{key}'] = '{os.environ[key]}'")
 
 def process_general_section(general_info, prefix):
     # Process general section
-    print("Processing General section...")
+    #print("Processing General section...")
     process_stream(general_info, prefix)
-
-def old_process_section(section_name, section, prefix):
-    # Process elements within the section based on the section name
-    if section_name.lower() == "general".lower():
-        print("Processing General section...")
-        process_stream(section, prefix)
-    else:    #elif section_name in ["video", "audio"]:
-        print(f"Processing first {section_name} stream...")
-        if len(section) > 0:
-            process_stream(section[0], prefix)
-        else:
-            print(f"No {section_name} stream found.")
 
 def process_section(section_name, streams, prefix):
     # Process elements within the section based on the section name
     # sort the streams based on their index within the specified codec type 
     # and then select the stream with the lowest index as the first stream for that codec type.
     if section_name.lower() == "general":
-        print("Processing General section...")
+        #print("Processing General section...")
         process_stream(section, prefix)
     else:    
         codec_streams = sorted(streams, key=lambda x: x['index'])  # Sort streams based on index
         if len(codec_streams) > 0:
-            print(f"Processing first {section_name} stream...")
+            #print(f"Processing first {section_name} stream...")
             process_stream(codec_streams[0], prefix)  # Choose the first stream with the lowest index
         else:
-            print(f"No {section_name} stream found.")
+            print(f"No {section_name} stream found for {mediafile}")
+            pass
 
 if __name__ == "__main__":
     # eg clear, set with python3, then show
@@ -89,19 +80,19 @@ if __name__ == "__main__":
     # Retrieve the path of MediaInfo from the environment variable and Check if MediaInfo file path exists
     ffprobe_path = os.environ.get(ffprobe_dos_variablename)
     if not ffprobe_path or not os.path.exists(ffprobe_path):
-        print(f"Error: ffprobe path not specified or does not exist for variable {ffprobe_dos_variablename}.")
+        #print(f"Error: ffprobe path not specified or does not exist for variable {ffprobe_dos_variablename}.")
         exit(1)
 
     # Check if media file exists
     if not os.path.exists(mediafile):
-        print(f"Error: Media file does not exist: {mediafile}")
+        #print(f"Error: Media file does not exist: {mediafile}")
         exit(1)
 
     # Run ffprobe command to get JSON output
     ffprobe_subprocess_command = [ffprobe_path, "-v", "quiet", "-print_format", "json", "-show_format", "-show_streams", mediafile]
-    #print(f"DEBUG: issuing subprocess command: {ffprobe_subprocess_command}")
+    print(f"DEBUG: issuing subprocess command: {ffprobe_subprocess_command}")
     ffprobe_output = subprocess.check_output(ffprobe_subprocess_command).decode()
-    #print(f"DEBUG: returned output string: {ffprobe_output}")
+    print(f"DEBUG: returned output string: {ffprobe_output}")
 
     # Parse JSON output
     ffprobe_data = json.loads(ffprobe_output)
@@ -111,5 +102,5 @@ if __name__ == "__main__":
         streams = [s for s in ffprobe_data["streams"] if "codec_type" in s and s["codec_type"] == section_name]    # eg "video", "audio"
         process_section(section_name, streams, prefix)
     else:
-        print(f"Error: Invalid ffprobe section '{section_name}'. Please specify a valid section (e.g., Video, Audio, General).")
+        print(f"Error: Invalid ffprobe section '{section_name}' processing {mediafile}\nPlease specify a valid section (e.g., Video, Audio, General).")
         exit(1)
