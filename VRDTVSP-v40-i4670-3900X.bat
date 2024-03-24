@@ -438,29 +438,29 @@ REM %~nx1  -  expands %1 to a file name and extension only
 REM ---
 set "prefix=SRC_FF_V_"
 FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=")
-echo "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Video" >> "!vrdlog!" 2>&1
-"!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Video" >> "!vrdlog!" 2>&1
+echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Video" >> "!vrdlog!" 2>&1
+"!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Video" >> "!vrdlog!" 2>&1
 set "prefix=SRC_FF_A_"
 FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=")
-echo "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Audio" >> "!vrdlog!" 2>&1
-"!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Audio" >> "!vrdlog!" 2>&1
+echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Audio" >> "!vrdlog!" 2>&1
+"!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Audio" >> "!vrdlog!" 2>&1
 set "prefix=SRC_FF_G_"
 FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=")
-echo "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "%~f1" --prefix "!prefix!" --section "General" >> "!vrdlog!" 2>&1
-"!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "%~f1" --prefix "!prefix!" --section "General" >> "!vrdlog!" 2>&1
+echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "%~f1" --prefix "!prefix!" --section "General" >> "!vrdlog!" 2>&1
+"!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "%~f1" --prefix "!prefix!" --section "General" >> "!vrdlog!" 2>&1
 REM ---
 set "prefix=SRC_MI_V_"
 FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=")
-echo "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Video" >> "!vrdlog!" 2>&1
-"!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Video" >> "!vrdlog!" 2>&1
+echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Video" >> "!vrdlog!" 2>&1
+"!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Video" >> "!vrdlog!" 2>&1
 set "prefix=SRC_MI_A_"
 FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=")
-echo "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Audio" >> "!vrdlog!" 2>&1
-"!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Audio" >> "!vrdlog!" 2>&1
+echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Audio" >> "!vrdlog!" 2>&1
+"!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Audio" >> "!vrdlog!" 2>&1
 set "prefix=SRC_MI_G_"
 FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=")
-echo "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "%~f1" --prefix "!prefix!" --section "General" >> "!vrdlog!" 2>&1
-"!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "%~f1" --prefix "!prefix!" --section "General" >> "!vrdlog!" 2>&1
+echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "%~f1" --prefix "!prefix!" --section "General" >> "!vrdlog!" 2>&1
+"!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "%~f1" --prefix "!prefix!" --section "General" >> "!vrdlog!" 2>&1
 REM ---
 
 echo set SRC_FF_ >> "!vrdlog!" 2>&1
