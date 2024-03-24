@@ -81,9 +81,9 @@ if __name__ == "__main__":
 
     # Run MediaInfo command to generate XML output into a string
     mediainfo_subprocess_command = [mediainfo_path, "--Output=XML", mediafile]
-    print(f"DEBUG: issuing subprocess command: {mediainfo_subprocess_command}")
+    #print(f"DEBUG: issuing subprocess command: {mediainfo_subprocess_command}")
     mediainfo_output = subprocess.check_output(mediainfo_subprocess_command).decode()
-    print(f"DEBUG: returned output string: {mediainfo_output}")
+    #print(f"DEBUG: returned output string: {mediainfo_output}")
 
     # Parse MediaInfo XML output in the string
     root = ET.fromstring(mediainfo_output)

@@ -97,9 +97,9 @@ if __name__ == "__main__":
 
     # Run ffprobe command to get JSON output
     ffprobe_subprocess_command = [ffprobe_path, "-v", "quiet", "-print_format", "json", "-show_format", "-show_streams", mediafile]
-    print(f"DEBUG: issuing subprocess command: {ffprobe_subprocess_command}")
+    #print(f"DEBUG: issuing subprocess command: {ffprobe_subprocess_command}")
     ffprobe_output = subprocess.check_output(ffprobe_subprocess_command).decode()
-    print(f"DEBUG: returned output string: {ffprobe_output}")
+    #print(f"DEBUG: returned output string: {ffprobe_output}")
 
     # Parse JSON output
     ffprobe_data = json.loads(ffprobe_output)
