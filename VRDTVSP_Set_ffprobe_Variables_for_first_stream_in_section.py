@@ -80,19 +80,19 @@ if __name__ == "__main__":
     # Retrieve the path of MediaInfo from the environment variable and Check if MediaInfo file path exists
     ffprobe_path = os.environ.get(ffprobe_dos_variablename)
     if not ffprobe_path or not os.path.exists(ffprobe_path):
-        #print(f"Error: ffprobe path not specified or does not exist for variable {ffprobe_dos_variablename}.")
+        print(f"Error: ffprobe path not specified or does not exist for variable {ffprobe_dos_variablename}.")
         exit(1)
 
     # Check if media file exists
     if not os.path.exists(mediafile):
-        #print(f"Error: Media file does not exist: {mediafile}")
+        print(f"Error: Media file does not exist: {mediafile}")
         exit(1)
 
     # Run ffprobe command to get JSON output
     ffprobe_subprocess_command = [ffprobe_path, "-v", "quiet", "-print_format", "json", "-show_format", "-show_streams", mediafile]
     print(f"DEBUG: issuing subprocess command: {ffprobe_subprocess_command}")
     ffprobe_output = subprocess.check_output(ffprobe_subprocess_command).decode()
-    print(f"DEBUG: returned output string: {ffprobe_output}")
+    #print(f"DEBUG: returned output string: {ffprobe_output}")
 
     # Parse JSON output
     ffprobe_data = json.loads(ffprobe_output)
