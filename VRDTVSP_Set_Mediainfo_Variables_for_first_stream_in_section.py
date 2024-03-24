@@ -44,6 +44,9 @@ if __name__ == "__main__":
     #from MediaInfoDLL3 import MediaInfo, Stream, Info, InfoOption
     #from MediaInfoDLL3 import *
 
+    TERMINAL_WIDTH = 250
+    objPrettyPrint = pprint.PrettyPrinter(width=TERMINAL_WIDTH, compact=False, sort_dicts=False)	# facilitates formatting 
+
     parser = argparse.ArgumentParser(description="Parse media file with MediaInfo and create DOS variables.")
     parser.add_argument("--mediainfo_dos_variablename", help="Name of DOS variable for fully qualified MediaInfo path", required=True)
     parser.add_argument("--mediafile", help="Path to the media file", required=True)

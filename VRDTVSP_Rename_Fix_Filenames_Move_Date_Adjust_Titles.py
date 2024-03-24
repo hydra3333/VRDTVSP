@@ -781,6 +781,10 @@ def rename_to_adjusted_filename(old_full_filename, old_filename_without_extensio
 # THIS WILL ONLY WORK if the calling CMD commandline specifies a folder with DOUBLE backslashes
 #
 if __name__ == "__main__":
+
+    TERMINAL_WIDTH = 250
+    objPrettyPrint = pprint.PrettyPrinter(width=TERMINAL_WIDTH, compact=False, sort_dicts=False)	# facilitates formatting 
+
     parser = argparse.ArgumentParser(description="Rename Fix Filenames by adjusting titles")
     parser.add_argument("--folder", type=str, default="G:\\HDTV\\000-TO-BE-PROCESSED", help="Folder to process")
     parser.add_argument("--recurse", action="store_true", help="Recursively process subdirectories")

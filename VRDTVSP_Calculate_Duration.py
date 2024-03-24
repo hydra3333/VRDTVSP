@@ -20,6 +20,9 @@ from pymediainfo import MediaInfo
 import argparse
 from datetime import datetime
 if __name__ == "__main__":
+    TERMINAL_WIDTH = 250
+    objPrettyPrint = pprint.PrettyPrinter(width=TERMINAL_WIDTH, compact=False, sort_dicts=False)	# facilitates formatting 
+
     parser = argparse.ArgumentParser(description='Calculate duration between two date time strings.')
     parser.add_argument("--start_datetime", type=str, help='Start date and time string (YYYY-MM-DD HH.MM.SS.hhh)')
     parser.add_argument("--end_datetime", type=str, help='End date and time string (YYYY-MM-DD HH.MM.SS.hhh)')
