@@ -11,7 +11,7 @@ import subprocess
 import pprint
 
 def add_variable_to_list(key, value, set_cmd_list):
-    set_cmd_list.append(f'SET "{prefix}{key}={value}"')
+    set_cmd_list.append(f'SET "{key}={value}"')
 
 def escape_special_chars(text):
     # Replace special characters with underscores.
@@ -26,10 +26,10 @@ def process_stream(stream, prefix, set_cmd_list):
             value = str(value)
         key = escape_special_chars(prefix + key)
         value = escape_special_chars(value)
-        print(f"DEBUG: do set_env_variable '{key}'] = '{value}'")
+        #print(f"DEBUG: do set_env_variable '{key}'] = '{value}'")
         os.environ[key] = value    # Because os.environ() ONLY set/get environment variables within the life of the PYTHON process
         debug_value = os.environ[key]
-        print(f"DEBUG: after set_env_variable '{key}' = '{debug_value}'")
+        #print(f"DEBUG: after set_env_variable '{key}' = '{debug_value}'")
         add_variable_to_list(key, value, set_cmd_list)
 
 def process_general_section(general_info, prefix, set_cmd_list):
@@ -101,7 +101,7 @@ if __name__ == "__main__":
 
     # Run ffprobe command to get JSON output
     ffprobe_subprocess_command = [ffprobe_path, "-v", "quiet", "-print_format", "json", "-show_format", "-show_streams", mediafile]
-    print(f"DEBUG: issuing subprocess command: {ffprobe_subprocess_command}")
+    #print(f"DEBUG: issuing subprocess command: {ffprobe_subprocess_command}")
     ffprobe_output = subprocess.check_output(ffprobe_subprocess_command).decode()
     #print(f"DEBUG: returned output string: {ffprobe_output}")
 
@@ -119,7 +119,7 @@ if __name__ == "__main__":
         print(f"Error: Invalid ffprobe section '{section_name}' processing {mediafile}\nPlease specify a valid section (e.g., Video, Audio, General).")
         exit(1)
     set_cmd_list.append(f'goto :eof')
-    print(f"DEBUG: set_cmd_list=\n{objPrettyPrint.pformat(set_cmd_list)}")
+    #print(f"DEBUG: set_cmd_list=\n{objPrettyPrint.pformat(set_cmd_list)}")
 
     # Open the cmd file for writing in overwrite mode
     output_cmd_file = args.output_cmd_file
