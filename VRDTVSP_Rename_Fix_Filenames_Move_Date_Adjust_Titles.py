@@ -784,6 +784,7 @@ if __name__ == "__main__":
 
     TERMINAL_WIDTH = 250
     objPrettyPrint = pprint.PrettyPrinter(width=TERMINAL_WIDTH, compact=False, sort_dicts=False)	# facilitates formatting 
+	#print(f"DEBUG: {objPrettyPrint.pformat(a_list)}")
 
     parser = argparse.ArgumentParser(description="Rename Fix Filenames by adjusting titles")
     parser.add_argument("--folder", type=str, default="G:\\HDTV\\000-TO-BE-PROCESSED", help="Folder to process")

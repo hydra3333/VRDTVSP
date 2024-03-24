@@ -21,6 +21,7 @@ from pymediainfo import MediaInfo
 if __name__ == "__main__":
     TERMINAL_WIDTH = 250
     objPrettyPrint = pprint.PrettyPrinter(width=TERMINAL_WIDTH, compact=False, sort_dicts=False)	# facilitates formatting 
+	#print(f"DEBUG: {objPrettyPrint.pformat(a_list)}")
 
     print(f"\n\nSTARTED Set file date-time timestamps")
     print(f"This will ONLY work when the calling dos commandline specifies a folder with DOUBLE backslashes like this:")
