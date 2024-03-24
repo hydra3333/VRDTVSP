@@ -35,7 +35,7 @@ def process_stream(stream, prefix, set_cmd_list):
 def process_general_section(general_info, prefix, set_cmd_list):
     # Process general section
     #print("Processing General section...")
-    process_stream(general_info, prefix)
+    process_stream(general_info, prefix, set_cmd_list)
 
 def process_section(section_name, streams, prefix, set_cmd_list):
     # Process elements within the section based on the section name
@@ -106,7 +106,8 @@ if __name__ == "__main__":
     #print(f"DEBUG: returned output string: {ffprobe_output}")
 
     # Parse JSON output
-    set_cmd_list = [ f'REM List of DOS SET commands to define DOS variables' ]
+    set_cmd_list = [ f'echo prefix = "{prefix}"' ]
+    set_cmd_list.append(f'REM List of DOS SET commands to define DOS variables')
     set_cmd_list.append(f'REM First, clear the variables with the chosen prefix')
     set_cmd_list.append(f'FOR /F "tokens=1,* delims==" %%G IN (\'SET !prefix!\') DO (SET "%%G=")')
     ffprobe_data = json.loads(ffprobe_output)
