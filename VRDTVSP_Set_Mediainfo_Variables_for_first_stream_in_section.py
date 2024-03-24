@@ -31,7 +31,7 @@ def process_section(section_name_capitalize, section, prefix):
         if first_track:
             process_stream(first_track, prefix)
         else:
-            print(f"No track found in the section: {section_name_capitalize} ... tag={section.tag}")
+            print(f"No track found in section: {section_name_capitalize} ... tag={section.tag}")
 if __name__ == "__main__":
     # eg clear, set with python3, then show
     # set "prefix=SRC_MI_V_"
@@ -101,7 +101,7 @@ if __name__ == "__main__":
     #    print("No audio stream found in the MediaInfo output.")
 
     # Find the specified section in the MediaInfo output
-	section_name_capitalize = section_name.capitalize()
+    section_name_capitalize = section_name.capitalize()
     section = root.find(f"./{section_name_capitalize}")  # Find section in correct case
     if section:
         process_section(section_name_capitalize, section, prefix)

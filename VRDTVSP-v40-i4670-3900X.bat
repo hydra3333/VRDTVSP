@@ -120,6 +120,7 @@ REM --------- setup .PY fully qualified filenames to pre-created files which ren
 set "Path_to_py_VRDTVSP_Calculate_Duration=!root!VRDTVSP_Calculate_Duration.py"
 set "Path_to_py_VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles=!root!VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles.py"
 set "Path_to_py_VRDTVSP_Modify_File_Date_Timestamps=!root!VRDTVSP_Modify_File_Date_Timestamps.py"
+set "Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section=!root!VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section.py"
 REM --------- setup .VBS and .PS1 and .PY fully qualified filenames to pre-created files which rename and re-timestamp filenames etc ---------
 
 call :get_date_time_String "TOTAL_start_date_time"
@@ -174,6 +175,7 @@ ECHO !DATE! !TIME! profile_name_for_qsf_h265="!profile_name_for_qsf_h265!" >> "%
 ECHO !DATE! !TIME! Path_to_py_VRDTVSP_Calculate_Duration="!Path_to_py_VRDTVSP_Calculate_Duration!" >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! Path_to_py_VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles="!Path_to_py_VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles!" >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! Path_to_py_VRDTVSP_Modify_File_Date_Timestamps="!Path_to_py_VRDTVSP_Modify_File_Date_Timestamps!" >> "%vrdlog%" 2>&1
+ECHO !DATE! !TIME! Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section="!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" >> "%vrdlog%" 2>&1
 
 ECHO !DATE! !TIME! End summary of Initialised paths etc ... >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
