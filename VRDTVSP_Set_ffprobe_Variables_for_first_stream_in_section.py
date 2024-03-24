@@ -20,7 +20,7 @@ def process_general_section(general_info, prefix):
     print("Processing General section...")
     process_stream(general_info, prefix)
 
-def process_section(section_name, section, prefix):
+def old_process_section(section_name, section, prefix):
     # Process elements within the section based on the section name
     if section_name.lower() == "general".lower():
         print("Processing General section...")
@@ -29,6 +29,21 @@ def process_section(section_name, section, prefix):
         print(f"Processing first {section_name} stream...")
         if len(section) > 0:
             process_stream(section[0], prefix)
+        else:
+            print(f"No {section_name} stream found.")
+
+def process_section(section_name, streams, prefix):
+    # Process elements within the section based on the section name
+    # sort the streams based on their index within the specified codec type 
+    # and then select the stream with the lowest index as the first stream for that codec type.
+    if section_name.lower() == "general":
+        print("Processing General section...")
+        process_stream(section, prefix)
+    else:    
+        codec_streams = sorted(streams, key=lambda x: x['index'])  # Sort streams based on index
+        if len(codec_streams) > 0:
+            print(f"Processing first {section_name} stream...")
+            process_stream(codec_streams[0], prefix)  # Choose the first stream with the lowest index
         else:
             print(f"No {section_name} stream found.")
 
@@ -87,4 +102,3 @@ if __name__ == "__main__":
     else:
         print(f"Error: Invalid ffprobe section '{section_name}'. Please specify a valid section (e.g., Video, Audio, General).")
         exit(1)
-
