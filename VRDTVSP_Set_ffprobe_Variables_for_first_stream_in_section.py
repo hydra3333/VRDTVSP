@@ -25,10 +25,10 @@ def process_stream(stream, prefix, set_cmd_list):
         if not isinstance(value, str):
             value = str(value)
         key = escape_special_chars(prefix + key)
-        value = escape_special_chars(value)
+        value = escape_special_chars(value.strip())
         #print(f"DEBUG: do set_env_variable '{key}'] = '{value}'")
         os.environ[key] = value    # Because os.environ() ONLY set/get environment variables within the life of the PYTHON process
-        debug_value = os.environ[key]
+        #debug_value = os.environ[key]
         #print(f"DEBUG: after set_env_variable '{key}' = '{debug_value}'")
         add_variable_to_list(key, value, set_cmd_list)
 
