@@ -40,7 +40,7 @@ REM --------- setup paths and exe filenames ----------------------------
 
 REM -- Header ---------------------------------------------------------------------
 REM set header to date and time and computer name
-call :get_header_string "header"
+call :get_header_String "header"
 REM -- Header ---------------------------------------------------------------------
 
 REM -- Prepare the log file ---------------------------------------------------------------------
@@ -122,7 +122,7 @@ set "Path_to_py_VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles=!root!VRDTV
 set "Path_to_py_VRDTVSP_Modify_File_Date_Timestamps=!root!VRDTVSP_Modify_File_Date_Timestamps.py"
 REM --------- setup .VBS and .PS1 and .PY fully qualified filenames to pre-created files which rename and re-timestamp filenames etc ---------
 
-call :get_date_time_string "TOTAL_start_date_time"
+call :get_date_time_String "TOTAL_start_date_time"
 
 REM --------- Start Initial Summarize ---------
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
@@ -240,7 +240,7 @@ ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO --------- Start move .TS .MP4 .MPG .VOB files from capture folder "!capture_TS_folder!" to "!source_TS_Folder!" --------- >> "!vrdlog!" 2>&1
-call :get_date_time_string "start_date_time"
+call :get_date_time_String "start_date_time"
 ECHO MOVE /Y "!capture_TS_folder!*.TS" "!source_TS_Folder!" >> "!vrdlog!" 2>&1
 MOVE /Y "!capture_TS_folder!*.TS" "!source_TS_Folder!" >> "!vrdlog!" 2>&1
 ECHO MOVE /Y "!capture_TS_folder!*.MP4" "!source_TS_Folder!" >> "!vrdlog!" 2>&1
@@ -249,7 +249,7 @@ ECHO MOVE /Y "!capture_TS_folder!*.MPG" "!source_TS_Folder!" >> "!vrdlog!" 2>&1
 MOVE /Y "!capture_TS_folder!*.MPG" "!source_TS_Folder!" >> "!vrdlog!" 2>&1
 ECHO MOVE /Y "!capture_TS_folder!*.VOB" "!source_TS_Folder!" >> "!vrdlog!" 2>&1
 MOVE /Y "!capture_TS_folder!*.VOB" "!source_TS_Folder!" >> "!vrdlog!" 2>&1
-call :get_date_time_string "end_date_time"
+call :get_date_time_String "end_date_time"
 echo "!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "MoveFiles" >> "!vrdlog!" 2>&1
 "!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "MoveFiles" >> "!vrdlog!" 2>&1
 ECHO --------- End   move .TS .MP4 .MPG .VOB files from capture folder "!capture_TS_folder!" to "!source_TS_Folder!" --------- >> "!vrdlog!" 2>&1
@@ -270,17 +270,17 @@ REM If a filename isn't "safe" then rename it so it really is safe
 REM Allowed only characters a-z,A-Z,0-9,-,_,.,space
 REM
 REM ENFORCE VALID FILENAMES on the source_TS_Folder
-call :get_date_time_string "start_date_time"
+call :get_date_time_String "start_date_time"
 set "the_folder=!source_TS_Folder!" 
 call :make_double_backslashes_into_variable "!source_TS_Folder!" "the_folder"
 REM call :remove_trailing_backslash_into_variable "!the_folder!" "the_folder"
 echo "!py_exe!" "!Path_to_py_VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles!" --folder "!the_folder!" --recurse >> "!vrdlog!" 2>&1
 "!py_exe!" "!Path_to_py_VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles!" --folder "!the_folder!" --recurse >> "!vrdlog!" 2>&1
-call :get_date_time_string "end_date_time"
+call :get_date_time_String "end_date_time"
 echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles !the_folder!" >> "!vrdlog!" 2>&1
 "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles !the_folder!" >> "!vrdlog!" 2>&1
 REM
-call :get_date_time_string "loop_start_date_time"
+call :get_date_time_String "loop_start_date_time"
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
@@ -292,19 +292,19 @@ REM --------- Start Loop through the SOURCE files ---------
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-call :get_date_time_string "loop_start_date_time"
+call :get_date_time_String "loop_start_date_time"
 for %%f in ("!source_TS_Folder!*.TS", "!source_TS_Folder!*.MPG", "!source_TS_Folder!*.MP4", "!source_TS_Folder!*.VOB") do (
-	call :get_date_time_string "iloop_start_date_time"
+	call :get_date_time_String "iloop_start_date_time"
 	ECHO !DATE! !TIME! START ------------------ %%f >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! Input file : "%%~f" >> "!vrdlog!" 2>&1
 	CALL :QSFandCONVERT "%%f"
 	REM no - MOVE "%%f" "!done_TS_Folder!" - INSTREAD do the RENAME/MOVE as a part of the CALL above, depending on whether it's been propcessed correctly
 	ECHO !DATE! !TIME! END ------------------ %%f >> "!vrdlog!" 2>&1
-	call :get_date_time_string "iloop_end_date_time"
+	call :get_date_time_String "iloop_end_date_time"
 	echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!iloop_start_date_time!" --end_datetime "!iloop_end_date_time!" --prefix_id ":::::::::: iloop %%f " >> "!vrdlog!" 2>&1
 	"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!iloop_start_date_time!" --end_datetime "!iloop_end_date_time!" --prefix_id ":::::::::: iloop %%f " >> "!vrdlog!" 2>&1
 )
-call :get_date_time_string "loop_end_date_time"
+call :get_date_time_String "loop_end_date_time"
 echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!loop_start_date_time!" --end_datetime "!loop_end_date_time!" --prefix_id "Loop_Processing_Files" >> "!vrdlog!" 2>&1
 "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!loop_start_date_time!" --end_datetime "!loop_end_date_time!" --prefix_id "Loop_Processing_Files" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
@@ -324,17 +324,17 @@ REM If a filename isn't "safe" then rename it so it really is safe
 REM Allowed only characters a-z,A-Z,0-9,-,_,.,space
 REM
 REM ENFORCE VALID FILENAMES on the destination_mp4_Folder
-call :get_date_time_string "start_date_time"
+call :get_date_time_String "start_date_time"
 set "the_folder=!destination_mp4_Folder!" 
 call :make_double_backslashes_into_variable "!destination_mp4_Folder!" "the_folder"
 REM call :remove_trailing_backslash_into_variable "!the_folder!" "the_folder"
 echo "!py_exe!" "!Path_to_py_VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles!" --folder "!the_folder!" --recurse >> "!vrdlog!" 2>&1
 "!py_exe!" "!Path_to_py_VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles!" --folder "!the_folder!" --recurse >> "!vrdlog!" 2>&1
-call :get_date_time_string "end_date_time"
+call :get_date_time_String "end_date_time"
 echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles !the_folder!" >> "!vrdlog!" 2>&1
 "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles !the_folder!" >> "!vrdlog!" 2>&1
 REM
-call :get_date_time_string "loop_start_date_time"
+call :get_date_time_String "loop_start_date_time"
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
@@ -353,7 +353,7 @@ ECHO !DATE! !TIME! --- START Modify DateCreated and DateModified Timestamps on "
 echo DEBUG: BEFORE:  >> "!vrdlog!" 2>&1
 dir "!destination_mp4_Folder! >> "!vrdlog!" 2>&1
 
-call :get_date_time_string "start_date_time"
+call :get_date_time_String "start_date_time"
 set "the_folder=!destination_mp4_Folder!" 
 call :make_double_backslashes_into_variable "!destination_mp4_Folder!" "the_folder"
 REM call :remove_trailing_backslash_into_variable "!the_folder!" "the_folder"
@@ -363,7 +363,7 @@ echo "!py_exe!" "!Path_to_py_VRDTVSP_Modify_File_Date_Timestamps!" --folder "!th
 echo DEBUG: AFTER: >> "!vrdlog!" 2>&1
 dir "!destination_mp4_Folder! >> "!vrdlog!" 2>&1
 
-call :get_date_time_string "end_date_time"
+call :get_date_time_String "end_date_time"
 echo "!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "ReTimestamp" >> "!vrdlog!" 2>&1
 "!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "ReTimestamp" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! --- END Modify DateCreated and DateModified Timestamps on "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
@@ -392,7 +392,7 @@ ECHO !DATE! !TIME! -------------------------------------------------------------
 REM --------- Swap back to original folder ---------
 
 
-call :get_date_time_string "TOTAL_end_date_time"
+call :get_date_time_String "TOTAL_end_date_time"
 echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!TOTAL_start_date_time!" --end_datetime "!TOTAL_end_date_time!" --prefix_id "TOTAL" >> "!vrdlog!" 2>&1
 "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!TOTAL_start_date_time!" --end_datetime "!TOTAL_end_date_time!" --prefix_id "TOTAL" >> "!vrdlog!" 2>&1
 
@@ -456,6 +456,18 @@ Call :get_mediainfo_parameter_legacy "Video" "Codec_Settings_Matrix_Data" "V_Cod
 Call :get_mediainfo_parameter_legacy "Video" "Codec_Settings_CABAC" "V_Codec_Settings_CABAC_legacy" "%~f1"
 Call :get_mediainfo_parameter_legacy "Video" "Codec_Settings_RefFrames" "V_Codec_Settings_RefFrames_legacy" "%~f1"
 REM
+Call :get_mediainfo_parameter "General" "Format" "G_Format" "%~f1" 
+Call :get_mediainfo_parameter "General" "Format/String" "G_Format_String" "%~f1" 
+Call :get_mediainfo_parameter "General" "CodecID" "G_CodecID" "%~f1" 
+Call :get_mediainfo_parameter "General" "CodecID/String" "G_CodecID_String" "%~f1" 
+Call :get_mediainfo_parameter "General" "Interleaved" "G_Interleaved" "%~f1" 
+Call :get_mediainfo_parameter "General" "FrameRate" "G_FrameRate" "%~f1" 
+Call :get_mediainfo_parameter "General" "FrameRate/String" "G_FrameRate_String" "%~f1" 
+Call :get_mediainfo_parameter "General" "FrameRate_Num" "G_FrameRate_Num" "%~f1" 
+Call :get_mediainfo_parameter "General" "FrameRate_Den" "G_FrameRate_Den" "%~f1" 
+Call :get_mediainfo_parameter "General" "FrameCount" "G_FrameCount" "%~f1" 
+Call :get_mediainfo_parameter "General" "Delay" "G_Delay" "%~f1" 
+Call :get_mediainfo_parameter "General" "Delay/String" "G_Delay_String" "%~f1" 
 Call :get_mediainfo_parameter "General" "VideoCount" "G_VideoCount" "%~f1" 
 Call :get_mediainfo_parameter "General" "AudioCount" "G_AudioCount" "%~f1" 
 Call :get_mediainfo_parameter "General" "Duration" "G_Duration_ms" "%~f1" 
@@ -470,8 +482,9 @@ Call :get_mediainfo_parameter "General" "Duration_End" "G_End" "%~f1"
 REM
 Call :get_mediainfo_parameter "Video" "CodecID" "V_CodecID" "%~f1" 
 Call :get_mediainfo_parameter "Video" "CodecID/String" "V_CodecID_String" "%~f1" 
+Call :get_mediainfo_parameter "Video" "CodecID_Description" "V_CodecID_Description" "%~f1" 
 Call :get_mediainfo_parameter "Video" "Format" "V_Format" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Format/String" "V_Format_string" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Format/String" "V_Format_String" "%~f1" 
 Call :get_mediainfo_parameter "Video" "Format_Version" "V_Format_Version" "%~f1" 
 Call :get_mediainfo_parameter "Video" "Format_Profile" "V_Format_Profile" "%~f1" 
 Call :get_mediainfo_parameter "Video" "Format_Level" "V_Format_Level" "%~f1" 
@@ -623,7 +636,7 @@ Call :get_mediainfo_parameter "Video" "MaxFALL_Original" "V_MaxFALL_Original" "%
 Call :get_mediainfo_parameter "Video" "MaxFALL_Original_Source" "V_MaxFALL_Original_Source" "%~f1" 
 REM
 Call :get_ffprobe_video_stream_parameter "codec_name" "V_CodecID_FF" "%~f1" 
-Call :get_ffprobe_video_stream_parameter "codec_tag_string" "V_CodecID_String_FF" "%~f1" 
+Call :get_ffprobe_video_stream_parameter "codec_tag_String" "V_CodecID_String_FF" "%~f1" 
 Call :get_ffprobe_video_stream_parameter "width" "V_Width_FF" "%~f1" 
 Call :get_ffprobe_video_stream_parameter "height" "V_Height_FF" "%~f1" 
 Call :get_ffprobe_video_stream_parameter "duration" "V_Duration_s_FF" "%~f1" 
@@ -632,6 +645,7 @@ Call :get_ffprobe_video_stream_parameter "max_bit_rate" "V_BitRate_Maximum_FF" "
 REM
 Call :get_mediainfo_parameter "Audio" "CodecID" "A_CodecID" "%~f1" 
 Call :get_mediainfo_parameter "Audio" "CodecID/String" "A_CodecID_String" "%~f1" 
+Call :get_mediainfo_parameter "Audio" "CodecID_Description" "A_CodecID_Description" "%~f1" 
 Call :get_mediainfo_parameter "Audio" "Format" "A_Format" "%~f1" 
 Call :get_mediainfo_parameter "Audio" "Format/String" "A_Format_String" "%~f1" 
 Call :get_mediainfo_parameter "Audio" "Format/Info" "A_Format_Info" "%~f1" 
@@ -660,7 +674,6 @@ Call :get_mediainfo_parameter "Audio" "Video_Delay/String2" "A_Video_Delay_Strin
 Call :get_mediainfo_parameter "Audio" "Video_Delay/String3" "A_Video_Delay_String3" "%~f1" 
 Call :get_mediainfo_parameter "Audio" "Video_Delay/String4" "A_Video_Delay_String4" "%~f1" 
 Call :get_mediainfo_parameter "Audio" "Video_Delay/String5" "A_Video_Delay_String5" "%~f1" 
-
 REM
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Finished collecting .TS mediainfo variables ... "%~f1" >> "!vrdlog!" 2>&1
@@ -668,7 +681,31 @@ ECHO !DATE! !TIME! =============================================================
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Start of Important Parameters Collected ... "%~f1" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-REM a few depracated video settings first
+REM
+echo "G_Format=!G_Format!" >> "!vrdlog!" 2>&1
+echo "G_Format_String=!G_Format_String!" >> "!vrdlog!" 2>&1
+echo "G_CodecID=!G_CodecID!" >> "!vrdlog!" 2>&1
+echo "G_CodecID_String=!G_CodecID_String!" >> "!vrdlog!" 2>&1
+echo "G_Interleaved=!G_Interleaved!" >> "!vrdlog!" 2>&1
+echo "G_FrameRate=!G_FrameRate!" >> "!vrdlog!" 2>&1
+echo "G_FrameRate_String=!G_FrameRate_String!" >> "!vrdlog!" 2>&1
+echo "G_FrameRate_Num=!G_FrameRate_Num!" >> "!vrdlog!" 2>&1
+echo "G_FrameRate_Den=!G_FrameRate_Den!" >> "!vrdlog!" 2>&1
+echo "G_FrameCount=!G_FrameCount!" >> "!vrdlog!" 2>&1
+echo "G_Delay=!G_Delay!" >> "!vrdlog!" 2>&1
+echo "G_Delay_String=!G_Delay_String!" >> "!vrdlog!" 2>&1
+echo "G_VideoCount=!G_VideoCount!" >> "!vrdlog!" 2>&1
+echo "G_AudioCount=!G_AudioCount!" >> "!vrdlog!" 2>&1
+echo "G_Duration_ms=!G_Duration_ms!" >> "!vrdlog!" 2>&1
+echo "G_Duration_String=!G_Duration_String!" >> "!vrdlog!" 2>&1
+echo "G_Duration_String1=!G_Duration_String1!" >> "!vrdlog!" 2>&1
+echo "G_Duration_String2=!G_Duration_String2!" >> "!vrdlog!" 2>&1
+echo "G_Duration_String3=!G_Duration_String3!" >> "!vrdlog!" 2>&1
+echo "G_Duration_String4=!G_Duration_String4!" >> "!vrdlog!" 2>&1
+echo "G_Duration_String5=!G_Duration_String5!" >> "!vrdlog!" 2>&1
+echo "G_Start=!G_Start!" >> "!vrdlog!" 2>&1
+echo "G_End=!G_End!" >> "!vrdlog!" 2>&1
+REM a few depracated video settings
 echo "(deprecated) V_Codec_legacy=!V_Codec_legacy!" >> "!vrdlog!" 2>&1
 echo "(deprecated) V_Codec_String_legacy=!V_Codec_String_legacy!" >> "!vrdlog!" 2>&1
 echo "(deprecated) V_Codec_Family_legacy=!V_Codec_Family_legacy!" >> "!vrdlog!" 2>&1
@@ -690,11 +727,22 @@ echo "(deprecated) V_Codec_Settings_RefFrames_legacy=!V_Codec_Settings_RefFrames
 REM 
 ECHO "V_CodecID=!V_CodecID!" >> "!vrdlog!" 2>&1
 ECHO "V_CodecID_String=!V_CodecID_String!" >> "!vrdlog!" 2>&1
-ECHO "V_Format=!V_Format!" >> "!vrdlog!" 2>&1
-ECHO "V_Format_String=!V_Format_String!" >> "!vrdlog!" 2>&1
+ECHO "V_CodecID_Description=!V_CodecID_Description!" >> "!vrdlog!" 2>&1
+echo "V_InternetMediaType=!V_InternetMediaType!" >> "!vrdlog!" 2>&1
+echo "V_Format=!V_Format!" >> "!vrdlog!" 2>&1
+echo "V_Format_String=!V_Format_String!" >> "!vrdlog!" 2>&1
+echo "V_Format_Version=!V_Format_Version!" >> "!vrdlog!" 2>&1
+echo "V_Format_Profile=!V_Format_Profile!" >> "!vrdlog!" 2>&1
+echo "V_Format_Level=!V_Format_Level!" >> "!vrdlog!" 2>&1
+echo "V_Format_Tier=!V_Format_Tier!" >> "!vrdlog!" 2>&1
+echo "V_Format_Compression=!V_Format_Compression!" >> "!vrdlog!" 2>&1
+echo "V_Format_Commercial=!V_Format_Commercial!" >> "!vrdlog!" 2>&1
+echo "V_Format_Commercial_IfAny=!V_Format_Commercial_IfAny!" >> "!vrdlog!" 2>&1
 REM
 ECHO "A_CodecID=!A_CodecID!" >> "!vrdlog!" 2>&1
 ECHO "A_CodecID_String=!A_CodecID_String!" >> "!vrdlog!" 2>&1
+ECHO "A_CodecID_Description=!A_CodecID_Description!" >> "!vrdlog!" 2>&1
+echo "A_InternetMediaType=!A_InternetMediaType!" >> "!vrdlog!" 2>&1
 ECHO "A_Format=!A_Format!" >> "!vrdlog!" 2>&1
 ECHO "A_Format_String=!A_Format_String!" >> "!vrdlog!" 2>&1
 REM
@@ -801,7 +849,7 @@ REM
 Call :get_mediainfo_parameter "Video" "CodecID" "V_CodecID" "%~f1" 
 Call :get_mediainfo_parameter "Video" "CodecID/String" "V_CodecID_String" "%~f1" 
 Call :get_mediainfo_parameter "Video" "Format" "V_Format" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Format/String" "V_Format_string" "%~f1" 
+Call :get_mediainfo_parameter "Video" "Format/String" "V_Format_String" "%~f1" 
 Call :get_mediainfo_parameter "Video" "Format_Version" "V_Format_Version" "%~f1" 
 Call :get_mediainfo_parameter "Video" "Format_Profile" "V_Format_Profile" "%~f1" 
 Call :get_mediainfo_parameter "Video" "Format_Level" "V_Format_Level" "%~f1" 
@@ -952,7 +1000,7 @@ Call :get_mediainfo_parameter "Video" "MaxFALL_Original" "V_MaxFALL_Original" "%
 Call :get_mediainfo_parameter "Video" "MaxFALL_Original_Source" "V_MaxFALL_Original_Source" "%~f1" 
 REM
 Call :get_ffprobe_video_stream_parameter "codec_name" "V_CodecID_FF" "%~f1" 
-Call :get_ffprobe_video_stream_parameter "codec_tag_string" "V_CodecID_String_FF" "%~f1" 
+Call :get_ffprobe_video_stream_parameter "codec_tag_String" "V_CodecID_String_FF" "%~f1" 
 Call :get_ffprobe_video_stream_parameter "width" "V_Width_FF" "%~f1" 
 Call :get_ffprobe_video_stream_parameter "height" "V_Height_FF" "%~f1" 
 Call :get_ffprobe_video_stream_parameter "duration" "V_Duration_s_FF" "%~f1" 
@@ -1197,8 +1245,8 @@ REM ECHO !DATE! !TIME! TYPE "!this_QSF_log6_bitstring_log!" >> "%vrdlog%" 2>&1
 REM TYPE "!this_QSF_log6_bitstring_log!" >> "%vrdlog%" 2>&1
 for /f "tokens=1,2 delims=:" %%a in (' FINDSTR /I /C:":" ^< "!this_QSF_log_bitstring_log!" ') do (
 	echo !DATE! !TIME! "lc=!lc! a='%%a' b='%%b' >> "%vrdlog%" 2>&1
-	set "bitrate_string_from_log=%%b"
-	for /f "tokens=1,2 delims= " %%i in ("!bitrate_string_from_log!") do (
+	set "bitrate_String_from_log=%%b"
+	for /f "tokens=1,2 delims= " %%i in ("!bitrate_String_from_log!") do (
 		echo !DATE! !TIME! "i='%%i' j='%%j'" >> "%vrdlog%" 2>&1
 		set "Q_ACTUAL_QSF_LOG_BITRATE=%%i"
 		set "Q_ACTUAL_QSF_LOG_BITRATE_UNITS=%%j"
@@ -1267,7 +1315,7 @@ ECHO !DATE! !TIME! "Q_A_Video_Delay_ms=!Q_A_Video_Delay_ms!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! "Q_A_Audio_Delay_ms=!Q_A_Audio_Delay_ms!" Calculated >> "!vrdlog!" 2>&1
 REM
 Call :get_ffprobe_video_stream_parameter "codec_name" "Q_V_CodecID_FF" "!scratch_file_qsf!" 
-Call :get_ffprobe_video_stream_parameter "codec_tag_string" "Q_V_CodecID_String_FF" "!scratch_file_qsf!" 
+Call :get_ffprobe_video_stream_parameter "codec_tag_String" "Q_V_CodecID_String_FF" "!scratch_file_qsf!" 
 Call :get_ffprobe_video_stream_parameter "width" "Q_V_Width_FF" "!scratch_file_qsf!" 
 Call :get_ffprobe_video_stream_parameter "height" "Q_V_Height_FF" "!scratch_file_qsf!" 
 Call :get_ffprobe_video_stream_parameter "duration" "Q_V_Duration_s_FF" "!scratch_file_qsf!" 
@@ -2050,7 +2098,7 @@ ECHO !DATE! !TIME! "D_A_Video_Delay_ms=!D_A_Video_Delay_ms!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! "D_A_Audio_Delay_ms=!D_A_Audio_Delay_ms!" Calculated >> "!vrdlog!" 2>&1
 REM
 Call :get_ffprobe_video_stream_parameter "codec_name" "D_V_CodecID_FF" "!destination_file!" 
-Call :get_ffprobe_video_stream_parameter "codec_tag_string" "D_V_CodecID_String_FF" "!destination_file!" 
+Call :get_ffprobe_video_stream_parameter "codec_tag_String" "D_V_CodecID_String_FF" "!destination_file!" 
 Call :get_ffprobe_video_stream_parameter "width" "D_V_Width_FF" "!destination_file!" 
 Call :get_ffprobe_video_stream_parameter "height" "D_V_Height_FF" "!destination_file!" 
 Call :get_ffprobe_video_stream_parameter "duration" "D_V_Duration_s_FF" "!destination_file!" 
@@ -2315,7 +2363,7 @@ REM 	2	mi_Variable			name if dos variable to be returned eg "V_Width"
 REM 	3	mi_Filename			fully qualified filename of media file beng examined
 REM Examples:
 REM		Call :get_ffprobe_video_stream_parameter "codec_name" "V_CodecID_FF" "video_filename.mp4" >NUL
-REM		Call :get_ffprobe_video_stream_parameter "codec_tag_string" "V_CodecID_String_FF" "video_filename.mp4" >NUL
+REM		Call :get_ffprobe_video_stream_parameter "codec_tag_String" "V_CodecID_String_FF" "video_filename.mp4" >NUL
 REM		Call :get_ffprobe_video_stream_parameter "width" "V_Width_FF" "video_filename.mp4" >NUL
 REM		Call :get_ffprobe_video_stream_parameter "height" "V_Height_FF" "video_filename.mp4" >NUL
 REM		Call :get_ffprobe_video_stream_parameter "duration" "V_Duration_s_FF" "video_filename.mp4" >NUL
@@ -2402,7 +2450,7 @@ REM ----------------------------------------------------------------------------
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
-:get_date_time_string
+:get_date_time_String
 REM return a datetime string with spaces replaced by zeroes in format yyyy-mm-dd hh.mm.ss.hh
 set "datetimestring_variable_name=%~1"
 set "Datey=!DATE: =0!"
@@ -2416,11 +2464,11 @@ REM ----------------------------------------------------------------------------
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
-:get_date_time_string_nospaces
+:get_date_time_String_nospaces
 REM return a datetime string with spaces replaced by zeroes and no spaces in format yyyy-mm-dd.hh.mm.ss.hh
 set "ns_datetimestring_variable_name=%~1"
 set "ns_eval_datetime="
-call :get_date_time_string "ns_eval_datetime"
+call :get_date_time_String "ns_eval_datetime"
 set "ns_eval_datetime=!ns_eval_datetime: =.!"
 set "!ns_datetimestring_variable_name!=!ns_eval_datetime!"
 goto :eof
@@ -2430,11 +2478,11 @@ REM ----------------------------------------------------------------------------
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
-:get_header_string
+:get_header_String
 REM Create a Header
 set "ghs_header_variable_name=%~1"
-call :get_date_time_string_nospaces "ghs_date_time_string"
-set "!ghs_header_variable_name!=!ghs_date_time_string!-!COMPUTERNAME!"
+call :get_date_time_String_nospaces "ghs_date_time_String"
+set "!ghs_header_variable_name!=!ghs_date_time_String!-!COMPUTERNAME!"
 goto :eof
 
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
