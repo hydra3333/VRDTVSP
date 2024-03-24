@@ -20,8 +20,41 @@ def add_variable_to_list(key, value, set_cmd_list):
 def escape_special_chars(text):
     # Replace special characters with underscores.
     special_chars = r'<>|&"?*()\' '    # leave : and / alone
-    return re.sub(r'[%s]' % re.escape(special_chars), '_', str(text))
+    return re.sub(r'[%s]' % re.escape(special_chars), '_', text)
 
+def process_stream(stream, prefix, set_cmd_list):
+    # Create or overwrite DOS environment variables with key/value pairs
+    for child in stream:
+        if not isinstance(value, str):
+            value = str(value)
+        key = escape_special_chars(prefix + child.tag)
+        value = escape_special_chars(child.text.strip())
+        #print(f"DEBUG: do set_env_variable '{key}'] = '{value}'")
+        os.environ[key] = value    # Because os.environ() ONLY set/get environment variables within the life of the PYTHON process
+        #debug_value = os.environ[key]
+        #print(f"DEBUG: after set_env_variable '{key}' = '{debug_value}'")
+        add_variable_to_list(key, value, set_cmd_list)
+
+def process_section(section_name_capitalize, section, prefix, set_cmd_list):
+    # Process elements within the section based on the section name
+    if section.tag.lower() == "general":
+        print(f"Processing General section...")
+        for element in section:
+            if not isinstance(value, str):
+                value = str(value)
+            key = escape_special_chars(prefix + element.tag)
+            value = escape_special_chars(element.text.strip())
+            os.environ[key] = value    # Because os.environ() ONLY set/get environment variables within the life of the PYTHON process
+            #debug_value = os.environ[key]
+            #print(f"DEBUG: after set_env_variable '{key}' = '{debug_value}'")
+            add_variable_to_list(key, value, set_cmd_list)
+    else:    # eg if section.tag.lower() == "video":
+        print(f"Processing first track in section {section_name_capitalize} ...")
+        first_track = section.find("./track")
+        if first_track:
+            process_stream(first_track, prefix, set_cmd_list)
+        else:
+            print(f"No track found in section: {section_name_capitalize} ... tag={section.tag} for {mediafile}")
 if __name__ == "__main__":
     # eg clear, set with python3, then show
     # set "prefix=SRC_MI_V_"
@@ -39,14 +72,6 @@ if __name__ == "__main__":
     # FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=")
     # python.exe --mediainfo_dos_variablename "mediainfo_dos_variablename" --mediafile "!source_mediafile!" --prefix "!prefix!" --section "General"
     # set !prefix!
-
-    #CDLL(r'MediaInfo.dll')
-    #from MediaInfoDLL3 import MediaInfo, Stream, Info, InfoOption
-    #from MediaInfoDLL3 import *
-
-    TERMINAL_WIDTH = 250
-    objPrettyPrint = pprint.PrettyPrinter(width=TERMINAL_WIDTH, compact=False, sort_dicts=False)	# facilitates formatting 
-	#print(f"DEBUG: {objPrettyPrint.pformat(a_list)}")
 
     parser = argparse.ArgumentParser(description="Parse media file with MediaInfo and create DOS variables.")
     parser.add_argument("--mediainfo_dos_variablename", help="Name of DOS variable for fully qualified MediaInfo path", required=True)
@@ -73,61 +98,27 @@ if __name__ == "__main__":
         print(f"Error: Media file does not exist at path {mediafile}.")
         exit(1)
 
+    # Run MediaInfo command to generate XML output into a string
+    mediainfo_subprocess_command = [mediainfo_path, "--Output=XML", mediafile]
+    #print(f"DEBUG: issuing subprocess command: {mediainfo_subprocess_command}")
+    mediainfo_output = subprocess.check_output(mediainfo_subprocess_command).decode()
+    #print(f"DEBUG: returned output string: {mediainfo_output}")
+
+    # Parse MediaInfo XML output in the string
     set_cmd_list = [ f'echo prefix = "{prefix}"' ]
     set_cmd_list.append(f'REM List of DOS SET commands to define DOS variables')
     set_cmd_list.append(f'REM First, clear the variables with the chosen prefix')
     set_cmd_list.append(f'FOR /F "tokens=1,* delims==" %%G IN (\'SET !prefix!\') DO (SET "%%G=")')
-    if section_name.lower() == "General".lower():
-        media_info = MediaInfo.parse(mediafile, parse_speed=1)    # ,full=True ,output="JSON" returns a string
-        general_track = media_info.general_tracks[0]
-        print("DEBUG: General Information:")
-        print(f"DEBUG: {objPrettyPrint.pformat(general_track)}")
-        #for key, value in general_track.items():
-        #for key in sorted(general_track.to_data().keys()):
-        for key,value in general_track.to_data().items():
-            item_key = escape_special_chars(prefix + key)
-            item_value =  escape_special_chars(value)
-            #print(f"DEBUG: General {item_key}: {item_value}")
-            os.environ[item_key] = item_value    # Because os.environ() ONLY set/get environment variables within the life of the PYTHON process
-            #debug_value = os.environ[item_key]
-            #print(f"DEBUG: after set_env_variable '{item_key}' = '{debug_value}'")
-            set_cmd_list.append(f'SET "{item_key}={item_value}"')
-    elif section_name.lower() == "Video".lower():
-        media_info = MediaInfo.parse(mediafile, parse_speed=1)    # ,full=True ,output="JSON" returns a string
-        video_track = media_info.video_tracks[0]
-        #for key, value in video_track.items():
-        print("DEBUG: Video Information:")
-        print(f"DEBUG: {objPrettyPrint.pformat(video_track)}")
-        #for key, value in video_track.items():
-        #for key in sorted(video_track.to_data().keys()):
-        for key,value in video_track.to_data().items():
-            item_key = escape_special_chars(prefix + key)
-            item_value =  escape_special_chars(value)
-            #print(f"DEBUG: Video {item_key}: {item_value}")
-            os.environ[item_key] = item_value    # Because os.environ() ONLY set/get environment variables within the life of the PYTHON process
-            #debug_value = os.environ[item_key]
-            #print(f"DEBUG: after set_env_variable '{item_key}' = '{debug_value}'")
-            set_cmd_list.append(f'SET "{item_key}={item_value}"')
-    elif section_name.lower() == "Audio".lower():
-        media_info = MediaInfo.parse(mediafile, parse_speed=1)    # ,full=True ,output="JSON" returns a string
-        audio_track = media_info.audio_tracks[0]
-        #for key, value in audio_track.items():
-        print("DEBUG: Audio Information:")
-        print(f"DEBUG: {objPrettyPrint.pformat(audio_track)}")
-        #for key, value in audio_track.items():
-        #for key in sorted(audio_track.to_data().keys()):
-        for key,value in audio_track.to_data().items():
-            item_key = escape_special_chars(prefix + key)
-            item_value =  escape_special_chars(value)
-            #print(f"DEBUG: Audio {item_key}: {item_value}")
-            os.environ[item_key] = item_value    # Because os.environ() ONLY set/get environment variables within the life of the PYTHON process
-            #debug_value = os.environ[item_key]
-            #print(f"DEBUG: after set_env_variable '{item_key}' = '{debug_value}'")
-            set_cmd_list.append(f'SET "{item_key}={item_value}"')
-    else:
-        print(f"Error: Invalid MediaInfo section '{section_name}' processing {mediafile}\nPlease specify a valid section (e.g., Video, Audio, General).")
-        exit(1)
+    root = ET.fromstring(mediainfo_output)
 
+    # Find the specified section in the MediaInfo output
+    section_name_capitalize = section_name.capitalize()
+    section = root.find(f"./{section_name_capitalize}")  # Find section in correct case
+    if section:
+        process_section(section_name_capitalize, section, prefix, set_cmd_list)
+    else:
+        print(f"Error: Invalid MediaInfo section '{section_name_capitalize}' processing {mediafile}\nPlease specify a valid section (e.g., Video, Audio, General).")
+        exit(1)
     set_cmd_list.append(f'goto :eof')
     #print(f"DEBUG: set_cmd_list=\n{objPrettyPrint.pformat(set_cmd_list)}")
 
@@ -135,8 +126,8 @@ if __name__ == "__main__":
     output_cmd_file = args.output_cmd_file
     if os.path.exists(output_cmd_file):
         os.remove(output_cmd_file)
-    # Open the cmd file for writing in overwrite mode
     with open(output_cmd_file, 'w') as cmd_file:
         # Write each item in the list to the file followed by a newline character
         for cmd_item in set_cmd_list:
             cmd_file.write(cmd_item + '\n')
+
