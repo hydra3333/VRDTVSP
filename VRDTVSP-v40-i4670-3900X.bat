@@ -121,6 +121,7 @@ set "Path_to_py_VRDTVSP_Calculate_Duration=!root!VRDTVSP_Calculate_Duration.py"
 set "Path_to_py_VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles=!root!VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles.py"
 set "Path_to_py_VRDTVSP_Modify_File_Date_Timestamps=!root!VRDTVSP_Modify_File_Date_Timestamps.py"
 set "Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section=!root!VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section.py"
+set "Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section=!root!VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section.py"
 REM --------- setup .VBS and .PS1 and .PY fully qualified filenames to pre-created files which rename and re-timestamp filenames etc ---------
 
 call :get_date_time_String "TOTAL_start_date_time"
@@ -176,6 +177,7 @@ ECHO !DATE! !TIME! Path_to_py_VRDTVSP_Calculate_Duration="!Path_to_py_VRDTVSP_Ca
 ECHO !DATE! !TIME! Path_to_py_VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles="!Path_to_py_VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles!" >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! Path_to_py_VRDTVSP_Modify_File_Date_Timestamps="!Path_to_py_VRDTVSP_Modify_File_Date_Timestamps!" >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section="!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" >> "%vrdlog%" 2>&1
+ECHO !DATE! !TIME! Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section="!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" >> "%vrdlog%" 2>&1
 
 ECHO !DATE! !TIME! End summary of Initialised paths etc ... >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
@@ -432,6 +434,43 @@ REM %~z1  -  expands %1 to size of file
 REM The modifiers can be combined to get compound results:
 REM %~dp1  -  expands %1 to a drive letter and path only 
 REM %~nx1  -  expands %1 to a file name and extension only 
+
+REM ---
+set "prefix=SRC_FF_V_"
+FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=")
+echo "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Video" >> "!vrdlog!" 2>&1
+"!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Video" >> "!vrdlog!" 2>&1
+set "prefix=SRC_FF_A_"
+FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=")
+echo "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Audio" >> "!vrdlog!" 2>&1
+"!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Audio" >> "!vrdlog!" 2>&1
+set "prefix=SRC_FF_G_"
+FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=")
+echo "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "%~f1" --prefix "!prefix!" --section "General" >> "!vrdlog!" 2>&1
+"!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "%~f1" --prefix "!prefix!" --section "General" >> "!vrdlog!" 2>&1
+REM ---
+set "prefix=SRC_MI_V_"
+FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=")
+echo "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Video" >> "!vrdlog!" 2>&1
+"!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Video" >> "!vrdlog!" 2>&1
+set "prefix=SRC_MI_A_"
+FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=")
+echo "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Audio" >> "!vrdlog!" 2>&1
+"!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Audio" >> "!vrdlog!" 2>&1
+set "prefix=SRC_MI_G_"
+FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=")
+echo "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "%~f1" --prefix "!prefix!" --section "General" >> "!vrdlog!" 2>&1
+"!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "%~f1" --prefix "!prefix!" --section "General" >> "!vrdlog!" 2>&1
+REM ---
+
+echo set SRC_FF_ >> "!vrdlog!" 2>&1
+set SRC_FF_ >> "!vrdlog!" 2>&1
+
+echo set SRC_MI_ >> "!vrdlog!" 2>&1
+set SRC_MI_ >> "!vrdlog!" 2>&1
+
+pause
+exit
 
 
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
