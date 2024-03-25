@@ -437,9 +437,8 @@ REM %~dp1  -  expands %1 to a drive letter and path only
 REM %~nx1  -  expands %1 to a file name and extension only 
 
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! Start collecting .TS ffprobe and mediainfo variables ... "%~f1" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! Start collecting pre-QSF "SRC_" ffprobe and mediainfo variables ... "%~f1" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-@echo off
 REM ---
 echo set "prefix=SRC_FF_V_" >> "!vrdlog!" 2>&1
 set "prefix=SRC_FF_V_" >> "!vrdlog!" 2>&1
@@ -452,7 +451,6 @@ echo call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 echo set "prefix=SRC_FF_A_" >> "!vrdlog!" 2>&1
 set "prefix=SRC_FF_A_" >> "!vrdlog!" 2>&1
 echo FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
@@ -463,7 +461,6 @@ echo ### "!prefix!" >> "!vrdlog!" 2>&1
 echo call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 echo set "prefix=SRC_FF_G_" >> "!vrdlog!" 2>&1
 set "prefix=SRC_FF_G_" >> "!vrdlog!" 2>&1
@@ -486,7 +483,6 @@ echo ### "!prefix!" >> "!vrdlog!" 2>&1
 echo call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 
-
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 echo set "prefix=SRC_MI_A_" >> "!vrdlog!" 2>&1
 set "prefix=SRC_MI_A_" >> "!vrdlog!" 2>&1
@@ -508,19 +504,18 @@ echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in
 echo ### "!prefix!" >> "!vrdlog!" 2>&1
 echo call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! List All SRC_FF_ variables  >> "!vrdlog!" 2>&1
-echo set SRC_FF_ >> "!vrdlog!" 2>&1
-set SRC_FF_ >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! List All SRC_MI_ variables  >> "!vrdlog!" 2>&1
-echo set SRC_MI_ >> "!vrdlog!" 2>&1
-set SRC_MI_ >> "!vrdlog!" 2>&1
-@echo on
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! List All SRC_FF_ variables  >> "!vrdlog!" 2>&1
+REM ECHO set SRC_FF_ >> "!vrdlog!" 2>&1
+REM set SRC_FF_ >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! List All SRC_MI_ variables  >> "!vrdlog!" 2>&1
+REM echo set SRC_MI_ >> "!vrdlog!" 2>&1
+REM set SRC_MI_ >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 REM 
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 echo AVC Interlaced type #1 .TS >> "!vrdlog!" 2>&1
@@ -620,7 +615,7 @@ ECHO !DATE! !TIME! Video_Encoding=!Video_Encoding! >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Video_Interlacement=!Video_Interlacement! >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Video_FieldFirst=!Video_FieldFirst! >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-
+REM
 REM Fix up some variables
 REM
 set "SRC_MI_V_DisplayAspectRatio_String_slash=!SRC_MI_V_DisplayAspectRatio_String!"
@@ -629,417 +624,47 @@ set "SRC_MI_V_DisplayAspectRatio_String_slash=!SRC_MI_V_DisplayAspectRatio_Strin
 set "SRC_FF_V_display_aspect_ratio_slash=!SRC_FF_V_display_aspect_ratio!"
 set "SRC_FF_V_display_aspect_ratio_slash=!SRC_FF_V_display_aspect_ratio_slash::=/!"
 set "SRC_FF_V_display_aspect_ratio_slash=!SRC_FF_V_display_aspect_ratio_slash:\=/!"
-REM
 ECHO !DATE! !TIME! "Original SRC_MI_A_Video_Delay=!SRC_MI_A_Video_Delay! SRC_MI_A_Video_Delay_String=!SRC_MI_A_Video_Delay_String!" >> "!vrdlog!" 2>&1
 IF /I "!SRC_MI_A_Video_Delay!" == "" (set /a "SRC_MI_A_Video_Delay=0")
 SET /a "SRC_MI_A_Audio_Delay=0 - !SRC_MI_A_Video_Delay!"
 REM
-
-goto :eof
-
-
-
-
-ECHO !DATE! !TIME! "Original A_Video_Delay_ms=!A_Video_Delay_ms! A_Video_Delay_ms_String=!A_Video_Delay_ms_String!" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! "Original A_Video_Delay_ms_String=!A_Video_Delay_ms_String!" >> "!vrdlog!" 2>&1
-IF /I "!A_Video_Delay_ms!" == "" (
-	set /a "A_Audio_Delay_ms=0"
-) ELSE (
-	set /a "A_Audio_Delay_ms=0 - !A_Video_Delay_ms!"
-)
-
-
-
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! List All SRC_MI_ variables  >> "!vrdlog!" 2>&1
-echo set SRC_MI_ >> "!vrdlog!" 2>&1
-set SRC_MI_ >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! End collecting .TS ffprobe and mediainfo variables ... "%~f1" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-
-goto :after_old_TS_variable_collection
-
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! Start collecting .TS mediainfo variables ... "%~f1" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-REM
-REM a few Deprecated video settings first
-Call :get_mediainfo_parameter_legacy "Video" "Codec" "V_Codec_legacy" "%~f1"
-Call :get_mediainfo_parameter_legacy "Video" "Codec/String" "V_Codec_String_legacy" "%~f1"
-Call :get_mediainfo_parameter_legacy "Video" "Codec/Family" "V_Codec_Family_legacy" "%~f1"
-Call :get_mediainfo_parameter_legacy "Video" "Codec/Info" "V_Codec_Info_legacy" "%~f1"
-Call :get_mediainfo_parameter_legacy "Video" "Codec/Url" "V_Codec_Url_legacy" "%~f1"
-Call :get_mediainfo_parameter_legacy "Video" "Codec/CC" "V_Codec_CC_legacy" "%~f1"
-Call :get_mediainfo_parameter_legacy "Video" "Codec_Profile" "V_Codec_Profile_legacy" "%~f1"
-Call :get_mediainfo_parameter_legacy "Video" "Codec_Description" "V_Codec_Description_legacy" "%~f1"
-Call :get_mediainfo_parameter_legacy "Video" "Codec_Settings" "V_Codec_Settings_legacy" "%~f1"
-Call :get_mediainfo_parameter_legacy "Video" "Codec_Settings_PacketBitS" "V_Codec_Settings_PacketBitS_legacy" "%~f1"
-Call :get_mediainfo_parameter_legacy "Video" "Codec_Settings_BVOP" "V_Codec_Settings_BVOP_legacy" "%~f1"
-Call :get_mediainfo_parameter_legacy "Video" "Codec_Settings_QPel" "V_Codec_Settings_QPel_legacy" "%~f1"
-Call :get_mediainfo_parameter_legacy "Video" "Codec_Settings_GMC" "V_Codec_Settings_GMC_legacy" "%~f1"
-Call :get_mediainfo_parameter_legacy "Video" "Codec_Settings_GMC/String" "V_Codec_Settings_GMC_String_legacy" "%~f1"
-Call :get_mediainfo_parameter_legacy "Video" "Codec_Settings_Matrix" "V_Codec_Settings_Matrix_legacy" "%~f1"
-Call :get_mediainfo_parameter_legacy "Video" "Codec_Settings_Matrix_Data" "V_Codec_Settings_Matrix_Data_legacy" "%~f1"
-Call :get_mediainfo_parameter_legacy "Video" "Codec_Settings_CABAC" "V_Codec_Settings_CABAC_legacy" "%~f1"
-Call :get_mediainfo_parameter_legacy "Video" "Codec_Settings_RefFrames" "V_Codec_Settings_RefFrames_legacy" "%~f1"
-REM
-Call :get_mediainfo_parameter "General" "Format" "G_Format" "%~f1" 
-Call :get_mediainfo_parameter "General" "Format/String" "G_Format_String" "%~f1" 
-Call :get_mediainfo_parameter "General" "CodecID" "G_CodecID" "%~f1" 
-Call :get_mediainfo_parameter "General" "CodecID/String" "G_CodecID_String" "%~f1" 
-Call :get_mediainfo_parameter "General" "Interleaved" "G_Interleaved" "%~f1" 
-Call :get_mediainfo_parameter "General" "FrameRate" "G_FrameRate" "%~f1" 
-Call :get_mediainfo_parameter "General" "FrameRate/String" "G_FrameRate_String" "%~f1" 
-Call :get_mediainfo_parameter "General" "FrameRate_Num" "G_FrameRate_Num" "%~f1" 
-Call :get_mediainfo_parameter "General" "FrameRate_Den" "G_FrameRate_Den" "%~f1" 
-Call :get_mediainfo_parameter "General" "FrameCount" "G_FrameCount" "%~f1" 
-Call :get_mediainfo_parameter "General" "Delay" "G_Delay" "%~f1" 
-Call :get_mediainfo_parameter "General" "Delay/String" "G_Delay_String" "%~f1" 
-Call :get_mediainfo_parameter "General" "VideoCount" "G_VideoCount" "%~f1" 
-Call :get_mediainfo_parameter "General" "AudioCount" "G_AudioCount" "%~f1" 
-Call :get_mediainfo_parameter "General" "Duration" "G_Duration_ms" "%~f1" 
-Call :get_mediainfo_parameter "General" "Duration/String" "G_Duration_String" "%~f1" 
-Call :get_mediainfo_parameter "General" "Duration/String1" "G_Duration_String1" "%~f1" 
-Call :get_mediainfo_parameter "General" "Duration/String2" "G_Duration_String2" "%~f1" 
-Call :get_mediainfo_parameter "General" "Duration/String3" "G_Duration_String3" "%~f1" 
-Call :get_mediainfo_parameter "General" "Duration/String4" "G_Duration_String4" "%~f1" 
-Call :get_mediainfo_parameter "General" "Duration/String5" "G_Duration_String5" "%~f1" 
-Call :get_mediainfo_parameter "General" "Duration_Start" "G_Start" "%~f1" 
-Call :get_mediainfo_parameter "General" "Duration_End" "G_End" "%~f1" 
-REM
-Call :get_mediainfo_parameter "Video" "CodecID" "V_CodecID" "%~f1" 
-Call :get_mediainfo_parameter "Video" "CodecID/String" "V_CodecID_String" "%~f1" 
-Call :get_mediainfo_parameter "Video" "CodecID_Description" "V_CodecID_Description" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Format" "V_Format" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Format/String" "V_Format_String" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Format_Version" "V_Format_Version" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Format_Profile" "V_Format_Profile" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Format_Level" "V_Format_Level" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Format_Tier" "V_Format_Tier" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Format_Compression" "V_Format_Compression" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Format_Commercial" "V_Format_Commercial" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Format_Commercial_IfAny" "V_Format_Commercial_IfAny" "%~f1" 
-Call :get_mediainfo_parameter "Video" "StreamKind" "V_StreamKind" "%~f1" 
-Call :get_mediainfo_parameter "Video" "StreamKind/String" "V_StreamKind_String" "%~f1" 
-Call :get_mediainfo_parameter "Video" "InternetMediaType" "V_InternetMediaType" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Duration" "V_Duration_ms" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Duration/String" "V_Duration_ms_String" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Duration/String1" "V_Duration_ms_String1" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Duration/String2" "V_Duration_ms_String2" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Duration/String3" "V_Duration_ms_String3" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Duration/String4" "V_Duration_ms_String4" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Duration/String5" "V_Duration_ms_String5" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Duration_Start" "V_Duration_Start" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Duration_End" "V_Duration_End" "%~f1" 
-REM
-Call :get_mediainfo_parameter "Video" "Source_Duration" "V_Source_Duration_ms" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Source_Duration/String" "V_Source_Duration_ms_String" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Source_Duration/String1" "V_Source_Duration_ms_String1" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Source_Duration/String2" "V_Source_Duration_ms_String2" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Source_Duration/String3" "V_Source_Duration_ms_String3" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Source_Duration/String4" "V_Source_Duration_ms_String4" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Source_Duration/String5" "V_Source_Duration_ms_String5" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Source_Duration_Start" "V_Source_Duration_Start" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Source_Duration_End" "V_Source_Duration_End" "%~f1" 
-REM
-Call :get_mediainfo_parameter "Video" "BitRate_Mode" "V_BitRate_Mode" "%~f1" 
-Call :get_mediainfo_parameter "Video" "BitRate_Mode/String" "V_BitRate_Mode_String" "%~f1" 
-Call :get_mediainfo_parameter "Video" "BitRate" "V_BitRate" "%~f1" 
-Call :get_mediainfo_parameter "Video" "BitRate/String" "V_BitRate_String" "%~f1" 
-Call :get_mediainfo_parameter "Video" "BitRate_Minimum" "V_BitRate_Minimum" "%~f1" 
-Call :get_mediainfo_parameter "Video" "BitRate_Minimum/String" "V_BitRate_Minimum_String" "%~f1" 
-Call :get_mediainfo_parameter "Video" "BitRate_Maximum" "V_BitRate_Maximum" "%~f1" 
-Call :get_mediainfo_parameter "Video" "BitRate_Maximum/String" "V_BitRate_Maximum_String" "%~f1" 
-Call :get_mediainfo_parameter "Video" "BufferSize" "V_BufferSize" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Bits-(Pixel*Frame)" "V_Bits_Pixel_Frame" "%~f1" 
-Call :get_mediainfo_parameter "Video" "BitDepth" "V_BitDepth" "%~f1" 
-Call :get_mediainfo_parameter "Video" "BitDepth/String" "V_BitDepth_String" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Width" "V_Width" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Height" "V_Height" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Stored_Width" "V_Stored_Width" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Stored_Height" "V_Stored_Height" "%~f1" 
-Call :get_mediainfo_parameter "Video" "PixelAspectRatio" "V_PixelAspectRatio" "%~f1" 
-Call :get_mediainfo_parameter "Video" "PixelAspectRatio/String" "V_PixelAspectRatio_String" "%~f1" 
-Call :get_mediainfo_parameter "Video" "PixelAspectRatio_Original" "V_PixelAspectRatio_Original" "%~f1" 
-Call :get_mediainfo_parameter "Video" "PixelAspectRatio_Original/String" "V_PixelAspectRatio_Original_String" "%~f1" 
-Call :get_mediainfo_parameter "Video" "DisplayAspectRatio" "V_DisplayAspectRatio" "%~f1" 
-Call :get_mediainfo_parameter "Video" "DisplayAspectRatio/String" "V_DisplayAspectRatio_String" "%~f1" 
-set "V_DisplayAspectRatio_String_slash=!V_DisplayAspectRatio_String::=/!"
-set "V_DisplayAspectRatio_String_slash=!V_DisplayAspectRatio_String_slash:\=/!"
-Call :get_mediainfo_parameter "Video" "DisplayAspectRatio_Original" "V_DisplayAspectRatio_Original" "%~f1" 
-Call :get_mediainfo_parameter "Video" "DisplayAspectRatio_Original/String" "V_DisplayAspectRatio_Original_String" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Rotation" "V_Rotation" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Rotation/String" "V_Rotation_String" "%~f1" 
-Call :get_mediainfo_parameter "Video" "FrameRate_Mode" "V_FrameRate_Mode" "%~f1" 
-Call :get_mediainfo_parameter "Video" "FrameRate_Mode/String" "V_FrameRate_Mode_String" "%~f1" 
-Call :get_mediainfo_parameter "Video" "FrameRate_Mode_Original" "V_FrameRate_Mode_Original" "%~f1" 
-Call :get_mediainfo_parameter "Video" "FrameRate_Mode_Original/String" "V_FrameRate_Mode_Original_String" "%~f1" 
-Call :get_mediainfo_parameter "Video" "FrameRate" "V_FrameRate" "%~f1" 
-Call :get_mediainfo_parameter "Video" "FrameRate/String" "V_FrameRate_String" "%~f1" 
-Call :get_mediainfo_parameter "Video" "FrameRate_Minimum" "V_FrameRate_Minimum" "%~f1" 
-Call :get_mediainfo_parameter "Video" "FrameRate_Minimum/String" "V_FrameRate_Minimum_String" "%~f1" 
-Call :get_mediainfo_parameter "Video" "FrameRate_Nominal" "V_FrameRate_Nominal" "%~f1" 
-Call :get_mediainfo_parameter "Video" "FrameRate_Nominal/String" "V_FrameRate_Nominal_String" "%~f1" 
-Call :get_mediainfo_parameter "Video" "FrameRate_Maximum" "V_FrameRate_Maximum" "%~f1" 
-Call :get_mediainfo_parameter "Video" "FrameRate_Maximum/String" "V_FrameRate_Maximum_String" "%~f1" 
-Call :get_mediainfo_parameter "Video" "FrameRate_Original" "V_FrameRate_Original" "%~f1" 
-Call :get_mediainfo_parameter "Video" "FrameRate_Original/String" "V_FrameRate_Original_String" "%~f1" 
-Call :get_mediainfo_parameter "Video" "FrameRate_Num" "V_FrameRate_Num" "%~f1" 
-Call :get_mediainfo_parameter "Video" "FrameRate_Den" "V_FrameRate_Den" "%~f1" 
-Call :get_mediainfo_parameter "Video" "FrameRate_Original_Num" "V_FrameRate_Original_Num" "%~f1" 
-Call :get_mediainfo_parameter "Video" "FrameRate_Original_Den" "V_FrameRate_Original_Den" "%~f1" 
-REM
-Call :get_mediainfo_parameter "Video" "FrameCount" "V_FrameCount" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Source_FrameCount" "V_Source_FrameCount" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Standard" "V_Standard" "%~f1" 
-REM
-Call :get_mediainfo_parameter "Video" "ColorSpace" "V_ColorSpace" "%~f1" 
-Call :get_mediainfo_parameter "Video" "ChromaSubsampling" "V_ChromaSubsampling" "%~f1" 
-Call :get_mediainfo_parameter "Video" "ChromaSubsampling/String" "V_ChromaSubsampling_String" "%~f1" 
-Call :get_mediainfo_parameter "Video" "ChromaSubsampling_Position" "V_ChromaSubsampling_Position" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Gop_OpenClosed" "V_Gop_OpenClosed" "%~f1" 
-Call :get_mediainfo_parameter "Video" "Gop_OpenClosed/String" "V_Gop_OpenClosed_String" "%~f1" 
-REM
-Call :get_mediainfo_parameter "Video" "ScanType" "V_ScanType" "%~f1" 
-Call :get_mediainfo_parameter "Video" "ScanType/String" "V_ScanType_String" "%~f1" 
-Call :get_mediainfo_parameter "Video" "ScanType_Original" "V_ScanType_Original" "%~f1" 
-Call :get_mediainfo_parameter "Video" "ScanType_Original/String" "V_ScanType_Original_String" "%~f1" 
-Call :get_mediainfo_parameter "Video" "ScanType_StoreMethod" "V_ScanType_StoreMethod" "%~f1" 
-Call :get_mediainfo_parameter "Video" "ScanType_StoreMethod_FieldsPerBlock" "V_ScanType_StoreMethod_FieldsPerBlock" "%~f1" 
-Call :get_mediainfo_parameter "Video" "ScanType_StoreMethod/String" "V_ScanType_StoreMethod_String" "%~f1" 
-set "V_ScanType_original=!V_ScanType!"
-IF /I "!V_ScanType!" == "" (
-	ECHO !DATE! !TIME! "V_ScanType blank, setting V_ScanType=Progressive" >> "!vrdlog!" 2>&1
-	set "V_ScanType=Progressive"
-) ELSE IF /I "!V_ScanType!" == "MBAFF" (
-	ECHO !DATE! !TIME! "V_ScanType blank, setting V_ScanType=Interlaced" >> "!vrdlog!" 2>&1
-	set "V_ScanType=Interlaced"
-)
-Call :get_mediainfo_parameter "Video" "ScanOrder" "V_ScanOrder" "%~f1" 
-Call :get_mediainfo_parameter "Video" "ScanOrder/String" "V_ScanOrder_String" "%~f1" 
-Call :get_mediainfo_parameter "Video" "ScanOrder_Stored" "V_ScanOrder_Stored" "%~f1" 
-Call :get_mediainfo_parameter "Video" "ScanOrder_Stored/String" "V_ScanOrder_Stored_String" "%~f1" 
-Call :get_mediainfo_parameter "Video" "ScanOrder_StoredDisplayedInverted" "V_ScanOrder_StoredDisplayedInverted" "%~f1" 
-Call :get_mediainfo_parameter "Video" "ScanOrder_Original" "V_ScanOrder_Original" "%~f1" 
-Call :get_mediainfo_parameter "Video" "ScanOrder_Original/String" "V_ScanOrder_Original_String" "%~f1" 
-set "V_ScanOrder_original=!V_ScanOrder!"
-IF /I "!V_ScanOrder!" == "" (
-	ECHO !DATE! !TIME! "V_ScanOrder blank, setting V_ScanOrder=TFF" >> "!vrdlog!" 2>&1
-	set "V_ScanOrder=TFF"
-)
-Call :get_mediainfo_parameter "Video" "HDR_Format" "V_HDR_Format" "%~f1" 
-Call :get_mediainfo_parameter "Video" "HDR_Format/String" "V_HDR_Format_String" "%~f1" 
-Call :get_mediainfo_parameter "Video" "HDR_Format_Commercial" "V_HDR_Format_Commercial" "%~f1" 
-Call :get_mediainfo_parameter "Video" "HDR_Format_Version" "V_HDR_Format_Version" "%~f1" 
-Call :get_mediainfo_parameter "Video" "HDR_Format_Profile" "V_HDR_Format_Profile" "%~f1" 
-Call :get_mediainfo_parameter "Video" "HDR_Format_Level" "V_HDR_Format_Level" "%~f1" 
-Call :get_mediainfo_parameter "Video" "HDR_Format_Settings" "V_HDR_Format_Settings" "%~f1" 
-Call :get_mediainfo_parameter "Video" "HDR_Format_Compatibility" "V_HDR_Format_Compatibility" "%~f1" 
-REM
-Call :get_mediainfo_parameter "Video" "colour_description_presence" "V_colour_description_presence" "%~f1" 
-Call :get_mediainfo_parameter "Video" "colour_range" "V_colour_range" "%~f1" 
-Call :get_mediainfo_parameter "Video" "colour_range_Source" "V_colour_range_Source" "%~f1" 
-Call :get_mediainfo_parameter "Video" "colour_range_Original" "V_colour_range_Original" "%~f1" 
-Call :get_mediainfo_parameter "Video" "colour_range_Original_Source" "V_colour_range_Original_Source" "%~f1" 
-Call :get_mediainfo_parameter "Video" "colour_primaries" "V_colour_primaries" "%~f1" 
-Call :get_mediainfo_parameter "Video" "colour_primaries_Source" "V_colour_primaries_Source" "%~f1" 
-Call :get_mediainfo_parameter "Video" "colour_primaries_Original" "V_colour_primaries_Original" "%~f1" 
-Call :get_mediainfo_parameter "Video" "colour_primaries_Original_Source" "V_colour_primaries_Original_Source" "%~f1" 
-Call :get_mediainfo_parameter "Video" "transfer_characteristics" "V_transfer_characteristics" "%~f1" 
-Call :get_mediainfo_parameter "Video" "transfer_characteristics_Source" "V_transfer_characteristics_Source" "%~f1" 
-Call :get_mediainfo_parameter "Video" "matrix_coefficients" "V_matrix_coefficients" "%~f1" 
-Call :get_mediainfo_parameter "Video" "matrix_coefficients_Source" "V_matrix_coefficients_Source" "%~f1" 
-Call :get_mediainfo_parameter "Video" "MasteringDisplay_ColorPrimaries" "V_MasteringDisplay_ColorPrimaries" "%~f1" 
-Call :get_mediainfo_parameter "Video" "MasteringDisplay_ColorPrimaries_Source" "V_MasteringDisplay_ColorPrimaries_Source" "%~f1" 
-Call :get_mediainfo_parameter "Video" "MasteringDisplay_Luminance" "V_MasteringDisplay_Luminance" "%~f1" 
-Call :get_mediainfo_parameter "Video" "MasteringDisplay_Luminance_Source" "V_MasteringDisplay_Luminance_Source" "%~f1" 
-Call :get_mediainfo_parameter "Video" "MaxCLL" "V_MaxCLL" "%~f1" 
-Call :get_mediainfo_parameter "Video" "MaxCLL_Source" "V_MaxCLL_Source" "%~f1" 
-Call :get_mediainfo_parameter "Video" "MaxCLL_Original" "V_MaxCLL_Original" "%~f1" 
-Call :get_mediainfo_parameter "Video" "MaxCLL_Original_Source" "V_MaxCLL_Original_Source" "%~f1" 
-Call :get_mediainfo_parameter "Video" "MaxFALL" "V_MaxFALL" "%~f1" 
-Call :get_mediainfo_parameter "Video" "MaxFALL_Source" "V_MaxFALL_Source" "%~f1" 
-Call :get_mediainfo_parameter "Video" "MaxFALL_Original" "V_MaxFALL_Original" "%~f1" 
-Call :get_mediainfo_parameter "Video" "MaxFALL_Original_Source" "V_MaxFALL_Original_Source" "%~f1" 
-REM
-Call :get_ffprobe_video_stream_parameter "codec_name" "V_CodecID_FF" "%~f1" 
-Call :get_ffprobe_video_stream_parameter "codec_tag_String" "V_CodecID_String_FF" "%~f1" 
-Call :get_ffprobe_video_stream_parameter "width" "V_Width_FF" "%~f1" 
-Call :get_ffprobe_video_stream_parameter "height" "V_Height_FF" "%~f1" 
-Call :get_ffprobe_video_stream_parameter "duration" "V_Duration_s_FF" "%~f1" 
-Call :get_ffprobe_video_stream_parameter "bit_rate" "V_BitRate_FF" "%~f1" 
-Call :get_ffprobe_video_stream_parameter "max_bit_rate" "V_BitRate_Maximum_FF" "%~f1"
-REM
-Call :get_mediainfo_parameter "Audio" "CodecID" "A_CodecID" "%~f1" 
-Call :get_mediainfo_parameter "Audio" "CodecID/String" "A_CodecID_String" "%~f1" 
-Call :get_mediainfo_parameter "Audio" "CodecID_Description" "A_CodecID_Description" "%~f1" 
-Call :get_mediainfo_parameter "Audio" "Format" "A_Format" "%~f1" 
-Call :get_mediainfo_parameter "Audio" "Format/String" "A_Format_String" "%~f1" 
-Call :get_mediainfo_parameter "Audio" "Format/Info" "A_Format_Info" "%~f1" 
-Call :get_mediainfo_parameter "Audio" "Format_Commercial" "A_Format_Commercial" "%~f1" 
-Call :get_mediainfo_parameter "Audio" "Format_Commercial_IfAny" "A_Format_Commercial_IfAny" "%~f1" 
-Call :get_mediainfo_parameter "Audio" "Format_Version" "A_Format_Version" "%~f1" 
-Call :get_mediainfo_parameter "Audio" "Format_Profile" "A_Format_Profile" "%~f1" 
-Call :get_mediainfo_parameter "Audio" "Format_Level" "A_Format_Level" "%~f1" 
-Call :get_mediainfo_parameter "Audio" "Format_Compression" "A_Format_Compression" "%~f1" 
-Call :get_mediainfo_parameter "Audio" "InternetMediaType" "A_InternetMediaType" "%~f1" 
-Call :get_mediainfo_parameter "Audio" "Channel(s)" "A_Channels" "%~f1" 
-Call :get_mediainfo_parameter "Audio" "Channel(s)/String" "A_Channels_String" "%~f1" 
-REM
-Call :get_mediainfo_parameter "Audio" "Video_Delay" "A_Video_Delay_ms" "%~f1" 
-Call :get_mediainfo_parameter "Audio" "Video_Delay/String" "A_Video_Delay_ms_String" "%~f1" 
-ECHO !DATE! !TIME! "Original A_Video_Delay_ms=!A_Video_Delay_ms! A_Video_Delay_ms_String=!A_Video_Delay_ms_String!" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! "Original A_Video_Delay_ms_String=!A_Video_Delay_ms_String!" >> "!vrdlog!" 2>&1
-IF /I "!A_Video_Delay_ms!" == "" (
-	set /a "A_Audio_Delay_ms=0"
-) ELSE (
-	set /a "A_Audio_Delay_ms=0 - !A_Video_Delay_ms!"
-)
-Call :get_mediainfo_parameter "Audio" "Video_Delay/String" "A_Video_Delay_String" "%~f1" 
-Call :get_mediainfo_parameter "Audio" "Video_Delay/String1" "A_Video_Delay_String1" "%~f1" 
-Call :get_mediainfo_parameter "Audio" "Video_Delay/String2" "A_Video_Delay_String2" "%~f1" 
-Call :get_mediainfo_parameter "Audio" "Video_Delay/String3" "A_Video_Delay_String3" "%~f1" 
-Call :get_mediainfo_parameter "Audio" "Video_Delay/String4" "A_Video_Delay_String4" "%~f1" 
-Call :get_mediainfo_parameter "Audio" "Video_Delay/String5" "A_Video_Delay_String5" "%~f1" 
+REM Display the variables we collected for the Source Video
 REM
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! Finished collecting .TS mediainfo variables ... "%~f1" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! List All "General" variables  >> "!vrdlog!" 2>&1
+echo set SRC_MI_G_ >> "!vrdlog!" 2>&1
+set SRC_MI_G_ >> "!vrdlog!" 2>&1
+echo set SRC_FF_G_ >> "!vrdlog!" 2>&1
+set SRC_FF_G_ >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! List All "Video" variables  >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+echo set Video_ >> "!vrdlog!" 2>&1
+set Video_ >> "!vrdlog!" 2>&1
+echo set SRC_MI_V_ >> "!vrdlog!" 2>&1
+set SRC_MI_V_ >> "!vrdlog!" 2>&1
+echo set SRC_FF_V_ >> "!vrdlog!" 2>&1
+set SRC_FF_V_ >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! Start of Important Parameters Collected ... "%~f1" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! List All "Audio" variables  >> "!vrdlog!" 2>&1
+echo set SRC_MI_A_ >> "!vrdlog!" 2>&1
+set SRC_MI_A_ >> "!vrdlog!" 2>&1
+echo set SRC_FF_A_ >> "!vrdlog!" 2>&1
+set SRC_FF_AQ_ >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-REM
-echo "G_Format=!G_Format!" >> "!vrdlog!" 2>&1
-echo "G_Format_String=!G_Format_String!" >> "!vrdlog!" 2>&1
-echo "G_CodecID=!G_CodecID!" >> "!vrdlog!" 2>&1
-echo "G_CodecID_String=!G_CodecID_String!" >> "!vrdlog!" 2>&1
-echo "G_Interleaved=!G_Interleaved!" >> "!vrdlog!" 2>&1
-echo "G_FrameRate=!G_FrameRate!" >> "!vrdlog!" 2>&1
-echo "G_FrameRate_String=!G_FrameRate_String!" >> "!vrdlog!" 2>&1
-echo "G_FrameRate_Num=!G_FrameRate_Num!" >> "!vrdlog!" 2>&1
-echo "G_FrameRate_Den=!G_FrameRate_Den!" >> "!vrdlog!" 2>&1
-echo "G_FrameCount=!G_FrameCount!" >> "!vrdlog!" 2>&1
-echo "G_Delay=!G_Delay!" >> "!vrdlog!" 2>&1
-echo "G_Delay_String=!G_Delay_String!" >> "!vrdlog!" 2>&1
-echo "G_VideoCount=!G_VideoCount!" >> "!vrdlog!" 2>&1
-echo "G_AudioCount=!G_AudioCount!" >> "!vrdlog!" 2>&1
-echo "G_Duration_ms=!G_Duration_ms!" >> "!vrdlog!" 2>&1
-echo "G_Duration_String=!G_Duration_String!" >> "!vrdlog!" 2>&1
-echo "G_Duration_String1=!G_Duration_String1!" >> "!vrdlog!" 2>&1
-echo "G_Duration_String2=!G_Duration_String2!" >> "!vrdlog!" 2>&1
-echo "G_Duration_String3=!G_Duration_String3!" >> "!vrdlog!" 2>&1
-echo "G_Duration_String4=!G_Duration_String4!" >> "!vrdlog!" 2>&1
-echo "G_Duration_String5=!G_Duration_String5!" >> "!vrdlog!" 2>&1
-echo "G_Start=!G_Start!" >> "!vrdlog!" 2>&1
-echo "G_End=!G_End!" >> "!vrdlog!" 2>&1
-REM a few depracated video settings
-echo "(deprecated) V_Codec_legacy=!V_Codec_legacy!" >> "!vrdlog!" 2>&1
-echo "(deprecated) V_Codec_String_legacy=!V_Codec_String_legacy!" >> "!vrdlog!" 2>&1
-echo "(deprecated) V_Codec_Family_legacy=!V_Codec_Family_legacy!" >> "!vrdlog!" 2>&1
-echo "(deprecated) V_Codec_Info_legacy=!V_Codec_Info_legacy!" >> "!vrdlog!" 2>&1
-echo "(deprecated) V_Codec_Url_legacy=!V_Codec_Url_legacy!" >> "!vrdlog!" 2>&1
-echo "(deprecated) V_Codec_CC_legacy=!V_Codec_CC_legacy!" >> "!vrdlog!" 2>&1
-echo "(deprecated) V_Codec_Profile_legacy=!V_Codec_Profile_legacy!" >> "!vrdlog!" 2>&1
-echo "(deprecated) V_Codec_Description_legacy=!V_Codec_Description_legacy!" >> "!vrdlog!" 2>&1
-echo "(deprecated) V_Codec_Settings_legacy=!V_Codec_Settings_legacy!" >> "!vrdlog!" 2>&1
-echo "(deprecated) V_Codec_Settings_PacketBitS_legacy=!V_Codec_Settings_PacketBitS_legacy!" >> "!vrdlog!" 2>&1
-echo "(deprecated) V_Codec_Settings_BVOP_legacy=!V_Codec_Settings_BVOP_legacy!" >> "!vrdlog!" 2>&1
-echo "(deprecated) V_Codec_Settings_QPel_legacy=!V_Codec_Settings_QPel_legacy!" >> "!vrdlog!" 2>&1
-echo "(deprecated) V_Codec_Settings_GMC_legacy=!V_Codec_Settings_GMC_legacy!" >> "!vrdlog!" 2>&1
-echo "(deprecated) V_Codec_Settings_GMC_String_legacy=!V_Codec_Settings_GMC_String_legacy!" >> "!vrdlog!" 2>&1
-echo "(deprecated) V_Codec_Settings_Matrix_legacy=!V_Codec_Settings_Matrix_legacy!" >> "!vrdlog!" 2>&1
-echo "(deprecated) V_Codec_Settings_Matrix_Data_legacy=!V_Codec_Settings_Matrix_Data_legacy!" >> "!vrdlog!" 2>&1
-echo "(deprecated) V_Codec_Settings_CABAC_legacy=!V_Codec_Settings_CABAC_legacy!" >> "!vrdlog!" 2>&1
-echo "(deprecated) V_Codec_Settings_RefFrames_legacy=!V_Codec_Settings_RefFrames_legacy!" >> "!vrdlog!" 2>&1
-REM 
-ECHO "V_CodecID=!V_CodecID!" >> "!vrdlog!" 2>&1
-ECHO "V_CodecID_String=!V_CodecID_String!" >> "!vrdlog!" 2>&1
-ECHO "V_CodecID_Description=!V_CodecID_Description!" >> "!vrdlog!" 2>&1
-echo "V_InternetMediaType=!V_InternetMediaType!" >> "!vrdlog!" 2>&1
-echo "V_Format=!V_Format!" >> "!vrdlog!" 2>&1
-echo "V_Format_String=!V_Format_String!" >> "!vrdlog!" 2>&1
-echo "V_Format_Version=!V_Format_Version!" >> "!vrdlog!" 2>&1
-echo "V_Format_Profile=!V_Format_Profile!" >> "!vrdlog!" 2>&1
-echo "V_Format_Level=!V_Format_Level!" >> "!vrdlog!" 2>&1
-echo "V_Format_Tier=!V_Format_Tier!" >> "!vrdlog!" 2>&1
-echo "V_Format_Compression=!V_Format_Compression!" >> "!vrdlog!" 2>&1
-echo "V_Format_Commercial=!V_Format_Commercial!" >> "!vrdlog!" 2>&1
-echo "V_Format_Commercial_IfAny=!V_Format_Commercial_IfAny!" >> "!vrdlog!" 2>&1
-REM
-ECHO "A_CodecID=!A_CodecID!" >> "!vrdlog!" 2>&1
-ECHO "A_CodecID_String=!A_CodecID_String!" >> "!vrdlog!" 2>&1
-ECHO "A_CodecID_Description=!A_CodecID_Description!" >> "!vrdlog!" 2>&1
-echo "A_InternetMediaType=!A_InternetMediaType!" >> "!vrdlog!" 2>&1
-ECHO "A_Format=!A_Format!" >> "!vrdlog!" 2>&1
-ECHO "A_Format_String=!A_Format_String!" >> "!vrdlog!" 2>&1
-REM
-ECHO "A_Video_Delay_ms=!A_Video_Delay_ms!" >> "!vrdlog!" 2>&1
-ECHO "A_Audio_Delay_ms=!A_Audio_Delay_ms!" (Calculated) >> "!vrdlog!" 2>&1
-REM
-ECHO "G_Duration_ms=!G_Duration_ms!" >> "!vrdlog!" 2>&1
-ECHO "G_Duration_String=!G_Duration_String!" >> "!vrdlog!" 2>&1
-ECHO "G_Duration_String3=!G_Duration_String3!" >> "!vrdlog!" 2>&1
-ECHO "V_Format=!V_Format!" >> "!vrdlog!" 2>&1
-ECHO "V_Width=!V_Width!" >> "!vrdlog!" 2>&1
-ECHO "V_Height=!V_Height!" >> "!vrdlog!" 2>&1
-ECHO "V_FrameRate=!V_FrameRate!" >> "!vrdlog!" 2>&1
-ECHO "V_BitDepth=!V_BitDepth!" >> "!vrdlog!" 2>&1
-ECHO "V_BitRate_Mode=!V_BitRate_Mode!" >> "!vrdlog!" 2>&1
-ECHO "V_BitRate=!V_BitRate!" >> "!vrdlog!" 2>&1
-ECHO "V_BitRate_String=!V_BitRate_String!" >> "!vrdlog!" 2>&1
-ECHO "V_BitRate_Minimum=!V_BitRate_Minimum!" >> "!vrdlog!" 2>&1
-ECHO "V_BitRate_Minimum_String=!V_BitRate_Minimum_String!" >> "!vrdlog!" 2>&1
-ECHO "V_BitRate_Maximum=!V_BitRate_Maximum!" >> "!vrdlog!" 2>&1
-ECHO "V_BitRate_Maximum_String=!V_BitRate_Maximum_String!" >> "!vrdlog!" 2>&1
-ECHO "V_BufferSize=!V_BufferSize!" >> "!vrdlog!" 2>&1
-ECHO "V_CodecID_FF=!V_CodecID_FF!" >> "!vrdlog!" 2>&1
-ECHO "V_CodecID_String_FF=!V_CodecID_String_FF!" >> "!vrdlog!" 2>&1
-ECHO "V_Width_FF=!V_Width_FF!" >> "!vrdlog!" 2>&1
-ECHO "V_Height_FF=!V_Height_FF!" >> "!vrdlog!" 2>&1
-ECHO "V_Duration_s_FF=!V_Duration_s_FF!" >> "!vrdlog!" 2>&1
-ECHO "V_BitRate_FF=!V_BitRate_FF!" >> "!vrdlog!" 2>&1
-ECHO "V_BitRate_Maximum_FF=!V_BitRate_Maximum_FF!" >> "!vrdlog!" 2>&1
-ECHO "V_PixelAspectRatio=!V_PixelAspectRatio!" >> "!vrdlog!" 2>&1
-ECHO "V_PixelAspectRatio_String=!V_PixelAspectRatio_String!" >> "!vrdlog!" 2>&1
-ECHO "V_DisplayAspectRatio=!V_DisplayAspectRatio!" >> "!vrdlog!" 2>&1
-ECHO "V_DisplayAspectRatio_String=!V_DisplayAspectRatio_String!"  >> "!vrdlog!" 2>&1
-ECHO "V_DisplayAspectRatio_String_slash=!V_DisplayAspectRatio_String_slash!"  >> "!vrdlog!" 2>&1
-ECHO "V_FrameCount=!V_FrameCount!" >> "!vrdlog!" 2>&1
-ECHO "V_ScanType_original=!V_ScanType_original!" >> "!vrdlog!" 2>&1
-ECHO "V_ScanType=!V_ScanType!" >> "!vrdlog!" 2>&1
-ECHO "V_ScanOrder_original=!V_ScanOrder_original!" >> "!vrdlog!" 2>&1
-ECHO "V_ScanOrder=!V_ScanOrder!" >> "!vrdlog!" 2>&1
-ECHO "V_Standard=!V_Standard!" >> "!vrdlog!" 2>&1
-ECHO "V_ColorSpace=!V_ColorSpace!" >> "!vrdlog!" 2>&1
-ECHO "V_Duration_ms=!V_Duration_ms!" >> "!vrdlog!" 2>&1
-ECHO "V_Duration_ms_String3=!V_Duration_ms_String3!" >> "!vrdlog!" 2>&1
-ECHO "V_ChromaSubsampling=!V_ChromaSubsampling!" >> "!vrdlog!" 2>&1
-ECHO "V_HDR_Format=!V_HDR_Format!" >> "!vrdlog!" 2>&1
-ECHO "A_Format_Profile=!A_Format_Profile!" >> "!vrdlog!" 2>&1
-ECHO "A_Channels=!A_Channels!" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! =============================================
-
-echo "!mediainfoexe64!" "%~f1" --full >> "%vrdlog%" 2>&1
-"!mediainfoexe64!" "%~f1" --full >> "%vrdlog%" 2>&1
-
-ECHO !DATE! !TIME! =============================================
-
-echo "!ffprobeexe64!" -v verbose -select_streams v:0 -show_entries stream -of default "%~f1" >> "%vrdlog%" 2>&1
-"!ffprobeexe64!" -v verbose -select_streams v:0 -show_entries stream -of default "%~f1" >> "%vrdlog%" 2>&1
-
-ECHO !DATE! !TIME! =============================================
-
-echo "!ffprobeexe64!" -v verbose -select_streams a:0 -show_entries stream -of default "%~f1" >> "%vrdlog%" 2>&1
-"!ffprobeexe64!" -v verbose -select_streams a:0 -show_entries stream -of default "%~f1" >> "%vrdlog%" 2>&1
-
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! End of Important Parameters Collected ... "%~f1" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! End collecting pre-QSF "SRC_" ffprobe and mediainfo variables ... "%~f1" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 
-
-:after_old_TS_variable_collection
-
+REM ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+REM echo "!mediainfoexe64!" "%~f1" --full >> "%vrdlog%" 2>&1
+REM "!mediainfoexe64!" "%~f1" --full >> "%vrdlog%" 2>&1
+REM ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+REM echo "!ffprobeexe64!" -v verbose -select_streams v:0 -show_entries stream -of default "%~f1" >> "%vrdlog%" 2>&1
+REM "!ffprobeexe64!" -v verbose -select_streams v:0 -show_entries stream -of default "%~f1" >> "%vrdlog%" 2>&1
+REM ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+REM echo "!ffprobeexe64!" -v verbose -select_streams a:0 -show_entries stream -of default "%~f1" >> "%vrdlog%" 2>&1
+REM "!ffprobeexe64!" -v verbose -select_streams a:0 -show_entries stream -of default "%~f1" >> "%vrdlog%" 2>&1
+REM ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 
 goto :eof
 
@@ -2759,4 +2384,280 @@ set "rtbiv_path=!rtbiv_path:\\=\!"
 REM now make double backslashes
 set "rtbiv_path=!rtbiv_path:\=\\!"
 set "!rtbiv_variable!=!rtbiv_path!"
+goto :eof
+
+
+
+:gather_variables_from_media_file
+REM Parameters
+REM		1	the global prefix to use for this gather, one of "SRC_", "QSF_" "TARGET_"
+REM		2	the fully qualified filename of the media file, eg a .TS file etc
+REM NOTES:
+REM %~1   -  expands %1 removing any surrounding quotes (") 
+REM %~f1  -  expands %1 to a fully qualified path name 
+REM %~d1  -  expands %1 to a drive letter only 
+REM %~p1  -  expands %1 to a path only 
+REM %~n1  -  expands %1 to a file name only 
+REM %~x1  -  expands %1 to a file extension only 
+REM %~s1  -  expanded path contains short names only 
+REM %~a1  -  expands %1 to file attributes 
+REM %~t1  -  expands %1 to date/time of file 
+REM %~z1  -  expands %1 to size of file 
+REM The modifiers can be combined to get compound results:
+REM %~dp1 -  expands %1 to a drive letter and path only 
+REM %~nx1 -  expands ro name.extension 
+REM DO NOT SET @setlocal ENABLEDELAYEDEXPANSION or this function will fail
+REM DO NOT SET @setlocal enableextensions
+REM ENSURE no trailing spaces in any of the lines in this routine !!
+REM
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! Start :collecting gather_variables_from_media_file "!global_prefix!" ffprobe and mediainfo variables ... "%~f1" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+
+set "global_prefix=%~1"
+set "media_filename=%~f2"
+
+IF /I "!global_prefix!" == "SRC_" goto :is_valid_global_prefix
+IF /I "!global_prefix!" == "QSF_" goto :is_valid_global_prefix
+IF /I "!global_prefix!" == "TARGET_" goto :is_valid_global_prefix
+ECHO !DATE! !TIME! ?????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????? >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ?????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????? >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! Invalid global_prefix "!global_prefix!" for "%~f1" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! MUST be one of "SRC_", "QSF_" "TARGET_" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ABORTING. >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ?????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????? >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ?????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????? >> "!vrdlog!" 2>&1
+exit 1
+:is_valid_global_prefix
+
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! Start collecting ffprobe and mediainfo variables ... "%~f1" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+REM ---
+echo set "prefix=!global_prefix!FF_V_" >> "!vrdlog!" 2>&1
+set "prefix=!global_prefix!FF_V_" >> "!vrdlog!" 2>&1
+echo FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
+FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
+echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Video" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
+"!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Video" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
+echo ### "!prefix!" >> "!vrdlog!" 2>&1
+echo call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+echo set "prefix=!global_prefix!FF_A_" >> "!vrdlog!" 2>&1
+set "prefix=!global_prefix!FF_A_" >> "!vrdlog!" 2>&1
+echo FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
+FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
+echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Audio" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
+"!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Audio" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
+echo ### "!prefix!" >> "!vrdlog!" 2>&1
+echo call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+echo set "prefix=!global_prefix!FF_G_" >> "!vrdlog!" 2>&1
+set "prefix=!global_prefix!FF_G_" >> "!vrdlog!" 2>&1
+echo FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
+FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
+echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "%~f1" --prefix "!prefix!" --section "General" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
+"!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "%~f1" --prefix "!prefix!" --section "General" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
+echo ### "!prefix!" >> "!vrdlog!" 2>&1
+echo call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+echo set "prefix=!global_prefix!MI_V_" >> "!vrdlog!" 2>&1
+set "prefix=!global_prefix!MI_V_" >> "!vrdlog!" 2>&1
+echo FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
+FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
+echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Video" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
+"!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Video" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
+echo ### "!prefix!" >> "!vrdlog!" 2>&1
+echo call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+echo set "prefix=!global_prefix!MI_A_" >> "!vrdlog!" 2>&1
+set "prefix=!global_prefix!MI_A_" >> "!vrdlog!" 2>&1
+echo FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
+FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
+echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Audio" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
+"!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Audio" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
+echo ### "!prefix!" >> "!vrdlog!" 2>&1
+echo call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+echo set "prefix=!global_prefix!MI_G_" >> "!vrdlog!" 2>&1
+set "prefix=!global_prefix!MI_G_" >> "!vrdlog!" 2>&1
+echo FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
+FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
+echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "%~f1" --prefix "!prefix!" --section "General" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
+"!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "%~f1" --prefix "!prefix!" --section "General" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
+echo ### "!prefix!" >> "!vrdlog!" 2>&1
+echo call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+
+REM ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! List All !global_prefix!FF_ variables  >> "!vrdlog!" 2>&1
+REM ECHO set !global_prefix!FF_ >> "!vrdlog!" 2>&1
+REM set !global_prefix!FF_ >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! List All !global_prefix!MI_ variables  >> "!vrdlog!" 2>&1
+REM echo set !global_prefix!MI_ >> "!vrdlog!" 2>&1
+REM set !global_prefix!MI_ >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+REM 
+ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+echo AVC Interlaced type #1 .TS >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_CodecID=27 >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_G_Format=MPEG-TS >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_Format=AVC >> "!vrdlog!" 2>&1
+echo    !global_prefix!FF_V_codec_name=h264 >> "!vrdlog!" 2>&1
+echo    !global_prefix!FF_V_field_order=tt >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_ScanOrder=TFF >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_ScanType=Interlaced >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_ScanType_StoreMethod=SeparatedFields >> "!vrdlog!" 2>&1
+echo    !global_prefix!FF_V_display_aspect_ratio=16:9 >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_DisplayAspectRatio_String=16:9 >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+echo AVC Interlaced type #2 >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_CodecID=27 >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_G_Format=MPEG-TS >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_Format=AVC >> "!vrdlog!" 2>&1
+echo    !global_prefix!FF_V_codec_name=h264 >> "!vrdlog!" 2>&1
+echo    !global_prefix!FF_V_field_order=tt >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_ScanOrder=TFF >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_ScanType=MBAFF >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_ScanType_StoreMethod=InterleavedFields >> "!vrdlog!" 2>&1
+echo    !global_prefix!FF_V_display_aspect_ratio=16:9 >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_DisplayAspectRatio_String=16:9 >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+echo AVC Interlaced type #3 .mp4 >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_CodecID=avc1 >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_G_Format=MPEG-4 >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_Format=AVC >> "!vrdlog!" 2>&1
+echo    !global_prefix!FF_V_codec_name=h264 >> "!vrdlog!" 2>&1
+echo    !global_prefix!FF_V_field_order=tt >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_ScanOrder=TFF >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_ScanType=MBAFF >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_ScanType_StoreMethod=InterleavedFields >> "!vrdlog!" 2>&1
+echo    !global_prefix!FF_V_display_aspect_ratio=16:9 >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_DisplayAspectRatio_String=16:9 >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+echo AVC Interlaced type #4 .mp4 >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_CodecID_Info=Advanced_Video_Coding >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_G_Format=MPEG-4 >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_Format=AVC >> "!vrdlog!" 2>&1
+echo    !global_prefix!FF_V_codec_name=h264 >> "!vrdlog!" 2>&1
+echo    !global_prefix!FF_V_field_order=tt >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_ScanOrder=TFF >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_ScanType=MBAFF >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_ScanType_StoreMethod=InterleavedFields >> "!vrdlog!" 2>&1
+echo    !global_prefix!FF_V_display_aspect_ratio=16:9 >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_DisplayAspectRatio_String=16:9 >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+echo MPEG2 INTERLACED >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_CodecID=2 >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_G_Format=MPEG-TS >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_Format=MPEG_Video >> "!vrdlog!" 2>&1
+echo    !global_prefix!FF_V_codec_name=mpeg2video >> "!vrdlog!" 2>&1
+echo    !global_prefix!FF_V_field_order=tt >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_ScanOrder=TFF >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_ScanType=Interlaced >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_ScanType_StoreMethod= >> "!vrdlog!" 2>&1
+echo    !global_prefix!FF_V_display_aspect_ratio=16:9 >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_DisplayAspectRatio_String=16:9 >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+echo MPEG2 PROGRESSIVE >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_CodecID=2 >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_G_Format=MPEG-TS >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_Format=MPEG_Video >> "!vrdlog!" 2>&1
+echo    !global_prefix!FF_V_codec_name=mpeg2video >> "!vrdlog!" 2>&1
+echo    !global_prefix!FF_V_field_order=progressive >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_ScanOrder= >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_ScanType= >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_ScanType_StoreMethod= >> "!vrdlog!" 2>&1
+echo    !global_prefix!FF_V_display_aspect_ratio=16:9 >> "!vrdlog!" 2>&1
+echo    !global_prefix!MI_V_DisplayAspectRatio_String=16:9 >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+
+REM 
+set "!global_prefix!Video_Encoding=AVC"
+??? IF /I "!SRC_MI_V_Format!" == "AVC"            (set "!global_prefix!Video_Encoding=AVC")
+??? IF /I "!SRC_FF_V_codec_name!" == "h264"       (set "!global_prefix!Video_Encoding=AVC")
+??? IF /I "!SRC_MI_V_Format!" == "MPEG_Video"     (set "!global_prefix!Video_Encoding=MPEG2")
+??? IF /I "!SRC_FF_V_codec_name!" == "mpeg2video" (set "!global_prefix!Video_Encoding=MPEG2")
+REM
+set "!global_prefix!Video_Interlacement=PROGRESSIVE"
+??? IF /I "!SRC_MI_V_ScanType!" == "MBAFF"          (set "!global_prefix!Video_Interlacement=INTERLACED")
+??? IF /I "!SRC_MI_V_ScanType!" == "Interlaced"     (set "!global_prefix!Video_Interlacement=INTERLACED")
+??? IF /I "!SRC_FF_V_field_order!" == "tt"          (set "!global_prefix!Video_Interlacement=INTERLACED")
+??? IF /I "!SRC_MI_V_ScanType!" == ""               (set "!global_prefix!Video_Interlacement=PROGRESSIVE")
+??? IF /I "!SRC_FF_V_field_order!" == "progressive" (set "!global_prefix!Video_Interlacement=PROGRESSIVE")
+REM 
+set "!global_prefix!Video_FieldFirst=TFF"
+??? IF /I "!SRC_MI_V_ScanOrder=TFF!" == ""    (set "!global_prefix!Video_FieldFirst=TFF")
+??? IF /I "!SRC_MI_V_ScanOrder=TFF!" == "TFF" (set "!global_prefix!Video_FieldFirst=TFF")
+??? IF /I "!SRC_MI_V_ScanOrder=TFF!" == "BFF" (set "!global_prefix!Video_FieldFirst=BFF")
+REM 
+ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+??? ECHO !DATE! !TIME! !global_prefix!Video_Encoding=!Video_Encoding! >> "!vrdlog!" 2>&1
+??? ECHO !DATE! !TIME! !global_prefix!Video_Interlacement=!Video_Interlacement! >> "!vrdlog!" 2>&1
+??? ECHO !DATE! !TIME! !global_prefix!Video_FieldFirst=!Video_FieldFirst! >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+REM
+REM Fix up some variables
+REM
+set "!global_prefix!MI_V_DisplayAspectRatio_String_slash=!SRC_MI_V_DisplayAspectRatio_String!"
+set "!global_prefix!MI_V_DisplayAspectRatio_String_slash=!SRC_MI_V_DisplayAspectRatio_String_slash::=/!"
+set "!global_prefix!MI_V_DisplayAspectRatio_String_slash=!SRC_MI_V_DisplayAspectRatio_String_slash:\=/!"
+set "!global_prefix!FF_V_display_aspect_ratio_slash=!SRC_FF_V_display_aspect_ratio!"
+set "!global_prefix!FF_V_display_aspect_ratio_slash=!SRC_FF_V_display_aspect_ratio_slash::=/!"
+set "!global_prefix!FF_V_display_aspect_ratio_slash=!SRC_FF_V_display_aspect_ratio_slash:\=/!"
+???? ECHO !DATE! !TIME! "Original !global_prefix!MI_A_Video_Delay=!SRC_MI_A_Video_Delay! !global_prefix!MI_A_Video_Delay_String=!SRC_MI_A_Video_Delay_String!" >> "!vrdlog!" 2>&1
+???? IF /I "!SRC_MI_A_Video_Delay!" == "" (set /a "!global_prefix!MI_A_Video_Delay=0")
+???? SET /a "!global_prefix!MI_A_Audio_Delay=0 - !SRC_MI_A_Video_Delay!"
+REM
+REM Display the variables we collected for the Source Video
+REM
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! List All "General" variables  >> "!vrdlog!" 2>&1
+echo set !global_prefix!MI_G_ >> "!vrdlog!" 2>&1
+set !global_prefix!MI_G_ >> "!vrdlog!" 2>&1
+echo set !global_prefix!FF_G_ >> "!vrdlog!" 2>&1
+set !global_prefix!FF_G_ >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! List All "Video" variables  >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+echo set Video_ >> "!vrdlog!" 2>&1
+set Video_ >> "!vrdlog!" 2>&1
+echo set !global_prefix!MI_V_ >> "!vrdlog!" 2>&1
+set !global_prefix!MI_V_ >> "!vrdlog!" 2>&1
+echo set !global_prefix!FF_V_ >> "!vrdlog!" 2>&1
+set !global_prefix!FF_V_ >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! List All "Audio" variables  >> "!vrdlog!" 2>&1
+echo set !global_prefix!MI_A_ >> "!vrdlog!" 2>&1
+set !global_prefix!MI_A_ >> "!vrdlog!" 2>&1
+echo set !global_prefix!FF_A_ >> "!vrdlog!" 2>&1
+set !global_prefix!FF_AQ_ >> "!vrdlog!" 2>&1
+
+REM ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+REM echo "!mediainfoexe64!" "%~f1" --full >> "%vrdlog%" 2>&1
+REM "!mediainfoexe64!" "%~f1" --full >> "%vrdlog%" 2>&1
+REM ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+REM echo "!ffprobeexe64!" -v verbose -select_streams v:0 -show_entries stream -of default "%~f1" >> "%vrdlog%" 2>&1
+REM "!ffprobeexe64!" -v verbose -select_streams v:0 -show_entries stream -of default "%~f1" >> "%vrdlog%" 2>&1
+REM ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+REM echo "!ffprobeexe64!" -v verbose -select_streams a:0 -show_entries stream -of default "%~f1" >> "%vrdlog%" 2>&1
+REM "!ffprobeexe64!" -v verbose -select_streams a:0 -show_entries stream -of default "%~f1" >> "%vrdlog%" 2>&1
+REM ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! End :collecting gather_variables_from_media_file "!global_prefix!" ffprobe and mediainfo variables ... "%~f1" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 goto :eof
