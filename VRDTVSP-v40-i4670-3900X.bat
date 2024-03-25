@@ -439,6 +439,7 @@ REM %~nx1  -  expands %1 to a file name and extension only
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Start collecting .TS ffprobe and mediainfo variables ... "%~f1" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+@echo off
 REM ---
 echo set "prefix=SRC_FF_V_" >> "!vrdlog!" 2>&1
 set "prefix=SRC_FF_V_" >> "!vrdlog!" 2>&1
@@ -517,23 +518,113 @@ ECHO !DATE! !TIME! =============================================================
 ECHO !DATE! !TIME! List All SRC_MI_ variables  >> "!vrdlog!" 2>&1
 echo set SRC_MI_ >> "!vrdlog!" 2>&1
 set SRC_MI_ >> "!vrdlog!" 2>&1
+@echo on
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+REM 
+echo  >> "!vrdlog!" 2>&1
+echo AVC Interlaced type #1 .TS >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_CodecID=27 >> "!vrdlog!" 2>&1
+echo    SRC_MI_G_Format=MPEG-TS >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_Format=AVC >> "!vrdlog!" 2>&1
+echo    SRC_FF_V_codec_name=h264 >> "!vrdlog!" 2>&1
+echo    SRC_FF_V_field_order=tt >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_ScanOrder=TFF >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_ScanType=Interlaced >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_ScanType_StoreMethod=SeparatedFields >> "!vrdlog!" 2>&1
+echo    SRC_FF_V_display_aspect_ratio=16:9 >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_DisplayAspectRatio_String=16:9 >> "!vrdlog!" 2>&1
+echo  >> "!vrdlog!" 2>&1
+echo AVC Interlaced type #2 >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_CodecID=27 >> "!vrdlog!" 2>&1
+echo    SRC_MI_G_Format=MPEG-TS >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_Format=AVC >> "!vrdlog!" 2>&1
+echo    SRC_FF_V_codec_name=h264 >> "!vrdlog!" 2>&1
+echo    SRC_FF_V_field_order=tt >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_ScanOrder=TFF >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_ScanType=MBAFF >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_ScanType_StoreMethod=InterleavedFields >> "!vrdlog!" 2>&1
+echo    SRC_FF_V_display_aspect_ratio=16:9 >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_DisplayAspectRatio_String=16:9 >> "!vrdlog!" 2>&1
+echo  >> "!vrdlog!" 2>&1
+echo AVC Interlaced type #3 .mp4 >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_CodecID=avc1 >> "!vrdlog!" 2>&1
+echo    SRC_MI_G_Format=MPEG-4 >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_Format=AVC >> "!vrdlog!" 2>&1
+echo    SRC_FF_V_codec_name=h264 >> "!vrdlog!" 2>&1
+echo    SRC_FF_V_field_order=tt >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_ScanOrder=TFF >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_ScanType=MBAFF >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_ScanType_StoreMethod=InterleavedFields >> "!vrdlog!" 2>&1
+echo    SRC_FF_V_display_aspect_ratio=16:9 >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_DisplayAspectRatio_String=16:9 >> "!vrdlog!" 2>&1
+echo  >> "!vrdlog!" 2>&1
+echo AVC Interlaced type #4 .mp4 >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_CodecID_Info=Advanced_Video_Coding >> "!vrdlog!" 2>&1
+echo    SRC_MI_G_Format=MPEG-4 >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_Format=AVC >> "!vrdlog!" 2>&1
+echo    SRC_FF_V_codec_name=h264 >> "!vrdlog!" 2>&1
+echo    SRC_FF_V_field_order=tt >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_ScanOrder=TFF >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_ScanType=MBAFF >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_ScanType_StoreMethod=InterleavedFields >> "!vrdlog!" 2>&1
+echo    SRC_FF_V_display_aspect_ratio=16:9 >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_DisplayAspectRatio_String=16:9 >> "!vrdlog!" 2>&1
+echo  >> "!vrdlog!" 2>&1
+echo MPEG2 INTERLACED >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_CodecID=2 >> "!vrdlog!" 2>&1
+echo    SRC_MI_G_Format=MPEG-TS >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_Format=MPEG_Video >> "!vrdlog!" 2>&1
+echo    SRC_FF_V_codec_name=mpeg2video >> "!vrdlog!" 2>&1
+echo    SRC_FF_V_field_order=tt >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_ScanOrder=TFF >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_ScanType=Interlaced >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_ScanType_StoreMethod= >> "!vrdlog!" 2>&1
+echo    SRC_FF_V_display_aspect_ratio=16:9 >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_DisplayAspectRatio_String=16:9 >> "!vrdlog!" 2>&1
+echo  >> "!vrdlog!" 2>&1
+echo MPEG2 PROGRESSIVE >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_CodecID=2 >> "!vrdlog!" 2>&1
+echo    SRC_MI_G_Format=MPEG-TS >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_Format=MPEG_Video >> "!vrdlog!" 2>&1
+echo    SRC_FF_V_codec_name=mpeg2video >> "!vrdlog!" 2>&1
+echo    SRC_FF_V_field_order=progressive >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_ScanOrder= >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_ScanType= >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_ScanType_StoreMethod= >> "!vrdlog!" 2>&1
+echo    SRC_FF_V_display_aspect_ratio=16:9 >> "!vrdlog!" 2>&1
+echo    SRC_MI_V_DisplayAspectRatio_String=16:9 >> "!vrdlog!" 2>&1
+echo  >> "!vrdlog!" 2>&1
+set "Interlacement=PROGRESSIVE"
+IF /I "!SRC_MI_V_ScanType!" == "MBAFF" (set "Interlacement=INTERLACED")
+IF /I "!SRC_MI_V_ScanType!" == "Interlaced" (set "Interlacement=INTERLACED")
+IF /I "!SRC_MI_V_ScanType!" == "" (set "Interlacement=PROGRESSIVE")
+IF /I "!SRC_FF_V_field_order!" == "tt" (set "Interlacement=INTERLACED")
+IF /I "!SRC_FF_V_field_order!" == "progressive" (set "Interlacement=PROGRESSIVE")
+REM 
+set "Encoding=AVC"
+IF /I "!SRC_MI_V_Format!" == "MPEG_Video" (set "Encoding=MPEG2")
+IF /I "!SRC_FF_V_codec_name!" == "mpeg2video" (set "Encoding=MPEG2")
+REM 
 
 
-pause
-exit
 
 
 
-
-
-??????????????????????????????
+goto :eof
 
 
 
-set "V_DisplayAspectRatio_String_slash=!V_DisplayAspectRatio_String::=/!"
-set "V_DisplayAspectRatio_String_slash=!V_DisplayAspectRatio_String_slash:\=/!"
+REM Fix up some variables
+set "SRC_MI_V_DisplayAspectRatio_String_slash=!SRC_MI_V_DisplayAspectRatio_String!"
+set "SRC_MI_V_DisplayAspectRatio_String_slash=!SRC_MI_V_DisplayAspectRatio_String_slash::=/!"
+set "SRC_MI_V_DisplayAspectRatio_String_slash=!SRC_MI_V_DisplayAspectRatio_String_slash:\=/!"
+set "SRC_FF_V_display_aspect_ratio_slash=!SRC_FF_V_display_aspect_ratio!"
+set "SRC_FF_V_display_aspect_ratio_slash=!SRC_FF_V_display_aspect_ratio_slash::=/!"
+set "SRC_FF_V_display_aspect_ratio_slash=!SRC_FF_V_display_aspect_ratio_slash:\=/!"
+
+
+
 
 set "V_ScanType_original=!V_ScanType!"
 IF /I "!V_ScanType!" == "" (
