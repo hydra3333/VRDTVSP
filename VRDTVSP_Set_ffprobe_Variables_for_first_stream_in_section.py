@@ -126,7 +126,7 @@ if __name__ == "__main__":
         process_section(section_name, streams, prefix, set_cmd_list)
     else:
         print(f"Error: Invalid ffprobe section '{section_name}' processing {mediafile}\nPlease specify a valid section (e.g., Video, Audio, General).")
-        sys.exit(1)
+        #sys.exit(1)
     set_cmd_list.append(f'goto :eof')
     #print(f"DEBUG: set_cmd_list=\n{objPrettyPrint.pformat(set_cmd_list)}")
 

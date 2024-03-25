@@ -20,8 +20,8 @@ def add_variable_to_list(key, value, set_cmd_list):
 
 def escape_special_chars(text):
     # Replace special characters with underscores.
-    special_chars = r'<>|&"?*()\' '    # leave : and / alone
-    return re.sub(r'[%s]' % re.escape(special_chars), '_', text.strip())
+    special_chars = r'<>|&"?*()\' @'    # leave : and / alone
+    return re.sub(r'[%s]' % re.escape(special_chars), '_', text.strip()).replace('__', '_').replace('__', '_')
 
 def process_section(section_name_capitalize, section, prefix, set_cmd_list):
     #print(f"DEBUG: json_data Section {section_name_capitalize}:\nSection Data: {section}\n{objPrettyPrint.pformat(section)}")
@@ -98,16 +98,6 @@ if __name__ == "__main__":
     json_data = json.loads(mediainfo_output)
     #print(f"DEBUG: json_data:\n{objPrettyPrint.pformat(json_data)}")
 
-    # Check if the JSON file exists and load it then delete the file
-    #if os.path.exists(mediainfo_json_file):
-    #    with open(mediainfo_json_file, 'r') as j:
-    #        json_data = json.load(j)
-    #else:
-    #    print(f"Error: MediaInfo JSON file does not exist at path '{mediainfo_json_file}'")
-    #    sys.exit(1)
-    #if os.path.exists(mediainfo_json_file):
-    #    os.remove(mediainfo_json_file)
-
     # Find the specified section in the MediaInfo output
     section_name_capitalize = section_name.capitalize()
     section_track_data = None
@@ -118,12 +108,12 @@ if __name__ == "__main__":
             break
     if not section_track_data:
         print(f"Error: Invalid MediaInfo section '{section_name_capitalize}' processing {mediafile}\nPlease specify a valid section (e.g., Video, Audio, General).")
-        sys.exit(1)
+        #sys.exit(1)
     else:
         process_section(section_name_capitalize, section_track_data, prefix, set_cmd_list)
     set_cmd_list.append(f'goto :eof')
 
-    print(f"DEBUG: set_cmd_list=\n{objPrettyPrint.pformat(set_cmd_list)}")
+    #print(f"DEBUG: set_cmd_list=\n{objPrettyPrint.pformat(set_cmd_list)}")
     # Open the cmd file for writing in overwrite mode
     output_cmd_file = args.output_cmd_file
     if os.path.exists(output_cmd_file):
