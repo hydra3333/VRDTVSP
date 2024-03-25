@@ -595,25 +595,26 @@ echo    SRC_MI_V_ScanType_StoreMethod= >> "!vrdlog!" 2>&1
 echo    SRC_FF_V_display_aspect_ratio=16:9 >> "!vrdlog!" 2>&1
 echo    SRC_MI_V_DisplayAspectRatio_String=16:9 >> "!vrdlog!" 2>&1
 echo  >> "!vrdlog!" 2>&1
-set "Interlacement=PROGRESSIVE"
-IF /I "!SRC_MI_V_ScanType!" == "MBAFF" (set "Interlacement=INTERLACED")
-IF /I "!SRC_MI_V_ScanType!" == "Interlaced" (set "Interlacement=INTERLACED")
-IF /I "!SRC_MI_V_ScanType!" == "" (set "Interlacement=PROGRESSIVE")
-IF /I "!SRC_FF_V_field_order!" == "tt" (set "Interlacement=INTERLACED")
-IF /I "!SRC_FF_V_field_order!" == "progressive" (set "Interlacement=PROGRESSIVE")
+
 REM 
-set "Encoding=AVC"
-IF /I "!SRC_MI_V_Format!" == "MPEG_Video" (set "Encoding=MPEG2")
-IF /I "!SRC_FF_V_codec_name!" == "mpeg2video" (set "Encoding=MPEG2")
+set "Video_Encoding=AVC"
+IF /I "!SRC_MI_V_Format!" == "AVC"            (set "Video_Encoding=AVC")
+IF /I "!SRC_FF_V_codec_name!" == "h264"       (set "Video_Encoding=AVC")
+IF /I "!SRC_MI_V_Format!" == "MPEG_Video"     (set "Video_Encoding=MPEG2")
+IF /I "!SRC_FF_V_codec_name!" == "mpeg2video" (set "Video_Encoding=MPEG2")
+REM
+set "Video_Interlacement=PROGRESSIVE"
+IF /I "!SRC_MI_V_ScanType!" == "MBAFF"          (set "Video_Interlacement=INTERLACED")
+IF /I "!SRC_MI_V_ScanType!" == "Interlaced"     (set "Video_Interlacement=INTERLACED")
+IF /I "!SRC_FF_V_field_order!" == "tt"          (set "Video_Interlacement=INTERLACED")
+IF /I "!SRC_MI_V_ScanType!" == ""               (set "Video_Interlacement=PROGRESSIVE")
+IF /I "!SRC_FF_V_field_order!" == "progressive" (set "Video_Interlacement=PROGRESSIVE")
 REM 
-
-
-
-
-
-goto :eof
-
-
+set "Video_FieldFirst=TFF"
+IF /I "!SRC_MI_V_ScanOrder=TFF!" == ""    (set "Video_FieldFirst=TFF")
+IF /I "!SRC_MI_V_ScanOrder=TFF!" == "TFF" (set "Video_FieldFirst=TFF")
+IF /I "!SRC_MI_V_ScanOrder=TFF!" == "BFF" (set "Video_FieldFirst=BFF")
+REM 
 
 REM Fix up some variables
 set "SRC_MI_V_DisplayAspectRatio_String_slash=!SRC_MI_V_DisplayAspectRatio_String!"
@@ -622,6 +623,11 @@ set "SRC_MI_V_DisplayAspectRatio_String_slash=!SRC_MI_V_DisplayAspectRatio_Strin
 set "SRC_FF_V_display_aspect_ratio_slash=!SRC_FF_V_display_aspect_ratio!"
 set "SRC_FF_V_display_aspect_ratio_slash=!SRC_FF_V_display_aspect_ratio_slash::=/!"
 set "SRC_FF_V_display_aspect_ratio_slash=!SRC_FF_V_display_aspect_ratio_slash:\=/!"
+REM
+
+
+goto :eof
+
 
 
 
