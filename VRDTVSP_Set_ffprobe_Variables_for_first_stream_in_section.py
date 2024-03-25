@@ -106,6 +106,11 @@ if __name__ == "__main__":
         print(f"Error: Media file does not exist: {mediafile}")
         sys.exit(1)
 
+    set_cmd_list = [ f'echo prefix = "{prefix}"' ]
+    set_cmd_list.append(f'REM List of DOS SET commands to define DOS variables')
+    set_cmd_list.append(f'REM First, clear the variables with the chosen prefix')
+    set_cmd_list.append(f'FOR /F "tokens=1,* delims==" %%G IN (\'SET !prefix!\') DO (SET "%%G=")')
+
     # Run ffprobe command to get JSON output
     ffprobe_subprocess_command = [ffprobe_path, "-v", "quiet", "-print_format", "json", "-show_format", "-show_streams", mediafile]
     #print(f"DEBUG: issuing subprocess command: {ffprobe_subprocess_command}")
@@ -113,10 +118,6 @@ if __name__ == "__main__":
     #print(f"DEBUG: returned output string: {ffprobe_output}")
 
     # Parse JSON output
-    set_cmd_list = [ f'echo prefix = "{prefix}"' ]
-    set_cmd_list.append(f'REM List of DOS SET commands to define DOS variables')
-    set_cmd_list.append(f'REM First, clear the variables with the chosen prefix')
-    set_cmd_list.append(f'FOR /F "tokens=1,* delims==" %%G IN (\'SET !prefix!\') DO (SET "%%G=")')
     ffprobe_data = json.loads(ffprobe_output)
     if section_name.lower() == "general":
         process_general_section(ffprobe_data["format"], prefix, set_cmd_list)

@@ -25,10 +25,11 @@ def escape_special_chars(text):
 
 def process_section(section_name_capitalize, section, prefix, set_cmd_list):
     for child in section:
-        if not isinstance(value, str):
-            value = str(value)
+        if not isinstance(child.text, str):
+            value = str(child.text)
+        else:
+            value = child.text.strip()
         key = escape_special_chars(prefix + child.tag)
-        value = escape_special_chars(child.text.strip())
         os.environ[key] = value
         add_variable_to_list(key, value, set_cmd_list)
 
@@ -78,6 +79,11 @@ if __name__ == "__main__":
         print(f"Error: Media file does not exist at path {mediafile}.")
         sys.exit(1)
 
+    set_cmd_list = [ f'echo prefix = "{prefix}"' ]
+    set_cmd_list.append(f'REM List of DOS SET commands to define DOS variables')
+    set_cmd_list.append(f'REM First, clear the variables with the chosen prefix')
+    set_cmd_list.append(f'FOR /F "tokens=1,* delims==" %%G IN (\'SET !prefix!\') DO (SET "%%G=")')
+
     # Run MediaInfo command to generate JSON output
     #mediainfo_json_file = mediafile + ".mediainfo.json"
     #if os.path.exists(mediainfo_json_file):
@@ -112,7 +118,7 @@ if __name__ == "__main__":
         print(f"Error: Invalid MediaInfo section '{section_name_capitalize}' processing {mediafile}\nPlease specify a valid section (e.g., Video, Audio, General).")
         sys.exit(1)
     else:
-        print(f"DEBUG: json_data Section {section_name_capitalize}:\n{objPrettyPrint.pformat(section)}")
+        print(f"DEBUG: json_data Section {section_name_capitalize}:\n{objPrettyPrint.pformat(section_track_data)}")
         print(f"DEBUG: calling process_section for '{section_name_capitalize}'")
         process_section(section_name_capitalize, section_track_data, prefix, set_cmd_list)
     set_cmd_list.append(f'goto :eof')
