@@ -21,15 +21,17 @@ def add_variable_to_list(key, value, set_cmd_list):
 def escape_special_chars(text):
     # Replace special characters with underscores.
     special_chars = r'<>|&"?*()\' '    # leave : and / alone
-    return re.sub(r'[%s]' % re.escape(special_chars), '_', text)
+    return re.sub(r'[%s]' % re.escape(special_chars), '_', text.strip())
 
 def process_section(section_name_capitalize, section, prefix, set_cmd_list):
-    for child in section:
-        if not isinstance(child.text, str):
-            value = str(child.text)
-        else:
-            value = child.text.strip()
-        key = escape_special_chars(prefix + child.tag)
+    #print(f"DEBUG: json_data Section {section_name_capitalize}:\nSection Data: {section}\n{objPrettyPrint.pformat(section)}")
+    #for key, value in section.items():
+    #    print(f"DEBUG: Section {section_name_capitalize} key='{key}' value='{value}'")
+    for key, value in section.items():
+        if not isinstance(value, str):
+            value = str(value)
+        key = escape_special_chars(prefix.strip() + key.strip())
+        value = escape_special_chars(value.strip())
         os.environ[key] = value
         add_variable_to_list(key, value, set_cmd_list)
 
@@ -94,7 +96,7 @@ if __name__ == "__main__":
     #print(f"DEBUG: returned output string: {mediainfo_output}")
 
     json_data = json.loads(mediainfo_output)
-    print(f"DEBUG: json_data:\n{objPrettyPrint.pformat(json_data)}")
+    #print(f"DEBUG: json_data:\n{objPrettyPrint.pformat(json_data)}")
 
     # Check if the JSON file exists and load it then delete the file
     #if os.path.exists(mediainfo_json_file):
@@ -118,12 +120,10 @@ if __name__ == "__main__":
         print(f"Error: Invalid MediaInfo section '{section_name_capitalize}' processing {mediafile}\nPlease specify a valid section (e.g., Video, Audio, General).")
         sys.exit(1)
     else:
-        print(f"DEBUG: json_data Section {section_name_capitalize}:\n{objPrettyPrint.pformat(section_track_data)}")
-        print(f"DEBUG: calling process_section for '{section_name_capitalize}'")
         process_section(section_name_capitalize, section_track_data, prefix, set_cmd_list)
     set_cmd_list.append(f'goto :eof')
 
-    #print(f"DEBUG: set_cmd_list=\n{objPrettyPrint.pformat(set_cmd_list)}")
+    print(f"DEBUG: set_cmd_list=\n{objPrettyPrint.pformat(set_cmd_list)}")
     # Open the cmd file for writing in overwrite mode
     output_cmd_file = args.output_cmd_file
     if os.path.exists(output_cmd_file):
