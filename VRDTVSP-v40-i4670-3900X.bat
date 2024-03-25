@@ -436,17 +436,10 @@ REM The modifiers can be combined to get compound results:
 REM %~dp1  -  expands %1 to a drive letter and path only 
 REM %~nx1  -  expands %1 to a file name and extension only 
 
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! Start collecting pre-QSF "SRC_" ffprobe and mediainfo variables ... "%~f1" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-
-
-
-
-call :gather_variables_from_media_file "SRC_" "%~f1"
+call :gather_variables_from_media_file "%~f1" "SRC_" 
 REM Parameters
-REM		1	the global prefix to use for this gather, one of "SRC_", "QSF_" "TARGET_"
-REM		2	the fully qualified filename of the media file, eg a .TS file etc
+REM		1	the fully qualified filename of the media file, eg a .TS file etc
+REM		2	the global prefix to use for this gather, one of "SRC_", "QSF_" "TARGET_"
 
 pause
 exit
@@ -2409,8 +2402,8 @@ goto :eof
 
 :gather_variables_from_media_file
 REM Parameters
-REM		1	the global prefix to use for this gather, one of "SRC_", "QSF_" "TARGET_"
-REM		2	the fully qualified filename of the media file, eg a .TS file etc
+REM		1	the fully qualified filename of the media file, eg a .TS file etc
+REM		2	the global prefix to use for this gather, one of "SRC_", "QSF_" "TARGET_"
 REM NOTES:
 REM %~1   -  expands %1 removing any surrounding quotes (") 
 REM %~f1  -  expands %1 to a fully qualified path name 
@@ -2429,24 +2422,28 @@ REM DO NOT SET @setlocal ENABLEDELAYEDEXPANSION or this function will fail
 REM DO NOT SET @setlocal enableextensions
 REM ENSURE no trailing spaces in any of the lines in this routine !!
 REM
+set "global_prefix=%~f1"
+set "media_filename=%~2"
+
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! Start :collecting gather_variables_from_media_file "!global_prefix!" ffprobe and mediainfo variables ... "%~f1" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! Start :collecting gather_variables_from_media_file "!global_prefix!" ffprobe and mediainfo variables ... "!media_filename!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 
-set "global_prefix=%~1"
-set "media_filename=%~f2"
+echo IF /I "!global_prefix!" == "SRC_" goto :is_valid_global_prefix >> "!vrdlog!" 2>&1
+echo IF /I "!global_prefix!" == "QSF_" goto :is_valid_global_prefix >> "!vrdlog!" 2>&1
+echo IF /I "!global_prefix!" == "TARGET_" goto :is_valid_global_prefix >> "!vrdlog!" 2>&1
 
 IF /I "!global_prefix!" == "SRC_" goto :is_valid_global_prefix
 IF /I "!global_prefix!" == "QSF_" goto :is_valid_global_prefix
 IF /I "!global_prefix!" == "TARGET_" goto :is_valid_global_prefix
 ECHO !DATE! !TIME! ?????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????? >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ?????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????? >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! Invalid global_prefix "!global_prefix!" for "%~f1" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! MUST be one of "SRC_", "QSF_" "TARGET_" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! Invalid global_prefix "!global_prefix!" for "!media_filename!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! "!global_prefix!" MUST be one of "SRC_", "QSF_" "TARGET_" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ABORTING. >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ?????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????? >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ?????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????? >> "!vrdlog!" 2>&1
-exit 1
+exit
 :is_valid_global_prefix
 
 REM ---
@@ -2454,8 +2451,8 @@ echo set "prefix=!global_prefix!FF_V_" >> "!vrdlog!" 2>&1
 set "prefix=!global_prefix!FF_V_" >> "!vrdlog!" 2>&1
 echo FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
 FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
-echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Video" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
-"!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Video" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
+echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "!media_filename!" --prefix "!prefix!" --section "Video" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
+"!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "!media_filename!" --prefix "!prefix!" --section "Video" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
 echo ### "!prefix!" >> "!vrdlog!" 2>&1
 echo call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
@@ -2465,8 +2462,8 @@ echo set "prefix=!global_prefix!FF_A_" >> "!vrdlog!" 2>&1
 set "prefix=!global_prefix!FF_A_" >> "!vrdlog!" 2>&1
 echo FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
 FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
-echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Audio" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
-"!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Audio" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
+echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "!media_filename!" --prefix "!prefix!" --section "Audio" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
+"!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "!media_filename!" --prefix "!prefix!" --section "Audio" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
 echo ### "!prefix!" >> "!vrdlog!" 2>&1
 echo call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
@@ -2476,8 +2473,8 @@ echo set "prefix=!global_prefix!FF_G_" >> "!vrdlog!" 2>&1
 set "prefix=!global_prefix!FF_G_" >> "!vrdlog!" 2>&1
 echo FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
 FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
-echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "%~f1" --prefix "!prefix!" --section "General" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
-"!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "%~f1" --prefix "!prefix!" --section "General" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
+echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "!media_filename!" --prefix "!prefix!" --section "General" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
+"!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "!media_filename!" --prefix "!prefix!" --section "General" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
 echo ### "!prefix!" >> "!vrdlog!" 2>&1
 echo call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
@@ -2487,8 +2484,8 @@ echo set "prefix=!global_prefix!MI_V_" >> "!vrdlog!" 2>&1
 set "prefix=!global_prefix!MI_V_" >> "!vrdlog!" 2>&1
 echo FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
 FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
-echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Video" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
-"!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Video" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
+echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "!media_filename!" --prefix "!prefix!" --section "Video" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
+"!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "!media_filename!" --prefix "!prefix!" --section "Video" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
 echo ### "!prefix!" >> "!vrdlog!" 2>&1
 echo call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
@@ -2498,8 +2495,8 @@ echo set "prefix=!global_prefix!MI_A_" >> "!vrdlog!" 2>&1
 set "prefix=!global_prefix!MI_A_" >> "!vrdlog!" 2>&1
 echo FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
 FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
-echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Audio" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
-"!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "%~f1" --prefix "!prefix!" --section "Audio" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
+echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "!media_filename!" --prefix "!prefix!" --section "Audio" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
+"!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "!media_filename!" --prefix "!prefix!" --section "Audio" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
 echo ### "!prefix!" >> "!vrdlog!" 2>&1
 echo call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
@@ -2509,8 +2506,8 @@ echo set "prefix=!global_prefix!MI_G_" >> "!vrdlog!" 2>&1
 set "prefix=!global_prefix!MI_G_" >> "!vrdlog!" 2>&1
 echo FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
 FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
-echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "%~f1" --prefix "!prefix!" --section "General" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
-"!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "%~f1" --prefix "!prefix!" --section "General" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
+echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "!media_filename!" --prefix "!prefix!" --section "General" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
+"!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "!media_filename!" --prefix "!prefix!" --section "General" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
 echo ### "!prefix!" >> "!vrdlog!" 2>&1
 echo call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
@@ -2680,18 +2677,18 @@ echo set !global_prefix!FF_A_ >> "!vrdlog!" 2>&1
 set !global_prefix!FF_AQ_ >> "!vrdlog!" 2>&1
 
 REM ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-REM echo "!mediainfoexe64!" "%~f1" --full >> "%vrdlog%" 2>&1
-REM "!mediainfoexe64!" "%~f1" --full >> "%vrdlog%" 2>&1
+REM echo "!mediainfoexe64!" "!media_filename!" --full >> "%vrdlog%" 2>&1
+REM "!mediainfoexe64!" "!media_filename!" --full >> "%vrdlog%" 2>&1
 REM ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-REM echo "!ffprobeexe64!" -v verbose -select_streams v:0 -show_entries stream -of default "%~f1" >> "%vrdlog%" 2>&1
-REM "!ffprobeexe64!" -v verbose -select_streams v:0 -show_entries stream -of default "%~f1" >> "%vrdlog%" 2>&1
+REM echo "!ffprobeexe64!" -v verbose -select_streams v:0 -show_entries stream -of default "!media_filename!" >> "%vrdlog%" 2>&1
+REM "!ffprobeexe64!" -v verbose -select_streams v:0 -show_entries stream -of default "!media_filename!" >> "%vrdlog%" 2>&1
 REM ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-REM echo "!ffprobeexe64!" -v verbose -select_streams a:0 -show_entries stream -of default "%~f1" >> "%vrdlog%" 2>&1
-REM "!ffprobeexe64!" -v verbose -select_streams a:0 -show_entries stream -of default "%~f1" >> "%vrdlog%" 2>&1
+REM echo "!ffprobeexe64!" -v verbose -select_streams a:0 -show_entries stream -of default "!media_filename!" >> "%vrdlog%" 2>&1
+REM "!ffprobeexe64!" -v verbose -select_streams a:0 -show_entries stream -of default "!media_filename!" >> "%vrdlog%" 2>&1
 REM ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! End :collecting gather_variables_from_media_file "!global_prefix!" ffprobe and mediainfo variables ... "%~f1" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! End :collecting gather_variables_from_media_file "!global_prefix!" ffprobe and mediainfo variables ... "!media_filename!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 goto :eof
 
