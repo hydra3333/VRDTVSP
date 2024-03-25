@@ -2599,11 +2599,8 @@ echo    !global_prefix!MI_V_DisplayAspectRatio_String=16:9 >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 REM 
 
-REM call :setvar "new_variable_name" "old_variable_name_containing_value"
-echo call :setvar "tmp_MI_V_Format" "!global_prefix!MI_V_Format" >> "!vrdlog!" 2>&1
-call :setvar "tmp_MI_V_Format" "!global_prefix!MI_V_Format"
-echo  :setvar "tmp_FF_V_codec_name" "!global_prefix!FF_V_codec_name" >> "!vrdlog!" 2>&1
-call :setvar "tmp_FF_V_codec_name" "!global_prefix!FF_V_codec_name"
+call set tmp_MI_V_Format=%%!global_prefix!MI_V_Format%%
+call set tmp_FF_V_codec_name=%%!global_prefix!FF_V_codec_name%%
 
 set "!global_prefix!Video_Encoding=AVC"
 IF /I "!tmp_MI_V_Format!" == "AVC"            (set "!global_prefix!Video_Encoding=AVC")
@@ -2614,22 +2611,19 @@ IF /I "!tmp_FF_V_codec_name!" == "mpeg2video" (set "!global_prefix!Video_Encodin
 echo +++ >> "!vrdlog!" 2>&1
 echo set tmp_MI_V_Format >> "!vrdlog!" 2>&1
 set tmp_MI_V_Format >> "!vrdlog!" 2>&1
-
 echo +++ >> "!vrdlog!" 2>&1
 echo set tmp_FF_V_codec_name >> "!vrdlog!" 2>&1
 set tmp_FF_V_codec_name >> "!vrdlog!" 2>&1
-
-echo +++ >> "!vrdlog!" 2>&1
-echo set !global_prefix!MI_V_Format >> "!vrdlog!" 2>&1
-set !global_prefix!MI_V_Format >> "!vrdlog!" 2>&1
-
-echo +++ >> "!vrdlog!" 2>&1
-echo set !global_prefix!FF_V_codec_name >> "!vrdlog!" 2>&1
-set !global_prefix!FF_V_codec_name >> "!vrdlog!" 2>&1
-
+REM echo +++ >> "!vrdlog!" 2>&1
+REM echo set !global_prefix!MI_V_Format >> "!vrdlog!" 2>&1
+REM set !global_prefix!MI_V_Format >> "!vrdlog!" 2>&1
+REM echo +++ >> "!vrdlog!" 2>&1
+REM echo set !global_prefix!FF_V_codec_name >> "!vrdlog!" 2>&1
+REM set !global_prefix!FF_V_codec_name >> "!vrdlog!" 2>&1
 echo +++++++++ >> "!vrdlog!" 2>&1
 echo set !global_prefix!Video_Encoding >> "!vrdlog!" 2>&1
 set !global_prefix!Video_Encoding >> "!vrdlog!" 2>&1
+echo +++++++++ >> "!vrdlog!" 2>&1
 
 echo +++++++++ >> "!vrdlog!" 2>&1
 echo set !global_prefix! >> "!vrdlog!" 2>&1
