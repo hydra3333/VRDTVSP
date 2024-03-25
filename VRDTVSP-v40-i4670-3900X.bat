@@ -2422,11 +2422,11 @@ REM DO NOT SET @setlocal ENABLEDELAYEDEXPANSION or this function will fail
 REM DO NOT SET @setlocal enableextensions
 REM ENSURE no trailing spaces in any of the lines in this routine !!
 REM
-set "global_prefix=%~f1"
-set "media_filename=%~2"
+set "media_filename=%~f1"
+set "global_prefix=%~2"
 
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! Start :collecting gather_variables_from_media_file "!global_prefix!" ffprobe and mediainfo variables ... "!media_filename!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! Start collecting :gather_variables_from_media_file "!global_prefix!" ffprobe and mediainfo variables ... "!media_filename!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 
 echo IF /I "!global_prefix!" == "SRC_" goto :is_valid_global_prefix >> "!vrdlog!" 2>&1
@@ -2600,22 +2600,41 @@ ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 REM 
 
 REM call :setvar "new_variable_name" "old_variable_name_containing_value"
-set "!global_prefix!Video_Encoding=AVC"
+echo call :setvar "tmp_MI_V_Format" "!global_prefix!MI_V_Format" >> "!vrdlog!" 2>&1
 call :setvar "tmp_MI_V_Format" "!global_prefix!MI_V_Format"
+echo  :setvar "tmp_FF_V_codec_name" "!global_prefix!FF_V_codec_name" >> "!vrdlog!" 2>&1
 call :setvar "tmp_FF_V_codec_name" "!global_prefix!FF_V_codec_name"
+
+set "!global_prefix!Video_Encoding=AVC"
 IF /I "!tmp_MI_V_Format!" == "AVC"            (set "!global_prefix!Video_Encoding=AVC")
 IF /I "!tmp_FF_V_codec_name!" == "h264"       (set "!global_prefix!Video_Encoding=AVC")
 IF /I "!tmp_MI_V_Format!" == "MPEG_Video"     (set "!global_prefix!Video_Encoding=MPEG2")
 IF /I "!tmp_FF_V_codec_name!" == "mpeg2video" (set "!global_prefix!Video_Encoding=MPEG2")
 
+echo +++ >> "!vrdlog!" 2>&1
+echo set tmp_MI_V_Format >> "!vrdlog!" 2>&1
+set tmp_MI_V_Format >> "!vrdlog!" 2>&1
+
+echo +++ >> "!vrdlog!" 2>&1
+echo set tmp_FF_V_codec_name >> "!vrdlog!" 2>&1
+set tmp_FF_V_codec_name >> "!vrdlog!" 2>&1
+
+echo +++ >> "!vrdlog!" 2>&1
 echo set !global_prefix!MI_V_Format >> "!vrdlog!" 2>&1
 set !global_prefix!MI_V_Format >> "!vrdlog!" 2>&1
+
+echo +++ >> "!vrdlog!" 2>&1
 echo set !global_prefix!FF_V_codec_name >> "!vrdlog!" 2>&1
 set !global_prefix!FF_V_codec_name >> "!vrdlog!" 2>&1
-echo set tmp_ >> "!vrdlog!" 2>&1
-set tmp_ >> "!vrdlog!" 2>&1
+
+echo +++++++++ >> "!vrdlog!" 2>&1
 echo set !global_prefix!Video_Encoding >> "!vrdlog!" 2>&1
 set !global_prefix!Video_Encoding >> "!vrdlog!" 2>&1
+
+echo +++++++++ >> "!vrdlog!" 2>&1
+echo set !global_prefix! >> "!vrdlog!" 2>&1
+set !global_prefix! >> "!vrdlog!" 2>&1
+echo +++++++++ >> "!vrdlog!" 2>&1
 
 pause
 exit
@@ -2688,7 +2707,7 @@ REM "!ffprobeexe64!" -v verbose -select_streams a:0 -show_entries stream -of def
 REM ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! End :collecting gather_variables_from_media_file "!global_prefix!" ffprobe and mediainfo variables ... "!media_filename!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! End collecting :gather_variables_from_media_file "!global_prefix!" ffprobe and mediainfo variables ... "!media_filename!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 goto :eof
 
@@ -2708,8 +2727,8 @@ set !old_variable_name_containing_value!>"!tempfile!" 2>&1
 echo IN :SETVAR TYPE !tempfile! >> "!vrdlog!" 2>&1
 TYPE !tempfile! >> "!vrdlog!" 2>&1
 set /p !new_variable_name!=<"!tempfile!"
+echo IN :SETVAR after set /p >> "!vrdlog!" 2>&1
 DEL /F "!tempfile!" >NUL 2>&1
-pause
 goto :eof
 
 
