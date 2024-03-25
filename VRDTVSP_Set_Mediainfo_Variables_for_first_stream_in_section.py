@@ -111,7 +111,7 @@ if __name__ == "__main__":
     if not section_track_data:
         print(f"Error: Invalid MediaInfo section '{section_name_capitalize}' processing {mediafile}\nPlease specify a valid section (e.g., Video, Audio, General).")
         sys.exit(1)
-    else
+    else:
         print(f"DEBUG: json_data Section {section_name_capitalize}:\n{objPrettyPrint.pformat(section)}")
         print(f"DEBUG: calling process_section for '{section_name_capitalize}'")
         process_section(section_name_capitalize, section_track_data, prefix, set_cmd_list)
