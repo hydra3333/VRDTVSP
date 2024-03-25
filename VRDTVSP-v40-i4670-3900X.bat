@@ -439,6 +439,25 @@ REM %~nx1  -  expands %1 to a file name and extension only
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Start collecting pre-QSF "SRC_" ffprobe and mediainfo variables ... "%~f1" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+
+
+
+
+call :gather_variables_from_media_file "SRC_" "%~f1"
+REM Parameters
+REM		1	the global prefix to use for this gather, one of "SRC_", "QSF_" "TARGET_"
+REM		2	the fully qualified filename of the media file, eg a .TS file etc
+
+pause
+exit
+
+
+
+
+
+
+
+
 REM ---
 echo set "prefix=SRC_FF_V_" >> "!vrdlog!" 2>&1
 set "prefix=SRC_FF_V_" >> "!vrdlog!" 2>&1
@@ -2430,9 +2449,6 @@ ECHO !DATE! !TIME! ?????????????????????????????????????????????????????????????
 exit 1
 :is_valid_global_prefix
 
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! Start collecting ffprobe and mediainfo variables ... "%~f1" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 REM ---
 echo set "prefix=!global_prefix!FF_V_" >> "!vrdlog!" 2>&1
 set "prefix=!global_prefix!FF_V_" >> "!vrdlog!" 2>&1
@@ -2501,16 +2517,16 @@ call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 
-REM ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-REM ECHO !DATE! !TIME! List All !global_prefix!FF_ variables  >> "!vrdlog!" 2>&1
-REM ECHO set !global_prefix!FF_ >> "!vrdlog!" 2>&1
-REM set !global_prefix!FF_ >> "!vrdlog!" 2>&1
-REM ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-REM ECHO !DATE! !TIME! List All !global_prefix!MI_ variables  >> "!vrdlog!" 2>&1
-REM echo set !global_prefix!MI_ >> "!vrdlog!" 2>&1
-REM set !global_prefix!MI_ >> "!vrdlog!" 2>&1
-REM ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-REM 
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! List All !global_prefix!FF_ variables  >> "!vrdlog!" 2>&1
+ECHO set !global_prefix!FF_ >> "!vrdlog!" 2>&1
+set !global_prefix!FF_ >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! List All !global_prefix!MI_ variables  >> "!vrdlog!" 2>&1
+echo set !global_prefix!MI_ >> "!vrdlog!" 2>&1
+set !global_prefix!MI_ >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 echo AVC Interlaced type #1 .TS >> "!vrdlog!" 2>&1
 echo    !global_prefix!MI_V_CodecID=27 >> "!vrdlog!" 2>&1
@@ -2584,25 +2600,42 @@ echo    !global_prefix!MI_V_ScanType_StoreMethod= >> "!vrdlog!" 2>&1
 echo    !global_prefix!FF_V_display_aspect_ratio=16:9 >> "!vrdlog!" 2>&1
 echo    !global_prefix!MI_V_DisplayAspectRatio_String=16:9 >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-
 REM 
+
+REM call :setvar "new_variable_name" "old_variable_name_containing_value"
 set "!global_prefix!Video_Encoding=AVC"
-??? IF /I "!SRC_MI_V_Format!" == "AVC"            (set "!global_prefix!Video_Encoding=AVC")
-??? IF /I "!SRC_FF_V_codec_name!" == "h264"       (set "!global_prefix!Video_Encoding=AVC")
-??? IF /I "!SRC_MI_V_Format!" == "MPEG_Video"     (set "!global_prefix!Video_Encoding=MPEG2")
-??? IF /I "!SRC_FF_V_codec_name!" == "mpeg2video" (set "!global_prefix!Video_Encoding=MPEG2")
+call :setvar "tmp_MI_V_Format" "!global_prefix!MI_V_Format"
+call :setvar "tmp_FF_V_codec_name" "!global_prefix!FF_V_codec_name"
+IF /I "!tmp_MI_V_Format!" == "AVC"            (set "!global_prefix!Video_Encoding=AVC")
+IF /I "!tmp_FF_V_codec_name!" == "h264"       (set "!global_prefix!Video_Encoding=AVC")
+IF /I "!tmp_MI_V_Format!" == "MPEG_Video"     (set "!global_prefix!Video_Encoding=MPEG2")
+IF /I "!tmp_FF_V_codec_name!" == "mpeg2video" (set "!global_prefix!Video_Encoding=MPEG2")
+
+echo set !global_prefix!MI_V_Format >> "!vrdlog!" 2>&1
+set !global_prefix!MI_V_Format >> "!vrdlog!" 2>&1
+echo set !global_prefix!FF_V_codec_name >> "!vrdlog!" 2>&1
+set !global_prefix!FF_V_codec_name >> "!vrdlog!" 2>&1
+echo set tmp_ >> "!vrdlog!" 2>&1
+set tmp_ >> "!vrdlog!" 2>&1
+echo set !global_prefix!Video_Encoding >> "!vrdlog!" 2>&1
+set !global_prefix!Video_Encoding >> "!vrdlog!" 2>&1
+
+pause
+exit
+
+
 REM
 set "!global_prefix!Video_Interlacement=PROGRESSIVE"
-??? IF /I "!SRC_MI_V_ScanType!" == "MBAFF"          (set "!global_prefix!Video_Interlacement=INTERLACED")
-??? IF /I "!SRC_MI_V_ScanType!" == "Interlaced"     (set "!global_prefix!Video_Interlacement=INTERLACED")
-??? IF /I "!SRC_FF_V_field_order!" == "tt"          (set "!global_prefix!Video_Interlacement=INTERLACED")
-??? IF /I "!SRC_MI_V_ScanType!" == ""               (set "!global_prefix!Video_Interlacement=PROGRESSIVE")
-??? IF /I "!SRC_FF_V_field_order!" == "progressive" (set "!global_prefix!Video_Interlacement=PROGRESSIVE")
+??? IF /I "!tmp_MI_V_ScanType!" == "MBAFF"          (set "!global_prefix!Video_Interlacement=INTERLACED")
+??? IF /I "!tmp_MI_V_ScanType!" == "Interlaced"     (set "!global_prefix!Video_Interlacement=INTERLACED")
+??? IF /I "!tmp_FF_V_field_order!" == "tt"          (set "!global_prefix!Video_Interlacement=INTERLACED")
+??? IF /I "!tmp_MI_V_ScanType!" == ""               (set "!global_prefix!Video_Interlacement=PROGRESSIVE")
+??? IF /I "!tmp_FF_V_field_order!" == "progressive" (set "!global_prefix!Video_Interlacement=PROGRESSIVE")
 REM 
 set "!global_prefix!Video_FieldFirst=TFF"
-??? IF /I "!SRC_MI_V_ScanOrder=TFF!" == ""    (set "!global_prefix!Video_FieldFirst=TFF")
-??? IF /I "!SRC_MI_V_ScanOrder=TFF!" == "TFF" (set "!global_prefix!Video_FieldFirst=TFF")
-??? IF /I "!SRC_MI_V_ScanOrder=TFF!" == "BFF" (set "!global_prefix!Video_FieldFirst=BFF")
+??? IF /I "!tmp_MI_V_ScanOrder!" == ""    (set "!global_prefix!Video_FieldFirst=TFF")
+??? IF /I "!tmp_MI_V_ScanOrder!" == "TFF" (set "!global_prefix!Video_FieldFirst=TFF")
+??? IF /I "!tmp_MI_V_ScanOrder!" == "BFF" (set "!global_prefix!Video_FieldFirst=BFF")
 REM 
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ??? ECHO !DATE! !TIME! !global_prefix!Video_Encoding=!Video_Encoding! >> "!vrdlog!" 2>&1
@@ -2661,3 +2694,25 @@ ECHO !DATE! !TIME! =============================================================
 ECHO !DATE! !TIME! End :collecting gather_variables_from_media_file "!global_prefix!" ffprobe and mediainfo variables ... "%~f1" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 goto :eof
+
+:setvar
+REM Set a variable with a value from a  differnt calculated variable name which contains a value
+REM call :setvar "new_variable_name" "old_variable_name_containing_value"
+REM eg call :setvar "tempvar" "!global_prefix!MI_V_Format"
+set "new_variable_name=%~1"
+set "old_variable_name_containing_value=%~2"
+set "tempfile=.\tempfile.txt"
+echo IN :SETVAR new_variable_name=!new_variable_name! >> "!vrdlog!" 2>&1
+echo IN :SETVAR old_variable_name_containing_value=!old_variable_name_containing_value! >> "!vrdlog!" 2>&1
+echo IN :SETVAR tempfile=!tempfile! >> "!vrdlog!" 2>&1
+DEL /F "!tempfile!" >NUL 2>&1
+set "!new_variable_name!="
+set !old_variable_name_containing_value!>"!tempfile!" 2>&1
+echo IN :SETVAR TYPE !tempfile! >> "!vrdlog!" 2>&1
+TYPE !tempfile! >> "!vrdlog!" 2>&1
+set /p !new_variable_name!=<"!tempfile!"
+DEL /F "!tempfile!" >NUL 2>&1
+pause
+goto :eof
+
+
