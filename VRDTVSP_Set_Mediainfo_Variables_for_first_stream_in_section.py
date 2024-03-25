@@ -32,27 +32,6 @@ def process_section(section_name_capitalize, section, prefix, set_cmd_list):
         os.environ[key] = value
         add_variable_to_list(key, value, set_cmd_list)
 
-def process_section(section_name_capitalize, section, prefix, set_cmd_list):
-    # Process elements within the section based on the section name
-    if section.tag.lower() == "general":
-        print(f"Processing General section...")
-        for element in section:
-            if not isinstance(value, str):
-                value = str(value)
-            key = escape_special_chars(prefix + element.tag)
-            value = escape_special_chars(element.text.strip())
-            os.environ[key] = value    # Because os.environ() ONLY set/get environment variables within the life of the PYTHON process
-            #debug_value = os.environ[key]
-            #print(f"DEBUG: after set_env_variable '{key}' = '{debug_value}'")
-            add_variable_to_list(key, value, set_cmd_list)
-    else:    # eg if section.tag.lower() == "video":
-        print(f"Processing first track in section {section_name_capitalize} ...")
-        first_track = section.find("./track")
-        if first_track:
-            process_stream(first_track, prefix, set_cmd_list)
-        else:
-            print(f"No track found in section: {section_name_capitalize} ... tag={section.tag} for {mediafile}")
-
 if __name__ == "__main__":
     # eg clear, set with python3, then show
     # set "prefix=SRC_MI_V_"
@@ -123,15 +102,22 @@ if __name__ == "__main__":
 
     # Find the specified section in the MediaInfo output
     section_name_capitalize = section_name.capitalize()
-    section = json_data.get(section_name_capitalize)
-    if section:
-        process_section(section_name_capitalize, section, prefix, set_cmd_list)
-    else:
+    section_track_data = None
+    # Iterate through the tracks and check if any track has '@type' equal to 'General'
+    for track in json_data['media']['track']:
+        if track.get('@type') == section_name_capitalize:
+            section_track_data = track
+            break
+    if not section_track_data:
         print(f"Error: Invalid MediaInfo section '{section_name_capitalize}' processing {mediafile}\nPlease specify a valid section (e.g., Video, Audio, General).")
         sys.exit(1)
+    else
+        print(f"DEBUG: json_data Section {section_name_capitalize}:\n{objPrettyPrint.pformat(section)}")
+        print(f"DEBUG: calling process_section for '{section_name_capitalize}'")
+        process_section(section_name_capitalize, section_track_data, prefix, set_cmd_list)
     set_cmd_list.append(f'goto :eof')
-    #print(f"DEBUG: set_cmd_list=\n{objPrettyPrint.pformat(set_cmd_list)}")
 
+    #print(f"DEBUG: set_cmd_list=\n{objPrettyPrint.pformat(set_cmd_list)}")
     # Open the cmd file for writing in overwrite mode
     output_cmd_file = args.output_cmd_file
     if os.path.exists(output_cmd_file):
