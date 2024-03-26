@@ -2,8 +2,8 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 	' This script should ALWAYS be reconciled with that created by function vrdtvsp_create_custom_QSF_vbscript_vrd_5_AND_6
 	' Parameters: 
 	'				riqowv_vrd_version				is the version of vrd to be used
-	'				riqowv_FILE_AbsolutePathName	is path/name of output QSF'd file - a fully qualified path name
-	'				riqowv_QSF_AbsolutePathName		is input video file path - a fully qualified path name, eg a .TS file
+	'				riqowv_FILE_AbsolutePathName	is input video file path - a fully qualified path name, eg a .TS file
+	'				riqowv_QSF_AbsolutePathName		is path/name of output QSF'd file - a fully qualified path name
 	'				riqowv_vrd6_profile_name		is name of a valid  QSF Output Profile created in VRD v6
 	' Returns:
 	'				a dictionary object populated with key/item pairs of data about the resulting QSF file (see xml from VideoReDo.OutputGetCompletedInfo() below ; xml attributes are also added as well as xml items)
@@ -87,7 +87,7 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 	quarter_hour_in_ms = ROUND(half_hour_in_ms / 2)
 	ten_minutes_in_ms = ROUND(two_hours_in_ms / 6)
 	dot_count_linebreak_interval = CLng(CLng(120) * CLng(1000) / CLng(wait_ms))		' for 2000 ms, this is 120 seconds worth of intervals
-	giveup_interval_count = CLng( CDbl(3) * CDbl(CDbl(CDbl(one_hour_in_ms) / CDbl(wait_ms) )))	' 3 hours worth of intervals, so 3 hours for QSF to finish and not fail with "timeout"
+	giveup_interval_count = CLng( CDbl(4) * CDbl(CDbl(CDbl(one_hour_in_ms) / CDbl(wait_ms) )))	' 4 hours worth of intervals, so 4 hours for QSF to finish and not fail with "timeout"
 	'
 	riqowv_FILE_AbsolutePathName = fso.GetAbsolutePathName(riqowv_FILE_AbsolutePathName)		' was passed byVal
 	riqowv_QSF_AbsolutePathName = fso.GetAbsolutePathName(riqowv_QSF_AbsolutePathName)			' was passed byVal
@@ -308,6 +308,10 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 	on error goto 0
 	Set VideoReDo = Nothing
  	Set VideoReDoSilent = Nothing
+
+
+
+
 	'
 	' Get some of the data obtained during the QSF process and populate a Dict object to return
 	'

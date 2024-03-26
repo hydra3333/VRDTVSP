@@ -1,3 +1,16 @@
+Option Explicit
+' cscript //nologo "z_vrdtvsp_create_custom_QSF_vbscript_vrd_5_AND_6.vbs"
+
+Dim fso, wso, objFolder
+Set wso = CreateObject("Wscript.Shell")
+Set fso = CreateObject("Scripting.FileSystemObject")
+Set objFolder = Nothing
+dim x, y
+
+x = vrdtvsp_create_custom_QSF_vbscript_vrd_5_AND_6( 5 )
+
+y = vrdtvsp_create_custom_QSF_vbscript_vrd_5_AND_6( 6 )
+
 Function vrdtvsp_create_custom_QSF_vbscript_vrd_5_AND_6( byVAL ccqsfs_vrd_version )
 	' Create a custom QSF Script for use with VRD v6
 	' Return the Absolute filename of the script
@@ -6,7 +19,7 @@ Function vrdtvsp_create_custom_QSF_vbscript_vrd_5_AND_6( byVAL ccqsfs_vrd_versio
 	Dim ccqsfs_status
 	Dim ccqsfs(), i, c
 	'
-	ccqsfs_Absolute_script_name = vrdtvsp_gimme_a_temporary_absolute_filename("vrdtvsp_custom_vrd" & ccqsfs_vrd_version & "_QSF_script-" & vrdtvsp_run_datetime) & ".vbs"
+	ccqsfs_Absolute_script_name = ".\z_created_qsf_script_for_v" & ccqsfs_vrd_version & ".vbs"
 	c = -1 ' base 0
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "Option Explicit"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "' File: """ & ccqsfs_Absolute_script_name & """"
@@ -355,7 +368,6 @@ Function vrdtvsp_create_custom_QSF_vbscript_vrd_5_AND_6( byVAL ccqsfs_vrd_versio
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "	gimme_xml_named_attribute = item_nNode.getAttribute(xml_item_attribute_name)"
 	c=c+1 : ReDim Preserve ccqsfs(c) : ccqsfs(c) = "End Function"
 	' Create the new custom QSF script in the nominated file from the array above
-	ccqsfs_status = vrdtvsp_delete_a_file(ccqsfs_Absolute_script_name, True) 	' delete the file first
 	Set ccqsfs_object = fso.CreateTextFile(ccqsfs_Absolute_script_name, True, False) ' *** vapoursynth fails with unicode input file *** [ filename, Overwrite[, Unicode]])
 	If ccqsfs_object is Nothing  Then ' Something went wrong with creating the file
 		If vrdtvsp_DEBUG Then WScript.StdOut.WriteLine("VRDTVSP DEBUG: VRDTVSP ERROR vrdtvsp_create_custom_QSF_vbscript_vrd_5_AND_6 - Error - Nothing object returned from fso.CreateTextFile for file """ & ccqsfs_Absolute_script_name & """... Aborting ...")
@@ -371,4 +383,3 @@ Function vrdtvsp_create_custom_QSF_vbscript_vrd_5_AND_6( byVAL ccqsfs_vrd_versio
 	Set ccqsfs_object = Nothing
 	vrdtvsp_create_custom_QSF_vbscript_vrd_5_AND_6 = ccqsfs_Absolute_script_name
 End Function
-
