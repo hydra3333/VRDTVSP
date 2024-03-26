@@ -2085,8 +2085,9 @@ echo +++++++++ >> "!vrdlog!" 2>&1
 
 REM display all calculated variables
 echo +++++++++ >> "!vrdlog!" 2>&1
-echo set !current_prefix!calculated >> "!vrdlog!" 2>&1
-set !current_prefix!calculated >> "!vrdlog!" 2>&1
+echo display all calculated variables >> "!vrdlog!" 2>&1
+echo set !current_prefix!calc >> "!vrdlog!" 2>&1
+set !current_prefix!calc >> "!vrdlog!" 2>&1
 echo +++++++++ >> "!vrdlog!" 2>&1
 
 REM display calculated variables individually
