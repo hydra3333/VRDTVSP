@@ -366,7 +366,7 @@ ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! --- START Modify DateCreated and DateModified Timestamps on "!destination_mp4_Folder! >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! --- START Modify DateCreated and DateModified Timestamps on "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
 
 echo DEBUG: BEFORE:  >> "!vrdlog!" 2>&1
 echo dir "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
