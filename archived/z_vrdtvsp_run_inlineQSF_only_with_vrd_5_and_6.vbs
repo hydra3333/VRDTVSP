@@ -1,10 +1,53 @@
-Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, byVAL riqowv_FILE_AbsolutePathName, byVAL riqowv_QSF_AbsolutePathName, byVAL riqowv_vrd6_profile_name)
+Option Explicit
+' cscript //nologo ".\z_vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6.vbs"
+
+dim vrd_version_for_qsf
+dim xmlDict, CF_FILE_AbsolutePathName, CF_QSF_AbsolutePathName, vrdtvsp_profile_name_for_qsf
+Dim fso, wso, objFolder
+dim xmlDict_key
+
+vrd_version_for_qsf = 6
+CF_FILE_AbsolutePathName = "G:\TEST-vrdtvsp-v40\000-TO-BE-PROCESSED\Motor_Sport-Sport-Motorsport-Formula_One_Grand_Prix-2024-Australia-Day_3.2024-03-24.ts"
+CF_QSF_AbsolutePathName = "G:\TEST-vrdtvsp-v40\000-TO-BE-PROCESSED\Motor_Sport-Sport-Motorsport-Formula_One_Grand_Prix-2024-Australia-Day_3.2024-03-24.qsf.mp4"
+vrdtvsp_profile_name_for_qsf = "VRDTVS-for-QSF-H264_VRD6" 
+
+Set wso = CreateObject("Wscript.Shell")
+Set fso = CreateObject("Scripting.FileSystemObject")
+Set objFolder = Nothing
+
+	Set xmlDict = vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (vrd_version_for_qsf, CF_FILE_AbsolutePathName, CF_QSF_AbsolutePathName, vrdtvsp_profile_name_for_qsf)
+	If xmlDict is Nothing Then
+			WScript.StdOut.WriteLine("VRDTVSP ERROR vrdtvsp_Convert_File - Error - Failed to QSF after re-trying with v5 QSF """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
+			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? FAILED CONVERSION")
+			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? FAILED CONVERSION")
+			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? FAILED CONVERSION")
+			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? FAILED CONVERSION")
+			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? FAILED CONVERSION")
+			WScript.StdOut.WriteLine(" ")
+			WScript.StdOut.WriteLine("======================================================================================================================================================")
+			WScript.StdOut.WriteLine(" ")
+			vrdtvsp_Convert_File = -1 ' just exit and hope the source file is moved to "failed" folder and the process continues with other files
+			WScript.Quit 17
+	End If
+	For Each xmlDict_key In xmlDict
+		wscript.echo "vrdtvsp_Convert_File: VRD QSF returned XML data: xmlDict_key=""" & xmlDict_key & """ xmlDict_value= """ & xmlDict.Item(xmlDict_key) & """"
+	Next
+
+
+Function vrdtvsp_current_datetime_string()
+ Dim dt
+    dt = Now
+    vrdtvsp_current_datetime_string = FormatDateTime(dt, vbLongDate) & " " & FormatDateTime(dt, vbLongTime)
+End Function
+
+
+Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL vrd_version_number, byVAL input_file, byVAL output_QSF_file, byVAL QSF_profile_name)
 	' This script should ALWAYS be reconciled with that created by function vrdtvsp_create_custom_QSF_vbscript_vrd_5_AND_6
 	' Parameters: 
-	'				riqowv_vrd_version				is the version of vrd to be used
-	'				riqowv_FILE_AbsolutePathName	is input video file path - a fully qualified path name, eg a .TS file
-	'				riqowv_QSF_AbsolutePathName		is path/name of output QSF'd file - a fully qualified path name
-	'				riqowv_vrd6_profile_name		is name of a valid  QSF Output Profile created in VRD v6
+	'				vrd_version_number				is the version of vrd to be used
+	'				input_file						is input video file path - a fully qualified path name, eg a .TS file
+	'				output_QSF_file					is path/name of output QSF'd file - a fully qualified path name
+	'				QSF_profile_name				is name of a valid  QSF Output Profile created in VRD v6
 	' Returns:
 	'				a dictionary object populated with key/item pairs of data about the resulting QSF file (see xml from VideoReDo.OutputGetCompletedInfo() below ; xml attributes are also added as well as xml items)
 	'
@@ -89,19 +132,19 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 	dot_count_linebreak_interval = CLng(CLng(120) * CLng(1000) / CLng(wait_ms))		' for 2000 ms, this is 120 seconds worth of intervals
 	giveup_interval_count = CLng( CDbl(4) * CDbl(CDbl(CDbl(one_hour_in_ms) / CDbl(wait_ms) )))	' 4 hours worth of intervals, so 4 hours for QSF to finish and not fail with "timeout"
 	'
-	riqowv_FILE_AbsolutePathName = fso.GetAbsolutePathName(riqowv_FILE_AbsolutePathName)		' was passed byVal
-	riqowv_QSF_AbsolutePathName = fso.GetAbsolutePathName(riqowv_QSF_AbsolutePathName)			' was passed byVal
+	input_file = fso.GetAbsolutePathName(input_file)		' was passed byVal
+	output_QSF_file = fso.GetAbsolutePathName(output_QSF_file)			' was passed byVal
 	'
 	WScript.StdOut.WriteLine("======================================================================================================================================================")
 	WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
-	WScript.StdOut.WriteLine("START vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 - QSF VRD VERSION SPECIFIED TO BE USED IS: """ & riqowv_vrd_version & """")
+	WScript.StdOut.WriteLine("START vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 - QSF VRD VERSION SPECIFIED TO BE USED IS: """ & vrd_version_number & """")
 	'
-	If riqowv_vrd_version = 5 Then
+	If vrd_version_number = 5 Then
 		Set VideoReDoSilent = WScript.CreateObject("VideoReDo5.VideoReDoSilent")
-	ElseIf riqowv_vrd_version = 6 Then
+	ElseIf vrd_version_number = 6 Then
 		Set VideoReDoSilent = WScript.CreateObject("VideoReDo6.VideoReDoSilent")
 	Else
-		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 - Error - VRD version must be 5 or 6, not """ & riqowv_vrd_version & """... Aborting ...")
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 - Error - VRD version must be 5 or 6, not """ & vrd_version_number & """... Aborting ...")
 		Wscript.Echo "Error 17 = cannot perform the requested operation"
 		On Error goto 0
 		WScript.Quit 17 ' Error 17 = cannot perform the requested operation
@@ -115,9 +158,9 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 	profile_count = VideoReDo.ProfilesGetCount()
 	For i = 0 to profile_count-1
 		a_profile_name = VideoReDo.ProfilesGetProfileName( i )
-		If riqowv_vrd_version = 5 Then
+		If vrd_version_number = 5 Then
 			is_QSF = True
-		ElseIf riqowv_vrd_version = 6 Then
+		ElseIf vrd_version_number = 6 Then
 			is_QSF = NOT VideoReDo.ProfilesGetProfileIsAdScan( i )
 		End If
 		If ( is_QSF ) Then
@@ -137,13 +180,13 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 	End If
 	matching_QSF_profile = False
 	For i = 0 to (QSF_profile_count-1)
-		If riqowv_vrd6_profile_name = QSF_Profile_Names(i) Then
+		If QSF_profile_name = QSF_Profile_Names(i) Then
 			matching_QSF_profile = True
 			Exit For
 		End If
 	Next
 	If NOT matching_QSF_profile Then
-		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: ERROR: no VRD6 QSF profile was located matching your specified profile: """ & riqowv_vrd6_profile_name & """")
+		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: ERROR: no VRD6 QSF profile was located matching your specified profile: """ & QSF_profile_name & """")
 		For i = 0 to profile_count-1
 			a_profile_name = VideoReDo.ProfilesGetProfileName( i )
 			is_QSF = NOT VideoReDo.ProfilesGetProfileIsAdScan( i )
@@ -165,12 +208,12 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 	' Open the Input file and QSF SaveAs to the output file
 	'
 	Err.Clear
-	Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: Commencing WITH SPECIFIED VRD VERSION : " & riqowv_vrd_version & " at: " & vrdtvsp_current_datetime_string())
+	Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: Commencing WITH SPECIFIED VRD VERSION : " & vrd_version_number & " at: " & vrdtvsp_current_datetime_string())
 	on error resume next
-	openflag = VideoReDo.FileOpen(riqowv_FILE_AbsolutePathName, True) ' True means QSF mode
+	openflag = VideoReDo.FileOpen(input_file, True) ' True means QSF mode
 	if Err.Number <> 0 Then
 		Wscript.StdOut.WriteLine("")
-		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: VideoReDo.FileOpen File " & riqowv_QSF_AbsolutePathName & " : Error #" & CStr(Err.Number) & " " & Err.Description)
+		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: VideoReDo.FileOpen File " & output_QSF_file & " : Error #" & CStr(Err.Number) & " " & Err.Description)
 		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: VideoReDo.FileOpen Error #" & CStr(Err.Number) & " " & Err.Description & " at: " & vrdtvsp_current_datetime_string())
 		set vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 = Nothing
 		Err.Clear
@@ -178,7 +221,7 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 	End If
 	on error goto 0
 	If openflag = False Then
-		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: ERROR: VideoReDo failed to open file: """ & riqowv_FILE_AbsolutePathName & """")
+		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: ERROR: VideoReDo failed to open file: """ & input_file & """")
 		'on error goto 0
 		on error resume Next
 		VideoReDo.ProgramExit()
@@ -191,9 +234,9 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 		'Wscript.Quit 5
 	End If
 	on error resume next
-	outputOK = VideoReDo.FileSaveAs(riqowv_QSF_AbsolutePathName, riqowv_vrd6_profile_name) ' save the QSF file using the specified QSF profile
+	outputOK = VideoReDo.FileSaveAs(output_QSF_file, QSF_profile_name) ' save the QSF file using the specified QSF profile
 	If NOT outputOK = True Then
-		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: ERROR: VideoReDo failed to create QSF file: """ & riqowv_QSF_AbsolutePathName & """ using profile:""" & riqowv_vrd6_profile_name & """")
+		Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: ERROR: VideoReDo failed to create QSF file: """ & output_QSF_file & """ using profile:""" & QSF_profile_name & """")
 		on error resume Next
 		'on error goto 0
 		closeflag = VideoReDo.FileClose()
@@ -243,7 +286,7 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 		OutputGetState = VideoRedo.OutputGetState()
 		if Err.Number <> 0 Then
 			Wscript.StdOut.WriteLine("")
-			Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: File " & riqowv_QSF_AbsolutePathName & " : Error #" & CStr(Err.Number) & " " & Err.Description)
+			Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: File " & output_QSF_file & " : Error #" & CStr(Err.Number) & " " & Err.Description)
 			Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: Error #" & CStr(Err.Number) & " " & Err.Description & " at: " & vrdtvsp_current_datetime_string())
 			set vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 = Nothing
 			Err.Clear
@@ -312,6 +355,7 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 
 
 
+
 	'
 	' Get some of the data obtained during the QSF process and populate a Dict object to return
 	'
@@ -374,9 +418,9 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 		exit function
 		'Wscript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: Exiting with errorlevel code 17")
 		'WScript.Quit 17 ' Error 17 = cannot perform the requested operation
-	ElseIf NOT ( Ucase(xmlDict.Item("outputFile")) =  Ucase(riqowv_QSF_AbsolutePathName) ) Then 
+	ElseIf NOT ( Ucase(xmlDict.Item("outputFile")) =  Ucase(output_QSF_file) ) Then 
 		Set xmlDoc = Nothing
-		WScript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: ABORTING: outputFile from VideoReDo.OutputGetCompletedInfo() not equal QSFfilename: xml_string_completedfile=" & xml_string_completedfile & " riqowv_QSF_AbsolutePathName=" & riqowv_QSF_AbsolutePathName)
+		WScript.StdOut.WriteLine("vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6: ABORTING: outputFile from VideoReDo.OutputGetCompletedInfo() not equal QSFfilename: xml_string_completedfile=" & xml_string_completedfile & " output_QSF_file=" & output_QSF_file)
 		Wscript.Echo "Error 17 = cannot perform the requested operation"
 		On Error goto 0
 		Set xmlDoc = Nothing
@@ -389,7 +433,7 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL riqowv_vrd_version, 
 	End If
 	on error goto 0
 	Set xmlDoc = Nothing
-	WScript.StdOut.WriteLine("END vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 - QSF VRD VERSION SPECIFIED TO BE USED WAS: """ & riqowv_vrd_version & """")
+	WScript.StdOut.WriteLine("END vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 - QSF VRD VERSION SPECIFIED TO BE USED WAS: """ & vrd_version_number & """")
 	WScript.StdOut.WriteLine("" & vrdtvsp_current_datetime_string())
 	WScript.StdOut.WriteLine("======================================================================================================================================================")
 	Set vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 = xmlDict
