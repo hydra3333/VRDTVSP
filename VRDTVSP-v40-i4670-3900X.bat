@@ -1912,9 +1912,9 @@ call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 REM list initial variables we created for "!current_prefix!" and "!media_filename!"
-ECHO !DATE! !TIME! List initial "!current_prefix!" variables for "!media_filename!" >> "!vrdlog!" 2>&1
-ECHO set !current_prefix! >> "!vrdlog!" 2>&1
-set !current_prefix! >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! List initial "!current_prefix!" variables for "!media_filename!" >> "!vrdlog!" 2>&1
+REM ECHO set !current_prefix! >> "!vrdlog!" 2>&1
+REM set !current_prefix! >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Start of NOTES: >> "!vrdlog!" 2>&1
@@ -2017,11 +2017,12 @@ set !current_prefix!FF_V_display_aspect_ratio >> "!vrdlog!" 2>&1
 echo +++++++++ >> "!vrdlog!" 2>&1
 
 REM calculate MI_A_Audio_Delay from MI_A_Video_Delay
+REM MI_A_Video_Delay is reported by mediainfo as decimal seconds, not milliseconds, so up-convert it
 call set tmp_MI_A_Video_Delay=%%!current_prefix!MI_A_Video_Delay%%
-IF /I "!tmp_MI_A_Video_Delay!" == "" (
-	set "tmp_MI_A_Video_Delay=0"
-)
-set /a tmp_MI_A_Audio_Delay=0 - tmp_MI_A_Video_Delay
+IF /I "!tmp_MI_A_Video_Delay!" == "" (set "tmp_MI_A_Video_Delay=0")
+CALL :calc_single_number_result "Int(1000 * !tmp_MI_A_Video_Delay!)" "tmp_MI_A_Video_Delay"
+set /a tmp_MI_A_Audio_Delay=0 - !tmp_MI_A_Video_Delay!
+set "!current_prefix!MI_A_Video_Delay=!tmp_MI_A_Video_Delay!"
 set "!current_prefix!MI_A_Audio_Delay=!tmp_MI_A_Audio_Delay!"
 echo +++++++++ >> "!vrdlog!" 2>&1
 echo set !current_prefix!MI_A_Video_Delay >> "!vrdlog!" 2>&1
@@ -2098,56 +2099,18 @@ call set tmp_calc_Video_FieldFirst=%%!current_prefix!calc_Video_FieldFirst%%
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! !current_prefix!calc_Video_Encoding=!tmp_calc_Video_Encoding! >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! !current_prefix!calc_Video_Interlacement=!tmp_calc_Video_Interlacement! >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! !current_prefix!calc_Video_Interlacement=!tmp_calc_Video_Interlacement! >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! !current_prefix!calc_Video_FieldFirst=!tmp_calc_Video_FieldFirst! >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 echo +++++++++ >> "!vrdlog!" 2>&1
 
 
-pause
-exit
-
-goto :eof
-
-
-YET TO BE FIXED
-
-
-
-
-
-REM
-REM Display the variables we collected for the Source Video
-REM
-
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-REM list all variables we created for "!current_prefix!" and "!media_filename!"
-ECHO !DATE! !TIME! List all "!current_prefix!" variables for "!media_filename!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! List all  "!current_prefix!" variables for "!media_filename!" >> "!vrdlog!" 2>&1
 ECHO set !current_prefix! >> "!vrdlog!" 2>&1
 set !current_prefix! >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! List All !current_prefix! "General" variables  >> "!vrdlog!" 2>&1
-echo set !current_prefix!MI_G_ >> "!vrdlog!" 2>&1
-set !current_prefix!MI_G_ >> "!vrdlog!" 2>&1
-echo set !current_prefix!FF_G_ >> "!vrdlog!" 2>&1
-set !current_prefix!FF_G_ >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! List All !current_prefix! "Video" variables  >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-echo set Video_ >> "!vrdlog!" 2>&1
-set Video_ >> "!vrdlog!" 2>&1
-echo set !current_prefix!MI_V_ >> "!vrdlog!" 2>&1
-set !current_prefix!MI_V_ >> "!vrdlog!" 2>&1
-echo set !current_prefix!FF_V_ >> "!vrdlog!" 2>&1
-set !current_prefix!FF_V_ >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! List All !current_prefix! "Audio" variables  >> "!vrdlog!" 2>&1
-echo set !current_prefix!MI_A_ >> "!vrdlog!" 2>&1
-set !current_prefix!MI_A_ >> "!vrdlog!" 2>&1
-echo set !current_prefix!FF_A_ >> "!vrdlog!" 2>&1
-set !current_prefix!FF_A_ >> "!vrdlog!" 2>&1
 
 REM ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 REM echo "!mediainfoexe64!" "!media_filename!" --full >> "%vrdlog%" 2>&1
