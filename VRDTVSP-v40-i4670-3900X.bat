@@ -436,16 +436,81 @@ REM The modifiers can be combined to get compound results:
 REM %~dp1  -  expands %1 to a drive letter and path only 
 REM %~nx1  -  expands %1 to a file name and extension only 
 
+REM :gather_variables_from_media_file P2 =	the global prefix to use for this gather, one of "SRC_", "QSF_" "TARGET_"
 call :gather_variables_from_media_file "%~f1" "SRC_" 
-REM Parameters
-REM		1	the fully qualified filename of the media file, eg a .TS file etc
-REM		2	the global prefix to use for this gather, one of "SRC_", "QSF_" "TARGET_"
+
+REM "SRC_calc_Video_Encoding=AVC"
+REM "SRC_calc_Video_Encoding=MPEG2"
+REM 
+REM "SRC_calc_Video_Interlacement=PROGRESSIVE"
+REM "SRC_calc_Video_Interlacement=INTERLACED"
+REM 
+REM "SRC_calc_Video_FieldFirst=TFF"
+REM "SRC_calc_Video_FieldFirst=BFF"
+REM 
+REM "_vrd_version_primary=5"
+REM "_vrd_version_fallback=6"
+REM 
+REM "extension_mpeg2=mpg"
+REM "extension_h264=mp4"
+REM "extension_h265=mp4"
+REM 
+REM Providing subroutine :set_vrd_qsf_paths has been called, then these have been preset:
+REM    profile_name_for_qsf_mpeg2
+REM    profile_name_for_qsf_h264
+REM    profile_name_for_qsf_h265
+REM    extension_mpeg2=mpg
+REM    extension_h264=mp4
+REM    extension_h265=mp4
+REM 
+IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
+	set "qsf_profile=!profile_name_for_qsf_h264!"
+	set "qsf_extension=!extension_h264!"
+) ELSE IF /I "!SRC_calc_Video_Encoding!" == "MPEG2" (
+	set "qsf_profile=!profile_name_for_qsf_mpeg2!"
+	set "qsf_extension=!extension_mpeg2!"
+) ELSE (
+	echo !DATE! !TIME! "ERROR: mediainfo format '!SRC_calc_Video_Encoding!' neither "AVC" nor "MPEG2" for ???filename??? " >> "!vrdlog!" 2>&1
+	echo !DATE! !TIME! "Hard Aborting ..." >> "!vrdlog!" 2>&1
+	REM ??? MOVE FILE TO FOLDER AND SOFT ABORT ?
+	!xPAUSE!
+	EXIT
+)
+REM
+IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
+	echo !DATE! !TIME! >> "!vrdlog!" 2>&1
+) ELSE IF /I "!SRC_calc_Video_Interlacement!" == "INTERLACED" (
+	echo !DATE! !TIME! >> "!vrdlog!" 2>&1
+) ELSE (
+	echo !DATE! !TIME! "ERROR: mediainfo/ffmpeg data '!SRC_calc_Video_Interlacement!' yields neither "PROGRESSIVE" nor "INTERLACED" for ???filename??? " >> "!vrdlog!" 2>&1
+	echo !DATE! !TIME! "Hard Aborting ..." >> "!vrdlog!" 2>&1
+	REM ??? MOVE FILE TO FOLDER AND SOFT ABORT ?
+	!xPAUSE!
+	EXIT
+)
+REM
+IF /I "!SRC_calc_Video_FieldFirst!" == "TFF" (
+) ELSE IF /I "!SRC_calc_Video_FieldFirst!" == "BFF" (
+	echo !DATE! !TIME! >> "!vrdlog!" 2>&1
+) ELSE (
+	echo !DATE! !TIME! "ERROR: mediainfo/ffmpeg processing '!SRC_calc_Video_FieldFirst!' yields neither "TFF" nor "BFF" field-first (default TFF) for ???filename??? " >> "!vrdlog!" 2>&1
+	echo !DATE! !TIME! "Hard Aborting ..." >> "!vrdlog!" 2>&1
+	REM ??? MOVE FILE TO FOLDER AND SOFT ABORT ?
+	!xPAUSE!
+	EXIT
+)
+REM
+echo "SRC_calc_Video_Encoding=!SRC_calc_Video_Encoding!" >> "!vrdlog!" 2>&1
+echo "SRC_calc_Video_Interlacement=!SRC_calc_Video_Interlacement!" >> "!vrdlog!" 2>&1
+echo "SRC_calc_Video_FieldFirst=!SRC_calc_Video_FieldFirst!" >> "!vrdlog!" 2>&1
+echo "_vrd_version_primary=!_vrd_version_primary!" >> "!vrdlog!" 2>&1
+echo "_vrd_version_fallback=!_vrd_version_fallback!" >> "!vrdlog!" 2>&1
+echo "qsf_profile=!qsf_profile!" >> "!vrdlog!" 2>&1
+echo "qsf_extension=!qsf_extension!" >> "!vrdlog!" 2>&1
+
 
 pause
 exit
-
-
-goto :eof
 
 
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
@@ -1523,12 +1588,16 @@ IF /I "%~1" == "6" (
    set "profile_name_for_qsf_mpeg2=!profile_name_for_qsf_mpeg2_vrd6!"
    set "profile_name_for_qsf_h264=!profile_name_for_qsf_h264_vrd6!"
    set "profile_name_for_qsf_h265=!profile_name_for_qsf_h265_vrd6!"
+   set "_vrd_version_primary=6"
+   set "_vrd_version_fallback=5"
 ) ELSE IF /I "!%~1!" == "5" (
    set "Path_to_vrd=!Path_to_vrd5!"
    set "Path_to_vrd_vp_vbs=!Path_to_vp_vbs_vrd5!"
    set "profile_name_for_qsf_mpeg2=!profile_name_for_qsf_mpeg2_vrd5!"
    set "profile_name_for_qsf_h264=!profile_name_for_qsf_h264_vrd5!"
    set "profile_name_for_qsf_h265=!profile_name_for_qsf_h265_vrd5!"
+   set "_vrd_version_primary=5"
+   set "_vrd_version_fallback=6"
 ) ELSE (
    ECHO "VRD Version must be set to 5 or 6 not '%~1' (_vrd_version_primary=!_vrd_version_primary! _vrd_version_fallback=!_vrd_version_fallback!)... EXITING" >> "!vrdlog!" 2>&1
    !xPAUSE!
