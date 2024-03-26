@@ -2041,7 +2041,6 @@ REM MI_A_Video_Delay is reported by mediainfo as decimal seconds, not millisecon
 call set tmp_MI_A_Video_Delay=%%!current_prefix!MI_A_Video_Delay%%
 IF /I "!tmp_MI_A_Video_Delay!" == "" (set "tmp_MI_A_Video_Delay=0")
 set "py_eval_string=int(1000.0 * !tmp_MI_A_Video_Delay!)"
-echo CALL :calc_single_number_result_py "!py_eval_string!" "tmp_MI_A_Video_Delay"  >> "!vrdlog!" 2>&1
 CALL :calc_single_number_result_py "!py_eval_string!" "tmp_MI_A_Video_Delay"
 set /a tmp_MI_A_Audio_Delay=0 - !tmp_MI_A_Video_Delay!
 set "!current_prefix!MI_A_Video_Delay=!tmp_MI_A_Video_Delay!"
