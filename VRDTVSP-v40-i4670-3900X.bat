@@ -1763,6 +1763,49 @@ REM echo "eval_formula_vbs_filename=!eval_formula_vbs_filename!"
 REM echo "eval_variable_name=!eval_variable_name! eval_formula=!eval_formula! eval_single_number_result=!eval_single_number_result!"
 goto :eof
 
+:calc_single_number_result_py
+REM Use Python to evaluate an incoming formula string which has no embedded special characters 
+REM and yield a result which has no embedded special characters
+REM Example usage: CALL :calc_single_number_result "1+2+3+4+5+6" "return_variable_name"
+set "eval_formula=%~1"
+set "eval_variable_name=%~2"
+set "Datey=%DATE: =0%"
+set "Timey=%time: =0%"
+set "eval_datetime=!Datey:~10,4!-!Datey:~7,2!-!Datey:~4,2!.!Timey:~0,2!.!Timey:~3,2!.!Timey:~6,2!.!Timey:~9,2!"
+set "eval_datetime=!eval_datetime: =0!"
+set "eval_result_filename=.\VTDTVS_eval_formula-!eval_datetime!.txt"
+
+echo =============================================================================== >> "!vrdlog!" 2>&1
+echo =============================================================================== >> "!vrdlog!" 2>&1
+echo =============================================================================== >> "!vrdlog!" 2>&1
+echo =============================================================================== >> "!vrdlog!" 2>&1
+REM Evaluate the formula using Python
+
+echo "!py_exe!" -c "print(str((eval('!eval_formula!'))+"\n")" >> "!vrdlog!" 2>&1
+"!py_exe!" -c "print(eval('!eval_formula!'))" >> "!vrdlog!" 2>&1
+
+"!py_exe!" -c "print(eval('!eval_formula!'))" >"!eval_result_filename!" 2>&1
+
+echo type "!eval_result_filename!" >> "!vrdlog!" 2>&1
+type "!eval_result_filename!" >> "!vrdlog!" 2>&1
+
+set /p eval_single_number_result2 <"!eval_result_filename!"
+
+echo set eval_single_number_result2 >> "!vrdlog!" 2>&1
+set eval_single_number_result2 >> "!vrdlog!" 2>&1
+
+echo eval_single_number_result2="!eval_single_number_result2! using exclamation" >> "!vrdlog!" 2>&1
+echo eval_single_number_result2="%eval_single_number_result2% using percent" >> "!vrdlog!" 2>&1
+
+REM set /p !eval_variable_name! <"!eval_result_filename!"
+
+echo =============================================================================== >> "!vrdlog!" 2>&1
+echo =============================================================================== >> "!vrdlog!" 2>&1
+echo =============================================================================== >> "!vrdlog!" 2>&1
+echo =============================================================================== >> "!vrdlog!" 2>&1
+DEL /F "!eval_result_filename!" >NUL 2>&1
+goto :eof
+
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2020,7 +2063,15 @@ REM calculate MI_A_Audio_Delay from MI_A_Video_Delay
 REM MI_A_Video_Delay is reported by mediainfo as decimal seconds, not milliseconds, so up-convert it
 call set tmp_MI_A_Video_Delay=%%!current_prefix!MI_A_Video_Delay%%
 IF /I "!tmp_MI_A_Video_Delay!" == "" (set "tmp_MI_A_Video_Delay=0")
-CALL :calc_single_number_result "Int(1000 * !tmp_MI_A_Video_Delay!)" "tmp_MI_A_Video_Delay"
+
+set "py_eval_string=int(1000.0 * !tmp_MI_A_Video_Delay!)"
+
+echo CALL :calc_single_number_result_py "!py_eval_string!" "tmp_MI_A_Video_Delay2"  >> "!vrdlog!" 2>&1
+
+CALL :calc_single_number_result_py "!py_eval_string!" "tmp_MI_A_Video_Delay2"
+
+echo tmp_MI_A_Video_Delay2="!tmp_MI_A_Video_Delay!2" >> "!vrdlog!" 2>&1
+
 set /a tmp_MI_A_Audio_Delay=0 - !tmp_MI_A_Video_Delay!
 set "!current_prefix!MI_A_Video_Delay=!tmp_MI_A_Video_Delay!"
 set "!current_prefix!MI_A_Audio_Delay=!tmp_MI_A_Audio_Delay!"
