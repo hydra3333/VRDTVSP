@@ -1542,180 +1542,6 @@ REM ----------------------------------------------------------------------------
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
 REM
-:get_mediainfo_parameter
-REM NOTES:
-REM %~1   -  expands %1 removing any surrounding quotes (") 
-REM %~f1  -  expands %1 to a fully qualified path name 
-REM %~d1  -  expands %1 to a drive letter only 
-REM %~p1  -  expands %1 to a path only 
-REM %~n1  -  expands %1 to a file name only 
-REM %~x1  -  expands %1 to a file extension only 
-REM %~s1  -  expanded path contains short names only 
-REM %~a1  -  expands %1 to file attributes 
-REM %~t1  -  expands %1 to date/time of file 
-REM %~z1  -  expands %1 to size of file 
-REM The modifiers can be combined to get compound results:
-REM %~dp1 -  expands %1 to a drive letter and path only 
-REM %~nx1 -  expands ro name.extension 
-REM
-REM DO NOT SET @setlocal ENABLEDELAYEDEXPANSION or this function will fail
-REM DO NOT SET @setlocal enableextensions
-REM ENSURE no trailing spaces in any of the lines in this routine !!
-REM
-REM Parameters:
-REM 	1	mi_Section			section of required info in mediainfo eg "Video"
-REM 	2	mi_Parameter		mediainfo name of info equired eg "Width"
-REM 	3	mi_Variable			name if dos variable to be returned eg "V_Width"
-REM 	4	mi_Filename			fully qualified filename of media file beng examined
-REM Example:
-REM		Call :get_mediainfo_parameter "Video" "Width" "V_Width"  "video_filename.mp4" >NUL
-REM Required Pre-existing global variables:
-REM		mediainfoexe64			fully qualified pathname to mediainfo
-REM
-set "tempfile=.\tempfile.txt"
-set "mi_Section=%~1"
-set "mi_Parameter=%~2"
-set "mi_Variable=%~3"
-set "mi_Filename=%~f4"
-set "mi_var="
-DEL /F "!tempfile!" >NUL 2>&1
-REM Note \r\n is Windows new-line, which is for the case of multiple audio streams, 
-REM it outputs a result for each stream on a new line, the first stream being the first entry,
-REM and the first audio stream should be the one we need. 
-REM Set /p from an input file reads the first line.
-"!mediainfoexe64!" "--Inform=!mi_Section!;%%!mi_Parameter!%%\r\n" "!mi_Filename!" > "!tempfile!"
-set /p mi_var=<"!tempfile!"
-set "!mi_Variable!=!mi_var!"
-REM ECHO !DATE! !TIME! "!mi_Variable!=!mi_var!" from "!mi_Section!" "!mi_Parameter!" >> "!vrdlog!" 2>&1
-DEL /F "!tempfile!" >NUL 2>&1
-goto :eof
-
-REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
-REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
-REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
-REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
-REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
-REM
-:get_mediainfo_parameter_legacy
-REM NOTES:
-REM %~1   -  expands %1 removing any surrounding quotes (") 
-REM %~f1  -  expands %1 to a fully qualified path name 
-REM %~d1  -  expands %1 to a drive letter only 
-REM %~p1  -  expands %1 to a path only 
-REM %~n1  -  expands %1 to a file name only 
-REM %~x1  -  expands %1 to a file extension only 
-REM %~s1  -  expanded path contains short names only 
-REM %~a1  -  expands %1 to file attributes 
-REM %~t1  -  expands %1 to date/time of file 
-REM %~z1  -  expands %1 to size of file 
-REM The modifiers can be combined to get compound results:
-REM %~dp1 -  expands %1 to a drive letter and path only 
-REM %~nx1 -  expands ro name.extension 
-REM
-REM DO NOT SET @setlocal ENABLEDELAYEDEXPANSION or this function will fail
-REM DO NOT SET @setlocal enableextensions
-REM ENSURE no trailing spaces in any of the lines in this routine !!
-REM
-REM Parameters:
-REM 	1	mi_Section			section of required info in mediainfo eg "Video"
-REM 	2	mi_Parameter		mediainfo name of info equired eg "Width"
-REM 	3	mi_Variable			name if dos variable to be returned eg "V_Width"
-REM 	4	mi_Filename			fully qualified filename of media file beng examined
-REM Examples:
-REM		Call :get_mediainfo_parameter_legacy "Video" "Codec" "V_Codec_legacy" "video_filename.mp4" 
-REM		Call :get_mediainfo_parameter_legacy "Video" "Format" "V_Format_legacy" "video_filename.mp4" 
-REM		Call :get_mediainfo_parameter_legacy "Audio" "Codec" "A_Codec_legacy" "video_filename.mp4" 
-REM		Call :get_mediainfo_parameter_legacy "Audio" "CodecID" "A_CodecID_legacy" "video_filename.mp4" 
-REM		Call :get_mediainfo_parameter_legacy "Audio" "Format" "A_Format_legacy" "video_filename.mp4" 
-REM		Call :get_mediainfo_parameter_legacy "Audio" "Video_Delay" "A_Video_Delay_ms_legacy" "video_filename.mp4" 
-REM Required Pre-existing global variables:
-REM		mediainfoexe64			fully qualified pathname to mediainfo
-REM
-set "tempfile=.\tempfile.txt"
-set "mi_Section=%~1"
-set "mi_Parameter=%~2"
-set "mi_Variable=%~3"
-set "mi_Filename=%~f4"
-set "mi_var="
-DEL /F "!tempfile!" >NUL 2>&1
-REM Note \r\n is Windows new-line, which is for the case of multiple audio streams, 
-REM it outputs a result for each stream on a new line, the first stream being the first entry,
-REM and the first audio stream should be the one we need. 
-REM Set /p from an input file reads the first line.
-"!mediainfoexe64!" --Legacy "--Inform=!mi_Section!;%%!mi_Parameter!%%\r\n" "!mi_Filename!" > "!tempfile!"
-set /p mi_var=<"!tempfile!"
-set "!mi_Variable!=!mi_var!"
-REM ECHO !DATE! !TIME! "!mi_Variable!=!mi_var!" from Legacy "!mi_Section!" "!mi_Parameter!" >> "!vrdlog!" 2>&1
-DEL /F "!tempfile!" >NUL 2>&1
-goto :eof
-
-REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
-REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
-REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
-REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
-REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
-REM
-:get_ffprobe_video_stream_parameter
-REM NOTES:
-REM %~1   -  expands %1 removing any surrounding quotes (") 
-REM %~f1  -  expands %1 to a fully qualified path name 
-REM %~d1  -  expands %1 to a drive letter only 
-REM %~p1  -  expands %1 to a path only 
-REM %~n1  -  expands %1 to a file name only 
-REM %~x1  -  expands %1 to a file extension only 
-REM %~s1  -  expanded path contains short names only 
-REM %~a1  -  expands %1 to file attributes 
-REM %~t1  -  expands %1 to date/time of file 
-REM %~z1  -  expands %1 to size of file 
-REM The modifiers can be combined to get compound results:
-REM %~dp1 -  expands %1 to a drive letter and path only 
-REM %~nx1 -  expands ro name.extension 
-REM
-REM DO NOT SET @setlocal ENABLEDELAYEDEXPANSION or this function will fail
-REM DO NOT SET @setlocal enableextensions
-REM ENSURE no trailing spaces in any of the lines in this routine !!
-REM
-REM Parameters:
-REM 	1	mi_Parameter		ffprobe name of info equired eg "Width"
-REM 	2	mi_Variable			name if dos variable to be returned eg "V_Width"
-REM 	3	mi_Filename			fully qualified filename of media file beng examined
-REM Examples:
-REM		Call :get_ffprobe_video_stream_parameter "codec_name" "V_CodecID_FF" "video_filename.mp4" >NUL
-REM		Call :get_ffprobe_video_stream_parameter "codec_tag_String" "V_CodecID_String_FF" "video_filename.mp4" >NUL
-REM		Call :get_ffprobe_video_stream_parameter "width" "V_Width_FF" "video_filename.mp4" >NUL
-REM		Call :get_ffprobe_video_stream_parameter "height" "V_Height_FF" "video_filename.mp4" >NUL
-REM		Call :get_ffprobe_video_stream_parameter "duration" "V_Duration_s_FF" "video_filename.mp4" >NUL
-REM		Call :get_ffprobe_video_stream_parameter "bit_rate" "V_BitRate_FF" "video_filename.mp4" >NUL
-REM		Call :get_ffprobe_video_stream_parameter "max_bit_rate" "V_BitRate_Maximum_FF" "video_filename.mp4" >NUL
-REM		Call :get_ffprobe_video_stream_parameter "r_frame_rate" "V_Frame_Rate_FF" "video_filename.mp4" >NUL
-REM		Call :get_ffprobe_video_stream_parameter "avg_frame_rate" "V_Avg_Frame_Rate_FF" "video_filename.mp4" >NUL
-REM Required Pre-existing global variables:
-REM		ffprobeexe64			fully qualified pathname to ffprobe
-REM
-set "tempfile=.\tempfile.txt"
-set "mi_Parameter=%~1"
-set "mi_Variable=%~2"
-set "mi_Filename=%~f3"
-set "mi_var="
-DEL /F "!tempfile!" >NUL 2>&1
-REM Note \r\n is Windows new-line, which is for the case of multiple audio streams, 
-REM it outputs a result for each stream on a new line, the first stream being the first entry,
-REM and the first audio stream should be the one we need. 
-REM Set /p from an input file reads the first line.
-REM see if -probesize 5000M  makes any difference
-"!ffprobeexe64!" -hide_banner -v quiet -select_streams v:0 -show_entries stream=!mi_Parameter! -of default=noprint_wrappers=1:nokey=1 "!mi_Filename!" > "!tempfile!"
-set /p mi_var=<"!tempfile!"
-set !mi_Variable!=!mi_var!
-REM ECHO !DATE! !TIME! "!mi_Variable!=!mi_var!" from ffprobe "!mi_Parameter!" >> "!vrdlog!" 2>&1
-DEL /F "!tempfile!" >NUL 2>&1
-goto :eof
-
-REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
-REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
-REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
-REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
-REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
-REM
 :LoCase
 :: Subroutine to convert a variable VALUE to all lower case.
 :: The argument for this subroutine is the variable NAME.
@@ -1861,7 +1687,11 @@ set "rtbiv_path=!rtbiv_path:\=\\!"
 set "!rtbiv_variable!=!rtbiv_path!"
 goto :eof
 
-
+REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
+REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
+REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
+REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
+REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
 :gather_variables_from_media_file
 REM Parameters
@@ -1912,7 +1742,6 @@ set "derived_prefix_FF=!current_prefix!FF_"
 set "derived_prefix_MI=!current_prefix!MI_"
 REM ---
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 echo FOR /F "tokens=1,* delims==" %%G IN ('SET !derived_prefix_FF!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
 FOR /F "tokens=1,* delims==" %%G IN ('SET !derived_prefix_FF!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
 echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "!media_filename!" --prefix "!derived_prefix_FF!" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
@@ -1920,7 +1749,6 @@ echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_s
 echo ### "!derived_prefix_FF!" >> "!vrdlog!" 2>&1
 echo call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 echo FOR /F "tokens=1,* delims==" %%G IN ('SET !derived_prefix_MI!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
 FOR /F "tokens=1,* delims==" %%G IN ('SET !derived_prefix_MI!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
@@ -1930,12 +1758,10 @@ echo ### "!derived_prefix_MI!" >> "!vrdlog!" 2>&1
 echo call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 REM list initial variables we created for "!current_prefix!" and "!media_filename!"
 REM ECHO !DATE! !TIME! List initial "!current_prefix!" variables for "!media_filename!" >> "!vrdlog!" 2>&1
 REM ECHO set !current_prefix! >> "!vrdlog!" 2>&1
 REM set !current_prefix! >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Start of NOTES: >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
@@ -2124,13 +1950,10 @@ ECHO !DATE! !TIME! !current_prefix!calc_Video_FieldFirst=!tmp_calc_Video_FieldFi
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 echo +++++++++ >> "!vrdlog!" 2>&1
 
-
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! List all  "!current_prefix!" variables for "!media_filename!" >> "!vrdlog!" 2>&1
 ECHO set !current_prefix! >> "!vrdlog!" 2>&1
 set !current_prefix! >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 
 REM ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
