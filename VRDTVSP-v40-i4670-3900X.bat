@@ -472,7 +472,6 @@ IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
 ) ELSE (
 	echo !DATE! !TIME! "ERROR: mediainfo format '!SRC_calc_Video_Encoding!' neither "AVC" nor "MPEG2" for ???filename??? " >> "!vrdlog!" 2>&1
 	echo !DATE! !TIME! "Hard Aborting ..." >> "!vrdlog!" 2>&1
-	REM ??? MOVE FILE TO FOLDER AND SOFT ABORT ?
 	!xPAUSE!
 	EXIT
 )
@@ -484,7 +483,6 @@ IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 ) ELSE (
 	echo !DATE! !TIME! "ERROR: mediainfo/ffmpeg data '!SRC_calc_Video_Interlacement!' yields neither "PROGRESSIVE" nor "INTERLACED" for ???filename??? " >> "!vrdlog!" 2>&1
 	echo !DATE! !TIME! "Hard Aborting ..." >> "!vrdlog!" 2>&1
-	REM ??? MOVE FILE TO FOLDER AND SOFT ABORT ?
 	!xPAUSE!
 	EXIT
 )
@@ -493,9 +491,8 @@ IF /I "!SRC_calc_Video_FieldFirst!" == "TFF" (
 ) ELSE IF /I "!SRC_calc_Video_FieldFirst!" == "BFF" (
 	echo !DATE! !TIME! >> "!vrdlog!" 2>&1
 ) ELSE (
-	echo !DATE! !TIME! "ERROR: mediainfo/ffmpeg processing '!SRC_calc_Video_FieldFirst!' yields neither "TFF" nor "BFF" field-first (default TFF) for ???filename??? " >> "!vrdlog!" 2>&1
+	echo !DATE! !TIME! "ERROR: mediainfo/ffmpeg processing '!SRC_calc_Video_FieldFirst!' yields neither "TFF" nor "BFF" field-first ,default=TFF, for ???filename??? " >> "!vrdlog!" 2>&1
 	echo !DATE! !TIME! "Hard Aborting ..." >> "!vrdlog!" 2>&1
-	REM ??? MOVE FILE TO FOLDER AND SOFT ABORT ?
 	!xPAUSE!
 	EXIT
 )
@@ -507,7 +504,6 @@ echo "_vrd_version_primary=!_vrd_version_primary!" >> "!vrdlog!" 2>&1
 echo "_vrd_version_fallback=!_vrd_version_fallback!" >> "!vrdlog!" 2>&1
 echo "qsf_profile=!qsf_profile!" >> "!vrdlog!" 2>&1
 echo "qsf_extension=!qsf_extension!" >> "!vrdlog!" 2>&1
-
 
 pause
 exit
