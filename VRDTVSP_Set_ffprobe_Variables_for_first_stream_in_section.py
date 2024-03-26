@@ -21,8 +21,8 @@ def add_variable_to_list(key, value, set_cmd_list):
 
 def escape_special_chars(text):
     # Replace special characters with underscores.
-    special_chars = r'<>|&"?*()\' '    # leave : and / alone
-    return re.sub(r'[%s]' % re.escape(special_chars), '_', text)
+    special_chars = r'<>|&"?*()\' @'    # leave : and / alone
+    return re.sub(r'[%s]' % re.escape(special_chars), '_', text.strip()).replace('__', '_').replace('__', '_')
 
 def process_stream(stream, prefix, set_cmd_list):
     # Create or overwrite environment variables with key/value pairs
@@ -53,39 +53,24 @@ def process_section(section_name, streams, prefix, set_cmd_list):
     else:    
         codec_streams = sorted(streams, key=lambda x: x['index'])  # Sort streams based on index
         if len(codec_streams) > 0:
-            #print(f"Processing first {section_name} stream...")
+            #print(f"Processing first {section_name} stream ...")
             process_stream(codec_streams[0], prefix, set_cmd_list)  # Choose the first stream with the lowest index
         else:
-            print(f"No {section_name} stream found for {mediafile}")
-            pass
+            print(f"No ffprobe {section_name} stream found for {mediafile}")
 
 if __name__ == "__main__":
-    # eg clear, set with python3, then show
-    # set "prefix=SRC_FF_V_"
-    # REM set !prefix!
-    # FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=")
-    # python.exe --ffprobe_dos_variablename "ffprobe_dos_variablename" --mediafile "!source_mediafile!" --prefix "!prefix!" --section "Video"
-    # set !prefix!
-    # set "prefix=SRC_FF_A_"
-    # REM set !prefix!
-    # FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=")
-    # python.exe --ffprobe_dos_variablename "ffprobe_dos_variablename" --mediafile "!source_mediafile!" --prefix "!prefix!" --section "Audio"
-    # set !prefix!
-    # set "prefix=SRC_FF_G_"
-    # REM set !prefix!
-    # FOR /F "tokens=1,* delims==" %%G IN ('SET !prefix!') DO (SET "%%G=")
-    # python.exe --ffprobe_dos_variablename "ffprobe_dos_variablename" --mediafile "!source_mediafile!" --prefix "!prefix!" --section "General"
+    # REM prefix is usually "SRC_", "QSF_", "TARGET"
+    # python.exe --ffprobe_dos_variablename "ffprobe_dos_variablename" --mediafile "!source_mediafile!" --prefix "!prefix!"
     # set !prefix!
 
     TERMINAL_WIDTH = 250
-    objPrettyPrint = pprint.PrettyPrinter(width=TERMINAL_WIDTH, compact=False, sort_dicts=False)	# facilitates formatting 
-	#print(f"DEBUG: {objPrettyPrint.pformat(a_list)}")
+    objPrettyPrint = pprint.PrettyPrinter(width=TERMINAL_WIDTH, compact=False, sort_dicts=False)    # facilitates formatting 
+    #print(f"DEBUG: {objPrettyPrint.pformat(a_list)}")
 
     parser = argparse.ArgumentParser(description="Parse media file with ffprobe and create environment variables.")
     parser.add_argument("--ffprobe_dos_variablename", help="Name of DOS variable for fully qualified ffprobe path", required=True)
     parser.add_argument("--mediafile", help="Path to the media file", required=True)
     parser.add_argument("--prefix", help="Prefix for environment variable keys", required=True)
-    parser.add_argument("--section", help="ffprobe section to process (e.g., Video, Audio, General)", required=True)
     parser.add_argument("--output_cmd_file", help="Path to the cmd file containing the DOS SET statements", required=True)
     args = parser.parse_args()
 
@@ -93,7 +78,6 @@ if __name__ == "__main__":
     ffprobe_dos_variablename = args.ffprobe_dos_variablename
     mediafile = args.mediafile
     prefix = args.prefix
-    section_name = args.section.lower()  # Convert section name to lowercase for case-insensitive comparison
 
     # Retrieve the path of MediaInfo from the environment variable and Check if MediaInfo file path exists
     ffprobe_path = os.environ.get(ffprobe_dos_variablename)
@@ -109,7 +93,7 @@ if __name__ == "__main__":
     set_cmd_list = [ f'echo prefix = "{prefix}"' ]
     set_cmd_list.append(f'REM List of DOS SET commands to define DOS variables')
     set_cmd_list.append(f'REM First, clear the variables with the chosen prefix')
-    set_cmd_list.append(f'FOR /F "tokens=1,* delims==" %%G IN (\'SET !prefix!\') DO (SET "%%G=")')
+    set_cmd_list.append(f'FOR /F "tokens=1,* delims==" %%G IN (\'SET {prefix}\') DO (SET "%%G=")')
 
     # Run ffprobe command to get JSON output
     ffprobe_subprocess_command = [ffprobe_path, "-v", "quiet", "-print_format", "json", "-show_format", "-show_streams", mediafile]
@@ -119,14 +103,20 @@ if __name__ == "__main__":
 
     # Parse JSON output
     ffprobe_data = json.loads(ffprobe_output)
-    if section_name.lower() == "general":
-        process_general_section(ffprobe_data["format"], prefix, set_cmd_list)
-    elif "streams" in ffprobe_data:
-        streams = [s for s in ffprobe_data["streams"] if "codec_type" in s and s["codec_type"] == section_name]    # eg "video", "audio"
-        process_section(section_name, streams, prefix, set_cmd_list)
+    if "streams" in ffprobe_data:
+        section_name = "General".lower()
+        prefix_X =  prefix + "G_"
+        process_general_section(ffprobe_data["format"], prefix_X, set_cmd_list)
+        for sn in [ "Video", "Audio" ]:
+            section_name = sn.lower()
+            prefix_X =  prefix + section_name[0].upper() + "_"
+            streams = [s for s in ffprobe_data["streams"] if "codec_type" in s and s["codec_type"].lower() == section_name.lower()]
+            process_section(section_name.lower(), streams, prefix_X, set_cmd_list)
     else:
-        print(f"Error: Invalid ffprobe section '{section_name}' processing {mediafile}\nPlease specify a valid section (e.g., Video, Audio, General).")
+        print(f"Error: No ffprobe streams detected processing {mediafile}\n")
         #sys.exit(1)
+        pass
+
     set_cmd_list.append(f'goto :eof')
     #print(f"DEBUG: set_cmd_list=\n{objPrettyPrint.pformat(set_cmd_list)}")
 
