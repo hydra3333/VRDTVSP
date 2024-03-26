@@ -2,10 +2,10 @@
 @setlocal ENABLEDELAYEDEXPANSION
 @setlocal enableextensions
 
-REM --------- set whether pause statements take effect ----------------------------
-REM SET xPAUSE=REM
-SET "xPAUSE=PAUSE"
-IF /I "!xPAUSE!" == "PAUSE" (
+set "enable_nonlog_echo=NO"
+REM set "enable_nonlog_echo=YES"
+
+IF /I "!enable_nonlog_echo!" == "YES" (
 	set "echo_start=ON"
 	set "echo_end=OFF"
 ) ELSE (
@@ -13,6 +13,10 @@ IF /I "!xPAUSE!" == "PAUSE" (
 	set "echo_end=OFF"
 )
 @echo !echo_start!
+
+REM --------- set whether pause statements take effect ----------------------------
+REM SET xPAUSE=REM
+SET "xPAUSE=PAUSE"
 
 REM --------- set whether pause statements take effect ----------------------------
 
@@ -365,6 +369,7 @@ ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! --- START Modify DateCreated and DateModified Timestamps on "!destination_mp4_Folder! >> "!vrdlog!" 2>&1
 
 echo DEBUG: BEFORE:  >> "!vrdlog!" 2>&1
+echo dir "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
 dir "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
 
 call :get_date_time_String "start_date_time"
@@ -375,6 +380,7 @@ echo "!py_exe!" "!Path_to_py_VRDTVSP_Modify_File_Date_Timestamps!" --folder "!th
 "!py_exe!" "!Path_to_py_VRDTVSP_Modify_File_Date_Timestamps!" --folder "!the_folder!" --recurse >> "!vrdlog!" 2>&1
 
 echo DEBUG: AFTER: >> "!vrdlog!" 2>&1
+echo dir "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
 dir "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
 
 call :get_date_time_String "end_date_time"
@@ -1770,7 +1776,6 @@ REM ----------------------------------------------------------------------------
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
 :gather_variables_from_media_file
-@echo !echo_end!
 REM Parameters
 REM		1	the fully qualified filename of the media file, eg a .TS file etc
 REM		2	the global prefix to use for this gather, one of "SRC_", "QSF_" "TARGET_"
@@ -2047,5 +2052,4 @@ REM ECHO !DATE! !TIME! =========================================================
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! End collecting :gather_variables_from_media_file "!current_prefix!" ffprobe and mediainfo variables ... "!media_filename!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-@echo !echo_start!
 goto :eof
