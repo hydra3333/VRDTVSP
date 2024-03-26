@@ -1994,71 +1994,11 @@ ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! End of NOTES: >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 
-REM Determine which type of encoding, AVC or MPEG2
-call set tmp_MI_V_Format=%%!current_prefix!MI_V_Format%%
-call set tmp_FF_V_codec_name=%%!current_prefix!FF_V_codec_name%%
-set "!current_prefix!calculated_Video_Encoding=AVC"
-IF /I "!tmp_MI_V_Format!" == "AVC"            (set "!current_prefix!calculated_Video_Encoding=AVC")
-IF /I "!tmp_FF_V_codec_name!" == "h264"       (set "!current_prefix!calculated_Video_Encoding=AVC")
-IF /I "!tmp_MI_V_Format!" == "MPEG_Video"     (set "!current_prefix!calculated_Video_Encoding=MPEG2")
-IF /I "!tmp_FF_V_codec_name!" == "mpeg2video" (set "!current_prefix!calculated_Video_Encoding=MPEG2")
-echo +++++++++ >> "!vrdlog!" 2>&1
-echo set tmp_MI_V_Format >> "!vrdlog!" 2>&1
-set tmp_MI_V_Format >> "!vrdlog!" 2>&1
-echo +++++++++ >> "!vrdlog!" 2>&1
-echo set tmp_FF_V_codec_name >> "!vrdlog!" 2>&1
-set tmp_FF_V_codec_name >> "!vrdlog!" 2>&1
-echo +++++++++ >> "!vrdlog!" 2>&1
-echo set !current_prefix!calculated_Video_Encoding >> "!vrdlog!" 2>&1
-set !current_prefix!calculated_Video_Encoding >> "!vrdlog!" 2>&1
-echo +++++++++ >> "!vrdlog!" 2>&1
-
-REM Determine whether PROGRESIVE or INTERLACED
-call set tmp_MI_V_ScanType=%%!current_prefix!MI_V_ScanType%%
-call set tmp_FF_V_field_order=%%!current_prefix!FF_V_field_order%%
-set "!current_prefix!calculated_Video_Interlacement=PROGRESSIVE"
-IF /I "!tmp_MI_V_ScanType!" == "MBAFF"          (set "!current_prefix!calculated_Video_Interlacement=INTERLACED")
-IF /I "!tmp_MI_V_ScanType!" == "Interlaced"     (set "!current_prefix!calculated_Video_Interlacement=INTERLACED")
-IF /I "!tmp_FF_V_field_order!" == "tt"          (set "!current_prefix!calculated_Video_Interlacement=INTERLACED")
-IF /I "!tmp_MI_V_ScanType!" == ""               (set "!current_prefix!calculated_Video_Interlacement=PROGRESSIVE")
-IF /I "!tmp_FF_V_field_order!" == "progressive" (set "!current_prefix!calculated_Video_Interlacement=PROGRESSIVE")
-echo +++++++++ >> "!vrdlog!" 2>&1
-echo set tmp_MI_V_ScanType >> "!vrdlog!" 2>&1
-set tmp_MI_V_ScanType >> "!vrdlog!" 2>&1
-echo +++++++++ >> "!vrdlog!" 2>&1
-echo set tmp_FF_V_field_order >> "!vrdlog!" 2>&1
-set tmp_FF_V_field_order >> "!vrdlog!" 2>&1
-echo +++++++++ >> "!vrdlog!" 2>&1
-echo set !current_prefix!calculated_Video_Interlacement >> "!vrdlog!" 2>&1
-set !current_prefix!calculated_Video_Interlacement >> "!vrdlog!" 2>&1
-echo +++++++++ >> "!vrdlog!" 2>&1
-
-REM Determine FIELD ORDER for interlaced
-call set tmp_MI_V_ScanOrder=%%!current_prefix!MI_V_ScanOrder%%
-set "!current_prefix!calculated_Video_FieldFirst=TFF"
-IF /I "!tmp_MI_V_ScanOrder!" == ""    (set "!current_prefix!calculated_Video_FieldFirst=TFF")
-IF /I "!tmp_MI_V_ScanOrder!" == "TFF" (set "!current_prefix!calculated_Video_FieldFirst=TFF")
-IF /I "!tmp_MI_V_ScanOrder!" == "BFF" (set "!current_prefix!calculated_Video_FieldFirst=BFF")
-echo +++++++++ >> "!vrdlog!" 2>&1
-echo set tmp_MI_V_ScanOrder >> "!vrdlog!" 2>&1
-set tmp_MI_V_ScanOrder >> "!vrdlog!" 2>&1
-echo +++++++++ >> "!vrdlog!" 2>&1
-echo set !current_prefix!calculated_Video_FieldFirst >> "!vrdlog!" 2>&1
-set !current_prefix!calculated_Video_FieldFirst >> "!vrdlog!" 2>&1
-echo +++++++++ >> "!vrdlog!" 2>&1
-
-
-echo +++++++++ >> "!vrdlog!" 2>&1
-echo set !current_prefix!Calculated >> "!vrdlog!" 2>&1
-set !current_prefix!Calculated >> "!vrdlog!" 2>&1
-echo +++++++++ >> "!vrdlog!" 2>&1
-
-
 REM
-REM Fix up some variables
+REM Fix up and calculate some variables
 REM
 
-
+REM get a slash version of MI_V_DisplayAspectRatio_String
 call set !current_prefix!MI_V_DisplayAspectRatio_String_slash=%%!current_prefix!MI_V_DisplayAspectRatio_String%%
 call set !current_prefix!MI_V_DisplayAspectRatio_String_slash=%%!current_prefix!MI_V_DisplayAspectRatio_String_slash::=/%%
 call set !current_prefix!MI_V_DisplayAspectRatio_String_slash=%%!current_prefix!MI_V_DisplayAspectRatio_String_slash::\=/%%
@@ -2067,8 +2007,100 @@ echo set !current_prefix!MI_V_DisplayAspectRatio_String >> "!vrdlog!" 2>&1
 set !current_prefix!MI_V_DisplayAspectRatio_String >> "!vrdlog!" 2>&1
 echo +++++++++ >> "!vrdlog!" 2>&1
 
+REM get a slash version of FF_V_display_aspect_ratio
+call set !current_prefix!FF_V_display_aspect_ratio_slash=%%!current_prefix!FF_V_display_aspect_ratio%%
+call set !current_prefix!FF_V_display_aspect_ratio_slash=%%!current_prefix!FF_V_display_aspect_ratio_slash::=/%%
+call set !current_prefix!FF_V_display_aspect_ratio_slash=%%!current_prefix!FF_V_display_aspect_ratio_slash::\=/%%
+echo +++++++++ >> "!vrdlog!" 2>&1
+echo set !current_prefix!FF_V_display_aspect_ratio >> "!vrdlog!" 2>&1
+set !current_prefix!FF_V_display_aspect_ratio >> "!vrdlog!" 2>&1
+echo +++++++++ >> "!vrdlog!" 2>&1
 
+REM calculate MI_A_Audio_Delay from MI_A_Video_Delay
+call set tmp_MI_A_Video_Delay=%%!current_prefix!MI_A_Video_Delay%%
+IF /I "!tmp_MI_A_Video_Delay!" == "" (
+	set "tmp_MI_A_Video_Delay=0"
+)
+set /a tmp_MI_A_Audio_Delay=0 - tmp_MI_A_Video_Delay
+set "!current_prefix!MI_A_Audio_Delay=!tmp_MI_A_Audio_Delay!"
+echo +++++++++ >> "!vrdlog!" 2>&1
+echo set !current_prefix!MI_A_Video_Delay >> "!vrdlog!" 2>&1
+set !current_prefix!MI_A_Video_Delay >> "!vrdlog!" 2>&1
+echo set !current_prefix!MI_A_Audio_Delay >> "!vrdlog!" 2>&1
+set !current_prefix!MI_A_Audio_Delay >> "!vrdlog!" 2>&1
+echo +++++++++ >> "!vrdlog!" 2>&1
 
+REM Determine which type of encoding, AVC or MPEG2
+call set tmp_MI_V_Format=%%!current_prefix!MI_V_Format%%
+call set tmp_FF_V_codec_name=%%!current_prefix!FF_V_codec_name%%
+set "!current_prefix!calc_Video_Encoding=AVC"
+IF /I "!tmp_MI_V_Format!" == "AVC"            (set "!current_prefix!calc_Video_Encoding=AVC")
+IF /I "!tmp_FF_V_codec_name!" == "h264"       (set "!current_prefix!calc_Video_Encoding=AVC")
+IF /I "!tmp_MI_V_Format!" == "MPEG_Video"     (set "!current_prefix!calc_Video_Encoding=MPEG2")
+IF /I "!tmp_FF_V_codec_name!" == "mpeg2video" (set "!current_prefix!calc_Video_Encoding=MPEG2")
+REM echo +++++++++ >> "!vrdlog!" 2>&1
+REM echo set tmp_MI_V_Format >> "!vrdlog!" 2>&1
+REM set tmp_MI_V_Format >> "!vrdlog!" 2>&1
+REM echo +++++++++ >> "!vrdlog!" 2>&1
+REM echo set tmp_FF_V_codec_name >> "!vrdlog!" 2>&1
+REM set tmp_FF_V_codec_name >> "!vrdlog!" 2>&1
+echo +++++++++ >> "!vrdlog!" 2>&1
+echo set !current_prefix!calc_Video_Encoding >> "!vrdlog!" 2>&1
+set !current_prefix!calc_Video_Encoding >> "!vrdlog!" 2>&1
+echo +++++++++ >> "!vrdlog!" 2>&1
+
+REM Determine whether PROGRESSIVE or INTERLACED
+call set tmp_MI_V_ScanType=%%!current_prefix!MI_V_ScanType%%
+call set tmp_FF_V_field_order=%%!current_prefix!FF_V_field_order%%
+set "!current_prefix!calc_Video_Interlacement=PROGRESSIVE"
+IF /I "!tmp_MI_V_ScanType!" == "MBAFF"          (set "!current_prefix!calc_Video_Interlacement=INTERLACED")
+IF /I "!tmp_MI_V_ScanType!" == "Interlaced"     (set "!current_prefix!calc_Video_Interlacement=INTERLACED")
+IF /I "!tmp_FF_V_field_order!" == "tt"          (set "!current_prefix!calc_Video_Interlacement=INTERLACED")
+IF /I "!tmp_MI_V_ScanType!" == ""               (set "!current_prefix!calc_Video_Interlacement=PROGRESSIVE")
+IF /I "!tmp_FF_V_field_order!" == "progressive" (set "!current_prefix!calc_Video_Interlacement=PROGRESSIVE")
+REM echo +++++++++ >> "!vrdlog!" 2>&1
+REM echo set tmp_MI_V_ScanType >> "!vrdlog!" 2>&1
+REM set tmp_MI_V_ScanType >> "!vrdlog!" 2>&1
+REM echo +++++++++ >> "!vrdlog!" 2>&1
+REM echo set tmp_FF_V_field_order >> "!vrdlog!" 2>&1
+REM set tmp_FF_V_field_order >> "!vrdlog!" 2>&1
+echo +++++++++ >> "!vrdlog!" 2>&1
+echo set !current_prefix!calc_Video_Interlacement >> "!vrdlog!" 2>&1
+set !current_prefix!calc_Video_Interlacement >> "!vrdlog!" 2>&1
+echo +++++++++ >> "!vrdlog!" 2>&1
+
+REM Determine FIELD ORDER for interlaced
+call set tmp_MI_V_ScanOrder=%%!current_prefix!MI_V_ScanOrder%%
+set "!current_prefix!calc_Video_FieldFirst=TFF"
+IF /I "!tmp_MI_V_ScanOrder!" == ""    (set "!current_prefix!calc_Video_FieldFirst=TFF")
+IF /I "!tmp_MI_V_ScanOrder!" == "TFF" (set "!current_prefix!calc_Video_FieldFirst=TFF")
+IF /I "!tmp_MI_V_ScanOrder!" == "BFF" (set "!current_prefix!calc_Video_FieldFirst=BFF")
+REM echo +++++++++ >> "!vrdlog!" 2>&1
+REM echo set tmp_MI_V_ScanOrder >> "!vrdlog!" 2>&1
+REM set tmp_MI_V_ScanOrder >> "!vrdlog!" 2>&1
+REM echo +++++++++ >> "!vrdlog!" 2>&1
+echo set !current_prefix!calc_Video_FieldFirst >> "!vrdlog!" 2>&1
+set !current_prefix!calc_Video_FieldFirst >> "!vrdlog!" 2>&1
+echo +++++++++ >> "!vrdlog!" 2>&1
+
+REM display all calculated variables
+echo +++++++++ >> "!vrdlog!" 2>&1
+echo set !current_prefix!calculated >> "!vrdlog!" 2>&1
+set !current_prefix!calculated >> "!vrdlog!" 2>&1
+echo +++++++++ >> "!vrdlog!" 2>&1
+
+REM display calculated variables individually
+echo +++++++++ >> "!vrdlog!" 2>&1
+call set tmp_calc_Video_Encoding=%%!current_prefix!calc_Video_Encoding%%
+call set tmp_calc_Video_Interlacement=%%!current_prefix!calc_Video_Interlacement%%
+call set tmp_calc_Video_FieldFirst=%%!current_prefix!calc_Video_FieldFirst%%
+ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! !current_prefix!calc_Video_Encoding=!tmp_calc_Video_Encoding! >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! !current_prefix!calc_Video_Interlacement=!tmp_calc_Video_Interlacement! >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! !current_prefix!calc_Video_Interlacement=!tmp_calc_Video_Interlacement! >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! !current_prefix!calc_Video_FieldFirst=!tmp_calc_Video_FieldFirst! >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+echo +++++++++ >> "!vrdlog!" 2>&1
 
 
 pause
@@ -2079,25 +2111,7 @@ goto :eof
 
 YET TO BE FIXED
 
-set "!current_prefix!FF_V_display_aspect_ratio_slash=!SRC_FF_V_display_aspect_ratio!"
-set "!current_prefix!FF_V_display_aspect_ratio_slash=!SRC_FF_V_display_aspect_ratio_slash::=/!"
-set "!current_prefix!FF_V_display_aspect_ratio_slash=!SRC_FF_V_display_aspect_ratio_slash:\=/!"
 
-
-ECHO !DATE! !TIME! "Original !current_prefix!MI_A_Video_Delay=!SRC_MI_A_Video_Delay! !current_prefix!MI_A_Video_Delay_String=!SRC_MI_A_Video_Delay_String!" >> "!vrdlog!" 2>&1
-IF /I "!SRC_MI_A_Video_Delay!" == "" (set /a "!current_prefix!MI_A_Video_Delay=0")
-SET /a "!current_prefix!MI_A_Audio_Delay=0 - !SRC_MI_A_Video_Delay!"
-
-
-call set tmp_calculated_Video_Encoding=%%!current_prefix!calculated_Video_Encoding%%
-call set tmp_calculated_Video_Interlacement=%%!current_prefix!calculated_Video_Interlacement%%
-call set tmp_calculated_Video_FieldFirst=%%!current_prefix!calculated_Video_FieldFirst%%
-ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! !current_prefix!calculated_Video_Encoding=!tmp_calculated_Video_Encoding! >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! !current_prefix!calculated_Video_Interlacement=!tmp_calculated_Video_Interlacement! >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! !current_prefix!calculated_Video_Interlacement=!tmp_calculated_Video_Interlacement! >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! !current_prefix!calculated_Video_FieldFirst=!tmp_calculated_Video_FieldFirst! >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 
 
 
