@@ -488,10 +488,11 @@ IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 )
 REM
 IF /I "!SRC_calc_Video_FieldFirst!" == "TFF" (
+	echo !DATE! !TIME! >> "!vrdlog!" 2>&1
 ) ELSE IF /I "!SRC_calc_Video_FieldFirst!" == "BFF" (
 	echo !DATE! !TIME! >> "!vrdlog!" 2>&1
 ) ELSE (
-	echo !DATE! !TIME! "ERROR: mediainfo/ffmpeg processing '!SRC_calc_Video_FieldFirst!' yields neither "TFF" nor "BFF" field-first ,default=TFF, for ???filename??? " >> "!vrdlog!" 2>&1
+	echo !DATE! !TIME! "ERROR: mediainfo/ffmpeg processing '!SRC_calc_Video_FieldFirst!' yields neither 'TFF' nor 'BFF' field-first ,default='TFF', for ???filename??? " >> "!vrdlog!" 2>&1
 	echo !DATE! !TIME! "Hard Aborting ..." >> "!vrdlog!" 2>&1
 	!xPAUSE!
 	EXIT
