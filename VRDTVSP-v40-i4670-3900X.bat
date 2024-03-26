@@ -1,10 +1,19 @@
-@ECHO on
+@ECHO off
 @setlocal ENABLEDELAYEDEXPANSION
 @setlocal enableextensions
 
 REM --------- set whether pause statements take effect ----------------------------
 REM SET xPAUSE=REM
 SET "xPAUSE=PAUSE"
+IF /I "!xPAUSE!" == "PAUSE" (
+	set "echo_start=ON"
+	set "echo_end=OFF"
+) ELSE (
+	set "echo_start=OFF"
+	set "echo_end=OFF"
+)
+@echo !echo_start!
+
 REM --------- set whether pause statements take effect ----------------------------
 
 REM --------- setup paths and exe filenames ----------------------------
@@ -356,7 +365,7 @@ ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! --- START Modify DateCreated and DateModified Timestamps on "!destination_mp4_Folder! >> "!vrdlog!" 2>&1
 
 echo DEBUG: BEFORE:  >> "!vrdlog!" 2>&1
-dir "!destination_mp4_Folder! >> "!vrdlog!" 2>&1
+dir "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
 
 call :get_date_time_String "start_date_time"
 set "the_folder=!destination_mp4_Folder!" 
@@ -366,7 +375,7 @@ echo "!py_exe!" "!Path_to_py_VRDTVSP_Modify_File_Date_Timestamps!" --folder "!th
 "!py_exe!" "!Path_to_py_VRDTVSP_Modify_File_Date_Timestamps!" --folder "!the_folder!" --recurse >> "!vrdlog!" 2>&1
 
 echo DEBUG: AFTER: >> "!vrdlog!" 2>&1
-dir "!destination_mp4_Folder! >> "!vrdlog!" 2>&1
+dir "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
 
 call :get_date_time_String "end_date_time"
 echo "!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "ReTimestamp" >> "!vrdlog!" 2>&1
@@ -464,9 +473,11 @@ REM    extension_h264=mp4
 REM    extension_h265=mp4
 REM 
 IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
+	echo !DATE! !TIME! >> "!vrdlog!" 2>&1
 	set "qsf_profile=!profile_name_for_qsf_h264!"
 	set "qsf_extension=!extension_h264!"
 ) ELSE IF /I "!SRC_calc_Video_Encoding!" == "MPEG2" (
+	echo !DATE! !TIME! >> "!vrdlog!" 2>&1
 	set "qsf_profile=!profile_name_for_qsf_mpeg2!"
 	set "qsf_extension=!extension_mpeg2!"
 ) ELSE (
@@ -506,8 +517,7 @@ echo "_vrd_version_fallback=!_vrd_version_fallback!" >> "!vrdlog!" 2>&1
 echo "qsf_profile=!qsf_profile!" >> "!vrdlog!" 2>&1
 echo "qsf_extension=!qsf_extension!" >> "!vrdlog!" 2>&1
 
-pause
-exit
+goto :eof
 
 
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
@@ -1760,6 +1770,7 @@ REM ----------------------------------------------------------------------------
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
 :gather_variables_from_media_file
+@echo !echo_end!
 REM Parameters
 REM		1	the fully qualified filename of the media file, eg a .TS file etc
 REM		2	the global prefix to use for this gather, one of "SRC_", "QSF_" "TARGET_"
@@ -2036,4 +2047,5 @@ REM ECHO !DATE! !TIME! =========================================================
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! End collecting :gather_variables_from_media_file "!current_prefix!" ffprobe and mediainfo variables ... "!media_filename!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+@echo !echo_start!
 goto :eof
