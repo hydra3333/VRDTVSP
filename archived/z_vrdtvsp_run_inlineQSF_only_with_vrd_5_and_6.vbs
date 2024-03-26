@@ -1,6 +1,9 @@
 Option Explicit
 ' cscript //nologo ".\z_vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6.vbs"
 
+' make parameters
+
+
 dim vrd_version_for_qsf
 dim xmlDict, CF_FILE_AbsolutePathName, CF_QSF_AbsolutePathName, vrdtvsp_profile_name_for_qsf
 Dim fso, wso, objFolder
@@ -20,9 +23,6 @@ Set objFolder = Nothing
 			WScript.StdOut.WriteLine("VRDTVSP ERROR vrdtvsp_Convert_File - Error - Failed to QSF after re-trying with v5 QSF """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
 			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? FAILED CONVERSION")
 			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? FAILED CONVERSION")
-			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? FAILED CONVERSION")
-			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? FAILED CONVERSION")
-			WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - ???????????????????? FAILED CONVERSION")
 			WScript.StdOut.WriteLine(" ")
 			WScript.StdOut.WriteLine("======================================================================================================================================================")
 			WScript.StdOut.WriteLine(" ")
@@ -30,9 +30,9 @@ Set objFolder = Nothing
 			WScript.Quit 17
 	End If
 	For Each xmlDict_key In xmlDict
-		wscript.echo "vrdtvsp_Convert_File: VRD QSF returned XML data: xmlDict_key=""" & xmlDict_key & """ xmlDict_value= """ & xmlDict.Item(xmlDict_key) & """"
+		wscript.echo "VRD QSF returned XML data: xmlDict_key=""" & xmlDict_key & """ xmlDict_value= """ & xmlDict.Item(xmlDict_key) & """"
 	Next
-
+WScript.Quit
 
 Function vrdtvsp_current_datetime_string()
  Dim dt
@@ -398,12 +398,12 @@ Function vrdtvsp_run_inlineQSF_only_with_vrd_5_and_6 (byVAL vrd_version_number, 
 	' 2023.12.26 Rarely, there is text in the supposedlynueric field "//VRDOutputInfo/ActualVideoBitrate"
 	x = gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/ActualVideoBitrate")
 	if IsNumeric(x) Then
-		xmlDict.Add "ActualVideoBitrate", CLng(CDbl(x) * CDbl(1000000.0)) ' convert from dedcimal Mpbs to bps
+		xmlDict.Add "ActualVideoBitrate", CLng(CDbl(x) * CDbl(1000000.0)) ' convert from decimal Mpbs to bps
 	else
 		if gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/OutputType") = Ucase("MP4") Then
-			xmlDict.Add "ActualVideoBitrate", 4000000	' assume h.264
+			xmlDict.Add "ActualVideoBitrate", 4000000	' assume h.264, guess or use bitrate from mediainfo/ffprobe
 		else
-			xmlDict.Add "ActualVideoBitrate", 2000000	' assume mpeg2
+			xmlDict.Add "ActualVideoBitrate", 2000000	' assume mpeg2, guess or use bitrate from mediainfo/ffprobe
 		end if
 	end if
 	If NOT xmlDict.Exists("outputFile") Then 
