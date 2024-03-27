@@ -522,21 +522,24 @@ ECHO !DATE! !TIME! Input: Video Codec: '!SRC_FF_V_codec_name!' ScanType: '!SRC_c
 ECHO !DATE! !TIME! _vrd_version_primary='!_vrd_version_primary!' _vrd_version_fallback=!_vrd_version_fallback!' qsf_profile=!qsf_profile!' qsf_extension=!qsf_extension!' >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 REM
-
 set "qsf_prefix=QSFinfo_"
 set QSF_File=!scratch_Folder!%~n1.qsf.!qsf_extension!
 
 ECHO DEL /F "!QSF_File!"  >> "%vrdlog%" 2>&1
 DEL /F "!QSF_File!"  >> "%vrdlog%" 2>&1
-
 ECHO DEL /F "!vrd5_logfiles!" >> "%vrdlog%" 2>&1
 DEL /F "!vrd5_logfiles!" >> "%vrdlog%" 2>&1
-
 ECHO DEL /F "!vrd6_logfiles!" >> "%vrdlog%" 2>&1
 DEL /F "!vrd6_logfiles!" >> "%vrdlog%" 2>&1
-
 REM specify the source file average bitrate !SRC_MI_V_BitRate! in case QSF can't find it (it happens)
 cscript //nologo "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_prefix!" "!SRC_MI_V_BitRate!"
+SET EL=!ERRORLEVEL!
+IF /I "!EL!" NEQ "0" (
+   ECHO !DATE! !TIME! *********  QSF Error !EL! returned from cscript QSF >> "%vrdlog%" 2>&1
+   ECHO !DATE! !TIME! *********  ABORTING ... >> "%vrdlog%" 2>&1
+   !xPAUSE!
+   EXIT !EL!
+)
 echo TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 echo call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
