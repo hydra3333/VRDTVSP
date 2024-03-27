@@ -1,4 +1,4 @@
-@ECHO off
+@ECHO on
 @setlocal ENABLEDELAYEDEXPANSION
 @setlocal enableextensions
 
@@ -56,7 +56,6 @@ set "source_TS_Folder=!capture_TS_folder!000-TO-BE-PROCESSED\"
 set "done_TS_Folder=!source_TS_Folder!VRDTVSP-done\"
 set "failed_conversion_TS_Folder=!source_TS_Folder!VRDTVSP-Failed-Conversion\"
 set "temp_Folder=!scratch_Folder!"
-set "temp_cmd_file=!temp_Folder!temp_cmd_file.bat"
 
 if /I NOT "!destination_mp4_Folder:~-1!" == "\" (set "destination_mp4_Folder=!destination_mp4_Folder!\")
 if /I NOT "!capture_TS_folder:~-1!" == "\" (set "capture_TS_folder=!capture_TS_folder!\")
@@ -110,6 +109,18 @@ DEL /F "!PSlog!" >> "%vrdlog%" 2>&1
 SET tempfile=!scratch_Folder!%~n0-!header!-temp.txt
 ECHO !DATE! !TIME! DEL /F "!tempfile!" >> "%vrdlog%" 2>&1
 DEL /F "!tempfile!" >> "%vrdlog%" 2>&1
+
+set "temp_cmd_file=!temp_Folder!temp_cmd_file.bat"
+ECHO !DATE! !TIME! DEL /F "!temp_cmd_file!" >> "%vrdlog%" 2>&1
+DEL /F "!temp_cmd_file!" >> "%vrdlog%" 2>&1
+
+set "vrd5_logfiles=G:\HDTV\VideoReDo-5_*.Log"
+ECHO DEL /F "!vrd5_logfiles!" >> "%vrdlog%" 2>&1
+DEL /F "!vrd5_logfiles!" >> "%vrdlog%" 2>&1
+
+set "vrd6_logfiles=G:\HDTV\VideoReDo6_*.Log"
+ECHO DEL /F "!vrd6_logfiles!" >> "%vrdlog%" 2>&1
+DEL /F "!vrd6_logfiles!" >> "%vrdlog%" 2>&1
 REM --------- setup LOG file and TEMP filenames ----------------------------
 
 REM --------- setup vrd paths filenames ----------------------------
@@ -124,7 +135,7 @@ set "Path_to_py_VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles=!root!VRDTV
 set "Path_to_py_VRDTVSP_Modify_File_Date_Timestamps=!root!VRDTVSP_Modify_File_Date_Timestamps.py"
 set "Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section=!root!VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section.py"
 set "Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section=!root!VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section.py"
-set "Path_to_py_VRDTVSP_Run_QSF_with_v5_or_v6.vbs=!root!VRDTVSP_Run_QSF_with_v5_or_v6.vbs"
+set "Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6=!root!VRDTVSP_Run_QSF_with_v5_or_v6.vbs"
 REM --------- setup .VBS and .PS1 and .PY fully qualified filenames to pre-created files which rename and re-timestamp filenames etc ---------
 
 call :get_date_time_String "TOTAL_start_date_time"
@@ -408,13 +419,6 @@ echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!TOT
 !xPAUSE!
 exit
 
-
-REM
-REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
-REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
-REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
-REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
-REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -512,19 +516,60 @@ echo "_vrd_version_fallback=!_vrd_version_fallback!" >> "!vrdlog!" 2>&1
 echo "qsf_profile=!qsf_profile!" >> "!vrdlog!" 2>&1
 echo "qsf_extension=!qsf_extension!" >> "!vrdlog!" 2>&1
 
-
-
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Start QSF of "%~f1" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! input : Video Codec: "!???!" ScanType: "!SRC_calc_Video_Interlacement!" ScanOrder: "!SRC_calc_Video_FieldFirst!" !V_Width!x!V_Height! dar=!V_DisplayAspectRatio_String! sar=!V_PixelAspectRatio! Audio Codec: "!A_Codec_legacy!" A_Audio_Delay_ms: !A_Audio_Delay_ms! Audio_Delay_ms_legacy: !A_Video_Delay_ms_legacy! >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! Input: Video Codec: '!SRC_FF_V_codec_name!' ScanType: '!SRC_calc_Video_Interlacement!' ScanOrder: '!SRC_calc_Video_FieldFirst!' WxH: !SRC_MI_V_Width!x!SRC_MI_V_HEIGHT! dar:'!SRC_FF_V_display_aspect_ratio_slash!' and '!SRC_MI_V_DisplayAspectRatio_String_slash!' Audio Codec: '!SRC_FF_A_codec_name!' Audio_Delay_ms: '!SRC_MI_A_Audio_Delay!' Video_Delay_ms: '!SRC_MI_A_Video_Delay!' >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! _vrd_version_primary='!_vrd_version_primary!' _vrd_version_fallback=!_vrd_version_fallback!' qsf_profile=!qsf_profile!' qsf_extension=!qsf_extension!' >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 REM
-REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
-REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
-REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
-REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
-REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
-REM
+
+set "qsf_prefix=QSFinfo_"
+set QSF_File=!scratch_Folder!%~n1.qsf.!qsf_extension!
+
+ECHO DEL /F "!QSF_File!"  >> "%vrdlog%" 2>&1
+DEL /F "!QSF_File!"  >> "%vrdlog%" 2>&1
+
+ECHO DEL /F "!vrd5_logfiles!" >> "%vrdlog%" 2>&1
+DEL /F "!vrd5_logfiles!" >> "%vrdlog%" 2>&1
+
+ECHO DEL /F "!vrd6_logfiles!" >> "%vrdlog%" 2>&1
+DEL /F "!vrd6_logfiles!" >> "%vrdlog%" 2>&1
+
+REM specify the source file average bitrate !SRC_MI_V_BitRate! in case QSF can't find it (it happens)
+cscript //nologo "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_prefix!" "!SRC_MI_V_BitRate!"
+echo TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+echo call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+echo +++++++++ >> "!vrdlog!" 2>&1
+echo set !qsf_prefix! >> "!vrdlog!" 2>&1
+set !qsf_prefix! >> "!vrdlog!" 2>&1
+echo +++++++++ >> "!vrdlog!" 2>&1
+DIR "!QSF_File!"
+
+
+pause
+exit
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -536,41 +581,6 @@ goto :eof
 BAD CHECKING BELOW, use new checking !!!!!!!!!!!!!!! see above !!!!!!!!!!!!!!!!
 
 
-REM Let's do the QSF 
-REM The VRD profiles use SAS (same as source) resolution
-REM	QSF seems to removes audio delay
-REM Create 2 new specific profiles for QSF: 
-IF /I "!V_Codec_legacy!" == "MPEG-2V" (
-	set "VRDTVSP_qsf_extension=mpg"
-	IF /I "!_vrd_version!" == "5" (
-		set "VRDTVSP_qsf_profile=zzz-MPEG2ps"
-	) ELSE IF /I "!_vrd_version!" == "6" ( 
-		set "VRDTVSP_qsf_profile=VRDTVS-for-QSF-MPEG2"
-	) ELSE (
-		ECHO "VRD Version must be set to 5 or 6 not '!_vrd_version!' ... EXITING" >> "%vrdlog%" 2>&1
-		!xPAUSE!
-		exit
-	)
-) ELSE IF /I "!V_Codec_legacy!" == "AVC" (
-	set "VRDTVSP_qsf_extension=mp4"
-	IF /I "!_vrd_version!" == "5" (
-		set "VRDTVSP_qsf_profile=zzz-H.264-MP4-general"
-	) ELSE IF /I "!_vrd_version!" == "6" ( 
-		set "VRDTVSP_qsf_profile=VRDTVS-for-QSF-H264"
-	) ELSE (
-		ECHO "VRD Version must be set to 5 or 6 not '!_vrd_version!' ... EXITING" >> "%vrdlog%" 2>&1
-		!xPAUSE!
-		exit
-	)
-) ELSE (
-	set unknown_codec_file=%~f1.VRDTVSP_unknown_codec.TS
-	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! Unrecognised video codec !V_Codec_legacy! in "%~f1" >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! Renaming "%~f1" to "!unknown_codec_file!" >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	MOVE /Y "%~f1" "!unknown_codec_file!" >> "%vrdlog%" 2>&1
-	goto :eof
-)
 REM
 set scratch_file_qsf=!scratch_Folder!%~n1.vrdtvsp.qsf.!VRDTVSP_qsf_extension!
 DEL /F "!scratch_file_qsf!" >NUL 2>&1
@@ -1644,7 +1654,6 @@ set "eval_formula=%~1"
 set "eval_variable_name=%~2"
 set "eval_single_number_result="
 REM echo 'cscript //nologo "!eval_formula_vbs_filename!" "!eval_formula!"'
-echo wscript.echo eval(wscript.arguments(0))>"!eval_formula_vbs_filename!"
 for /f %%A in ('cscript //nologo "!eval_formula_vbs_filename!" "!eval_formula!"') do (
     set "!eval_variable_name!=%%A"
     set "eval_single_number_result=%%A"
@@ -1812,6 +1821,8 @@ FOR /F "tokens=1,* delims==" %%G IN ('SET !derived_prefix_FF!') DO (SET "%%G=")>
 echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "!media_filename!" --prefix "!derived_prefix_FF!" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
 "!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "!media_filename!" --prefix "!derived_prefix_FF!" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
 echo ### "!derived_prefix_FF!" >> "!vrdlog!" 2>&1
+echo TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 echo call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
@@ -1820,90 +1831,92 @@ FOR /F "tokens=1,* delims==" %%G IN ('SET !derived_prefix_MI!') DO (SET "%%G=")>
 echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "!media_filename!" --prefix "!derived_prefix_MI!" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
 "!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "!media_filename!" --prefix "!derived_prefix_MI!" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
 echo ### "!derived_prefix_MI!" >> "!vrdlog!" 2>&1
+echo TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 echo call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 REM list initial variables we created for "!current_prefix!" and "!media_filename!"
-REM ECHO !DATE! !TIME! List initial "!current_prefix!" variables for "!media_filename!" >> "!vrdlog!" 2>&1
-REM ECHO set !current_prefix! >> "!vrdlog!" 2>&1
-REM set !current_prefix! >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! List initial "!current_prefix!" variables for "!media_filename!" >> "!vrdlog!" 2>&1
+ECHO set !current_prefix! >> "!vrdlog!" 2>&1
+set !current_prefix! >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! Start of NOTES: >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! AVC Interlaced type #1 .TS >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_CodecID=27 >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_G_Format=MPEG-TS >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_Format=AVC >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!FF_V_codec_name=h264 >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!FF_V_field_order=tt >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanOrder=TFF >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanType=Interlaced >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanType_StoreMethod=SeparatedFields >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!FF_V_display_aspect_ratio=16:9 >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_DisplayAspectRatio_String=16:9 >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! AVC Interlaced type #2 >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_CodecID=27 >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_G_Format=MPEG-TS >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_Format=AVC >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!FF_V_codec_name=h264 >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!FF_V_field_order=tt >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanOrder=TFF >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanType=MBAFF >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanType_StoreMethod=InterleavedFields >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!FF_V_display_aspect_ratio=16:9 >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_DisplayAspectRatio_String=16:9 >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! AVC Interlaced type #3 .mp4 >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_CodecID=avc1 >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_G_Format=MPEG-4 >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_Format=AVC >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!FF_V_codec_name=h264 >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!FF_V_field_order=tt >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanOrder=TFF >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanType=MBAFF >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanType_StoreMethod=InterleavedFields >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!FF_V_display_aspect_ratio=16:9 >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_DisplayAspectRatio_String=16:9 >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! AVC Interlaced type #4 .mp4 >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_CodecID_Info=Advanced_Video_Coding >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_G_Format=MPEG-4 >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_Format=AVC >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!FF_V_codec_name=h264 >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!FF_V_field_order=tt >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanOrder=TFF >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanType=MBAFF >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanType_StoreMethod=InterleavedFields >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!FF_V_display_aspect_ratio=16:9 >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_DisplayAspectRatio_String=16:9 >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! MPEG2 INTERLACED >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_CodecID=2 >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_G_Format=MPEG-TS >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_Format=MPEG_Video >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!FF_V_codec_name=mpeg2video >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!FF_V_field_order=tt >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanOrder=TFF >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanType=Interlaced >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanType_StoreMethod= >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!FF_V_display_aspect_ratio=16:9 >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_DisplayAspectRatio_String=16:9 >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! MPEG2 PROGRESSIVE >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_CodecID=2 >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_G_Format=MPEG-TS >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_Format=MPEG_Video >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!FF_V_codec_name=mpeg2video >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!FF_V_field_order=progressive >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanOrder= >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanType= >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanType_StoreMethod= >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!FF_V_display_aspect_ratio=16:9 >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!    !current_prefix!MI_V_DisplayAspectRatio_String=16:9 >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! End of NOTES: >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! Start of NOTES: >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! AVC Interlaced type #1 .TS >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_CodecID=27 >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_G_Format=MPEG-TS >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_Format=AVC >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!FF_V_codec_name=h264 >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!FF_V_field_order=tt >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanOrder=TFF >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanType=Interlaced >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanType_StoreMethod=SeparatedFields >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!FF_V_display_aspect_ratio=16:9 >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_DisplayAspectRatio_String=16:9 >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! AVC Interlaced type #2 >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_CodecID=27 >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_G_Format=MPEG-TS >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_Format=AVC >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!FF_V_codec_name=h264 >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!FF_V_field_order=tt >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanOrder=TFF >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanType=MBAFF >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanType_StoreMethod=InterleavedFields >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!FF_V_display_aspect_ratio=16:9 >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_DisplayAspectRatio_String=16:9 >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! AVC Interlaced type #3 .mp4 >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_CodecID=avc1 >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_G_Format=MPEG-4 >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_Format=AVC >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!FF_V_codec_name=h264 >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!FF_V_field_order=tt >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanOrder=TFF >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanType=MBAFF >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanType_StoreMethod=InterleavedFields >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!FF_V_display_aspect_ratio=16:9 >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_DisplayAspectRatio_String=16:9 >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! AVC Interlaced type #4 .mp4 >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_CodecID_Info=Advanced_Video_Coding >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_G_Format=MPEG-4 >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_Format=AVC >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!FF_V_codec_name=h264 >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!FF_V_field_order=tt >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanOrder=TFF >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanType=MBAFF >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanType_StoreMethod=InterleavedFields >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!FF_V_display_aspect_ratio=16:9 >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_DisplayAspectRatio_String=16:9 >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! MPEG2 INTERLACED >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_CodecID=2 >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_G_Format=MPEG-TS >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_Format=MPEG_Video >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!FF_V_codec_name=mpeg2video >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!FF_V_field_order=tt >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanOrder=TFF >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanType=Interlaced >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanType_StoreMethod= >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!FF_V_display_aspect_ratio=16:9 >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_DisplayAspectRatio_String=16:9 >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! MPEG2 PROGRESSIVE >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_CodecID=2 >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_G_Format=MPEG-TS >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_Format=MPEG_Video >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!FF_V_codec_name=mpeg2video >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!FF_V_field_order=progressive >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanOrder= >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanType= >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_ScanType_StoreMethod= >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!FF_V_display_aspect_ratio=16:9 >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!    !current_prefix!MI_V_DisplayAspectRatio_String=16:9 >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! End of NOTES: >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 
 REM
 REM Fix up and calculate some variables
