@@ -11,6 +11,7 @@ Option Explicit
 	' Args(3) is name of QSF Output Profile, already created in VRD v6
 	' Args(4) is path/name of a file of XML associated with the output QSF'd file - a fully qualified path name
 	' Args(5) is a number: the ActualBitrate number, in bps, to use if "//VRDOutputInfo/ActualVideoBitrate" is not returned by VRD, eg 4000000
+	'
 	' Note: An additional file is created, with the same full filename/ext as Args(1) with .xml added on the end.
 	'       This .xml file contains complete info for the most recently completed output file 
 	'       (hopefully the QSF) from a call to OutputGetCompletedInfo() or FileGetOpenedFileProgramInfo().
@@ -79,11 +80,47 @@ dim vrd_version_for_qsf, input_AbsolutePathName, ouput_QSF_AbsolutePathName, pro
 Dim fso, wso, objFolder
 dim xmlDict
 dim xmlDict_key
+Dim Args, argCount
 
-vrd_version_for_qsf = 6
-input_AbsolutePathName = "G:\TEST-vrdtvsp-v40\000-TO-BE-PROCESSED\Motor_Sport-Sport-Motorsport-Formula_One_Grand_Prix-2024-Australia-Day_3.2024-03-24.ts"
-ouput_QSF_AbsolutePathName = "G:\TEST-vrdtvsp-v40\000-TO-BE-PROCESSED\Motor_Sport-Sport-Motorsport-Formula_One_Grand_Prix-2024-Australia-Day_3.2024-03-24.qsf.mp4"
-profile_name_for_qsf = "VRDTVS-for-QSF-H264_VRD6" 
+Set Args = Wscript.Arguments
+argCount = Wscript.Arguments.Count
+If argCount <> 6 Then
+	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6 ERROR: arg count should be 6, but is " & argCount)
+	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6	Args(0) is a number: the version number ot use, '5' or '6'")
+	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6	Args(1) is input video file path - a fully qualified path name")
+	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6	Args(2) is path/name of output QSF'd file - a fully qualified path name")
+	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6	Args(3) name of QSF Output Profile, already created in VRD v6")
+	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6	Args(4) is path/name of a file of XML associated with the output QSF'd file - a fully qualified path name")
+	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6	Args(5) is a number: the ActualBitrate number, in bps, to use if '//VRDOutputInfo/ActualVideoBitrate' is not returned by VRD, eg 4000000")
+	Wscript.Quit 5
+End If
+'
+vrd_version_for_qsf =  Args(0)
+input_AbsolutePathName =  Args(1)
+ouput_QSF_AbsolutePathName =  Args(2)
+profile_name_for_qsf =  Args(3)
+xml_AbsolutePathName =  Args(4)
+default_ActualBitrate_bps =  Args(5)
+
+Check the argument values
+vrd_version_for_qsf = CStr(Trim(vrd_version_for_qsf))
+if (not vrd_version_for_qsf.isnumeric()) or (InStr(1, vrd_version_for_qsf, ".") <> 0) or (vrd_version_for_qsf <> "5") or (vrd_version_for_qsf <> "6") Then
+	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6 ERROR: vrd_version_for_qsf should ONLY be 5 or 6, but is '" & vrd_version_for_qsf & "'")
+	Wscript.Quit 5
+End If
+vrd_version_for_qsf = CInt(vrd_version_for_qsf)
+
+default_ActualBitrate_bps = CStr(Trim(default_ActualBitrate_bps))
+if (not default_ActualBitrate_bps.isnumeric()) or (InStr(1, default_ActualBitrate_bps, ".") <> 0) Then
+	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6 ERROR: default_ActualBitrate_bps should ONLY be an integer, but is '" & default_ActualBitrate_bps & "'")
+	Wscript.Quit 5
+End If
+default_ActualBitrate_bps = CInt(default_ActualBitrate_bps)
+
+
+
+
+
 
 Set wso = CreateObject("Wscript.Shell")
 Set fso = CreateObject("Scripting.FileSystemObject")
@@ -254,7 +291,7 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 		Err.Clear
 		on error goto 0
 		set VRDTVSP_Run_QSF_with_v5_or_v6 = Nothing
-		exit function
+		Exit Function
 		'Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6: Exiting with errorlevel code 5")
 		'Wscript.Quit 5
 	End If
@@ -271,12 +308,12 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 		' change hard fail to a soft fail so this source file can be ignored and moved and the process continue with the Next source file
 		on error goto 0
 		set VRDTVSP_Run_QSF_with_v5_or_v6 = Nothing
-		exit function
+		Exit Function
 		'Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6: Exiting with errorlevel code 5")
 		'Wscript.Quit 5
 	End If
 	Wscript.StdOut.WriteLine("QSF working: ")
-	'Wscript.StdOut.Write("VRDTVSP_VRD_QSF: Percent Complete: ")
+	'Wscript.StdOut.Write("VRDTVSP_Run_QSF_with_v5_or_v6 Percent Complete: ")
 	i = 0
 	OutputGetState = VideoRedo.OutputGetState()
 	While( OutputGetState <> 0 )
@@ -291,7 +328,7 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 			' change hard fail to a soft fail so this source file can be ignored and moved and the process continue with the Next source file
 			on error goto 0
 			set VRDTVSP_Run_QSF_with_v5_or_v6 = Nothing
-			exit function
+			Exit Function
 			'Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6: Exiting with errorlevel code 5")
 			'Wscript.Quit 5
 		End If
@@ -316,7 +353,7 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 			set VRDTVSP_Run_QSF_with_v5_or_v6 = Nothing
 			Err.Clear
 			on error goto 0
-			exit function
+			Exit Function
 			'WScript.Quit Err.Number
 		end if
 	Wend
@@ -399,7 +436,7 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 		' change hard fail to a soft fail so this source file can be ignored and moved and the process continue with the Next source file
 		on error goto 0
 		set VRDTVSP_Run_QSF_with_v5_or_v6 = Nothing
-		exit function
+		Exit Function
 		'Wscript.Echo "Error 17 = cannot perform the requested operation"
 		'WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 	End If
@@ -435,7 +472,7 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 		' change hard fail to a soft fail so this source file can be ignored and moved and the process continue with the Next source file
 		on error goto 0
 		set VRDTVSP_Run_QSF_with_v5_or_v6 = Nothing
-		exit function
+		Exit Function
 		'Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6: Exiting with errorlevel code 17")
 		'WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 	ElseIf NOT ( Ucase(xmlDict.Item("outputFile")) =  Ucase(output_QSF_file) ) Then 
@@ -447,7 +484,7 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 		' change hard fail to a soft fail so this source file can be ignored and moved and the process continue with the Next source file
 		on error goto 0
 		set VRDTVSP_Run_QSF_with_v5_or_v6 = Nothing
-		exit function
+		Exit Function
 		'Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6: Exiting with errorlevel code 17")
 		'WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 	End If
@@ -488,7 +525,7 @@ Function gimme_xml_named_value (xmlDoc_object, byVAL xml_item_name) ' assumes th
 		' change hard fail to a soft fail so this source file can be ignored and moved and the process continue with the Next source file
 		on error goto 0
 		gimme_xml_named_value = "no xml node to get data from"
-		exit function
+		Exit Function
 		'Wscript.StdOut.WriteLine("gimme_xml_named_value: Exiting with errorlevel code 17")
 		'WScript.Quit 17 ' Error 17 = cannot perform the requested operation exit with an error ... soft or hard ?
 	End If
@@ -508,7 +545,7 @@ Function gimme_xml_named_attribute (xmlDoc_object, byVAL xml_item_name, byVAL xm
 		' change hard fail to a soft fail so this source file can be ignored and moved and the process continue with the Next source file
 		on error goto 0
 		gimme_xml_named_attribute = "no xml node to get data from"
-		exit function
+		Exit Function
 		'Wscript.StdOut.WriteLine("gimme_xml_named_attribute: Exiting with errorlevel code 17")
 		'WScript.Quit 17 ' Error 17 = cannot perform the requested operation exit with an error ... soft or hard ?
 	End If
