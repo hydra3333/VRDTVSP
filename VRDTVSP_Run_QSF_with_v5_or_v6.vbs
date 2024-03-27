@@ -2,7 +2,7 @@ Option Explicit
 	' cscript //nologo "VRDTVSP_Run_QSF_with_v5_or_v6.vbs" "6" "c:\TEMP\input.ts" "c:\TEMP\output.QSF.MP4" "VRDTVS-for-QSF-MPEG2_VRD6" "c:\TEMP\output_cmd_file.bat" "QSFinfo_" "5000000"
 	'                  name-of-script                args: 0   1                  2                        3                           4                             5         6 
 	'
-	' cscript //nologo "VRDTVSP_Run_QSF_with_v5_or_v6.vbs" "6" ""G:\TEST-vrdtvsp-v40\000-TO-BE-PROCESSED\Motor_Sport-Sport-Motorsport-Formula_One_Grand_Prix-2024-Australia-Day_3.2024-03-24.ts"" ""G:\TEST-vrdtvsp-v40\000-TO-BE-PROCESSED\Motor_Sport-Sport-Motorsport-Formula_One_Grand_Prix-2024-Australia-Day_3.2024-03-24.QSF.MP4" "VRDTVS-for-QSF-MPEG2_VRD6" "G:\TEST-vrdtvsp-v40\z_temp_qsf_cmdfile.bat" "QSFinfo_" "5000000"
+	' cscript //nologo "VRDTVSP_Run_QSF_with_v5_or_v6.vbs" "6" "G:\TEST-vrdtvsp-v40\000-TO-BE-PROCESSED\Motor_Sport-Sport-Motorsport-Formula_One_Grand_Prix-2024-Australia-Day_3.2024-03-24.ts" "G:\TEST-vrdtvsp-v40\000-TO-BE-PROCESSED\Motor_Sport-Sport-Motorsport-Formula_One_Grand_Prix-2024-Australia-Day_3.2024-03-24.QSF.MP4" "VRDTVS-for-QSF-MPEG2_VRD6" "G:\TEST-vrdtvsp-v40\z_temp_qsf_cmdfile.bat" "QSFinfo_" "5000000"
 	'
 	' VideoReDo VBScript to do QSF with QSF Profile and save an XML data into a file of DOS environment variable SET commands
 	' The caller MUST already know the codec used in the input and hence the profile which applies
@@ -90,27 +90,17 @@ Set objFolder = Nothing
 
 Set Args = Wscript.Arguments
 argCount = Wscript.Arguments.Count
-If argCount <> 6 Then
+If argCount <> 7 Then
 	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6 ERROR: arg count should be 6, but is " & argCount)
 	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6	Args(0) is a number: the version number ot use, '5' or '6'")
 	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6	Args(1) is input video file path - a fully qualified path name")
 	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6	Args(2) is path/name of output QSF'd file - a fully qualified path name")
 	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6	Args(3) name of QSF Output Profile, already created in VRD v6")
-	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6	Args(4) is path/name of a file of XML associated with the output QSF'd file - a fully qualified path name")
+	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6	Args(4) is path/name of a file of a .bat which will contain SET commands for DOS environment variables from QSF XML values - a fully qualified path name")
+	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6	Args(4) a prefix eg ""QSFinfo_"" to be used as the variables prefix for the DOS variables in SET commands")
 	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6	Args(5) is a number: the ActualBitrate number, in bps, to use if '//VRDOutputInfo/ActualVideoBitrate' is not returned by VRD, eg 4000000")
 	Wscript.Quit 5
 End If
-
-' Fetch the arg values from the commandline
-
-	' Args(0) is a number: the version number ot use, "5" or "6"
-	' Args(1) is input video file path - a fully qualified path name
-	' Args(2) is path/name of output QSF'd file - a fully qualified path name
-	' Args(3) is name of QSF Output Profile, already created in VRD v6
-	' Args(4) is path/name of a file of a .bat which will contain SET commands for DOS environment variables from QSF XML values - a fully qualified path name
-	' Args(5) a prefix eg "QSFinfo_" to be used as the variables prefix for the DOS variables in SET commands
-	' Args(6) is a number: the ActualBitrate number, in bps, to use if "//VRDOutputInfo/ActualVideoBitrate" is not returned by VRD, eg 4000000
-
 
 vrd_version_for_qsf =  Args(0)
 input_AbsolutePathName =  Args(1)
@@ -123,11 +113,11 @@ default_ActualBitrate_bps =  Args(6)
 ' Check the argument values, in the order of the commandline parameters
 
 vrd_version_for_qsf = CStr(Trim(vrd_version_for_qsf))
-If (not vrd_version_for_qsf.isnumeric()) or (InStr(1, vrd_version_for_qsf, ".") <> 0) or (vrd_version_for_qsf <> "5") or (vrd_version_for_qsf <> "6") Then
+If (not IsNumeric(vrd_version_for_qsf)) or (InStr(1, vrd_version_for_qsf, ".") <> 0) or ((vrd_version_for_qsf <> "5") and (vrd_version_for_qsf <> "6")) Then
 	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6 ERROR: vrd_version_for_qsf should ONLY be 5 or 6, but is '" & vrd_version_for_qsf & "'")
 	Wscript.Quit 5
 End If
-vrd_version_for_qsf = CInt(vrd_version_for_qsf)
+vrd_version_for_qsf = CLng(vrd_version_for_qsf)
 
 If input_AbsolutePathName = output_QSF_AbsolutePathName Then
 	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6 ERROR: input_AbsolutePathName '" & input_AbsolutePathName & "' MUST NOT equal output_QSF_AbsolutePathName '" & output_QSF_AbsolutePathName & "'")
@@ -157,11 +147,11 @@ If qsf_cmd_variable_prefix = "" Then
 End If
 
 default_ActualBitrate_bps = CStr(Trim(default_ActualBitrate_bps))
-If (not default_ActualBitrate_bps.isnumeric()) or (InStr(1, default_ActualBitrate_bps, ".") <> 0) Then
-	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6 ERROR: default_ActualBitrate_bps should ONLY be an integer, but is '" & default_ActualBitrate_bps & "'")
+If (not IsNumeric(default_ActualBitrate_bps)) or (InStr(1, default_ActualBitrate_bps, ".") <> 0) Then
+	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6 ERROR: default_ActualBitrate_bps should ONLY be an integer, eg 5000000, but is '" & default_ActualBitrate_bps & "'")
 	Wscript.Quit 5
 End If
-default_ActualBitrate_bps = CInt(default_ActualBitrate_bps)
+default_ActualBitrate_bps = CLng(default_ActualBitrate_bps)
 
 ' Do the QSF with the function which measures it, provides feedback, and kills it if a timeout occurs
 ' It returns a vbscript DICT object with filtered values in it
@@ -217,8 +207,8 @@ End Function
 Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 										byVAL input_file, _
 										byVAL output_QSF_file, _
-										byVAL QSF_profile_name _
-										byVAL ActualBitrate, _
+										byVAL QSF_profile_name, _
+										byVAL ActualBitrate _
 										)
 	' Parameters: 
 	'				vrd_version_number				is the version of vrd to be used , "5" or "6"
