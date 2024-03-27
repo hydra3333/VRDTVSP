@@ -2,18 +2,6 @@
 @setlocal ENABLEDELAYEDEXPANSION
 @setlocal enableextensions
 
-set "enable_nonlog_echo=NO"
-REM set "enable_nonlog_echo=YES"
-
-IF /I "!enable_nonlog_echo!" == "YES" (
-	set "echo_start=ON"
-	set "echo_end=OFF"
-) ELSE (
-	set "echo_start=OFF"
-	set "echo_end=OFF"
-)
-@echo !echo_start!
-
 REM --------- set whether pause statements take effect ----------------------------
 REM SET xPAUSE=REM
 SET "xPAUSE=PAUSE"
@@ -136,6 +124,7 @@ set "Path_to_py_VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles=!root!VRDTV
 set "Path_to_py_VRDTVSP_Modify_File_Date_Timestamps=!root!VRDTVSP_Modify_File_Date_Timestamps.py"
 set "Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section=!root!VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section.py"
 set "Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section=!root!VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section.py"
+set "Path_to_py_VRDTVSP_Run_QSF_with_v5_or_v6.vbs=!root!VRDTVSP_Run_QSF_with_v5_or_v6.vbs"
 REM --------- setup .VBS and .PS1 and .PY fully qualified filenames to pre-created files which rename and re-timestamp filenames etc ---------
 
 call :get_date_time_String "TOTAL_start_date_time"
@@ -523,12 +512,11 @@ echo "_vrd_version_fallback=!_vrd_version_fallback!" >> "!vrdlog!" 2>&1
 echo "qsf_profile=!qsf_profile!" >> "!vrdlog!" 2>&1
 echo "qsf_extension=!qsf_extension!" >> "!vrdlog!" 2>&1
 
-goto :eof
 
 
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Start QSF of "%~f1" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! input TS file: Video Codec: "!V_Codec_legacy!" ScanType: "!V_ScanType!" ScanOrder: "!V_ScanOrder!" !V_Width!x!V_Height! dar=!V_DisplayAspectRatio_String! sar=!V_PixelAspectRatio! Audio Codec: "!A_Codec_legacy!" A_Audio_Delay_ms: !A_Audio_Delay_ms! Audio_Delay_ms_legacy: !A_Video_Delay_ms_legacy! >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! input : Video Codec: "!???!" ScanType: "!SRC_calc_Video_Interlacement!" ScanOrder: "!SRC_calc_Video_FieldFirst!" !V_Width!x!V_Height! dar=!V_DisplayAspectRatio_String! sar=!V_PixelAspectRatio! Audio Codec: "!A_Codec_legacy!" A_Audio_Delay_ms: !A_Audio_Delay_ms! Audio_Delay_ms_legacy: !A_Video_Delay_ms_legacy! >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 REM
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1820,7 +1808,7 @@ set "derived_prefix_MI=!current_prefix!MI_"
 REM ---
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 echo FOR /F "tokens=1,* delims==" %%G IN ('SET !derived_prefix_FF!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
-FOR /F "tokens=1,* delims==" %%G IN ('SET !derived_prefix_FF!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
+FOR /F "tokens=1,* delims==" %%G IN ('SET !derived_prefix_FF!') DO (SET "%%G=")>NUL 2>&1
 echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "!media_filename!" --prefix "!derived_prefix_FF!" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
 "!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "!media_filename!" --prefix "!derived_prefix_FF!" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
 echo ### "!derived_prefix_FF!" >> "!vrdlog!" 2>&1
@@ -1828,7 +1816,7 @@ echo call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 echo FOR /F "tokens=1,* delims==" %%G IN ('SET !derived_prefix_MI!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
-FOR /F "tokens=1,* delims==" %%G IN ('SET !derived_prefix_MI!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
+FOR /F "tokens=1,* delims==" %%G IN ('SET !derived_prefix_MI!') DO (SET "%%G=")>NUL 2>&1
 echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "!media_filename!" --prefix "!derived_prefix_MI!" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
 "!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "!media_filename!" --prefix "!derived_prefix_MI!" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
 echo ### "!derived_prefix_MI!" >> "!vrdlog!" 2>&1
