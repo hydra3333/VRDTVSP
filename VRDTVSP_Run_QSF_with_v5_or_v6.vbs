@@ -175,8 +175,9 @@ fileObj.WriteLine("REM First, clear the variables with the chosen prefix '" & qs
 fileObj.WriteLine("FOR /F ""tokens=1,* delims=="" %%G IN (\'SET " & qsf_cmd_variable_prefix & "\') DO (SET ""%%G="")")
 For Each objDict_key In objDict
 	'WScript.StdOut.WriteLine("DEBUG: " & "SET """ & qsf_cmd_variable_prefix & Trim(objDict_key) & "=" & Trim(objDict.Item(objDict_key)) & """")
-	fileObj.WriteLine("SET """ & Trim(objDict_key) & "=" & Trim(objDict.Item(objDict_key)) & """")
+	fileObj.WriteLine("SET """ & qsf_cmd_variable_prefix & Trim(objDict_key) & "=" & Trim(objDict.Item(objDict_key)) & """")
 Next
+fileObj.WriteLine("goto :eof")
 fileObj.close
 Set fileObj = Nothing
 'Wscript.StdOut.WriteLine("DEBUG: Created cmdfile '" & output_cmdfile_AbsolutePathName & "'")
