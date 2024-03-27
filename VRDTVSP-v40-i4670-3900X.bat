@@ -516,11 +516,6 @@ echo "_vrd_version_fallback=!_vrd_version_fallback!" >> "!vrdlog!" 2>&1
 echo "qsf_profile=!qsf_profile!" >> "!vrdlog!" 2>&1
 echo "qsf_extension=!qsf_extension!" >> "!vrdlog!" 2>&1
 
-echo +++++++++ >> "!vrdlog!" 2>&1
-echo set SRC_ >> "!vrdlog!" 2>&1
-set SRC_ >> "!vrdlog!" 2>&1
-echo +++++++++ >> "!vrdlog!" 2>&1
-
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Start QSF of file: "%~f1" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Input: Video Codec: '!SRC_FF_V_codec_name!' ScanType: '!SRC_calc_Video_Interlacement!' ScanOrder: '!SRC_calc_Video_FieldFirst!' WxH: !SRC_MI_V_Width!x!SRC_MI_V_HEIGHT! dar:'!SRC_FF_V_display_aspect_ratio_slash!' and '!SRC_MI_V_DisplayAspectRatio_String_slash!' Audio Codec: '!SRC_FF_A_codec_name!' Audio_Delay_ms: '!SRC_MI_A_Audio_Delay!' Video_Delay_ms: '!SRC_MI_A_Video_Delay!' >> "!vrdlog!" 2>&1
@@ -561,15 +556,47 @@ DIR "!QSF_File!"
 
 REM :gather_variables_from_media_file P2 =	the global prefix to use for this gather, one of "SRC_", "QSF_" "TARGET_"
 call :gather_variables_from_media_file "%~f1" "QSF_" 
-echo +++++++++ >> "!vrdlog!" 2>&1
-echo set QSF_ >> "!vrdlog!" 2>&1
-set QSF_ >> "!vrdlog!" 2>&1
-echo +++++++++ >> "!vrdlog!" 2>&1
 
-
-
-
-
+REM $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+REM OK, by now we have 
+REM		variables for SRC_			including bitrate and whatnot
+REM		variables for QSF_
+REM		variables for QSFinfo_
+REM		a QSF file "!QSF_File!"
+REM
+REM handy variables include
+REM		!SRC_calc_Video_Encoding!
+REM		!SRC_calc_Video_Interlacement!"
+REM		!SRC_calc_Video_FieldFirst!"
+REM		!qsf_extension!"
+REM		!SRC_FF_V_codec_name!
+REM		!SRC_MI_V_Width!
+REM		!SRC_MI_V_HEIGHT!
+REM		!SRC_FF_V_display_aspect_ratio_slash!
+REM		!SRC_MI_V_DisplayAspectRatio_String_slash!
+REM		!SRC_FF_A_codec_name!
+REM		!SRC_MI_A_Audio_Delay!'
+REM		!SRC_MI_A_Video_Delay!'
+REM		!SRC_MI_V_BitRate!
+REM		!QSF_MI_V_BitRate!
+REM
+REM Example variable values:
+REM		SRC_MI_V_BitRate=4585677
+REM		SRC_MI_G_OverallBitRate=5300172
+REM		SRC_FF_G_bit_rate=5071587
+REM		QSF_MI_V_BitRate=4585677
+REM		QSF_MI_G_OverallBitRate=5300172
+REM		QSF_FF_G_bit_rate=5071587
+REM		QSFinfo_ActualVideoBitrate=3951544"
+REM		QSFinfo_outputFile=D:\VRDTVSP-SCRATCH\AFL-Live-Sport-Talk_Show-AFL-The_Sunday_Footy_Show.2024-03-24.qsf.mp4"
+REM		QSFinfo_OutputType=MP4"
+REM		QSFinfo_OutputDurationSecs=20"
+REM		QSFinfo_OutputDuration=00:00:20"
+REM		QSFinfo_OutputSizeMB=10"
+REM		QSFinfo_OutputSceneCount=1"
+REM		QSFinfo_VideoOutputFrameCount=519"
+REM		QSFinfo_AudioOutputFrameCount=617"
+REM		QSFinfo_ActualVideoBitrate=3951544"
 
 
 
