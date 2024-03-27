@@ -1,6 +1,6 @@
 Option Explicit
 	' cscript //nologo "VRDTVSP_Run_QSF_with_v5_or_v6.vbs" "6" "c:\TEMP\input.ts" "c:\TEMP\output.QSF.MP4" "VRDTVS-for-QSF-MPEG2_VRD6" "c:\TEMP\output.XML" "5000000"
-	'                  name-of-script                args: 0   1                  2                    3                           4                    5        
+	'                  name-of-script                args: 0   1                  2                        3                           4                    5        
 	' VideoReDo VBScript to do QSF with QSF Profile and save an XML file of characteristics
 	' The caller MUST already know the codec used in the input and hence the profile which applies
 	' There are 6 mandatory parameters.
@@ -76,11 +76,15 @@ Option Explicit
 	'</VRDOutputInfo>
 	'
 
-dim vrd_version_for_qsf, input_AbsolutePathName, ouput_QSF_AbsolutePathName, profile_name_for_qsf, xml_AbsolutePathName, default_ActualBitrate_bps
-Dim fso, wso, objFolder
-dim xmlDict
-dim xmlDict_key
+dim vrd_version_for_qsf, input_AbsolutePathName, output_QSF_AbsolutePathName, profile_name_for_qsf, output_xml_AbsolutePathName, default_ActualBitrate_bps
+Dim fso, wso, objFolder, fileObj
+dim objDict
+dim objDict_key
 Dim Args, argCount
+
+Set wso = CreateObject("Wscript.Shell")
+Set fso = CreateObject("Scripting.FileSystemObject")
+Set objFolder = Nothing
 
 Set Args = Wscript.Arguments
 argCount = Wscript.Arguments.Count
@@ -94,53 +98,83 @@ If argCount <> 6 Then
 	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6	Args(5) is a number: the ActualBitrate number, in bps, to use if '//VRDOutputInfo/ActualVideoBitrate' is not returned by VRD, eg 4000000")
 	Wscript.Quit 5
 End If
-'
+
+' Fetch the arg values from the commandline
 vrd_version_for_qsf =  Args(0)
 input_AbsolutePathName =  Args(1)
-ouput_QSF_AbsolutePathName =  Args(2)
+output_QSF_AbsolutePathName =  Args(2)
 profile_name_for_qsf =  Args(3)
-xml_AbsolutePathName =  Args(4)
+output_xml_AbsolutePathName =  Args(4)
 default_ActualBitrate_bps =  Args(5)
 
-Check the argument values
+' Check the argument values, in the order of the commandline parameters
+
 vrd_version_for_qsf = CStr(Trim(vrd_version_for_qsf))
-if (not vrd_version_for_qsf.isnumeric()) or (InStr(1, vrd_version_for_qsf, ".") <> 0) or (vrd_version_for_qsf <> "5") or (vrd_version_for_qsf <> "6") Then
+If (not vrd_version_for_qsf.isnumeric()) or (InStr(1, vrd_version_for_qsf, ".") <> 0) or (vrd_version_for_qsf <> "5") or (vrd_version_for_qsf <> "6") Then
 	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6 ERROR: vrd_version_for_qsf should ONLY be 5 or 6, but is '" & vrd_version_for_qsf & "'")
 	Wscript.Quit 5
 End If
 vrd_version_for_qsf = CInt(vrd_version_for_qsf)
 
+If input_AbsolutePathName = output_QSF_AbsolutePathName Then
+	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6 ERROR: input_AbsolutePathName '" & input_AbsolutePathName & "' MUST NOT equal output_QSF_AbsolutePathName '" & output_QSF_AbsolutePathName & "'")
+	Wscript.Quit 5
+End If
+If not fso.FileExists(input_AbsolutePathName) Then
+	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6 ERROR: input_AbsolutePathName '" & input_AbsolutePathName & "' DOES NOT EXIST")
+	Wscript.Quit 5
+End If
+
+If fso.FileExists(output_QSF_AbsolutePathName) then
+	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6 WARNING: input_AbsolutePathName '" & output_QSF_AbsolutePathName & "' ALREADY EXISTS, deleting it before continuing with QSF ..." )
+	fso.DeleteFile output_QSF_AbsolutePathName
+End If
+
+' We check the existence of 'profile_name_for_qsf' in the function 'VRDTVSP_Run_QSF_with_v5_or_v6' rather than here
+
+If fso.FileExists(output_xml_AbsolutePathName) then
+	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6 WARNING: output_xml_AbsolutePathName '" & output_xml_AbsolutePathName & "' ALREADY EXISTS, deleting it before continuing with QSF ..." )
+	fso.DeleteFile output_xml_AbsolutePathName
+End If
+
 default_ActualBitrate_bps = CStr(Trim(default_ActualBitrate_bps))
-if (not default_ActualBitrate_bps.isnumeric()) or (InStr(1, default_ActualBitrate_bps, ".") <> 0) Then
+If (not default_ActualBitrate_bps.isnumeric()) or (InStr(1, default_ActualBitrate_bps, ".") <> 0) Then
 	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6 ERROR: default_ActualBitrate_bps should ONLY be an integer, but is '" & default_ActualBitrate_bps & "'")
 	Wscript.Quit 5
 End If
 default_ActualBitrate_bps = CInt(default_ActualBitrate_bps)
 
+' Do the QSF with the function which measures it, provides feedback, and kills it if a timeout occurs
+' It returns a vbscript DICT object with filtered values in it
 
+Set objDict = VRDTVSP_run_inlineQSF_only_with_vrd_5_and_6(vrd_version_for_qsf, input_AbsolutePathName, output_QSF_AbsolutePathName, profile_name_for_qsf, default_ActualBitrate_bps)
+If objDict is Nothing Then
+		Wscript.StdOut.WriteLine("")
+		WScript.StdOut.WriteLine("??????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????")
+		WScript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6 ERROR: - Failed to QSF '" & input_AbsolutePathName & "' into '" & output_QSF_AbsolutePathName & "'")
+		WScript.StdOut.WriteLine("??????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????")
+		Wscript.StdOut.WriteLine("")
+		WScript.Quit 17
+End If
 
+'create ther XML file from objDict
+Set fileObj = fso.CreateTextFile(output_xml_AbsolutePathName, True, False) ' *** vapoursynth fails with unicode input file *** [ filename, Overwrite[, Unicode]])
+fileObj.WriteLine("<QSFinfo>")
+fileObj.WriteLine("   <outputFile>""" & actual_outputFile & """</outputFile>")
+fileObj.WriteLine("   <VideoOutputFrameCount>" & actual_VideoOutputFrameCount & "</VideoOutputFrameCount>")
+fileObj.WriteLine("   <Bitrate>" & actual_ActualVideoBitrate & "<Bitrate>")
+fileObj.WriteLine("   <QSFvalues>")
+For Each objDict_key In objDict
+	fileObj.WriteLine("   <""" & objDict_key & """> """ & objDict.Item(objDict_key) & """>")
+Next
+fileObj.WriteLine("   </QSFvalues>")
+fileObj.WriteLine("</QSFinfo>")
+fileObj.close
+Set fileObj = Nothing
 
-
-
-Set wso = CreateObject("Wscript.Shell")
-Set fso = CreateObject("Scripting.FileSystemObject")
-Set objFolder = Nothing
-
-	Set xmlDict = VRDTVSP_run_inlineQSF_only_with_vrd_5_and_6 (vrd_version_for_qsf, input_AbsolutePathName, ouput_QSF_AbsolutePathName, profile_name_for_qsf)
-	If xmlDict is Nothing Then
-			WScript.StdOut.WriteLine("VRDTVSP ERROR VRDTVSP_Convert_File - Error - Failed to QSF after re-trying with v5 QSF """ & input_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
-			WScript.StdOut.WriteLine("VRDTVSP VRDTVSP_Convert_File: - ???????????????????? FAILED CONVERSION")
-			WScript.StdOut.WriteLine("VRDTVSP VRDTVSP_Convert_File: - ???????????????????? FAILED CONVERSION")
-			WScript.StdOut.WriteLine(" ")
-			WScript.StdOut.WriteLine("======================================================================================================================================================")
-			WScript.StdOut.WriteLine(" ")
-			VRDTVSP_Convert_File = -1 ' just exit and hope the source file is moved to "failed" folder and the process continues with other files
-			WScript.Quit 17
-	End If
-	For Each xmlDict_key In xmlDict
-		wscript.echo "VRD QSF returned XML data: xmlDict_key=""" & xmlDict_key & """ xmlDict_value= """ & xmlDict.Item(xmlDict_key) & """"
-	Next
+' Finish nicely
 WScript.Quit
+
 
 Function VRDTVSP_current_datetime_string()
  Dim dt
@@ -172,7 +206,7 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 	Const giveup_hours = 4	' in hours, the time to let it run before giving up (eg for vrd v6 it can take ages)
 	
 	Dim dot_count_linebreak_interval, two_hours_in_ms, one_hour_in_ms, half_hour_in_ms, quarter_hour_in_ms, ten_minutes_in_ms, giveup_interval_count
-	Dim xmlDict	' this is a dictionary object returned with Set VRDTVSP_Run_QSF_with_v5_or_v6 = xmlDict 
+	Dim xmlDict	' this is a dictionary object returned with Set VRDTVSP_Run_QSF_with_v5_or_v6 = objDict 
 	Dim VideoReDoSilent
 	Dim VideoReDo
 	Dim openflag, closeflag, outputOK, OutputGetState, percentComplete
@@ -199,7 +233,7 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 	'
 	WScript.StdOut.WriteLine("======================================================================================================================================================")
 	WScript.StdOut.WriteLine("" & VRDTVSP_current_datetime_string())
-	WScript.StdOut.WriteLine("START VRDTVSP_Run_QSF_with_v5_or_v6 - QSF VRD VERSION SPECIFIED TO BE USED IS: """ & vrd_version_number & """")
+	WScript.StdOut.WriteLine("Commencing VRDTVSP_Run_QSF_with_v5_or_v6 - QSF VRD VERSION SPECIFIED TO BE USED IS: """ & vrd_version_number & """")
 	'
 	If vrd_version_number = 5 Then
 		Set VideoReDoSilent = WScript.CreateObject("VideoReDo5.VideoReDoSilent")
@@ -207,7 +241,7 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 		Set VideoReDoSilent = WScript.CreateObject("VideoReDo6.VideoReDoSilent")
 	Else
 		WScript.StdOut.WriteLine("VRDTVSP VRDTVSP_Run_QSF_with_v5_or_v6 - Error - VRD version must be 5 or 6, not """ & vrd_version_number & """... Aborting ...")
-		Wscript.Echo "Error 17 = cannot perform the requested operation"
+		WScript.StdOut.WriteLine("Error 17 = cannot perform the requested operation")
 		On Error goto 0
 		WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 	End If
@@ -337,7 +371,7 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 		percentComplete = CLng(VideoReDo.OutputGetPercentComplete())
 		'if NOT err.number = 0 then
 		'	percentComplete = 0
-		'end if
+		'End If
 		'Wscript.StdOut.Write(" " & percent & "% ")
 		Wscript.StdOut.Write( "." & OutputGetState)
 		' 2023.12.23 Changed to continue processing if error (new error has started popping up: Error # 462 The remote server machine does not exist or is unavailable)
@@ -355,7 +389,7 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 			on error goto 0
 			Exit Function
 			'WScript.Quit Err.Number
-		end if
+		End If
 	Wend
 	Wscript.StdOut.WriteLine( "." & OutputGetState & ".")
 	'
@@ -378,7 +412,7 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 		xml_string_completedfile = "" 
 		xml_string_completedfile = VideoReDo.OutputGetCompletedInfo() ' which is the most recently completed output file (hopefully the QSF file) https://www.videoredo.com/TVSuite_Application_Notes/output_complete_info_xml_forma.html" 
 		on error goto 0
-	end if
+	End If
 	if xml_string_completedfile = "" Then	' 2023.12.23 ' re-try to grab xml file Try #3
 		Wscript.StdOut.WriteLine("Using VideoReDo.OutputGetCompletedInfo() TRY #3 to Grab the *Actual* info about the 'VRD latest save' and hope it is the current QSF file)")
 	    Wscript.Sleep 100
@@ -387,7 +421,7 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 		xml_string_completedfile = "" 
 		xml_string_completedfile = VideoReDo.OutputGetCompletedInfo() ' which is the most recently completed output file (hopefully the QSF file) https://www.videoredo.com/TVSuite_Application_Notes/output_complete_info_xml_forma.html" 
 		on error goto 0
-	end if
+	End If
 	if xml_string_completedfile = "" Then	' 2023.12.23 ' re-try to grab xml file Try #4
 		Wscript.StdOut.WriteLine("Using VideoReDo.OutputGetCompletedInfo() TRY #4 to Grab the *Actual* info about the 'VRD latest save' and hope it is the current QSF file)")
 	    Wscript.Sleep 100
@@ -396,7 +430,7 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 		xml_string_completedfile = "" 
 		xml_string_completedfile = VideoReDo.OutputGetCompletedInfo() ' which is the most recently completed output file (hopefully the QSF file) https://www.videoredo.com/TVSuite_Application_Notes/output_complete_info_xml_forma.html" 
 		on error goto 0
-	end if
+	End If
 	if xml_string_completedfile = "" Then	' 2023.12.23 ' re-try to grab xml file Try #5
 		Wscript.StdOut.WriteLine("Using VideoReDo.OutputGetCompletedInfo() TRY #6 to Grab the *Actual* info about the 'VRD latest save' and hope it is the current QSF file)")
 	    Wscript.Sleep 100
@@ -405,7 +439,7 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 		xml_string_completedfile = "" 
 		xml_string_completedfile = VideoReDo.OutputGetCompletedInfo() ' which is the most recently completed output file (hopefully the QSF file) https://www.videoredo.com/TVSuite_Application_Notes/output_complete_info_xml_forma.html" 
 		on error goto 0
-	end if
+	End If
 	closeflag = VideoReDo.FileClose()
 	'on error resume Next
 	on error goto 0
@@ -416,8 +450,8 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 	'
 	' Get some of the data obtained during the QSF process and populate a Dict object to return
 	'
-	Set xmlDict = CreateObject("Scripting.Dictionary")
-	xmlDict.CompareMode = vbTextCompare ' set case insensitive key lookups. You can set the CompareMode property only when the dictionary is empty.
+	Set objDict = CreateObject("Scripting.Dictionary")
+	objDict.CompareMode = vbTextCompare ' set case insensitive key lookups. You can set the CompareMode property only when the dictionary is empty.
 	Set xmlDoc = WScript.CreateObject("Msxml2.DOMDocument.6.0")
 	xmlDoc.async = False
 	'on error resume Next
@@ -437,36 +471,37 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 		on error goto 0
 		set VRDTVSP_Run_QSF_with_v5_or_v6 = Nothing
 		Exit Function
-		'Wscript.Echo "Error 17 = cannot perform the requested operation"
+		'WScript.StdOut.WriteLine("Error 17 = cannot perform the requested operation")
 		'WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 	End If
 	'
 	' 2023.12.26 re-enable dump
 	Call VRDTVSP_DumpNodes_from_xml(xmlDoc.childNodes, 0)	' PRINT INTERESTING INFORMATION FORM WITH THE XML DOCUMENT
 	'
-	xmlDict.Add "outputFile", gimme_xml_named_attribute(xmlDoc, "//VRDOutputInfo", "outputFile")
-	xmlDict.Add "OutputType", gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/OutputType")
-	xmlDict.Add "OutputDurationSecs", gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/OutputDurationSecs")
-	xmlDict.Add "OutputDuration", gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/OutputDuration")
-	xmlDict.Add "OutputSizeMB", gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/OutputSizeMB")
-	xmlDict.Add "OutputSceneCount", gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/OutputSceneCount")
-	xmlDict.Add "VideoOutputFrameCount", gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/VideoOutputFrameCount")
-	xmlDict.Add "AudioOutputFrameCount", gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/AudioOutputFrameCount")
+	objDict.Add "outputFile", gimme_xml_named_attribute(xmlDoc, "//VRDOutputInfo", "outputFile")
+	objDict.Add "OutputType", gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/OutputType")
+	objDict.Add "OutputDurationSecs", gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/OutputDurationSecs")
+	objDict.Add "OutputDuration", gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/OutputDuration")
+	objDict.Add "OutputSizeMB", gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/OutputSizeMB")
+	objDict.Add "OutputSceneCount", gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/OutputSceneCount")
+	objDict.Add "VideoOutputFrameCount", gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/VideoOutputFrameCount")
+	objDict.Add "AudioOutputFrameCount", gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/AudioOutputFrameCount")
 	' 2023.12.26 Rarely, there is text in the supposedlynueric field "//VRDOutputInfo/ActualVideoBitrate"
 	x = gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/ActualVideoBitrate")
 	if IsNumeric(x) Then
-		xmlDict.Add "ActualVideoBitrate", CLng(CDbl(x) * CDbl(1000000.0)) ' convert from decimal Mpbs to bps
+		objDict.Add "ActualVideoBitrate", CLng(CDbl(x) * CDbl(1000000.0)) ' convert from decimal Mpbs to bps
 	else
-		if gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/OutputType") = Ucase("MP4") Then
-			xmlDict.Add "ActualVideoBitrate", 4000000	' assume h.264, guess or use bitrate from mediainfo/ffprobe
-		else
-			xmlDict.Add "ActualVideoBitrate", 2000000	' assume mpeg2, guess or use bitrate from mediainfo/ffprobe
-		end if
-	end if
-	If NOT xmlDict.Exists("outputFile") Then 
+		objDict.Add "ActualVideoBitrate", default_ActualBitrate_bps	' assume h.264, guess or use bitrate from mediainfo/ffprobe
+		'if gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/OutputType") = Ucase("MP4") Then
+		'	objDict.Add "ActualVideoBitrate", 4000000	' assume h.264, guess or use bitrate from mediainfo/ffprobe
+		'else
+		'	objDict.Add "ActualVideoBitrate", 2000000	' assume mpeg2, guess or use bitrate from mediainfo/ffprobe
+		'End If
+	End If
+	If NOT objDict.Exists("outputFile") Then 
 		Set xmlDoc = Nothing
 		WScript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6: ABORTING: outputFile string from VideoReDo.OutputGetCompletedInfo() not in Dict, xml_string_completedfile=" & xml_string_completedfile)
-		Wscript.Echo "Error 17 = cannot perform the requested operation"
+		WScript.StdOut.WriteLine("Error 17 = cannot perform the requested operation")
 		On Error goto 0
 		Set xmlDoc = Nothing
 		' change hard fail to a soft fail so this source file can be ignored and moved and the process continue with the Next source file
@@ -475,10 +510,10 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 		Exit Function
 		'Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6: Exiting with errorlevel code 17")
 		'WScript.Quit 17 ' Error 17 = cannot perform the requested operation
-	ElseIf NOT ( Ucase(xmlDict.Item("outputFile")) =  Ucase(output_QSF_file) ) Then 
+	ElseIf NOT ( Ucase(objDict.Item("outputFile")) =  Ucase(output_QSF_file) ) Then 
 		Set xmlDoc = Nothing
 		WScript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6: ABORTING: outputFile from VideoReDo.OutputGetCompletedInfo() not equal QSFfilename: xml_string_completedfile=" & xml_string_completedfile & " output_QSF_file=" & output_QSF_file)
-		Wscript.Echo "Error 17 = cannot perform the requested operation"
+		WScript.StdOut.WriteLine("Error 17 = cannot perform the requested operation")
 		On Error goto 0
 		Set xmlDoc = Nothing
 		' change hard fail to a soft fail so this source file can be ignored and moved and the process continue with the Next source file
@@ -493,25 +528,26 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 	WScript.StdOut.WriteLine("END VRDTVSP_Run_QSF_with_v5_or_v6 - QSF VRD VERSION SPECIFIED TO BE USED WAS: """ & vrd_version_number & """")
 	WScript.StdOut.WriteLine("" & VRDTVSP_current_datetime_string())
 	WScript.StdOut.WriteLine("======================================================================================================================================================")
-	Set VRDTVSP_Run_QSF_with_v5_or_v6 = xmlDict
+	Set VRDTVSP_Run_QSF_with_v5_or_v6 = objDict
 	' Can use the returned Dict like this:
-	'	Dim VRDTVSP_dict
-	'	Set VRDTVSP_dict = CreateObject("Scripting.Dictionary")
-	'	VRDTVSP_dict.CompareMode = vbTextCompare ' case insensitive key lookups. You can set the CompareMode property only when the dictionary is empty.
-	'	VRDTVSP_dict.Add key, item
-	'	VRDTVSP_dict.Remove (key)
-	'	VRDTVSP_dict.RemoveAll
-	'	If VRDTVSP_dict.Exists(key) Then temp = VRDTVSP_dict.Item(key) Else temp = ""
+	'	Dim objDict
+	'	Set objDict = CreateObject("Scripting.Dictionary")
+	'	objDict.CompareMode = vbTextCompare ' case insensitive key lookups. You can set the CompareMode property only when the dictionary is empty.
+	'	objDict.Add key, item
+	'	objDict.Remove (key)
+	'	objDict.RemoveAll
+	'	If objDict.Exists(key) Then temp = objDict.Item(key) Else temp = ""
 	'	End If
-	'	For Each key In VRDTVSP_dict
-	'		wscript.echo "Dict key=" & key & " value= " & VRDTVSP_dict.Item(key)
+	'	For Each key In objDict
+	'		WScript.StdOut.WriteLine("Dict key=" & key & " value= " & objDict.Item(key))
 	'	Next
-	'	VRDTVSP_dict.Items().Count ' count of items in the dictionary
-	'	VRDTVSP_dict.Keys().(i)	' the value, say in a for/Next loop, base 0 (0 to Count-1)
-	'	VRDTVSP_dict.Items().(i)	' the value, say in a for/Next loop, base 0 (0 to Count-1)
-	'	VRDTVSP_dict.Remove VRDTVSP_dict.Keys()(i)
-	'	VRDTVSP_dict.Key(key) = newkey ' but You can't change a value in a key-value pair.  If you want a different value, you need to delete the item, then add a new one.
+	'	objDict.Items().Count ' count of items in the dictionary
+	'	objDict.Keys().(i)	' the value, say in a for/Next loop, base 0 (0 to Count-1)
+	'	objDict.Items().(i)	' the value, say in a for/Next loop, base 0 (0 to Count-1)
+	'	objDict.Remove objDict.Keys()(i)
+	'	objDict.Key(key) = newkey ' but You can't change a value in a key-value pair.  If you want a different value, you need to delete the item, then add a new one.
 End Function
+
 Function gimme_xml_named_value (xmlDoc_object, byVAL xml_item_name) ' assumes the xml doc is already loaded in xmlDoc_object
 	'	Parameters:
 	'		xmlDoc_object 	the DOM xml object with the xml string already loaded
@@ -520,7 +556,7 @@ Function gimme_xml_named_value (xmlDoc_object, byVAL xml_item_name) ' assumes th
 	Set item_nNode = xmlDoc_object.selectsinglenode(xml_item_name) ' eg '//VRDProgramInfo/Video/EstimatedVideoBitrate' CAREFUL, this is case sensitive
 	If item_nNode is Nothing Then
 		WScript.StdOut.WriteLine("VRDTVS gimme_xml_named_value ABORTING : Could not find XML node " & xml_item_name & " in xmlDoc_object")
-		Wscript.Echo "Error 17 = cannot perform the requested operation"
+		WScript.StdOut.WriteLine("Error 17 = cannot perform the requested operation")
 		Set xmlDoc_object = Nothing
 		' change hard fail to a soft fail so this source file can be ignored and moved and the process continue with the Next source file
 		on error goto 0
@@ -531,6 +567,7 @@ Function gimme_xml_named_value (xmlDoc_object, byVAL xml_item_name) ' assumes th
 	End If
 	gimme_xml_named_value = item_nNode.text ' eg the text for that item //VideoReDoProject/EstimatedVideoBitrate
 	End Function
+
 Function gimme_xml_named_attribute (xmlDoc_object, byVAL xml_item_name, byVAL xml_item_attribute_name)
 	'	Parameters:
 	'		xmlDoc_object 				the DOM xml object with the xml string already loaded
@@ -540,7 +577,7 @@ Function gimme_xml_named_attribute (xmlDoc_object, byVAL xml_item_name, byVAL xm
 	Set item_nNode = xmlDoc_object.selectsinglenode(xml_item_name) ' eg '//VideoReDoProject/EncodingDimensions' CAREFUL, this is case sensitive
 	If item_nNode is Nothing Then
 		WScript.StdOut.WriteLine("VRDTVS gimme_xml_named_attribute ABORTING: Could not find XML node " & xml_item_name & " in xmlDoc_object")
-		Wscript.Echo "Error 17 = cannot perform the requested operation"
+		WScript.StdOut.WriteLine("Error 17 = cannot perform the requested operation")
 		Set xmlDoc_object = Nothing
 		' change hard fail to a soft fail so this source file can be ignored and moved and the process continue with the Next source file
 		on error goto 0
@@ -552,6 +589,7 @@ Function gimme_xml_named_attribute (xmlDoc_object, byVAL xml_item_name, byVAL xm
 	item_text = item_nNode.text ' eg the text for that item //VideoReDoProject/EncodingDimensions
 	gimme_xml_named_attribute = item_nNode.getAttribute(xml_item_attribute_name)
 End Function
+
 Sub VRDTVSP_DumpNodes_from_xml(dnfx_Nodes, dnfx_Indent_Size)
 	'	Dump useful information from the xmlDoc object which contains XML data
 	'	Called like:
@@ -579,6 +617,7 @@ Sub VRDTVSP_DumpNodes_from_xml(dnfx_Nodes, dnfx_Indent_Size)
 		End Select
 	Next
 End Sub
+
 Function VRDTVSP_DisplayAttributes_from_xml_node(dafxn_Node, dafxn_Indent_Size)
 	Dim dafxn_xAttr, dafxn_res
 	dafxn_res = ""
