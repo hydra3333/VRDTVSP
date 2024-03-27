@@ -155,8 +155,8 @@ default_ActualBitrate_bps = CLng(default_ActualBitrate_bps)
 
 ' Do the QSF with the function which measures it, provides feedback, and kills it if a timeout occurs
 ' It returns a vbscript DICT object with filtered values in it
+Set objDict = VRDTVSP_Run_QSF_with_v5_or_v6(vrd_version_for_qsf, input_AbsolutePathName, output_QSF_AbsolutePathName, profile_name_for_qsf, default_ActualBitrate_bps)
 
-Set objDict = VRDTVSP_run_inlineQSF_only_with_vrd_5_and_6(vrd_version_for_qsf, input_AbsolutePathName, output_QSF_AbsolutePathName, profile_name_for_qsf, default_ActualBitrate_bps)
 If objDict is Nothing Then
 		Wscript.StdOut.WriteLine("")
 		WScript.StdOut.WriteLine("??????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????")
@@ -167,16 +167,19 @@ If objDict is Nothing Then
 End If
 
 'create the .BAT cmdfile file from objDict
+Wscript.StdOut.WriteLine("Creating cmdfile '" & output_cmdfile_AbsolutePathName & "'")
 Set fileObj = fso.CreateTextFile(output_cmdfile_AbsolutePathName, True, False) ' *** vapoursynth fails with unicode input file *** [ filename, Overwrite[, Unicode]])
 fileObj.WriteLine("echo qsf_cmd_variable_prefix='" & qsf_cmd_variable_prefix & "'")
 fileObj.WriteLine("REM List of DOS SET commands to define DOS variables")
-fileObj.WriteLine("REM First, clear the variables with the chosen prefix")
+fileObj.WriteLine("REM First, clear the variables with the chosen prefix '" & qsf_cmd_variable_prefix & "'")
 fileObj.WriteLine("FOR /F ""tokens=1,* delims=="" %%G IN (\'SET " & qsf_cmd_variable_prefix & "\') DO (SET ""%%G="")")
 For Each objDict_key In objDict
+	WScript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6 DEBUG: " & "SET """ & Trim(objDict_key) & "=" & Trim(objDict.Item(objDict_key)) & """")
 	fileObj.WriteLine("SET """ & Trim(objDict_key) & "=" & Trim(objDict.Item(objDict_key)) & """")
 Next
 fileObj.close
 Set fileObj = Nothing
+Wscript.StdOut.WriteLine("Created cmdfile '" & output_cmdfile_AbsolutePathName & "'")
 
 
 ' Show how to create an XML file of the same thing
@@ -255,7 +258,7 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 	'
 	WScript.StdOut.WriteLine("======================================================================================================================================================")
 	WScript.StdOut.WriteLine("" & VRDTVSP_current_datetime_string())
-	WScript.StdOut.WriteLine("Commencing VRDTVSP_Run_QSF_with_v5_or_v6 - QSF VRD VERSION SPECIFIED TO BE USED IS: """ & vrd_version_number & """")
+	WScript.StdOut.WriteLine("Commencing VRDTVSP_Run_QSF_with_v5_or_v6 - QSF VRD VERSION SPECIFIED: """ & vrd_version_number & """   timeout giveup_hours=" & giveup_hours)
 	'
 	If vrd_version_number = 5 Then
 		Set VideoReDoSilent = WScript.CreateObject("VideoReDo5.VideoReDoSilent")
@@ -547,7 +550,7 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 	End If
 	on error goto 0
 	Set xmlDoc = Nothing
-	WScript.StdOut.WriteLine("END VRDTVSP_Run_QSF_with_v5_or_v6 - QSF VRD VERSION SPECIFIED TO BE USED WAS: """ & vrd_version_number & """")
+	WScript.StdOut.WriteLine("END VRDTVSP_Run_QSF_with_v5_or_v6 - QSF VRD VERSION SPECIFIED: """ & vrd_version_number & """")
 	WScript.StdOut.WriteLine("" & VRDTVSP_current_datetime_string())
 	WScript.StdOut.WriteLine("======================================================================================================================================================")
 	Set VRDTVSP_Run_QSF_with_v5_or_v6 = objDict
