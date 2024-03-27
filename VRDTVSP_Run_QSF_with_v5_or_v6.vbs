@@ -1,5 +1,5 @@
 Option Explicit
-	' cscript //nologo "VRDTVSP_Run_QSF_with_v5_or_v6.vbs" "6" "c:\TEMP\input.ts" "c:\TEMP\output.MP4" "VRDTVS-for-QSF-MPEG2_VRD6" "c:\TEMP\output.XML" "5000000"
+	' cscript //nologo "VRDTVSP_Run_QSF_with_v5_or_v6.vbs" "6" "c:\TEMP\input.ts" "c:\TEMP\output.QSF.MP4" "VRDTVS-for-QSF-MPEG2_VRD6" "c:\TEMP\output.XML" "5000000"
 	'                  name-of-script                args: 0   1                  2                    3                           4                    5        
 	' VideoReDo VBScript to do QSF with QSF Profile and save an XML file of characteristics
 	' The caller MUST already know the codec used in the input and hence the profile which applies
@@ -75,23 +75,23 @@ Option Explicit
 	'</VRDOutputInfo>
 	'
 
-dim vrd_version_for_qsf
-dim xmlDict, CF_FILE_AbsolutePathName, CF_QSF_AbsolutePathName, VRDTVSP_profile_name_for_qsf
+dim vrd_version_for_qsf, input_AbsolutePathName, ouput_QSF_AbsolutePathName, profile_name_for_qsf, xml_AbsolutePathName, default_ActualBitrate_bps
 Dim fso, wso, objFolder
+dim xmlDict
 dim xmlDict_key
 
 vrd_version_for_qsf = 6
-CF_FILE_AbsolutePathName = "G:\TEST-vrdtvsp-v40\000-TO-BE-PROCESSED\Motor_Sport-Sport-Motorsport-Formula_One_Grand_Prix-2024-Australia-Day_3.2024-03-24.ts"
-CF_QSF_AbsolutePathName = "G:\TEST-vrdtvsp-v40\000-TO-BE-PROCESSED\Motor_Sport-Sport-Motorsport-Formula_One_Grand_Prix-2024-Australia-Day_3.2024-03-24.qsf.mp4"
-VRDTVSP_profile_name_for_qsf = "VRDTVS-for-QSF-H264_VRD6" 
+input_AbsolutePathName = "G:\TEST-vrdtvsp-v40\000-TO-BE-PROCESSED\Motor_Sport-Sport-Motorsport-Formula_One_Grand_Prix-2024-Australia-Day_3.2024-03-24.ts"
+ouput_QSF_AbsolutePathName = "G:\TEST-vrdtvsp-v40\000-TO-BE-PROCESSED\Motor_Sport-Sport-Motorsport-Formula_One_Grand_Prix-2024-Australia-Day_3.2024-03-24.qsf.mp4"
+profile_name_for_qsf = "VRDTVS-for-QSF-H264_VRD6" 
 
 Set wso = CreateObject("Wscript.Shell")
 Set fso = CreateObject("Scripting.FileSystemObject")
 Set objFolder = Nothing
 
-	Set xmlDict = VRDTVSP_run_inlineQSF_only_with_vrd_5_and_6 (vrd_version_for_qsf, CF_FILE_AbsolutePathName, CF_QSF_AbsolutePathName, VRDTVSP_profile_name_for_qsf)
+	Set xmlDict = VRDTVSP_run_inlineQSF_only_with_vrd_5_and_6 (vrd_version_for_qsf, input_AbsolutePathName, ouput_QSF_AbsolutePathName, profile_name_for_qsf)
 	If xmlDict is Nothing Then
-			WScript.StdOut.WriteLine("VRDTVSP ERROR VRDTVSP_Convert_File - Error - Failed to QSF after re-trying with v5 QSF """ & CF_FILE_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
+			WScript.StdOut.WriteLine("VRDTVSP ERROR VRDTVSP_Convert_File - Error - Failed to QSF after re-trying with v5 QSF """ & input_AbsolutePathName & """ V_Codec_legacy=""" & V_Codec_legacy & """ CF_exe_cmd_string=""" & CF_exe_cmd_string & """")
 			WScript.StdOut.WriteLine("VRDTVSP VRDTVSP_Convert_File: - ???????????????????? FAILED CONVERSION")
 			WScript.StdOut.WriteLine("VRDTVSP VRDTVSP_Convert_File: - ???????????????????? FAILED CONVERSION")
 			WScript.StdOut.WriteLine(" ")
