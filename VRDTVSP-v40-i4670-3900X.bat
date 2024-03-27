@@ -519,7 +519,7 @@ echo "qsf_extension=!qsf_extension!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Start QSF of file: "%~f1" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Input: Video Codec: '!SRC_FF_V_codec_name!' ScanType: '!SRC_calc_Video_Interlacement!' ScanOrder: '!SRC_calc_Video_FieldFirst!' WxH: !SRC_MI_V_Width!x!SRC_MI_V_HEIGHT! dar:'!SRC_FF_V_display_aspect_ratio_slash!' and '!SRC_MI_V_DisplayAspectRatio_String_slash!' Audio Codec: '!SRC_FF_A_codec_name!' Audio_Delay_ms: '!SRC_MI_A_Audio_Delay!' Video_Delay_ms: '!SRC_MI_A_Video_Delay!' >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! _vrd_version_primary='!_vrd_version_primary!' _vrd_version_fallback=!_vrd_version_fallback!' qsf_profile=!qsf_profile!' qsf_extension=!qsf_extension!' >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! _vrd_version_primary='!_vrd_version_primary!' _vrd_version_fallback=!_vrd_version_fallback!' qsf_profile=!qsf_profile!' qsf_extension='!qsf_extension!' >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 REM
 set "qsf_xml_prefix=QSFinfo_"
@@ -536,7 +536,7 @@ DEL /F "!vrd6_logfiles!" >> "%vrdlog%" 2>&1
 ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 REM specify the source file average bitrate !SRC_MI_V_BitRate! in case QSF can't find it (it happens)
-cscript //nologo "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!"
+cscript //nologo "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" >> "!vrdlog!" 2>&1
 SET EL=!ERRORLEVEL!
 IF /I "!EL!" NEQ "0" (
    ECHO !DATE! !TIME! *********  QSF Error !EL! returned from cscript QSF >> "%vrdlog%" 2>&1
@@ -568,11 +568,22 @@ set !qsf_xml_prefix! >> "!vrdlog!" 2>&1
 echo +++++++++ >> "!vrdlog!" 2>&1
 DIR "!QSF_File!"
 call :get_date_time_String "end_date_time_QSF"
-echo "!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF" >> "!vrdlog!" 2>&1
-"!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF" >> "!vrdlog!" 2>&1
+echo "!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
+"!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
 
 REM :gather_variables_from_media_file P2 =	the global prefix to use for this gather, one of "SRC_", "QSF_" "TARGET_"
 call :gather_variables_from_media_file "%~f1" "QSF_" 
+
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! End QSF of file: "%~f1" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! Input: Video Codec: '!SRC_FF_V_codec_name!' ScanType: '!SRC_calc_Video_Interlacement!' ScanOrder: '!SRC_calc_Video_FieldFirst!' WxH: !SRC_MI_V_Width!x!SRC_MI_V_HEIGHT! dar:'!SRC_FF_V_display_aspect_ratio_slash!' and '!SRC_MI_V_DisplayAspectRatio_String_slash!' Audio Codec: '!SRC_FF_A_codec_name!' Audio_Delay_ms: '!SRC_MI_A_Audio_Delay!' Video_Delay_ms: '!SRC_MI_A_Video_Delay!' >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! _vrd_version_primary='!_vrd_version_primary!' _vrd_version_fallback=!_vrd_version_fallback!' qsf_profile=!qsf_profile!' qsf_extension='!qsf_extension!' >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! QSF file details: "!QSF_File!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! QSF: Video Codec: '!QSF_FF_V_codec_name!' ScanType: '!QSF_calc_Video_Interlacement!' ScanOrder: '!QSF_calc_Video_FieldFirst!' WxH: !QSF_MI_V_Width!x!QSF_MI_V_HEIGHT! dar:'!QSF_FF_V_display_aspect_ratio_slash!' and '!QSF_MI_V_DisplayAspectRatio_String_slash!' Audio Codec: '!QSF_FF_A_codec_name!' Audio_Delay_ms: '!QSF_MI_A_Audio_Delay!' Video_Delay_ms: '!QSF_MI_A_Video_Delay!' >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! _vrd_version_primary='!_vrd_version_primary!' _vrd_version_fallback=!_vrd_version_fallback!' qsf_profile=!qsf_profile!' qsf_extension='!qsf_extension!' >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 
 REM $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 REM OK, by now we have 
@@ -614,6 +625,23 @@ REM		QSFinfo_OutputSceneCount=1"
 REM		QSFinfo_VideoOutputFrameCount=519"
 REM		QSFinfo_AudioOutputFrameCount=617"
 REM		QSFinfo_ActualVideoBitrate=3951544"
+REM $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+REM Use the max of these actual video bitrates (not the "overall" which includes audio bitrate) 
+REM		SRC_MI_V_BitRate
+REM		QSF_MI_V_BitRate
+REM		QSFinfo_ActualVideoBitrate
+set /a SRC_calc_Video_Max_Bitrate=0
+if !SRC_MI_V_BitRate! gtr !SRC_calc_Video_Max_Bitrate! set /a SRC_calc_Video_Max_Bitrate=!SRC_MI_V_BitRate!
+if !QSF_MI_V_BitRate! gtr !SRC_calc_Video_Max_Bitrate! set /a SRC_calc_Video_Max_Bitrate=!QSF_MI_V_BitRate!
+if !QSFinfo_ActualVideoBitrate! gtr !SRC_calc_Video_Max_Bitrate! set /a SRC_calc_Video_Max_Bitrate=!QSFinfo_ActualVideoBitrate!
+echo SRC_calc_Video_Max_Bitrate=!SRC_calc_Video_Max_Bitrate! from !SRC_MI_V_BitRate!, !QSF_MI_V_BitRate!, !QSFinfo_ActualVideoBitrate! >> "!vrdlog!" 2>&1
+REM Now, SRC_calc_Video_Max_Bitrate contains the max video bitrate observed
+REM And handy variables include
+REM		!SRC_calc_Video_Encoding!
+REM		!SRC_calc_Video_Interlacement!"
+REM		!SRC_calc_Video_FieldFirst!"
+REM		!SRC_calc_Video_Max_Bitrate!"
 
 
 
@@ -631,219 +659,11 @@ exit
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 goto :eof
 
-BAD CHECKING BELOW, use new checking !!!!!!!!!!!!!!! see above !!!!!!!!!!!!!!!!
 
 
 
-REM $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-REM Extract the "Actual Bitrate" VRD's QSF found and published in the QSF log.
-REM The line in the QSF log looks like this without the quotes
-REM '       Actual Video Bitrate: 3.35 Mbps'
-set this_QSF_log5=!scratch_Folder!%~n1.vrdtvsp.qsf-5.log
-set this_QSF_log6=!scratch_Folder!%~n1.vrdtvsp.qsf-6.log
-set this_QSF_log5_bitstring_log=!scratch_Folder!%~n1.vrdtvsp.qsf-5.actual_bitstring-log.log
-set this_QSF_log6_bitstring_log=!scratch_Folder!%~n1.vrdtvsp.qsf-6.actual_bitstring-log.log
-REM
-REM 1. locate the bitrate string in the log file and extract it
-REM DIR "G:\HDTV\VideoReDo-5_*.Log"
-ECHO !DATE! !TIME! DIR "G:\HDTV\VideoReDo-5_*.Log" >> "%vrdlog%" 2>&1
-DIR "G:\HDTV\VideoReDo-5_*.Log" >> "%vrdlog%" 2>&1
-ECHO !DATE! !TIME! COPY /Y "G:\HDTV\VideoReDo-5_*.Log" "!this_QSF_log5!" >> "%vrdlog%" 2>&1
-COPY /Y "G:\HDTV\VideoReDo-5_*.Log" "!this_QSF_log5!" >> "%vrdlog%" 2>&1
-REM DIR "!this_QSF_log5!"
-ECHO !DATE! !TIME! DIR "!this_QSF_log5!" >> "%vrdlog%" 2>&1
-DIR "!this_QSF_log5!" >> "%vrdlog%" 2>&1
-REM
-REM DIR "G:\HDTV\VideoReDo6_*.Log"
-ECHO !DATE! !TIME! DIR "G:\HDTV\VideoReDo6_*.Log" >> "%vrdlog%" 2>&1
-DIR "G:\HDTV\VideoReDo6_*.Log" >> "%vrdlog%" 2>&1
-ECHO !DATE! !TIME! COPY /Y "G:\HDTV\VideoReDo6_*.Log" "!this_QSF_log6!" >> "%vrdlog%" 2>&1
-COPY /Y "G:\HDTV\VideoReDo6_*.Log" "!this_QSF_log6!" >> "%vrdlog%" 2>&1
-REM DIR "!this_QSF_log6!"
-ECHO !DATE! !TIME! DIR "!this_QSF_log6!" >> "%vrdlog%" 2>&1
-DIR "!this_QSF_log6!" >> "%vrdlog%" 2>&1
-REM
-REM ------- set to v5 or v6, matching the QSF version used
-IF /I "!_vrd_version!" == "5" (
-   set "this_QSF_log=!this_QSF_log5!"
-   set "this_QSF_log_bitstring_log=!this_QSF_log5_bitstring_log!"
-) ELSE IF /I "!_vrd_version!" == "6" ( 
-   set "this_QSF_log=!this_QSF_log6!"
-   set "this_QSF_log_bitstring_log=!this_QSF_log5_bitstring_log!"
-) ELSE (
-   ECHO "VRD Version must be set to 5 or 6 not '!_vrd_version!' ... EXITING" >> "%vrdlog%" 2>&1
-   !xPAUSE!
-   exit
-)
-REM
-REM -------
-ECHO !DATE! !TIME! 1. FINDSTR /I /C:"Actual Video Bitrate" "!this_QSF_log!" >> "%vrdlog%" 2>&1
-FINDSTR /I /C:"Actual Video Bitrate" "!this_QSF_log!" >> "%vrdlog%" 2>&1
-FINDSTR /I /C:"Actual Video Bitrate" "!this_QSF_log!" > "!this_QSF_log_bitstring_log!" 2>&1
-REM 2. crack string to find the number and the units
-ECHO !DATE! !TIME! 2. FINDSTR /I /C:":" ^< "!this_QSF_log_bitstring_log!" >> "%vrdlog%" 2>&1
-FINDSTR /I /C:":" < "!this_QSF_log_bitstring_log!" >> "%vrdlog%" 2>&1
-REM
-set /a "lc=1"
-set "Q_ACTUAL_QSF_LOG_BITRATE=0"
-set "Q_ACTUAL_QSF_LOG_BITRATE_UNITS="
-ECHO !DATE! !TIME! TYPE "!this_QSF_log_bitstring_log!" >> "%vrdlog%" 2>&1
-TYPE "!this_QSF_log_bitstring_log!" >> "%vrdlog%" 2>&1
-REM ECHO !DATE! !TIME! TYPE "!this_QSF_log6_bitstring_log!" >> "%vrdlog%" 2>&1
-REM TYPE "!this_QSF_log6_bitstring_log!" >> "%vrdlog%" 2>&1
-for /f "tokens=1,2 delims=:" %%a in (' FINDSTR /I /C:":" ^< "!this_QSF_log_bitstring_log!" ') do (
-	echo !DATE! !TIME! "lc=!lc! a='%%a' b='%%b' >> "%vrdlog%" 2>&1
-	set "bitrate_String_from_log=%%b"
-	for /f "tokens=1,2 delims= " %%i in ("!bitrate_String_from_log!") do (
-		echo !DATE! !TIME! "i='%%i' j='%%j'" >> "%vrdlog%" 2>&1
-		set "Q_ACTUAL_QSF_LOG_BITRATE=%%i"
-		set "Q_ACTUAL_QSF_LOG_BITRATE_UNITS=%%j"
-	)
-	set /a "lc=!lc! + 1"
-	if !lc! GTR 5 (
-		ECHO !DATE! !TIME! "SCRIPT ERROR: QDF LOG PARSE loop count GTR 5, exiting" >> "%vrdlog%" 2>&1
-		exit 1
-	)
-)
-REM
-ECHO DEL "!this_QSF_log5_bitstring_log!" >> "%vrdlog%" 2>&1
-DEL "!this_QSF_log5_bitstring_log!" >> "%vrdlog%" 2>&1
-ECHO DEL "!this_QSF_log6_bitstring_log!" >> "%vrdlog%" 2>&1
-DEL "!this_QSF_log6_bitstring_log!" >> "%vrdlog%" 2>&1
-REM at this point, we have a decimal number, eg '3.25' and units eg 'Mbps' without quotes
-ECHO !DATE! !TIME! "from QSF file, ACTUAL_QSF_LOG_BITRATE='!Q_ACTUAL_QSF_LOG_BITRATE!'" >> "%vrdlog%" 2>&1
-ECHO !DATE! !TIME! "from QSF file, Q_ACTUAL_QSF_LOG_BITRATE_UNITS='!Q_ACTUAL_QSF_LOG_BITRATE_UNITS!'" >> "%vrdlog%" 2>&1
-REM Always assume units is Mbps ...
-REM Now turn the decimal number into a full integer number of Mbps
-ECHO CALL :calc_single_number_result "INT(!Q_ACTUAL_QSF_LOG_BITRATE! * 1000000)" "Q_ACTUAL_QSF_LOG_BITRATE" >> "%vrdlog%" 2>&1
-CALL :calc_single_number_result "INT(!Q_ACTUAL_QSF_LOG_BITRATE! * 1000000)" "Q_ACTUAL_QSF_LOG_BITRATE"
-ECHO !DATE! !TIME! "Calculated Q_ACTUAL_QSF_LOG_BITRATE='!Q_ACTUAL_QSF_LOG_BITRATE!'" >> "%vrdlog%" 2>&1
-ECHO !DATE! !TIME! "Calculated Q_ACTUAL_QSF_LOG_BITRATE_UNITS='!Q_ACTUAL_QSF_LOG_BITRATE_UNITS!'" >> "!vrdlog!" 2>&1
-DEL /F "!scratch_Folder!%~n1.vrdtvsp.qsf-5.log" >NUL 2>&1
-DEL /F "!scratch_Folder!%~n1.vrdtvsp.qsf-6.log" >NUL 2>&1
-REM $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-REM
-Call :get_mediainfo_parameter_legacy "Video" "Codec" "Q_V_Codec_legacy" "!scratch_file_qsf!"
-Call :get_mediainfo_parameter "Video" "ScanType" "Q_V_ScanType" "!scratch_file_qsf!" 
-IF /I "!Q_V_ScanType!" == "" (
-	ECHO !DATE! !TIME! "Q_V_ScanType blank, setting Q_V_ScanType=Progressive" >> "!vrdlog!" 2>&1
-	set "Q_V_ScanType=Progressive"
-)
-IF /I "!Q_V_ScanType!" == "MBAFF" (
-	ECHO !DATE! !TIME! "Q_V_ScanType blank, setting Q_V_ScanType=Interlaced" >> "!vrdlog!" 2>&1
-	set "Q_V_ScanType=Interlaced"
-)
-Call :get_mediainfo_parameter "Video" "ScanOrder" "Q_V_ScanOrder" "!scratch_file_qsf!" 
-IF /I "!Q_V_ScanOrder!" == "" (
-	ECHO !DATE! !TIME! "Q_V_ScanOrder blank, setting Q_V_ScanOrder=TFF" >> "!vrdlog!" 2>&1
-	set "Q_V_ScanOrder=TFF"
-)
-Call :get_mediainfo_parameter "Video" "BitRate" "Q_V_BitRate" "!scratch_file_qsf!" 
-Call :get_mediainfo_parameter "Video" "BitRate/String" "Q_V_BitRate_String" "!scratch_file_qsf!"  
-Call :get_mediainfo_parameter "Video" "BitRate_Minimum" "Q_V_BitRate_Minimum" "!scratch_file_qsf!"  
-Call :get_mediainfo_parameter "Video" "BitRate_Minimum/String" "Q_V_BitRate_Minimum_String" "!scratch_file_qsf!"  
-Call :get_mediainfo_parameter "Video" "BitRate_Maximum" "Q_V_BitRate_Maximum" "!scratch_file_qsf!" 
-Call :get_mediainfo_parameter "Video" "BitRate_Maximum/String" "Q_V_BitRate_Maximum_String" "!scratch_file_qsf!"  
-Call :get_mediainfo_parameter "Video" "BufferSize" "Q_V_BufferSize" "!scratch_file_qsf!" 
-Call :get_mediainfo_parameter "Video" "Width" "Q_V_Width" "!scratch_file_qsf!" 
-Call :get_mediainfo_parameter "Video" "Height" "Q_V_Height" "!scratch_file_qsf!" 
-Call :get_mediainfo_parameter "Video" "DisplayAspectRatio" "Q_V_DisplayAspectRatio" "!scratch_file_qsf!"
-Call :get_mediainfo_parameter "Video" "DisplayAspectRatio/String" "Q_V_DisplayAspectRatio_String" "!scratch_file_qsf!"
-set "Q_V_DisplayAspectRatio_String_slash=!Q_V_DisplayAspectRatio_String::=/!"
-set "Q_V_DisplayAspectRatio_String_slash=!Q_V_DisplayAspectRatio_String_slash:\=/!"
-Call :get_mediainfo_parameter "Video" "PixelAspectRatio" "Q_V_PixelAspectRatio" "!scratch_file_qsf!"
-Call :get_mediainfo_parameter "Video" "PixelAspectRatio/String" "Q_V_PixelAspectRatio_String" "!scratch_file_qsf!"
-Call :get_mediainfo_parameter "Audio" "Video_Delay" "Q_A_Video_Delay_ms" "!scratch_file_qsf!" 
-IF /I "!Q_A_Video_Delay_ms!" == "" (
-	set /a Q_A_Audio_Delay_ms=0
-) ELSE (
-	set /a Q_A_Audio_Delay_ms=0 - !Q_A_Video_Delay_ms!
-)
-ECHO !DATE! !TIME! "Q_A_Video_Delay_ms=!Q_A_Video_Delay_ms!" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! "Q_A_Audio_Delay_ms=!Q_A_Audio_Delay_ms!" Calculated >> "!vrdlog!" 2>&1
-REM
-Call :get_ffprobe_video_stream_parameter "codec_name" "Q_V_CodecID_FF" "!scratch_file_qsf!" 
-Call :get_ffprobe_video_stream_parameter "codec_tag_String" "Q_V_CodecID_String_FF" "!scratch_file_qsf!" 
-Call :get_ffprobe_video_stream_parameter "width" "Q_V_Width_FF" "!scratch_file_qsf!" 
-Call :get_ffprobe_video_stream_parameter "height" "Q_V_Height_FF" "!scratch_file_qsf!" 
-Call :get_ffprobe_video_stream_parameter "duration" "Q_V_Duration_s_FF" "!scratch_file_qsf!" 
-Call :get_ffprobe_video_stream_parameter "bit_rate" "Q_V_BitRate_FF" "!scratch_file_qsf!" 
-Call :get_ffprobe_video_stream_parameter "max_bit_rate" "Q_V_BitRate_Maximum_FF" "!scratch_file_qsf!" 
-Call :get_mediainfo_parameter_legacy "Audio" "Codec" "Q_A_Codec_legacy" "!scratch_file_qsf!" 
-Call :get_mediainfo_parameter_legacy "Audio" "Video_Delay" "Q_A_Video_Delay_ms_legacy" "!scratch_file_qsf!" 
-IF /I "!Q_A_Video_Delay_ms_legacy!" == "" (
-	set /a "Q_A_Audio_Delay_ms_legacy=0"
-) ELSE (
-	set /a "Q_A_Audio_Delay_ms_legacy=0 - !Q_A_Video_Delay_ms_legacy!"
-)
-ECHO !DATE! !TIME! "Q_A_Video_Delay_ms_legacy=!Q_A_Video_Delay_ms_legacy!" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! "Q_A_Audio_Delay_ms_legacy=!Q_A_Audio_Delay_ms_legacy!" Calculated >> "!vrdlog!" 2>&1
-REM
-REM ECHO !DATE! !TIME! Q_A_Audio_Delay_ms_legacy=!Q_A_Audio_Delay_ms_legacy!
-REM ECHO !DATE! !TIME! Q_A_Audio_Delay_ms_legacy=!Q_A_Audio_Delay_ms_legacy! >> "!vrdlog!" 2>&1
-REM $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-REM Sometimes ffprobe mis-reports the qsf'd file's bitrate and is perhaps double the others. 
-REM It looks to be correct though.
-REM Cross-check with other tool values.
-REM NOTE: use the maximum of MEDIAINFO bitrate and QSF bitrate from log (QSF bitrate from log is an "average actual").
-REM       also, note we seek biotrate values of the QSF'd file not the original TS which can have problematic values.
-set /A "INCOMING_BITRATE_MEDIAINFO=0"
-set /A "INCOMING_BITRATE_FFPROBE=0"
-set /A "INCOMING_BITRATE_QSF_LOG=0"
-REM Check if supposed numbers are NUMERIC.
-REM To understand the FINDSTR command regex:
-REM caret -- is the the beginn of the value
-REM [1-9] -- one number from 1 to 9 for the first character
-REM [0-9]* -- more numbers from 0-9 possible or not more numbers
-REM $ -- is the end of the value
-ECHO !DATE! !TIME! Validating Q_V_BitRate as numeric ... >> "!vrdlog!" 2>&1
-echo !Q_V_BitRate!|findstr /r "^[0-9][0-9]*$" >> "!vrdlog!" 2>&1
-IF !errorlevel! EQU 0 (set /A "INCOMING_BITRATE_MEDIAINFO=!Q_V_BitRate!")
-REM
-ECHO !DATE! !TIME! Validating Q_V_BitRate_FF as numeric ... >> "!vrdlog!" 2>&1
-echo !Q_V_BitRate_FF!|findstr /r "^[0-9][0-9]*$" >> "!vrdlog!" 2>&1
-IF !errorlevel! EQU 0 (set /A "INCOMING_BITRATE_FFPROBE=!Q_V_BitRate_FF!")
-REM
-ECHO !DATE! !TIME! Validating Q_ACTUAL_QSF_LOG_BITRATE as numeric ... >> "!vrdlog!" 2>&1
-echo !Q_ACTUAL_QSF_LOG_BITRATE!|findstr /r "^[0-9][0-9]*$" >> "!vrdlog!" 2>&1
-IF !errorlevel! EQU 0 (set /A "INCOMING_BITRATE_QSF_LOG=!Q_ACTUAL_QSF_LOG_BITRATE!")
-REM
-set /A "INCOMING_BITRATE=0"
-REM USE the ffprobe bitrate value, sometimes it mis-reports as a much larger bitrate value but it seems to be correct.
-IF !INCOMING_BITRATE_FFPROBE!   GTR !INCOMING_BITRATE! (
-	set /A "INCOMING_BITRATE=!INCOMING_BITRATE_FFPROBE!"
-)
-IF !INCOMING_BITRATE_MEDIAINFO! GTR !INCOMING_BITRATE! (set /A "INCOMING_BITRATE=!INCOMING_BITRATE_MEDIAINFO!")
-IF !INCOMING_BITRATE_QSF_LOG!   GTR !INCOMING_BITRATE! (set /A "INCOMING_BITRATE=!INCOMING_BITRATE_QSF_LOG!")
-IF !INCOMING_BITRATE! EQU 0 (
-	REM Jolly Bother and Dash it all, no valid bitrate found, we need to set an artifical incoming bitrate. Choose 4Mb/s for AVC
-	set /A "INCOMING_BITRATE=4000000"
-)
-REM $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-REM DIR /4 "!scratch_file_qsf!"  
-REM ECHO DIR /4 "!scratch_file_qsf!" >> "!vrdlog!" 2>&1
-REM DIR /4 "!scratch_file_qsf!" >> "!vrdlog!" 2>&1
-REM ECHO "!mediainfoexe64!" --full "!scratch_file_qsf!" to "%~f1.QSF.mediainfo.txt" >> "!vrdlog!" 2>&1
-REM "!mediainfoexe64!" --full "!scratch_file_qsf!" > "%~f1.QSF.mediainfo.txt" 
-REM ECHO "!mediainfoexe64!" --full "!scratch_file_qsf!" >> "!vrdlog!" 2>&1
-REM "!mediainfoexe64!" --full "!scratch_file_qsf!" >> "%vrdlog%" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! output QSF file: Q_Video Codec: "!Q_V_Codec_legacy!" Q_ScanType: "!Q_V_ScanType!" Q_ScanOrder: "!Q_V_ScanOrder!" !Q_V_Width!x!Q_V_Height! dar=!Q_V_DisplayAspectRatio_String! sar=!Q_V_PixelAspectRatio! Q_Audio Codec: "!Q_A_Codec_legacy!" Q_Audio_Delay_ms: !Q_A_Audio_Delay_ms! Q_Audio_Delay_ms_legacy: !Q_A_Video_Delay_ms_legacy! >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! End QSF of "%~f1" >> "!vrdlog!" 2>&1
