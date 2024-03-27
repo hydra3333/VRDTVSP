@@ -1,6 +1,6 @@
 Option Explicit
-	' cscript //nologo "VRDTVSP_Run_QSF_with_v5_or_v6.vbs" "6" "c:\TEMP\input.ts" "c:\TEMP\output.QSF.MP4" "VRDTVS-for-QSF-H264_VRD6" "c:\TEMP\output_cmd_file.bat" "QSFinfo_" "5000000"
-	'                  name-of-script                args: 0   1                  2                        3                           4                             5         6 
+	' cscript //nologo "VRDTVSP_Run_QSF_with_v5_or_v6.vbs" "6" "c:\TEMP\input.ts" "c:\TEMP\output.QSF.MP4" "VRDTVS-for-QSF-H264_VRD6" "c:\TEMP\output_cmd_file.bat" "QSFinfo_" "5000000" "15"
+	'                  name-of-script                args: 0   1                  2                        3                           4                             5         6         7
 	'
 	' cscript //nologo "VRDTVSP_Run_QSF_with_v5_or_v6.vbs" "6" "G:\TEST-vrdtvsp-v40\000-TO-BE-PROCESSED\Motor_Sport-Sport-Motorsport-Formula_One_Grand_Prix-2024-Australia-Day_3.2024-03-24.ts" "G:\TEST-vrdtvsp-v40\000-TO-BE-PROCESSED\Motor_Sport-Sport-Motorsport-Formula_One_Grand_Prix-2024-Australia-Day_3.2024-03-24.QSF.MP4" "VRDTVS-for-QSF-H264_VRD6" "G:\TEST-vrdtvsp-v40\z_temp_qsf_cmdfile.bat" "QSFinfo_" "5000000"
 	'
@@ -15,6 +15,7 @@ Option Explicit
 	' Args(4) is path/name of a file of a .bat which will contain SET commands for DOS environment variables from QSF XML values - a fully qualified path name
 	' Args(5) a prefix eg "QSFinfo_" to be used as the variables prefix for the DOS variables in SET commands
 	' Args(6) is a number: the ActualBitrate number, in bps, to use if "//VRDOutputInfo/ActualVideoBitrate" is not returned by VRD, eg 4000000
+	' Args(7) is a number: the timeout in minutes before a QSF is deemed taking too long and is terminated, default 240
 	'
 	'       The .BAT cmd commands file contains data for the most recently completed output file 
 	'       (hopefully the QSF) from a call to OutputGetCompletedInfo() or FileGetOpenedFileProgramInfo().
@@ -90,15 +91,16 @@ Set objFolder = Nothing
 
 Set Args = Wscript.Arguments
 argCount = Wscript.Arguments.Count
-If argCount <> 7 Then
+If argCount < 7 Then	' 8 arguments, last is optional and defaults to 240
 	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6 ERROR: arg count should be 6, but is " & argCount)
 	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6	Args(0) is a number: the version number ot use, '5' or '6'")
 	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6	Args(1) is input video file path - a fully qualified path name")
 	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6	Args(2) is path/name of output QSF'd file - a fully qualified path name")
 	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6	Args(3) name of QSF Output Profile, already created in VRD v6")
 	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6	Args(4) is path/name of a file of a .bat which will contain SET commands for DOS environment variables from QSF XML values - a fully qualified path name")
-	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6	Args(4) a prefix eg ""QSFinfo_"" to be used as the variables prefix for the DOS variables in SET commands")
-	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6	Args(5) is a number: the ActualBitrate number, in bps, to use if '//VRDOutputInfo/ActualVideoBitrate' is not returned by VRD, eg 4000000")
+	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6	Args(5) a prefix eg ""QSFinfo_"" to be used as the variables prefix for the DOS variables in SET commands")
+	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6	Args(6) is a number: the ActualBitrate number, in bps, to use if '//VRDOutputInfo/ActualVideoBitrate' is not returned by VRD, eg 4000000")
+	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6	Args(7) is a number: the timeout in minutes before a QSF is deemed taking too long and is terminated, default 240")
 	Wscript.Quit 5
 End If
 
@@ -109,6 +111,7 @@ profile_name_for_qsf =  Args(3)
 output_cmdfile_AbsolutePathName =  Args(4)
 qsf_cmd_variable_prefix = Args(5)
 default_ActualBitrate_bps =  Args(6)
+qsf_timeout_minutes = Args(7)
 
 ' Check the argument values, in the order of the commandline parameters
 
@@ -153,9 +156,21 @@ If (not IsNumeric(default_ActualBitrate_bps)) or (InStr(1, default_ActualBitrate
 End If
 default_ActualBitrate_bps = CLng(default_ActualBitrate_bps)
 
+If IsNull(qsf_timeout_minutes) Then
+	qsf_timeout_minutes = 240
+ElseIf IsEmpty(qsf_timeout_minutes) Then
+	qsf_timeout_minutes = 240
+ElseIf qsf_timeout_minutes = Nothing Then
+	qsf_timeout_minutes = 240
+ElseIf (not IsNumeric(qsf_timeout_minutes)) or (InStr(1, qsf_timeout_minutes, ".") <> 0) Then
+	qsf_timeout_minutes = 240
+Else
+	qsf_timeout_minutes = CLng(qsf_timeout_minutes)
+End If
+
 ' Do the QSF with the function which measures it, provides feedback, and kills it if a timeout occurs
 ' It returns a vbscript DICT object with filtered values in it
-Set objDict = VRDTVSP_Run_QSF_with_v5_or_v6(vrd_version_for_qsf, input_AbsolutePathName, output_QSF_AbsolutePathName, profile_name_for_qsf, default_ActualBitrate_bps)
+Set objDict = VRDTVSP_Run_QSF_with_v5_or_v6(vrd_version_for_qsf, input_AbsolutePathName, output_QSF_AbsolutePathName, profile_name_for_qsf, default_ActualBitrate_bps, qsf_timeout_minutes)
 
 If objDict is Nothing Then
 		Wscript.StdOut.WriteLine("")
@@ -211,7 +226,8 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 										byVAL input_file, _
 										byVAL output_QSF_file, _
 										byVAL QSF_profile_name, _
-										byVAL ActualBitrate _
+										byVAL ActualBitrate, _
+										byVAL qsf_timeout_minutes _
 										)
 	' Parameters: 
 	'				vrd_version_number				is the version of vrd to be used , "5" or "6"
@@ -227,8 +243,10 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 	' 	Args(4) is not passed here since an XML string is returned to the caller for it to create the XML file
 	'
 
-	Const wait_ms = 5000	' in milliseconds, the time to break a line of dots
-	Const giveup_hours = 4	' in hours, the time to let it run before giving up (eg for vrd v6 it can take ages)
+	Const wait_ms = 2000	' in milliseconds, the time to break a line of dots
+	'Const giveup_hours = 4	' in hours, the time to let it run before giving up (eg for vrd v6 it can take ages)
+	'Const giveup_minutes = 240	' in minutes, the time to let it run before giving up (eg for vrd v6 it can take ages)
+	giveup_minutes = qsf_timeout_minutes
 	
 	Dim dot_count_linebreak_interval, two_hours_in_ms, one_hour_in_ms, half_hour_in_ms, quarter_hour_in_ms, ten_minutes_in_ms, giveup_interval_count
 	Dim xmlDict	' this is a DICTIONARY OBJECT (NOT an XML object) returned with Set VRDTVSP_Run_QSF_with_v5_or_v6 = objDict 
@@ -245,19 +263,21 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 	Dim estimated_outputFile, estimated_VideoOutputFrameCount, estimated_ActualVideoBitrate
 	Dim x
 	'
+	one_minute_in_ms = ROUND(1 * 60 * 1000)
 	two_hours_in_ms = CLng( 2 * 60 * 60 * 1000 )
 	one_hour_in_ms = ROUND(two_hours_in_ms / 2)
 	half_hour_in_ms = ROUND(one_hour_in_ms / 2)
 	quarter_hour_in_ms = ROUND(half_hour_in_ms / 2)
 	ten_minutes_in_ms = ROUND(two_hours_in_ms / 6)
 	dot_count_linebreak_interval = CLng(CLng(120) * CLng(1000) / CLng(wait_ms))		' for 5000 ms, this is 120 seconds worth of intervals
-	giveup_interval_count = CLng( CDbl(giveup_hours) * CDbl(CDbl(CDbl(one_hour_in_ms) / CDbl(wait_ms) )))	' "giveup_hours" worth of intervals, so 4 hours for QSF to finish and before fail with "timeout"
+	'giveup_interval_count = CLng( CDbl(giveup_hours) * CDbl(CDbl(CDbl(one_hour_in_ms) / CDbl(wait_ms) )))	' "giveup_hours" worth of intervals, so 4 hours for QSF to finish and before fail with "timeout"
+	giveup_interval_count = CLng( CDbl(giveup_minutes) * CDbl(CDbl(CDbl(one_minute_in_ms) / CDbl(wait_ms) )))	' "giveup_minutes" worth of intervals, so 4 hours for QSF to finish and before fail with "timeout"
 	'
 	input_file = fso.GetAbsolutePathName(input_file)		' was passed byVal
 	output_QSF_file = fso.GetAbsolutePathName(output_QSF_file)			' was passed byVal
 	'
 	WScript.StdOut.WriteLine("======================================================================================================================================================")
-	WScript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6 Commencing: QSF VRD VERSION SPECIFIED: """ & vrd_version_number & """   timeout giveup_hours=" & giveup_hours & "   at " &VRDTVSP_current_datetime_string())
+	WScript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6 Commencing: QSF VRD VERSION SPECIFIED: """ & vrd_version_number & """   timeout giveup_minutes=" & giveup_minutes & "   at " &VRDTVSP_current_datetime_string())
 	WScript.StdOut.WriteLine("Source file: '" & input_file & "'")
 	'
 	If vrd_version_number = 5 Then
