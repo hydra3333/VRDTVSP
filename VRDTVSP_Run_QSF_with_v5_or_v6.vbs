@@ -257,8 +257,8 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 	output_QSF_file = fso.GetAbsolutePathName(output_QSF_file)			' was passed byVal
 	'
 	WScript.StdOut.WriteLine("======================================================================================================================================================")
-	WScript.StdOut.WriteLine("" & VRDTVSP_current_datetime_string())
 	WScript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6 Commencing: QSF VRD VERSION SPECIFIED: """ & vrd_version_number & """   timeout giveup_hours=" & giveup_hours & "   at " &VRDTVSP_current_datetime_string())
+	WScript.StdOut.WriteLine("Source file: '" & input_file & "'")
 	'
 	If vrd_version_number = 5 Then
 		Set VideoReDoSilent = WScript.CreateObject("VideoReDo5.VideoReDoSilent")
