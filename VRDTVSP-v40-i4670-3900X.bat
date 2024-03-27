@@ -579,11 +579,6 @@ ECHO !DATE! !TIME! End QSF of file: "%~f1" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Input: Video Codec: '!SRC_FF_V_codec_name!' ScanType: '!SRC_calc_Video_Interlacement!' ScanOrder: '!SRC_calc_Video_FieldFirst!' WxH: !SRC_MI_V_Width!x!SRC_MI_V_HEIGHT! dar:'!SRC_FF_V_display_aspect_ratio_slash!' and '!SRC_MI_V_DisplayAspectRatio_String_slash!' Audio Codec: '!SRC_FF_A_codec_name!' Audio_Delay_ms: '!SRC_MI_A_Audio_Delay!' Video_Delay_ms: '!SRC_MI_A_Video_Delay!' >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! _vrd_version_primary='!_vrd_version_primary!' _vrd_version_fallback=!_vrd_version_fallback!' qsf_profile=!qsf_profile!' qsf_extension='!qsf_extension!' >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! QSF file details: "!QSF_File!" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! QSF: Video Codec: '!QSF_FF_V_codec_name!' ScanType: '!QSF_calc_Video_Interlacement!' ScanOrder: '!QSF_calc_Video_FieldFirst!' WxH: !QSF_MI_V_Width!x!QSF_MI_V_HEIGHT! dar:'!QSF_FF_V_display_aspect_ratio_slash!' and '!QSF_MI_V_DisplayAspectRatio_String_slash!' Audio Codec: '!QSF_FF_A_codec_name!' Audio_Delay_ms: '!QSF_MI_A_Audio_Delay!' Video_Delay_ms: '!QSF_MI_A_Video_Delay!' >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! _vrd_version_primary='!_vrd_version_primary!' _vrd_version_fallback=!_vrd_version_fallback!' qsf_profile=!qsf_profile!' qsf_extension='!qsf_extension!' >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 
 REM $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 REM OK, by now we have 
@@ -605,6 +600,8 @@ REM		!SRC_MI_V_DisplayAspectRatio_String_slash!
 REM		!SRC_FF_A_codec_name!
 REM		!SRC_MI_A_Audio_Delay!'
 REM		!SRC_MI_A_Video_Delay!'
+REM		!QSF_MI_A_Audio_Delay!'		<- use this one
+REM		!QSF_MI_A_Video_Delay!'		<- use this one
 REM		!SRC_MI_V_BitRate!
 REM		!QSF_MI_V_BitRate!
 REM
@@ -643,6 +640,39 @@ REM		!SRC_calc_Video_Interlacement!"
 REM		!SRC_calc_Video_FieldFirst!"
 REM		!SRC_calc_Video_Max_Bitrate!"
 
+IF /I NOT "!SRC_calc_Video_Encoding!" == "!QSF_calc_Video_Encoding!" (
+	ECHO "ERROR - incoming SRC_calc_Video_Encoding '!SRC_calc_Video_Encoding!' NOT EQUAL QSF_calc_Video_Encoding '!QSF_calc_Video_Encoding!'" >> "!vrdlog!" 2>&1
+	ECHO SRC file="%~f1" >> "!vrdlog!" 2>&1
+	ECHO QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
+	!xPAUSE!
+	exit 1
+)
+IF /I NOT "!SRC_FF_V_codec_name!" == "!QSF_FF_V_codec_name!" (
+	ECHO "ERROR - incoming SRC_FF_V_codec_name '!SRC_FF_V_codec_name!' NOT EQUAL QSF_FF_V_codec_name '!QSF_FF_V_codec_name!'" >> "!vrdlog!" 2>&1
+	ECHO SRC file="%~f1" >> "!vrdlog!" 2>&1
+	ECHO QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
+	!xPAUSE!
+	exit 1
+)
+IF /I NOT "!SRC_calc_Video_Interlacement!" == "!QSF_calc_Video_Interlacement!" (
+	ECHO "ERROR - incoming SRC_calc_Video_Interlacement '!SRC_calc_Video_Interlacement!' NOT EQUAL QSF_calc_Video_Interlacement '!QSF_calc_Video_Interlacement!'" >> "!vrdlog!" 2>&1
+	ECHO SRC file="%~f1" >> "!vrdlog!" 2>&1
+	ECHO QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
+	!xPAUSE!
+	exit 1
+)
+IF /I NOT "!SRC_calc_Video_FieldFirst!" == "!QSF_calc_Video_FieldFirst!" (
+	ECHO "ERROR - incoming SRC_calc_Video_FieldFirst '!SRC_calc_Video_FieldFirst!' NOT EQUAL QSF_calc_Video_FieldFirst '!QSF_calc_Video_FieldFirst!'" >> "!vrdlog!" 2>&1
+	ECHO SRC file="%~f1" >> "!vrdlog!" 2>&1
+	ECHO QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
+	!xPAUSE!
+	exit 1
+)
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! QSF file details: "!QSF_File!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! QSF: Video Codec: '!QSF_FF_V_codec_name!' ScanType: '!QSF_calc_Video_Interlacement!' ScanOrder: '!QSF_calc_Video_FieldFirst!' WxH: !QSF_MI_V_Width!x!QSF_MI_V_HEIGHT! dar:'!QSF_FF_V_display_aspect_ratio_slash!' and '!QSF_MI_V_DisplayAspectRatio_String_slash!' Audio Codec: '!QSF_FF_A_codec_name!' Audio_Delay_ms: '!QSF_MI_A_Audio_Delay!' Video_Delay_ms: '!QSF_MI_A_Video_Delay!' >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! _vrd_version_primary='!_vrd_version_primary!' _vrd_version_fallback=!_vrd_version_fallback!' qsf_profile=!qsf_profile!' qsf_extension='!qsf_extension!' >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 
 
 
@@ -664,37 +694,6 @@ goto :eof
 
 
 
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! output QSF file: Q_Video Codec: "!Q_V_Codec_legacy!" Q_ScanType: "!Q_V_ScanType!" Q_ScanOrder: "!Q_V_ScanOrder!" !Q_V_Width!x!Q_V_Height! dar=!Q_V_DisplayAspectRatio_String! sar=!Q_V_PixelAspectRatio! Q_Audio Codec: "!Q_A_Codec_legacy!" Q_Audio_Delay_ms: !Q_A_Audio_Delay_ms! Q_Audio_Delay_ms_legacy: !Q_A_Video_Delay_ms_legacy! >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! End QSF of "%~f1" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-REM
-IF /I NOT "!V_ScanType!" == "!Q_V_ScanType!" (
-	ECHO "ERROR - incoming V_ScanType NOT EQUAL Q_V_ScanType" >> "!vrdlog!" 2>&1
-	ECHO "V_ScanType=!V_ScanType!" >> "!vrdlog!" 2>&1
-	ECHO "V_ScanOrder=!V_ScanOrder!" >> "!vrdlog!" 2>&1
-	ECHO "Q_V_ScanType=!Q_V_ScanType!" >> "!vrdlog!" 2>&1
-	ECHO "Q_V_ScanOrder=!Q_V_ScanOrder!" >> "!vrdlog!" 2>&1
-	ECHO file="%~f1" >> "!vrdlog!" 2>&1
-	ECHO QSF_file="!scratch_file_qsf!" >> "!vrdlog!" 2>&1
-	!xPAUSE!
-	exit
-)
-IF /I NOT "!V_ScanOrder!" == "!Q_V_ScanOrder!" (
-	ECHO "ERROR - incoming V_ScanOrder NOT EQUAL Q_V_ScanOrder" >> "!vrdlog!" 2>&1
-	ECHO "V_ScanType=!V_ScanType!" >> "!vrdlog!" 2>&1
-	ECHO "V_ScanOrder=!V_ScanOrder!" >> "!vrdlog!" 2>&1
-	ECHO "Q_V_ScanType=!Q_V_ScanType!" >> "!vrdlog!" 2>&1
-	ECHO "Q_V_ScanOrder=!Q_V_ScanOrder!" >> "!vrdlog!" 2>&1
-	ECHO file="%~f1" >> "!vrdlog!" 2>&1
-	ECHO QSF_file="!scratch_file_qsf!" >> "!vrdlog!" 2>&1
-	!xPAUSE!
-	exit
-)
-REM
-REM ECHO !DATE! !TIME! "!mediainfoexe64!" --full "!scratch_file_qsf!" >> "!vrdlog!" 2>&1
-REM "!mediainfoexe64!" --full "!scratch_file_qsf!" >> "%vrdlog%" 2>&1
-REM
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Start Conversion of "!scratch_file_qsf!" into destination >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! input QSF file: Q_Video Codec: "!Q_V_Codec_legacy!" Q_ScanType: "!Q_V_ScanType!" Q_ScanOrder: "!Q_V_ScanOrder!" !Q_V_Width!x!Q_V_Height! dar=!Q_V_DisplayAspectRatio_String! sar=!Q_V_PixelAspectRatio! Q_Audio Codec: "!Q_A_Codec_legacy!" Q_Audio_Delay_ms: !Q_A_Audio_Delay_ms! Q_Audio_Delay_ms_legacy: !Q_A_Video_Delay_ms_legacy! >> "!vrdlog!" 2>&1
