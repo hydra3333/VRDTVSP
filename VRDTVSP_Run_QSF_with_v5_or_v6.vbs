@@ -167,19 +167,19 @@ If objDict is Nothing Then
 End If
 
 'create the .BAT cmdfile file from objDict
-Wscript.StdOut.WriteLine("Creating cmdfile '" & output_cmdfile_AbsolutePathName & "'")
+'Wscript.StdOut.WriteLine("DEBUG: Creating cmdfile '" & output_cmdfile_AbsolutePathName & "'")
 Set fileObj = fso.CreateTextFile(output_cmdfile_AbsolutePathName, True, False) ' *** vapoursynth fails with unicode input file *** [ filename, Overwrite[, Unicode]])
 fileObj.WriteLine("echo qsf_cmd_variable_prefix='" & qsf_cmd_variable_prefix & "'")
 fileObj.WriteLine("REM List of DOS SET commands to define DOS variables")
 fileObj.WriteLine("REM First, clear the variables with the chosen prefix '" & qsf_cmd_variable_prefix & "'")
 fileObj.WriteLine("FOR /F ""tokens=1,* delims=="" %%G IN (\'SET " & qsf_cmd_variable_prefix & "\') DO (SET ""%%G="")")
 For Each objDict_key In objDict
-	WScript.StdOut.WriteLine("DEBUG: " & "SET """ & qsf_cmd_variable_prefix & Trim(objDict_key) & "=" & Trim(objDict.Item(objDict_key)) & """")
+	'WScript.StdOut.WriteLine("DEBUG: " & "SET """ & qsf_cmd_variable_prefix & Trim(objDict_key) & "=" & Trim(objDict.Item(objDict_key)) & """")
 	fileObj.WriteLine("SET """ & Trim(objDict_key) & "=" & Trim(objDict.Item(objDict_key)) & """")
 Next
 fileObj.close
 Set fileObj = Nothing
-Wscript.StdOut.WriteLine("Created cmdfile '" & output_cmdfile_AbsolutePathName & "'")
+'Wscript.StdOut.WriteLine("DEBUG: Created cmdfile '" & output_cmdfile_AbsolutePathName & "'")
 
 ' Show how to create an XML file of the same thing
 'Set fileObj = fso.CreateTextFile(output_XMLfile_AbsolutePathName, True, False) ' *** vapoursynth fails with unicode input file *** [ filename, Overwrite[, Unicode]])
@@ -257,7 +257,7 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 	'
 	WScript.StdOut.WriteLine("======================================================================================================================================================")
 	WScript.StdOut.WriteLine("" & VRDTVSP_current_datetime_string())
-	WScript.StdOut.WriteLine("Commencing VRDTVSP_Run_QSF_with_v5_or_v6 - QSF VRD VERSION SPECIFIED: """ & vrd_version_number & """   timeout giveup_hours=" & giveup_hours)
+	WScript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6 Commencing: QSF VRD VERSION SPECIFIED: """ & vrd_version_number & """   timeout giveup_hours=" & giveup_hours & "   at " &VRDTVSP_current_datetime_string())
 	'
 	If vrd_version_number = 5 Then
 		Set VideoReDoSilent = WScript.CreateObject("VideoReDo5.VideoReDoSilent")
@@ -328,7 +328,7 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 	' Open the Input file and QSF SaveAs to the output file
 	'
 	Err.Clear
-	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6: Commencing WITH SPECIFIED VRD VERSION : " & vrd_version_number & " at: " & VRDTVSP_current_datetime_string())
+	'Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6: Commencing WITH SPECIFIED VRD VERSION : " & vrd_version_number & " at: " & VRDTVSP_current_datetime_string())
 	on error resume next
 	openflag = VideoReDo.FileOpen(input_file, True) ' True means QSF mode
 	if Err.Number <> 0 Then
@@ -420,16 +420,16 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 	' Grab the *Actual* info about the "VRD latest save" and hope it is the current QSF file)
 	'	
 	Wscript.StdOut.WriteLine("QSF 100% Completed: " & VRDTVSP_current_datetime_string())
-	Wscript.StdOut.WriteLine("Using VideoReDo.OutputGetCompletedInfo() TRY #1 to Grab the *Actual* info about the 'VRD latest save' and hope it is the current QSF file)")
+	'Wscript.StdOut.WriteLine("Using VideoReDo.OutputGetCompletedInfo() TRY #1 to Grab the *Actual* info about the 'VRD latest save' and hope it is the current QSF file)")
     Wscript.Sleep 100
 	'on error resume Next
 	on error goto 0
 	xml_string_completedfile = "" 
 	xml_string_completedfile = VideoReDo.OutputGetCompletedInfo() ' which is the most recently completed output file (hopefully the QSF file) https://www.videoredo.com/TVSuite_Application_Notes/output_complete_info_xml_forma.html" 
 	on error goto 0
-	Wscript.StdOut.WriteLine("QSF xml_string_completedfile='" & xml_string_completedfile & "'")
+	'Wscript.StdOut.WriteLine("DEBUG: QSF xml_string_completedfile='" & xml_string_completedfile & "'")
 	if xml_string_completedfile = "" Then	' 2023.12.23 ' re-try to grab xml file Try #2
-		Wscript.StdOut.WriteLine("Using VideoReDo.OutputGetCompletedInfo() TRY #2 to Grab the *Actual* info about the 'VRD latest save' and hope it is the current QSF file)")
+		'Wscript.StdOut.WriteLine("Using VideoReDo.OutputGetCompletedInfo() TRY #2 to Grab the *Actual* info about the 'VRD latest save' and hope it is the current QSF file)")
 	    Wscript.Sleep 100
 		'on error resume Next
 		on error goto 0
@@ -438,7 +438,7 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 		on error goto 0
 	End If
 	if xml_string_completedfile = "" Then	' 2023.12.23 ' re-try to grab xml file Try #3
-		Wscript.StdOut.WriteLine("Using VideoReDo.OutputGetCompletedInfo() TRY #3 to Grab the *Actual* info about the 'VRD latest save' and hope it is the current QSF file)")
+		'Wscript.StdOut.WriteLine("Using VideoReDo.OutputGetCompletedInfo() TRY #3 to Grab the *Actual* info about the 'VRD latest save' and hope it is the current QSF file)")
 	    Wscript.Sleep 100
 		'on error resume Next
 		on error goto 0
@@ -447,7 +447,7 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 		on error goto 0
 	End If
 	if xml_string_completedfile = "" Then	' 2023.12.23 ' re-try to grab xml file Try #4
-		Wscript.StdOut.WriteLine("Using VideoReDo.OutputGetCompletedInfo() TRY #4 to Grab the *Actual* info about the 'VRD latest save' and hope it is the current QSF file)")
+		'Wscript.StdOut.WriteLine("Using VideoReDo.OutputGetCompletedInfo() TRY #4 to Grab the *Actual* info about the 'VRD latest save' and hope it is the current QSF file)")
 	    Wscript.Sleep 100
 		'on error resume Next
 		on error goto 0
@@ -456,7 +456,7 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 		on error goto 0
 	End If
 	if xml_string_completedfile = "" Then	' 2023.12.23 ' re-try to grab xml file Try #5
-		Wscript.StdOut.WriteLine("Using VideoReDo.OutputGetCompletedInfo() TRY #6 to Grab the *Actual* info about the 'VRD latest save' and hope it is the current QSF file)")
+		'Wscript.StdOut.WriteLine("Using VideoReDo.OutputGetCompletedInfo() TRY #6 to Grab the *Actual* info about the 'VRD latest save' and hope it is the current QSF file)")
 	    Wscript.Sleep 100
 		'on error resume Next
 		on error goto 0
@@ -499,8 +499,8 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 		'WScript.Quit 17 ' Error 17 = cannot perform the requested operation
 	End If
 	'
-	' 2023.12.26 re-enable dump
-	Call VRDTVSP_DumpNodes_from_xml(xmlDoc.childNodes, 0)	' PRINT INTERESTING INFORMATION FORM WITH THE XML DOCUMENT
+	' DEBUG:
+	'Call VRDTVSP_DumpNodes_from_xml(xmlDoc.childNodes, 0)	' PRINT INTERESTING INFORMATION FORM WITH THE XML DOCUMENT
 	'
 	objDict.Add "outputFile", gimme_xml_named_attribute(xmlDoc, "//VRDOutputInfo", "outputFile")
 	objDict.Add "OutputType", gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/OutputType")
@@ -624,12 +624,12 @@ Sub VRDTVSP_DumpNodes_from_xml(dnfx_Nodes, dnfx_Indent_Size)
 			Case 1:   ' NODE_ELEMENT
 				If dnfx_xNode.nodeName <> "#document" Then ' looks like a hack for the top level
 					' change "VRDTVSP_DisplayAttributes_from_xml_node(dnfx_xNode, dnfx_Indent_Size + 2)" to "VRDTVSP_DisplayAttributes_from_xml_node(dnfx_xNode, 0)" to see inline attributes rather than indented
-					WScript.StdOut.WriteLine(String(dnfx_Indent_Size," ") & "<" & dnfx_xNode.nodeName & VRDTVSP_DisplayAttributes_from_xml_node(dnfx_xNode, dnfx_Indent_Size + 2) & ">") ' this is the nodename and note attributes THE START OF THE NODE
+					WScript.StdOut.WriteLine("DEBUG: " & String(dnfx_Indent_Size," ") & "<" & dnfx_xNode.nodeName & VRDTVSP_DisplayAttributes_from_xml_node(dnfx_xNode, dnfx_Indent_Size + 2) & ">") ' this is the nodename and note attributes THE START OF THE NODE
 					If dnfx_xNode.hasChildNodes Then
 						'Call DisplayNode_from_xml(dnfx_xNode.childNodes, dnfx_Indent_Size + 2)	' THIS IS THE CHILD NODES OF THE CURRENT NODE
 						Call VRDTVSP_DumpNodes_from_xml(dnfx_xNode.childNodes, dnfx_Indent_Size + 2)	' THIS IS THE CHILD NODES OF THE CURRENT NODE
 					End If
-					WScript.StdOut.WriteLine(String(dnfx_Indent_Size," ") & "</" & dnfx_xNode.nodeName & ">")	' THIS IS THE END OF THE NODE 
+					WScript.StdOut.WriteLine("DEBUG: " & String(dnfx_Indent_Size," ") & "</" & dnfx_xNode.nodeName & ">")	' THIS IS THE END OF THE NODE 
 				Else 'NODENAME =  "#document" 		' looks like a hack for the top level
 					If dnfx_xNode.hasChildNodes Then
 						'Call DisplayNode_from_xml(dnfx_xNode.childNodes, dnfx_Indent_Size + 2)
@@ -637,7 +637,7 @@ Sub VRDTVSP_DumpNodes_from_xml(dnfx_Nodes, dnfx_Indent_Size)
 					End If
 				End If
 			Case 3:   ' value                       
-				WScript.StdOut.WriteLine(String(dnfx_Indent_Size," ") & "" & dnfx_xNode.nodeValue) ' this is the value of the node ' <-- THIS IS THE VALUE
+				WScript.StdOut.WriteLine("DEBUG: " & String(dnfx_Indent_Size," ") & "" & dnfx_xNode.nodeValue) ' this is the value of the node ' <-- THIS IS THE VALUE
 		End Select
 	Next
 End Sub
