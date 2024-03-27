@@ -1,8 +1,8 @@
 Option Explicit
-	' cscript //nologo "VRDTVSP_Run_QSF_with_v5_or_v6.vbs" "6" "c:\TEMP\input.ts" "c:\TEMP\output.QSF.MP4" "VRDTVS-for-QSF-MPEG2_VRD6" "c:\TEMP\output_cmd_file.bat" "QSFinfo_" "5000000"
+	' cscript //nologo "VRDTVSP_Run_QSF_with_v5_or_v6.vbs" "6" "c:\TEMP\input.ts" "c:\TEMP\output.QSF.MP4" "VRDTVS-for-QSF-H264_VRD6" "c:\TEMP\output_cmd_file.bat" "QSFinfo_" "5000000"
 	'                  name-of-script                args: 0   1                  2                        3                           4                             5         6 
 	'
-	' cscript //nologo "VRDTVSP_Run_QSF_with_v5_or_v6.vbs" "6" "G:\TEST-vrdtvsp-v40\000-TO-BE-PROCESSED\Motor_Sport-Sport-Motorsport-Formula_One_Grand_Prix-2024-Australia-Day_3.2024-03-24.ts" "G:\TEST-vrdtvsp-v40\000-TO-BE-PROCESSED\Motor_Sport-Sport-Motorsport-Formula_One_Grand_Prix-2024-Australia-Day_3.2024-03-24.QSF.MP4" "VRDTVS-for-QSF-MPEG2_VRD6" "G:\TEST-vrdtvsp-v40\z_temp_qsf_cmdfile.bat" "QSFinfo_" "5000000"
+	' cscript //nologo "VRDTVSP_Run_QSF_with_v5_or_v6.vbs" "6" "G:\TEST-vrdtvsp-v40\000-TO-BE-PROCESSED\Motor_Sport-Sport-Motorsport-Formula_One_Grand_Prix-2024-Australia-Day_3.2024-03-24.ts" "G:\TEST-vrdtvsp-v40\000-TO-BE-PROCESSED\Motor_Sport-Sport-Motorsport-Formula_One_Grand_Prix-2024-Australia-Day_3.2024-03-24.QSF.MP4" "VRDTVS-for-QSF-H264_VRD6" "G:\TEST-vrdtvsp-v40\z_temp_qsf_cmdfile.bat" "QSFinfo_" "5000000"
 	'
 	' VideoReDo VBScript to do QSF with QSF Profile and save an XML data into a file of DOS environment variable SET commands
 	' The caller MUST already know the codec used in the input and hence the profile which applies
@@ -174,13 +174,12 @@ fileObj.WriteLine("REM List of DOS SET commands to define DOS variables")
 fileObj.WriteLine("REM First, clear the variables with the chosen prefix '" & qsf_cmd_variable_prefix & "'")
 fileObj.WriteLine("FOR /F ""tokens=1,* delims=="" %%G IN (\'SET " & qsf_cmd_variable_prefix & "\') DO (SET ""%%G="")")
 For Each objDict_key In objDict
-	WScript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6 DEBUG: " & "SET """ & Trim(objDict_key) & "=" & Trim(objDict.Item(objDict_key)) & """")
+	WScript.StdOut.WriteLine("DEBUG: " & "SET """ & qsf_cmd_variable_prefix & Trim(objDict_key) & "=" & Trim(objDict.Item(objDict_key)) & """")
 	fileObj.WriteLine("SET """ & Trim(objDict_key) & "=" & Trim(objDict.Item(objDict_key)) & """")
 Next
 fileObj.close
 Set fileObj = Nothing
 Wscript.StdOut.WriteLine("Created cmdfile '" & output_cmdfile_AbsolutePathName & "'")
-
 
 ' Show how to create an XML file of the same thing
 'Set fileObj = fso.CreateTextFile(output_XMLfile_AbsolutePathName, True, False) ' *** vapoursynth fails with unicode input file *** [ filename, Overwrite[, Unicode]])
