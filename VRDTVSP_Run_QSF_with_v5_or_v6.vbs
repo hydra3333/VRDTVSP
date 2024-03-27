@@ -1,23 +1,22 @@
 Option Explicit
-	' cscript //nologo "VRDTVSP_Run_QSF_with_v5_or_v6.vbs" "6" "c:\TEMP\input.ts" "c:\TEMP\output.QSF.MP4" "VRDTVS-for-QSF-MPEG2_VRD6" "c:\TEMP\output.XML" "5000000"
-	'                  name-of-script                args: 0   1                  2                        3                           4                    5        
-	' VideoReDo VBScript to do QSF with QSF Profile and save an XML file of characteristics
+	' cscript //nologo "VRDTVSP_Run_QSF_with_v5_or_v6.vbs" "6" "c:\TEMP\input.ts" "c:\TEMP\output.QSF.MP4" "VRDTVS-for-QSF-MPEG2_VRD6" "c:\TEMP\output_cmd_file.bat" "QSFinfo_" "5000000"
+	'                  name-of-script                args: 0   1                  2                        3                           4                             5         6 
+	' VideoReDo VBScript to do QSF with QSF Profile and save an XML data into a file of DOS environment variable SET commands
 	' The caller MUST already know the codec used in the input and hence the profile which applies
-	' There are 6 mandatory parameters.
+	' There are 7 mandatory parameters.
 	'
 	' Args(0) is a number: the version number ot use, "5" or "6"
 	' Args(1) is input video file path - a fully qualified path name
 	' Args(2) is path/name of output QSF'd file - a fully qualified path name
 	' Args(3) is name of QSF Output Profile, already created in VRD v6
-	' Args(4) is path/name of a file of XML associated with the output QSF'd file - a fully qualified path name
-	' Args(5) is a number: the ActualBitrate number, in bps, to use if "//VRDOutputInfo/ActualVideoBitrate" is not returned by VRD, eg 4000000
+	' Args(4) is path/name of a file of a .bat which will contain SET commands for DOS environment variables from QSF XML values - a fully qualified path name
+	' Args(5) a prefix eg "QSFinfo_" to be used as the variables prefix for the DOS variables in SET commands
+	' Args(6) is a number: the ActualBitrate number, in bps, to use if "//VRDOutputInfo/ActualVideoBitrate" is not returned by VRD, eg 4000000
 	'
-	' Note: An additional file is created, with the same full filename/ext as Args(1) with .xml added on the end.
-	'       This .xml file contains complete info for the most recently completed output file 
+	'       The .BAT cmd commands file contains data for the most recently completed output file 
 	'       (hopefully the QSF) from a call to OutputGetCompletedInfo() or FileGetOpenedFileProgramInfo().
-	'       With any luck, the timing of concurrent workflow doing calls works out for us, although we should still check the filename from the XML.
+	'       With any luck, the timing of concurrent workflow doing calls works out for us.
 	'
-	' VRD VBScript to do QSF with QSF Profile and save an XML file of characteristics
 	' Example Returned xml string: from VideoReDo.FileGetOpenedFileProgramInfo()
 	' This is a well-formed single-item XML string, which make it really easy to find things.
 	'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -76,7 +75,7 @@ Option Explicit
 	'</VRDOutputInfo>
 	'
 
-dim vrd_version_for_qsf, input_AbsolutePathName, output_QSF_AbsolutePathName, profile_name_for_qsf, output_xml_AbsolutePathName, default_ActualBitrate_bps
+dim vrd_version_for_qsf, input_AbsolutePathName, output_QSF_AbsolutePathName, profile_name_for_qsf, output_cmdfile_AbsolutePathName, qsf_cmd_variable_prefix, default_ActualBitrate_bps
 Dim fso, wso, objFolder, fileObj
 dim objDict
 dim objDict_key
@@ -100,12 +99,23 @@ If argCount <> 6 Then
 End If
 
 ' Fetch the arg values from the commandline
+
+	' Args(0) is a number: the version number ot use, "5" or "6"
+	' Args(1) is input video file path - a fully qualified path name
+	' Args(2) is path/name of output QSF'd file - a fully qualified path name
+	' Args(3) is name of QSF Output Profile, already created in VRD v6
+	' Args(4) is path/name of a file of a .bat which will contain SET commands for DOS environment variables from QSF XML values - a fully qualified path name
+	' Args(5) a prefix eg "QSFinfo_" to be used as the variables prefix for the DOS variables in SET commands
+	' Args(6) is a number: the ActualBitrate number, in bps, to use if "//VRDOutputInfo/ActualVideoBitrate" is not returned by VRD, eg 4000000
+
+
 vrd_version_for_qsf =  Args(0)
 input_AbsolutePathName =  Args(1)
 output_QSF_AbsolutePathName =  Args(2)
 profile_name_for_qsf =  Args(3)
-output_xml_AbsolutePathName =  Args(4)
-default_ActualBitrate_bps =  Args(5)
+output_cmdfile_AbsolutePathName =  Args(4)
+qsf_cmd_variable_prefix = Args(5)
+default_ActualBitrate_bps =  Args(6)
 
 ' Check the argument values, in the order of the commandline parameters
 
@@ -132,9 +142,16 @@ End If
 
 ' We check the existence of 'profile_name_for_qsf' in the function 'VRDTVSP_Run_QSF_with_v5_or_v6' rather than here
 
-If fso.FileExists(output_xml_AbsolutePathName) then
-	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6 WARNING: output_xml_AbsolutePathName '" & output_xml_AbsolutePathName & "' ALREADY EXISTS, deleting it before continuing with QSF ..." )
-	fso.DeleteFile output_xml_AbsolutePathName
+If fso.FileExists(output_cmdfile_AbsolutePathName) then
+	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6 WARNING: output_cmdfile_AbsolutePathName '" & output_cmdfile_AbsolutePathName & "' ALREADY EXISTS, deleting it before continuing with QSF ..." )
+	fso.DeleteFile output_cmdfile_AbsolutePathName
+End If
+
+
+qsf_cmd_variable_prefix = Trim(qsf_cmd_variable_prefix)
+If qsf_cmd_variable_prefix = "" Then
+	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6 ERROR: qsf_cmd_variable_prefix '" & qsf_cmd_variable_prefix & "' MUST be a string with no spaces or special characters")
+	Wscript.Quit 5
 End If
 
 default_ActualBitrate_bps = CStr(Trim(default_ActualBitrate_bps))
@@ -157,20 +174,35 @@ If objDict is Nothing Then
 		WScript.Quit 17
 End If
 
-'create ther XML file from objDict
-Set fileObj = fso.CreateTextFile(output_xml_AbsolutePathName, True, False) ' *** vapoursynth fails with unicode input file *** [ filename, Overwrite[, Unicode]])
-fileObj.WriteLine("<QSFinfo>")
-fileObj.WriteLine("   <outputFile>""" & actual_outputFile & """</outputFile>")
-fileObj.WriteLine("   <VideoOutputFrameCount>" & actual_VideoOutputFrameCount & "</VideoOutputFrameCount>")
-fileObj.WriteLine("   <Bitrate>" & actual_ActualVideoBitrate & "<Bitrate>")
-fileObj.WriteLine("   <QSFvalues>")
+'create the .BAT cmdfile file from objDict
+Set fileObj = fso.CreateTextFile(output_cmdfile_AbsolutePathName, True, False) ' *** vapoursynth fails with unicode input file *** [ filename, Overwrite[, Unicode]])
+fileObj.WriteLine("echo qsf_cmd_variable_prefix='" & qsf_cmd_variable_prefix & "'")
+fileObj.WriteLine("REM List of DOS SET commands to define DOS variables")
+fileObj.WriteLine("REM First, clear the variables with the chosen prefix")
+fileObj.WriteLine("FOR /F ""tokens=1,* delims=="" %%G IN (\'SET " & qsf_cmd_variable_prefix & "\') DO (SET ""%%G=""")")
 For Each objDict_key In objDict
-	fileObj.WriteLine("   <""" & objDict_key & """> """ & objDict.Item(objDict_key) & """>")
+
+fileObj.WriteLine("SET ""& {objDict_key}={value}""")
+	fileObj.WriteLine("SET """ & objDict_key & "=" & objDict.Item(objDict_key) & """")
 Next
-fileObj.WriteLine("   </QSFvalues>")
-fileObj.WriteLine("</QSFinfo>")
 fileObj.close
 Set fileObj = Nothing
+
+
+' Show how to create an XML file of the same thing
+'Set fileObj = fso.CreateTextFile(output_XMLfile_AbsolutePathName, True, False) ' *** vapoursynth fails with unicode input file *** [ filename, Overwrite[, Unicode]])
+'fileObj.WriteLine("<QSFinfo>")
+'fileObj.WriteLine("   <outputFile>""" & actual_outputFile & """</outputFile>")
+'fileObj.WriteLine("   <VideoOutputFrameCount>" & actual_VideoOutputFrameCount & "</VideoOutputFrameCount>")
+'fileObj.WriteLine("   <Bitrate>" & actual_ActualVideoBitrate & "<Bitrate>")
+'fileObj.WriteLine("   <QSFvalues>")
+'For Each objDict_key In objDict
+'	fileObj.WriteLine("   <""" & objDict_key & """> """ & objDict.Item(objDict_key) & """>")
+'Next
+'fileObj.WriteLine("   </QSFvalues>")
+'fileObj.WriteLine("</QSFinfo>")
+'fileObj.close
+'Set fileObj = Nothing
 
 ' Finish nicely
 WScript.Quit
@@ -206,7 +238,7 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 	Const giveup_hours = 4	' in hours, the time to let it run before giving up (eg for vrd v6 it can take ages)
 	
 	Dim dot_count_linebreak_interval, two_hours_in_ms, one_hour_in_ms, half_hour_in_ms, quarter_hour_in_ms, ten_minutes_in_ms, giveup_interval_count
-	Dim xmlDict	' this is a dictionary object returned with Set VRDTVSP_Run_QSF_with_v5_or_v6 = objDict 
+	Dim xmlDict	' this is a DICTIONARY OBJECT (NOT an XML object) returned with Set VRDTVSP_Run_QSF_with_v5_or_v6 = objDict 
 	Dim VideoReDoSilent
 	Dim VideoReDo
 	Dim openflag, closeflag, outputOK, OutputGetState, percentComplete
