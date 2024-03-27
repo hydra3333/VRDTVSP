@@ -93,7 +93,7 @@ if __name__ == "__main__":
     set_cmd_list = [ f'echo prefix = "{prefix}"' ]
     set_cmd_list.append(f'REM List of DOS SET commands to define DOS variables')
     set_cmd_list.append(f'REM First, clear the variables with the chosen prefix')
-    set_cmd_list.append(f'FOR /F "tokens=1,* delims==" %%G IN (\'SET {prefix}\') DO (SET "%%G=")>NUL 2>&1')
+    set_cmd_list.append(f'FOR /F "tokens=1,* delims==" %%G IN (\'SET {prefix}\') DO (SET "%%G=")')
 
     # Run ffprobe command to get JSON output
     ffprobe_subprocess_command = [ffprobe_path, "-v", "quiet", "-print_format", "json", "-show_format", "-show_streams", mediafile]
@@ -103,6 +103,9 @@ if __name__ == "__main__":
 
     # Parse JSON output
     ffprobe_data = json.loads(ffprobe_output)
+    if ffprobe_data is None:
+        print(f"Error: No ffprobe JSON data returned from: {mediafile}")
+        sys.exit(1)
     if "streams" in ffprobe_data:
         section_name = "General".lower()
         prefix_X =  prefix + "G_"

@@ -516,13 +516,18 @@ echo "_vrd_version_fallback=!_vrd_version_fallback!" >> "!vrdlog!" 2>&1
 echo "qsf_profile=!qsf_profile!" >> "!vrdlog!" 2>&1
 echo "qsf_extension=!qsf_extension!" >> "!vrdlog!" 2>&1
 
+echo +++++++++ >> "!vrdlog!" 2>&1
+echo set SRC_ >> "!vrdlog!" 2>&1
+set SRC_ >> "!vrdlog!" 2>&1
+echo +++++++++ >> "!vrdlog!" 2>&1
+
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Start QSF of file: "%~f1" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Input: Video Codec: '!SRC_FF_V_codec_name!' ScanType: '!SRC_calc_Video_Interlacement!' ScanOrder: '!SRC_calc_Video_FieldFirst!' WxH: !SRC_MI_V_Width!x!SRC_MI_V_HEIGHT! dar:'!SRC_FF_V_display_aspect_ratio_slash!' and '!SRC_MI_V_DisplayAspectRatio_String_slash!' Audio Codec: '!SRC_FF_A_codec_name!' Audio_Delay_ms: '!SRC_MI_A_Audio_Delay!' Video_Delay_ms: '!SRC_MI_A_Video_Delay!' >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! _vrd_version_primary='!_vrd_version_primary!' _vrd_version_fallback=!_vrd_version_fallback!' qsf_profile=!qsf_profile!' qsf_extension=!qsf_extension!' >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 REM
-set "qsf_prefix=QSFinfo_"
+set "qsf_xml_prefix=QSFinfo_"
 set QSF_File=!scratch_Folder!%~n1.qsf.!qsf_extension!
 
 ECHO DEL /F "!QSF_File!"  >> "%vrdlog%" 2>&1
@@ -531,8 +536,10 @@ ECHO DEL /F "!vrd5_logfiles!" >> "%vrdlog%" 2>&1
 DEL /F "!vrd5_logfiles!" >> "%vrdlog%" 2>&1
 ECHO DEL /F "!vrd6_logfiles!" >> "%vrdlog%" 2>&1
 DEL /F "!vrd6_logfiles!" >> "%vrdlog%" 2>&1
+ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 REM specify the source file average bitrate !SRC_MI_V_BitRate! in case QSF can't find it (it happens)
-cscript //nologo "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_prefix!" "!SRC_MI_V_BitRate!"
+cscript //nologo "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!"
 SET EL=!ERRORLEVEL!
 IF /I "!EL!" NEQ "0" (
    ECHO !DATE! !TIME! *********  QSF Error !EL! returned from cscript QSF >> "%vrdlog%" 2>&1
@@ -544,11 +551,27 @@ echo TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 echo call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 echo +++++++++ >> "!vrdlog!" 2>&1
-echo set !qsf_prefix! >> "!vrdlog!" 2>&1
-set !qsf_prefix! >> "!vrdlog!" 2>&1
+echo set !qsf_xml_prefix! >> "!vrdlog!" 2>&1
+set !qsf_xml_prefix! >> "!vrdlog!" 2>&1
 echo +++++++++ >> "!vrdlog!" 2>&1
 DIR "!QSF_File!"
+
+REM :gather_variables_from_media_file P2 =	the global prefix to use for this gather, one of "SRC_", "QSF_" "TARGET_"
+call :gather_variables_from_media_file "%~f1" "QSF_" 
+echo +++++++++ >> "!vrdlog!" 2>&1
+echo set QSF_ >> "!vrdlog!" 2>&1
+set QSF_ >> "!vrdlog!" 2>&1
+echo +++++++++ >> "!vrdlog!" 2>&1
+
+
+
+
+
+
+
 
 
 pause
@@ -1813,31 +1836,55 @@ ECHO !DATE! !TIME! "!current_prefix!" MUST be one of "SRC_", "QSF_" "TARGET_" >>
 ECHO !DATE! !TIME! ABORTING. >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ?????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????? >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ?????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????? >> "!vrdlog!" 2>&1
-exit
+!xPAUSE!
+exit 1
+
 :is_valid_current_prefix
 set "derived_prefix_FF=!current_prefix!FF_"
 set "derived_prefix_MI=!current_prefix!MI_"
 REM ---
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 echo FOR /F "tokens=1,* delims==" %%G IN ('SET !derived_prefix_FF!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
 FOR /F "tokens=1,* delims==" %%G IN ('SET !derived_prefix_FF!') DO (SET "%%G=")>NUL 2>&1
 echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "!media_filename!" --prefix "!derived_prefix_FF!" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
 "!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "!media_filename!" --prefix "!derived_prefix_FF!" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
+SET EL=!ERRORLEVEL!
+IF /I "!EL!" NEQ "0" (
+   ECHO !DATE! !TIME! *********  ffprobe "!derived_prefix_FF!" Error !EL! returned from !Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section! >> "%vrdlog%" 2>&1
+   ECHO !DATE! !TIME! *********  ABORTING ... >> "%vrdlog%" 2>&1
+   !xPAUSE!
+   EXIT !EL!
+)
 echo ### "!derived_prefix_FF!" >> "!vrdlog!" 2>&1
 REM echo TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 REM TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 echo call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 echo FOR /F "tokens=1,* delims==" %%G IN ('SET !derived_prefix_MI!') DO (SET "%%G=") >> "!vrdlog!" 2>&1
 FOR /F "tokens=1,* delims==" %%G IN ('SET !derived_prefix_MI!') DO (SET "%%G=")>NUL 2>&1
 echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "!media_filename!" --prefix "!derived_prefix_MI!" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
 "!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "!media_filename!" --prefix "!derived_prefix_MI!" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
+SET EL=!ERRORLEVEL!
+IF /I "!EL!" NEQ "0" (
+   ECHO !DATE! !TIME! *********  mediainfo "!derived_prefix_MI!" Error !EL! returned from !Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section! >> "%vrdlog%" 2>&1
+   ECHO !DATE! !TIME! *********  ABORTING ... >> "%vrdlog%" 2>&1
+   !xPAUSE!
+   EXIT !EL!
+)
 echo ### "!derived_prefix_MI!" >> "!vrdlog!" 2>&1
 REM echo TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 REM TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 echo call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 REM list initial variables we created for "!current_prefix!" and "!media_filename!"
 REM ECHO !DATE! !TIME! List initial "!current_prefix!" variables for "!media_filename!" >> "!vrdlog!" 2>&1

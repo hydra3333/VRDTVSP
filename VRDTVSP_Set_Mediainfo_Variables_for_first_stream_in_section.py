@@ -95,7 +95,7 @@ if __name__ == "__main__":
     set_cmd_list = [ f'echo prefix = "{prefix}"' ]
     set_cmd_list.append(f'REM List of DOS SET commands to define DOS variables')
     set_cmd_list.append(f'REM First, clear the variables with the chosen prefix')
-    set_cmd_list.append(f'FOR /F "tokens=1,* delims==" %%G IN (\'SET {prefix}\') DO (SET "%%G=")>NUL 2>&1')
+    set_cmd_list.append(f'FOR /F "tokens=1,* delims==" %%G IN (\'SET {prefix}\') DO (SET "%%G=")')
 
     # Run MediaInfo command to generate JSON output
     mediainfo_subprocess_command = [mediainfo_path, '--Full', '--Output=JSON', '--BOM', mediafile ]
@@ -105,6 +105,9 @@ if __name__ == "__main__":
 
     # Parse JSON output
     json_data = json.loads(mediainfo_output)
+    if json_data is None:
+        print(f"Error: No mediainfo JSON data returned from: {mediafile}")
+        sys.exit(1)
     if "track" in json_data['media']:
         for sn in [ "General", "Video", "Audio" ]:
             section_name = sn.capitalize()
