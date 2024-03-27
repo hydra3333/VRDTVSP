@@ -172,7 +172,7 @@ Set fileObj = fso.CreateTextFile(output_cmdfile_AbsolutePathName, True, False) '
 fileObj.WriteLine("echo qsf_cmd_variable_prefix='" & qsf_cmd_variable_prefix & "'")
 fileObj.WriteLine("REM List of DOS SET commands to define DOS variables")
 fileObj.WriteLine("REM First, clear the variables with the chosen prefix '" & qsf_cmd_variable_prefix & "'")
-fileObj.WriteLine("FOR /F ""tokens=1,* delims=="" %%G IN (\'SET " & qsf_cmd_variable_prefix & "\') DO (SET ""%%G="")")
+fileObj.WriteLine("FOR /F ""tokens=1,* delims=="" %%G IN ('SET " & qsf_cmd_variable_prefix & "') DO (SET ""%%G="")")
 For Each objDict_key In objDict
 	'WScript.StdOut.WriteLine("DEBUG: " & "SET """ & qsf_cmd_variable_prefix & Trim(objDict_key) & "=" & Trim(objDict.Item(objDict_key)) & """")
 	fileObj.WriteLine("SET """ & qsf_cmd_variable_prefix & Trim(objDict_key) & "=" & Trim(objDict.Item(objDict_key)) & """")

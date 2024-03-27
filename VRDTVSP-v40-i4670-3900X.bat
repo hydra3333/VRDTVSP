@@ -1821,8 +1821,8 @@ FOR /F "tokens=1,* delims==" %%G IN ('SET !derived_prefix_FF!') DO (SET "%%G=")>
 echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "!media_filename!" --prefix "!derived_prefix_FF!" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
 "!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "!media_filename!" --prefix "!derived_prefix_FF!" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
 echo ### "!derived_prefix_FF!" >> "!vrdlog!" 2>&1
-echo TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
-TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+REM echo TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+REM TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 echo call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
@@ -1831,16 +1831,16 @@ FOR /F "tokens=1,* delims==" %%G IN ('SET !derived_prefix_MI!') DO (SET "%%G=")>
 echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "!media_filename!" --prefix "!derived_prefix_MI!" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
 "!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "!media_filename!" --prefix "!derived_prefix_MI!" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
 echo ### "!derived_prefix_MI!" >> "!vrdlog!" 2>&1
-echo TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
-TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+REM echo TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+REM TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 echo call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 REM list initial variables we created for "!current_prefix!" and "!media_filename!"
-ECHO !DATE! !TIME! List initial "!current_prefix!" variables for "!media_filename!" >> "!vrdlog!" 2>&1
-ECHO set !current_prefix! >> "!vrdlog!" 2>&1
-set !current_prefix! >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! List initial "!current_prefix!" variables for "!media_filename!" >> "!vrdlog!" 2>&1
+REM ECHO set !current_prefix! >> "!vrdlog!" 2>&1
+REM set !current_prefix! >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 REM ECHO !DATE! !TIME! Start of NOTES: >> "!vrdlog!" 2>&1
 REM ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 REM ECHO !DATE! !TIME! AVC Interlaced type #1 .TS >> "!vrdlog!" 2>&1
