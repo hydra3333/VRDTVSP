@@ -126,10 +126,10 @@ REM --------- setup LOG file and TEMP filenames ----------------------------
 REM --------- setup vrd paths filenames ----------------------------
 REM set the primary and fallback version of VRD to use for QSF
 call :set_vrd_qsf_paths "5"
-set _vrd_version_ >> "%vrdlog%" 2>&1
-REM
 REM call :set_vrd_qsf_paths "6"
-REM set _vrd_version_ >> "%vrdlog%" 2>&1
+REM
+echo set _vrd_version_ >> "%vrdlog%" 2>&1
+set _vrd_version_ >> "%vrdlog%" 2>&1
 REM --------- setup vrd paths filenames ----------------------------
 
 REM --------- setup .PY fully qualified filenames to pre-created files which rename and re-timestamp filenames etc ---------
