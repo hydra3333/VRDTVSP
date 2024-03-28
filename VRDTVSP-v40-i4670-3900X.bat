@@ -796,12 +796,15 @@ REM If is footy, deinterlace to 50FPS 50p, doubling the framerate, rather than j
 REM so that we maintain the "motion fluidity" of 50i into 50p. It's better than Nothing.
 
 set "Footy_found=False"
-IF /I NOT "!file_name_part!"=="!thing:AFL=_____!" (
+IF /I NOT "!file_name_part!"=="!file_name_part:AFL=_____!" (
 	set "Footy_found=True"
-) ELSE IF /I NOT "!file_name_part!"=="!thing:SANFL=_____!" (
+	echo Footy word 'AFL' found in filename '!file_name_part!' >> "!vrdlog!" 2>&1
+) ELSE IF /I NOT "!file_name_part!"=="!file_name_part:SANFL=_____!" (
 	set "Footy_found=True"
-) ELSE IF /I NOT "!file_name_part!"=="!thing:Crows=_____!" (
+	echo Footy word 'SANFL' found in filename '!file_name_part!' >> "!vrdlog!" 2>&1
+) ELSE IF /I NOT "!file_name_part!"=="!file_name_part:Crows=_____!" (
 	set "Footy_found=True"
+	echo Footy word 'Crows' found in filename '!file_name_part!' >> "!vrdlog!" 2>&1
 ) ELSE (
 	set "Footy_found=False"
 	echo NO Footy words found in filename '!file_name_part!' >> "!vrdlog!" 2>&1
