@@ -92,7 +92,16 @@ if __name__ == "__main__":
         print(f"Error: Media file does not exist at path {mediafile}.")
         sys.exit(1)
 
-    set_cmd_list = [ f'echo prefix = "{prefix}"' ]
+    set_cmd_list = [ 'REM ---' ]
+    set_cmd_list.append(f'DEL /F ".\tmp_echo_status.log">NUL 2>&1"')
+    set_cmd_list.append(f'@ECHO>".\tmp_echo_status.log" 2>&1')
+    set_cmd_list.append(f'set /p initial_echo_status=<".\tmp_echo_status.log"')
+    set_cmd_list.append(f'DEL /F ".\tmp_echo_status.log">NUL 2>&1')
+    set_cmd_list.append(f'set "initial_echo_status=!initial_echo_status:ECHO is =!"')
+    set_cmd_list.append(f'set "initial_echo_status=!initial_echo_status:.=!"')
+    set_cmd_list.append(f'REM ---')
+    set_cmd_list.append(f'@ECHO OFF')
+    set_cmd_list.append(f'echo prefix = "{prefix}"')
     set_cmd_list.append(f'REM List of DOS SET commands to define DOS variables')
     set_cmd_list.append(f'REM First, clear the variables with the chosen prefix')
     set_cmd_list.append(f'FOR /F "tokens=1,* delims==" %%G IN (\'SET {prefix}\') DO (SET "%%G=")')
@@ -119,6 +128,8 @@ if __name__ == "__main__":
         #sys.exit(1)
         pass
 
+    set_cmd_list.append(f'@ECHO !initial_echo_status!')
+    set_cmd_list.append(f'set "initial_echo_status="')
     set_cmd_list.append(f'goto :eof')
     #print(f"DEBUG: set_cmd_list=\n{objPrettyPrint.pformat(set_cmd_list)}")
 
