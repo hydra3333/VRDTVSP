@@ -807,7 +807,7 @@ IF /I NOT "!file_name_part!"=="!thing:AFL=_____!" (
 	echo NO Footy words found in filename '!file_name_part!' >> "!vrdlog!" 2>&1
 )
 
-IF /I "!Footy_found! == "True" (
+IF /I "!Footy_found!" == "True" (
 	IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 		REM set for no deinterlace
 		set "FFMPEG_V_dg_deinterlace=0"
@@ -829,8 +829,6 @@ IF /I "!Footy_found! == "True" (
 ) ELSE (
 	echo NO Footy words found in filename '!file_name_part!', FFMPEG_V_dg_deinterlace unchanged=!FFMPEG_V_dg_deinterlace!, NO footy variables set  >> "!vrdlog!" 2>&1
 )
-
-
 
 
 
