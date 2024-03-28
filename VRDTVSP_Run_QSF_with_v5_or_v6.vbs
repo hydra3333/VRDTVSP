@@ -184,6 +184,16 @@ End If
 'create the .BAT cmdfile file from objDict
 'Wscript.StdOut.WriteLine("DEBUG: Creating cmdfile '" & output_cmdfile_AbsolutePathName & "'")
 Set fileObj = fso.CreateTextFile(output_cmdfile_AbsolutePathName, True, False) ' *** vapoursynth fails with unicode input file *** [ filename, Overwrite[, Unicode]])
+
+fileObj.WriteLine("REM ---")
+fileObj.WriteLine("DEL /F "".\tmp_echo_status.log"">NUL 2>&1")
+fileObj.WriteLine("@ECHO>"".\tmp_echo_status.log"" 2>&1")
+fileObj.WriteLine("set /p initial_echo_status=<"".\tmp_echo_status.log""")
+fileObj.WriteLine("DEL /F "".\tmp_echo_status.log"">NUL 2>&1")
+fileObj.WriteLine("set ""initial_echo_status=!initial_echo_status:ECHO is =!""")
+fileObj.WriteLine("set ""initial_echo_status=!initial_echo_status:.=!""")
+fileObj.WriteLine("REM ---")
+fileObj.WriteLine("@ECHO OFF")
 fileObj.WriteLine("echo qsf_cmd_variable_prefix='" & qsf_cmd_variable_prefix & "'")
 fileObj.WriteLine("REM List of DOS SET commands to define DOS variables")
 fileObj.WriteLine("REM First, clear the variables with the chosen prefix '" & qsf_cmd_variable_prefix & "'")
@@ -192,6 +202,8 @@ For Each objDict_key In objDict
 	'WScript.StdOut.WriteLine("DEBUG: " & "SET """ & qsf_cmd_variable_prefix & Trim(objDict_key) & "=" & Trim(objDict.Item(objDict_key)) & """")
 	fileObj.WriteLine("SET """ & qsf_cmd_variable_prefix & Trim(objDict_key) & "=" & Trim(objDict.Item(objDict_key)) & """")
 Next
+fileObj.WriteLine("@ECHO !initial_echo_status!")
+fileObj.WriteLine("set ""initial_echo_status=""")
 fileObj.WriteLine("goto :eof")
 fileObj.close
 Set fileObj = Nothing
