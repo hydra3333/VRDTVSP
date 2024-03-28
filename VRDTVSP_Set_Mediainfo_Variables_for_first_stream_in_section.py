@@ -107,7 +107,8 @@ if __name__ == "__main__":
     set_cmd_list.append(f'@ECHO OFF')
     set_cmd_list.append(f'echo prefix = "{prefix}"   Initial echo status=!initial_echo_status!')
     set_cmd_list.append(f'REM List of DOS SET commands to define DOS variables')
-    set_cmd_list.append(f'REM First, clear the variables with the chosen prefix')
+    set_cmd_list.append(f'ECHO Initialize: Clear variables with the prefix \'{prefix}\' ')
+    set_cmd_list.append(f'ECHO Ignore any message like \'Environment variable {prefix} not defined\'')
     set_cmd_list.append(f'FOR /F "tokens=1,* delims==" %%G IN (\'SET {prefix}\') DO (SET "%%G=") >NUL 2>&1')
 
     # Run MediaInfo command to generate JSON output
