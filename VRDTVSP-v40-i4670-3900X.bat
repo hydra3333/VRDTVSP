@@ -124,9 +124,12 @@ DEL /F "!vrd6_logfiles!" >> "%vrdlog%" 2>&1
 REM --------- setup LOG file and TEMP filenames ----------------------------
 
 REM --------- setup vrd paths filenames ----------------------------
-set "_vrd_version_primary=6"
-set "_vrd_version_fallback=5"
-call :set_vrd_qsf_paths "!_vrd_version_primary!"
+REM set the primary and fallback version of VRD to use for QSF
+call :set_vrd_qsf_paths "5"
+set _vrd_version_ >> "%vrdlog%" 2>&1
+REM
+REM call :set_vrd_qsf_paths "6"
+REM set _vrd_version_ >> "%vrdlog%" 2>&1
 REM --------- setup vrd paths filenames ----------------------------
 
 REM --------- setup .PY fully qualified filenames to pre-created files which rename and re-timestamp filenames etc ---------
@@ -543,8 +546,8 @@ ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 
 REM specify the source file average bitrate !SRC_MI_V_BitRate! in case QSF can't find it (it happens)
-REM can use this when timeouts: tasklist /fo list /fi "IMAGENAME eq VideoRedo*"
-REM can use this when timeouts: taskkill /f /t /fi "IMAGENAME eq VideoRedo*" /im *
+REM can use this when timeouts: tasklist /fo list /fi "IMAGENAME eq VideoReDo*"
+REM can use this when timeouts: taskkill /f /t /fi "IMAGENAME eq VideoReDo*" /im *
 echo cscript //nologo "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" >> "!vrdlog!" 2>&1
 cscript //nologo "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" >> "!vrdlog!" 2>&1
 SET EL=!ERRORLEVEL!
@@ -832,11 +835,6 @@ IF /I "!Footy_found! == "True" (
 
 
 
-
-
-
-pause
-exit
 
 goto :eof
 
@@ -1584,6 +1582,7 @@ REM ----------------------------------------------------------------------------
 REM
 :set_vrd_qsf_paths
 REM setup VRD paths based in parameter p1 = 5 or 6 only
+set "requested_vrd_version=%~1"
 REM set the fixed names
 set "Path_to_vrd6=C:\Program Files (x86)\VideoReDoTVSuite6"
 set "Path_to_vrd5=C:\Program Files (x86)\VideoReDoTVSuite5"
@@ -1615,8 +1614,7 @@ set "Path_to_vrd_vp_vbs="
 set "profile_name_for_qsf_mpeg2="
 set "profile_name_for_qsf_h264="
 set "profile_name_for_qsf_h265="
-
-IF /I "%~1" == "6" (
+IF /I "!requested_vrd_version!" == "6" (
    set "Path_to_vrd=!Path_to_vrd6!"
    set "Path_to_vrd_vp_vbs=!Path_to_vp_vbs_vrd6!"
    set "profile_name_for_qsf_mpeg2=!profile_name_for_qsf_mpeg2_vrd6!"
@@ -1624,7 +1622,7 @@ IF /I "%~1" == "6" (
    set "profile_name_for_qsf_h265=!profile_name_for_qsf_h265_vrd6!"
    set "_vrd_version_primary=6"
    set "_vrd_version_fallback=5"
-) ELSE IF /I "!%~1!" == "5" (
+) ELSE IF /I "!requested_vrd_version!" == "5" (
    set "Path_to_vrd=!Path_to_vrd5!"
    set "Path_to_vrd_vp_vbs=!Path_to_vp_vbs_vrd5!"
    set "profile_name_for_qsf_mpeg2=!profile_name_for_qsf_mpeg2_vrd5!"
@@ -1633,7 +1631,7 @@ IF /I "%~1" == "6" (
    set "_vrd_version_primary=5"
    set "_vrd_version_fallback=6"
 ) ELSE (
-   ECHO "VRD Version must be set to 5 or 6 not '%~1' (_vrd_version_primary=!_vrd_version_primary! _vrd_version_fallback=!_vrd_version_fallback!)... EXITING" >> "!vrdlog!" 2>&1
+   ECHO "VRD Version must be set to 5 or 6 not '!requested_vrd_version!' (_vrd_version_primary=!_vrd_version_primary! _vrd_version_fallback=!_vrd_version_fallback!)... EXITING" >> "!vrdlog!" 2>&1
    !xPAUSE!
    exit
 )
