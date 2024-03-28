@@ -749,7 +749,7 @@ IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 	set "FFMPEG_V_dg_deinterlace=0"
 ) ELSE IF /I "!QSF_calc_Video_Interlacement!" == "INTERLACED" (
 	REM set for normal single framerate deinterlace
-	set "FFMPEG_V_dg_deinterlace=2"
+	set "FFMPEG_V_dg_deinterlace=1"
 	set /a "FFMPEG_V_Target_BitRate=4000000"
 	set /a "FFMPEG_V_Target_Minimum_BitRate=100000"
 	set /a "FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_BitRate! * 2"
