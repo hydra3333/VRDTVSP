@@ -95,16 +95,20 @@ if __name__ == "__main__":
     set_cmd_list = [ 'REM ---' ]
     set_cmd_list.append(f'DEL /F ".\\tmp_echo_status.log">NUL 2>&1"')
     set_cmd_list.append(f'@ECHO>".\\tmp_echo_status.log" 2>&1')
+    #set_cmd_list.append(f'TYPE ".\\tmp_echo_status.log"')
     set_cmd_list.append(f'set /p initial_echo_status=<".\\tmp_echo_status.log"')
     set_cmd_list.append(f'DEL /F ".\\tmp_echo_status.log">NUL 2>&1')
+    #set_cmd_list.append(f'echo DEBUG: 1 initial_echo_status=!initial_echo_status!')
     set_cmd_list.append(f'set "initial_echo_status=!initial_echo_status:ECHO is =!"')
+    #set_cmd_list.append(f'echo DEBUG: 2 initial_echo_status=!initial_echo_status!')
     set_cmd_list.append(f'set "initial_echo_status=!initial_echo_status:.=!"')
+    #set_cmd_list.append(f'echo DEBUG: 3 initial_echo_status=!initial_echo_status!')
     set_cmd_list.append(f'REM ---')
     set_cmd_list.append(f'@ECHO OFF')
     set_cmd_list.append(f'echo prefix = "{prefix}"   Initial echo status=!initial_echo_status!')
     set_cmd_list.append(f'REM List of DOS SET commands to define DOS variables')
     set_cmd_list.append(f'REM First, clear the variables with the chosen prefix')
-    set_cmd_list.append(f'FOR /F "tokens=1,* delims==" %%G IN (\'SET {prefix}\') DO (SET "%%G=")')
+    set_cmd_list.append(f'FOR /F "tokens=1,* delims==" %%G IN (\'SET {prefix}\') DO (SET "%%G=") >NUL 2>&1')
 
     # Run MediaInfo command to generate JSON output
     mediainfo_subprocess_command = [mediainfo_path, '--Full', '--Output=JSON', '--BOM', mediafile ]
