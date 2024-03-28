@@ -735,7 +735,7 @@ IF /I "!QSF_calc_Video_Encoding!" == "AVC" (
 	ECHO !DATE! !TIME! "AVC" FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_Maximum_BitRate! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! "AVC"         FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BufSize! >> "!vrdlog!" 2>&1
 ) ELSE (
-	ECHO !DATE! !TIME! ERROR: UNKNOWN QSF_calc_Video_Encoding="!QSF_calc_Video_Encoding!" to base transcode calculations on.
+	ECHO !DATE! !TIME! ERROR: UNKNOWN QSF_calc_Video_Encoding="!QSF_calc_Video_Encoding!" to base transcode calculations on. >> "!vrdlog!" 2>&1
 	exit 1
 )
 
@@ -750,7 +750,7 @@ IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 	set /a "FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_BitRate! * 2"
 	set /a "FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BitRate! * 2"
 ) ELSE (
-	ECHO !DATE! !TIME! ERROR: UNKNOWN QSF_calc_Video_Interlacement="!QSF_calc_Video_Interlacement!" to base transcode calculations on.
+	ECHO !DATE! !TIME! ERROR: UNKNOWN QSF_calc_Video_Interlacement="!QSF_calc_Video_Interlacement!" to base transcode calculations on. >> "!vrdlog!" 2>&1
 	exit 1
 )
 
@@ -793,74 +793,31 @@ IF /I NOT "!file_name_part!"=="!thing:AFL=_____%" (
 	Set "Footy_found=True"
 ) ELSE (
 	Set "Footy_found=False"
+	echo NO Footy words found in filename '!file_name_part!' >> "!vrdlog!" 2>&1
 )
 
 IF /I "!Footy_found! == "True" (
 	IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 		REM set for no deinterlace
 		set "FFMPEG_V_dg_deinterlace=0"
+		ECHO Already Progressive video, Footy words found in filename '!file_name_part!', FFMPEG_V_dg_deinterlace=!FFMPEG_V_dg_deinterlace! NO Footy variables set >> "!vrdlog!" 2>&1
 	) ELSE IF /I "!QSF_calc_Video_Interlacement!" == "INTERLACED" (
 		REM set for double framerate deinterlace
 		set "FFMPEG_V_dg_deinterlace=2"
 		vrdtvsp_final_dg_deinterlace = 2	' set for double framerate deinterlace
-
 		REM use python to calculate rounded values for upped FOOTY double framerate deinterlaced output
-		??? Footy_FFMPEG_V_Target_BitRate = ROUND(FFMPEG_V_Target_BitRate * 1.75)
-		??? Footy_FFMPEG_V_Target_Minimum_BitRate = ROUND(Footy_FFMPEG_V_Target_BitRate * 0.20)
-		??? Footy_FFMPEG_V_Target_Maximum_BitRate = ROUND(Footy_FFMPEG_V_Target_BitRate * 2)
-		??? Footy_FFMPEG_V_Target_BufSize = ROUND(Footy_FFMPEG_V_Target_BitRate * 2)
-
-
-
+		CALL :calc_single_number_result_py "int(round(!FFMPEG_V_Target_BitRate! * 1.75))"       "Footy_FFMPEG_V_Target_BitRate"
+		CALL :calc_single_number_result_py "int(round(!Footy_FFMPEG_V_Target_BitRate! * 0.20))" "Footy_FFMPEG_V_Target_Minimum_BitRate"
+		CALL :calc_single_number_result_py "int(round(!Footy_FFMPEG_V_Target_BitRate! * 2))"    "Footy_FFMPEG_V_Target_Maximum_BitRate"
+		CALL :calc_single_number_result_py "int(round(!Footy_FFMPEG_V_Target_BitRate! * 2))"    "Footy_FFMPEG_V_Target_BufSize"
+		ECHO Interlaced video, Footy words found in filename '!file_name_part!', FFMPEG_V_dg_deinterlace=!FFMPEG_V_dg_deinterlace!  Footy variables set >> "!vrdlog!" 2>&1
 	) ELSE (
-		ECHO !DATE! !TIME! ERROR: UNKNOWN QSF_calc_Video_Interlacement="!QSF_calc_Video_Interlacement!" to base transcode calculations on.
+		ECHO !DATE! !TIME! ERROR: UNKNOWN QSF_calc_Video_Interlacement="!QSF_calc_Video_Interlacement!" to base transcode calculations on. >> "!vrdlog!" 2>&1
 		exit 1
 	)
+) ELSE (
+	echo NO Footy words found in filename '!file_name_part!', FFMPEG_V_dg_deinterlace unchanged=!FFMPEG_V_dg_deinterlace!, NO footy variables set  >> "!vrdlog!" 2>&1
 )
-
-
-	If Ucase(V_ScanType) = Ucase("Progressive") Then
-		vrdtvsp_final_dg_deinterlace = 0	' no deinterlace for progressive files
-	Else ' only check FOOTY for interlaced files
-		If Instr(1,Ucase(fso.GetBaseName(CF_QSF_AbsolutePathName)), Ucase("AFL"), vbTextCompare) > 0 Then 
-
-			If vrdtvsp_DEBUG Then 
-				WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_File - Footy_found: ""AFL"" found in filename.")
-			End If
-		End If
-		If Instr(1,Ucase(fso.GetBaseName(CF_QSF_AbsolutePathName)), Ucase("SANFL"), vbTextCompare) > 0 Then
-			Footy_found = True
-			If vrdtvsp_DEBUG Then 
-				WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_File - Footy_found: ""SANFL"" found in filename.")
-			End If
-		End If
-		If Instr(1,Ucase(fso.GetBaseName(CF_QSF_AbsolutePathName)), Ucase("Adelaide Crows"), vbTextCompare) > 0 Then
-			Footy_found = True
-			If vrdtvsp_DEBUG Then 
-				WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_File - Footy_found: ""Adelaide Crows"" found in filename.")
-			End If
-		End If
-		If Instr(1,Ucase(fso.GetBaseName(CF_QSF_AbsolutePathName)), Ucase("Crows"), vbTextCompare) > 0 Then
-			Footy_found = True
-			If vrdtvsp_DEBUG Then 
-				WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_File - Footy_found: ""Crows"" found in filename.")
-			End If
-		End If
-	End If		
-	If Footy_found Then ' bump up the bitrates due to double framerate deinterlacing
-		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - FOOTY detected ... setting extended Footy_FF_V_* bitates for double-framerate conversion.")
-		vrdtvsp_final_dg_deinterlace = 2	' set for double framerate deinterlace
-		Footy_FF_V_Target_BitRate = ROUND(FF_V_Target_BitRate * 1.75)
-		Footy_FF_V_Target_Minimum_BitRate = ROUND(Footy_FF_V_Target_BitRate * 0.20)
-		Footy_FF_V_Target_Maximum_BitRate = ROUND(Footy_FF_V_Target_BitRate * 2)
-		Footy_FF_V_Target_BufSize = ROUND(Footy_FF_V_Target_BitRate * 2)
-	Else ' default them back to non-footy settings
-		vrdtvsp_final_dg_deinterlace = 1	' set for normal single framerate deinterlace
-	'	Footy_FF_V_Target_BitRate = ROUND(FF_V_Target_BitRate)
-	'	Footy_FF_V_Target_Minimum_BitRate = ROUND(FF_V_Target_Minimum_BitRate)
-	'	Footy_FF_V_Target_Maximum_BitRate = ROUND(FF_V_Target_Maximum_BitRate)
-	'	Footy_FF_V_Target_BufSize = ROUND(FF_V_Target_BufSize)
-	End If
 
 
 
