@@ -434,7 +434,7 @@ REM %~1  -  expands %1 removing any surrounding quotes (")
 REM %~f1  -  expands %1 to a fully qualified path name 
 REM %~d1  -  expands %1 to a drive letter only 
 REM %~p1  -  expands %1 to a path only 
-REM %~n1  -  expands %1 to a file name only 
+REM %~n1  -  expands %1 to a file name only incldionjg the leading "."
 REM %~x1  -  expands %1 to a file extension only 
 REM %~s1  -  expanded path contains short names only 
 REM %~a1  -  expands %1 to file attributes 
@@ -626,6 +626,9 @@ REM		QSF_MI_V_BitRate
 REM		QSFinfo_ActualVideoBitrate
 set /a SRC_calc_Video_Max_Bitrate=0
 if !SRC_MI_V_BitRate! gtr !SRC_calc_Video_Max_Bitrate! set /a SRC_calc_Video_Max_Bitrate=!SRC_MI_V_BitRate!
+REM 	' NOTE:	After testing, it has been found that ffprobe can mis-report bitrates in the QSF'd file by about double.
+REM 	'		Although mediainfo and the "QSF log" values are reasonably close, testing shows ffprobe gets it more "right" when encoding.
+REM 	'		Although hopefully correct, this can result in a much lower transcoded filesizes than the originals.
 if !QSF_MI_V_BitRate! gtr !SRC_calc_Video_Max_Bitrate! set /a SRC_calc_Video_Max_Bitrate=!QSF_MI_V_BitRate!
 if !QSFinfo_ActualVideoBitrate! gtr !SRC_calc_Video_Max_Bitrate! set /a SRC_calc_Video_Max_Bitrate=!QSFinfo_ActualVideoBitrate!
 echo SRC_calc_Video_Max_Bitrate=!SRC_calc_Video_Max_Bitrate! from !SRC_MI_V_BitRate!, !QSF_MI_V_BitRate!, !QSFinfo_ActualVideoBitrate! >> "!vrdlog!" 2>&1
@@ -701,7 +704,6 @@ IF /I "!QSF_calc_Video_Encoding!" == "AVC" (
 	set /a "FFMPEG_V_Target_Minimum_BitRate=!extra_bitrate_20percent!"
 	set /a "FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_BitRate! * 2"
 	set /a "FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BitRate! * 2"
-	REM
 	ECHO !DATE! !TIME! Bitrates are calculated from the max AVC bitrate seen. >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! "AVC"      SRC_calc_Video_Max_Bitrate=!SRC_calc_Video_Max_Bitrate! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! "AVC" FFMPEG_V_Target_Minimum_BitRate=!FFMPEG_V_Target_Minimum_BitRate! >> "!vrdlog!" 2>&1
@@ -709,28 +711,119 @@ IF /I "!QSF_calc_Video_Encoding!" == "AVC" (
 	ECHO !DATE! !TIME! "AVC" FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_Maximum_BitRate! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! "AVC"         FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BufSize! >> "!vrdlog!" 2>&1
 ) ELSE IF /I "!QSF_calc_Video_Encoding!" == "MPEG2" (
-	REM is MPEG2 input, usually old stuff, so GUESS at reasonable target H.264 TARGET BITRATE
-	set /a "FFMPEG_V_Target_BitRate=2000000"
-	set /a "FFMPEG_V_Target_Minimum_BitRate=100000"
-	set /a "FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_BitRate! * 2"
-	set /a "FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BitRate! * 2"
-	ECHO !DATE! !TIME! Bitrates are fixed and NOT calculated as OK for mpeg2 transcode >> "!vrdlog!" 2>&1
+	IF /I "%~x1" == ".MPG" (
+		set /a "FFMPEG_V_Target_BitRate=4000000"
+		set /a "FFMPEG_V_Target_Minimum_BitRate=100000"
+		set /a "FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_BitRate! * 2"
+		set /a "FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BitRate! * 2"
+	) ELSE IF /I "%~x1" == ".VOB" (
+		set /a "FFMPEG_V_Target_BitRate=4000000"
+		set /a "FFMPEG_V_Target_Minimum_BitRate=100000"
+		set /a "FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_BitRate! * 2"
+		set /a "FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BitRate! * 2"
+	) ELSE (
+		REM usually .TS or anything else
+		set /a "FFMPEG_V_Target_BitRate=2000000"
+		set /a "FFMPEG_V_Target_Minimum_BitRate=100000"
+		set /a "FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_BitRate! * 2"
+		set /a "FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BitRate! * 2"
+	)
+	ECHO !DATE! !TIME! Bitrates are fixed and NOT calculated, for mpeg2 transcode >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! Bitrates are assumed based on the MPEG2 extension ""%~x1"" being [.mpg/.vob] or [anything else] >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! "AVC" FFMPEG_V_Target_Minimum_BitRate=!FFMPEG_V_Target_Minimum_BitRate! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! "AVC"         FFMPEG_V_Target_BitRate=!FFMPEG_V_Target_BitRate! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! "AVC" FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_Maximum_BitRate! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! "AVC"         FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BufSize! >> "!vrdlog!" 2>&1
 ) ELSE (
 	ECHO !DATE! !TIME! ERROR: UNKNOWN QSF_calc_Video_Encoding="!QSF_calc_Video_Encoding!" to base transcode calculations on.
 	exit 1
 )
 
-
-
-
 IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
+	REM set for no deinterlace
+	set "FFMPEG_V_dg_deinterlace=0"
 ) ELSE IF /I "!QSF_calc_Video_Interlacement!" == "INTERLACED" (
+	REM set for normal single framerate deinterlace
+	set "FFMPEG_V_dg_deinterlace=1"
 ) ELSE (
+	ECHO !DATE! !TIME! ERROR: UNKNOWN QSF_calc_Video_Interlacement="!QSF_calc_Video_Interlacement!" to base transcode calculations on.
+	exit 1
 )
+
 IF /I "!QSF_calc_Video_FieldFirst!" == "TFF" (
 ) ELSE IF /I "!QSF_calc_Video_FieldFirst!" == "BFF" (
 ) ELSE (
 )
+
+IF /I "%COMPUTERNAME%" == "3900X" (
+	REM		' -dpb_size 0		means automatic (default)
+	REM		' -bf:v 3			means use 3 b-frames (dont use more than 3)
+	REM	xx	' -b_ref_mode 0		means B frames will not be used for reference
+	REM set "ffmpeg_RTX2060super_extra_flags=-spatial-aq 1 -temporal-aq 1 -refs 3"
+	REM 2021.02.28 "-refs 3" is replaced by -dpb_size 0 -bf:v 3 -b_ref_mode:v 0 https://trac.ffmpeg.org/ticket/9130#comment:8 https://trac.ffmpeg.org/ticket/7303#comment:3
+	set "FFMPEG_V_RTX2060super_extra_flags=-spatial-aq 1 -temporal-aq 1 -dpb_size 0 -bf:v 3 -b_ref_mode:v 0"
+) ELSE (
+	set "FFMPEG_V_RTX2060super_extra_flags="
+)
+
+REM Default CQ options:
+set "FFMPEG_V_cq0=-cq:v 0"
+set "FFMPEG_V_cq24=-cq:v 24 -qmin 16 -qmax 48"
+set "FFMPEG_V_PROPOSED_x_cq_options=!FFMPEG_V_cq0!"
+set "FFMPEG_V_final_cq_options=!FFMPEG_V_cq0!"
+
+
+REM Now Check for Footy, after the final fiddling with bitrates and CQ.
+REM If is footy, deinterlace to 50FPS 50p, doubling the framerate, rather than just 25p
+REM so that we maintain the "motion fluidity" of 50i into 50p. It's better than Nothing.
+Set "Footy_found=False"
+
+
+	If Ucase(V_ScanType) = Ucase("Progressive") Then
+		vrdtvsp_final_dg_deinterlace = 0	' no deinterlace for progressive files
+	Else ' only check FOOTY for interlaced files
+		If Instr(1,Ucase(fso.GetBaseName(CF_QSF_AbsolutePathName)), Ucase("AFL"), vbTextCompare) > 0 Then 
+			Footy_found = True
+			If vrdtvsp_DEBUG Then 
+				WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_File - Footy_found: ""AFL"" found in filename.")
+			End If
+		End If
+		If Instr(1,Ucase(fso.GetBaseName(CF_QSF_AbsolutePathName)), Ucase("SANFL"), vbTextCompare) > 0 Then
+			Footy_found = True
+			If vrdtvsp_DEBUG Then 
+				WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_File - Footy_found: ""SANFL"" found in filename.")
+			End If
+		End If
+		If Instr(1,Ucase(fso.GetBaseName(CF_QSF_AbsolutePathName)), Ucase("Adelaide Crows"), vbTextCompare) > 0 Then
+			Footy_found = True
+			If vrdtvsp_DEBUG Then 
+				WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_File - Footy_found: ""Adelaide Crows"" found in filename.")
+			End If
+		End If
+		If Instr(1,Ucase(fso.GetBaseName(CF_QSF_AbsolutePathName)), Ucase("Crows"), vbTextCompare) > 0 Then
+			Footy_found = True
+			If vrdtvsp_DEBUG Then 
+				WScript.StdOut.WriteLine("VRDTVSP DEBUG: vrdtvsp_Convert_File - Footy_found: ""Crows"" found in filename.")
+			End If
+		End If
+	End If		
+	If Footy_found Then ' bump up the bitrates due to double framerate deinterlacing
+		WScript.StdOut.WriteLine("VRDTVSP vrdtvsp_Convert_File: - FOOTY detected ... setting extended Footy_FF_V_* bitates for double-framerate conversion.")
+		vrdtvsp_final_dg_deinterlace = 2	' set for double framerate deinterlace
+		Footy_FF_V_Target_BitRate = ROUND(FF_V_Target_BitRate * 1.75)
+		Footy_FF_V_Target_Minimum_BitRate = ROUND(Footy_FF_V_Target_BitRate * 0.20)
+		Footy_FF_V_Target_Maximum_BitRate = ROUND(Footy_FF_V_Target_BitRate * 2)
+		Footy_FF_V_Target_BufSize = ROUND(Footy_FF_V_Target_BitRate * 2)
+	Else ' default them back to non-footy settings
+		vrdtvsp_final_dg_deinterlace = 1	' set for normal single framerate deinterlace
+	'	Footy_FF_V_Target_BitRate = ROUND(FF_V_Target_BitRate)
+	'	Footy_FF_V_Target_Minimum_BitRate = ROUND(FF_V_Target_Minimum_BitRate)
+	'	Footy_FF_V_Target_Maximum_BitRate = ROUND(FF_V_Target_Maximum_BitRate)
+	'	Footy_FF_V_Target_BufSize = ROUND(FF_V_Target_BufSize)
+	End If
+
+
+
 
 
 pause
@@ -740,6 +833,14 @@ goto :eof
 
 
 BAD BAD BAD FROM HERE DOWN
+
+
+
+
+
+
+
+
 
 
 
@@ -895,9 +996,9 @@ REM set V_cut_start=-ss "00:35:00"
 REM set V_cut_duration=-t "00:15:00"
 REM +++++++++++++++++++++++++
 IF /I "%COMPUTERNAME%" == "3900X" (
-	set "RTX2060super_extra_flags=-spatial-aq 1 -temporal-aq 1 -refs 3"
+	set "ffmpeg_RTX2060super_extra_flags=-spatial-aq 1 -temporal-aq 1 -refs 3"
 ) ELSE (
-	set "RTX2060super_extra_flags="
+	set "ffmpeg_RTX2060super_extra_flags="
 )
 REM +++++++++++++++++++++++++
 set AO_=!loudnorm_filter! -c:a libfdk_aac -cutoff 20000 -ab 256k -ar 48000
@@ -1131,7 +1232,7 @@ IF /I "!V_ScanType!" == "Progressive" (
 		TYPE "!_VPY_file!" >> "%vrdlog%" 2>&1
 		ECHO ---------------------------- >> "%vrdlog%" 2>&1
 		REM from mpeg2, always -cq:v 0
-		set VO_HQ=-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental -c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres !RTX2060super_extra_flags! -rc:v vbr -cq:v 0 -b:v !FF_V_Target_BitRate! -minrate:v !FF_V_Target_Minimum_BitRate! -maxrate:v !FF_V_Target_Maximum_BitRate! -bufsize !FF_V_Target_BufSize! -profile:v high -level 5.2 -movflags +faststart+write_colr >> "%vrdlog%" 2>&1
+		set VO_HQ=-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental -c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres !ffmpeg_RTX2060super_extra_flags! -rc:v vbr -cq:v 0 -b:v !FF_V_Target_BitRate! -minrate:v !FF_V_Target_Minimum_BitRate! -maxrate:v !FF_V_Target_Maximum_BitRate! -bufsize !FF_V_Target_BufSize! -profile:v high -level 5.2 -movflags +faststart+write_colr >> "%vrdlog%" 2>&1
 		REM Handle an ffmpeg.exe with a removed Opencl
 		REM set VO_sharpen=-filter_complex "hwupload,unsharp_opencl=lx=3:ly=3:la=1.5:cx=3:cy=3:ca=1.5,hwdownload,format=pix_fmts=yuv420p" >> "%vrdlog%" 2>&1
 		REM set ff_cmd="!ffmpegexe64_OpenCL!" -hide_banner -v verbose -nostats !ff_OpenCL_device_init! !V_cut_start! -i "!scratch_file_qsf!" -vf "setdar=!V_DisplayAspectRatio_String_slash!" !V_cut_duration! !VO_sharpen! !VO_HQ! !AO_! -y "!destination_file!" >> "%vrdlog%" 2>&1
@@ -1190,11 +1291,11 @@ IF /I "!V_ScanType!" == "Progressive" (
 		ECHO ---------------------------- >> "%vrdlog%" 2>&1
 		REM perhaps -cq:v 24 -qmin 18 -qmax 40
 		REM set VO_deint_sharpen=-filter_complex "[0:v]yadif=!yadif_mode!:!yadif_tff_bff!:0,hwupload,unsharp_opencl=lx=3:ly=3:la=0.5:cx=3:cy=3:ca=0.5,hwdownload,format=pix_fmts=yuv420p" >> "%vrdlog%" 2>&1
-		REM set VO_HQ=-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp !VO_deint_sharpen! -strict experimental -c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres !RTX2060super_extra_flags! -rc:v vbr !x_cq_options! -b:v !FF_V_Target_BitRate! -minrate:v !FF_V_Target_Minimum_BitRate! -maxrate:v !FF_V_Target_Maximum_BitRate! -bufsize !FF_V_Target_BufSize! -profile:v high -level 5.2 -movflags +faststart+write_colr >> "%vrdlog%" 2>&1
+		REM set VO_HQ=-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp !VO_deint_sharpen! -strict experimental -c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres !ffmpeg_RTX2060super_extra_flags! -rc:v vbr !x_cq_options! -b:v !FF_V_Target_BitRate! -minrate:v !FF_V_Target_Minimum_BitRate! -maxrate:v !FF_V_Target_Maximum_BitRate! -bufsize !FF_V_Target_BufSize! -profile:v high -level 5.2 -movflags +faststart+write_colr >> "%vrdlog%" 2>&1
 		REM Handle an ffmpeg.exe with a removed Opencl
 		REM set ff_cmd="!ffmpegexe64!" -hide_banner -v verbose -nostats !ff_OpenCL_device_init! !V_cut_start! -i "!scratch_file_qsf!" -vf "setdar=!V_DisplayAspectRatio_String_slash!" !V_cut_duration! !VO_HQ! !AO_! -y "!destination_file!" >> "%vrdlog%" 2>&1
 		REM
-		set VO_HQ_DG=-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental -c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres !RTX2060super_extra_flags! -rc:v vbr !x_cq_options! -b:v !FF_V_Target_BitRate! -minrate:v !FF_V_Target_Minimum_BitRate! -maxrate:v !FF_V_Target_Maximum_BitRate! -bufsize !FF_V_Target_BufSize! -profile:v high -level 5.2 -movflags +faststart+write_colr >> "%vrdlog%" 2>&1
+		set VO_HQ_DG=-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental -c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres !ffmpeg_RTX2060super_extra_flags! -rc:v vbr !x_cq_options! -b:v !FF_V_Target_BitRate! -minrate:v !FF_V_Target_Minimum_BitRate! -maxrate:v !FF_V_Target_Maximum_BitRate! -bufsize !FF_V_Target_BufSize! -profile:v high -level 5.2 -movflags +faststart+write_colr >> "%vrdlog%" 2>&1
 		REM Handle an ffmpeg.exe with a removed Opencl
 		REM set ff_cmd_DG="!VSffmpegexe64_OpenCL!" -hide_banner -v verbose -nostats !ff_OpenCL_device_init! !V_cut_start! -f vapoursynth -i "!_VPY_file!" -i "!scratch_file_qsf!" -map 0:v:0 -map 1:a:0 -vf "setdar=!V_DisplayAspectRatio_String_slash!" !V_cut_duration! !VO_HQ_DG! !AO_! -y "!destination_file!" >> "%vrdlog%" 2>&1
 		set ff_cmd_DG="!VSffmpegexe64!" -hide_banner -v verbose -nostats !V_cut_start! -f vapoursynth -i "!_VPY_file!" -i "!scratch_file_qsf!" -map 0:v:0 -map 1:a:0 -vf "setdar=!V_DisplayAspectRatio_String_slash!" !V_cut_duration! !VO_HQ_DG! !AO_! -y "!destination_file!" >> "%vrdlog%" 2>&1
@@ -1206,14 +1307,14 @@ IF /I "!V_ScanType!" == "Progressive" (
 		REM especially when the source is blocky (lime some footy games are only broadcast at 3.5Mbps which is pitiful.
 		REM So, the code remains as an example, but never used.
 		REM set Footy_VO_deint_sharpen=-filter_complex "[0:v]yadif=!Footy_yadif_mode!:!yadif_tff_bff!:0,hwupload,unsharp_opencl=lx=3:ly=3:la=0.5:cx=3:cy=3:ca=0.5,hwdownload,format=pix_fmts=yuv420p" >> "%vrdlog%" 2>&1
-		REM set Footy_VO_HQ=-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp !Footy_VO_deint_sharpen! -strict experimental -c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres !RTX2060super_extra_flags! -rc:v vbr !x_cq_options! -b:v !Footy_FF_V_Target_BitRate! -minrate:v !Footy_FF_V_Target_Minimum_BitRate! -maxrate:v !Footy_FF_V_Target_Maximum_BitRate! -bufsize !Footy_FF_V_Target_BufSize! -profile:v high -level 5.2 -movflags +faststart+write_colr >> "%vrdlog%" 2>&1
+		REM set Footy_VO_HQ=-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp !Footy_VO_deint_sharpen! -strict experimental -c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres !ffmpeg_RTX2060super_extra_flags! -rc:v vbr !x_cq_options! -b:v !Footy_FF_V_Target_BitRate! -minrate:v !Footy_FF_V_Target_Minimum_BitRate! -maxrate:v !Footy_FF_V_Target_Maximum_BitRate! -bufsize !Footy_FF_V_Target_BufSize! -profile:v high -level 5.2 -movflags +faststart+write_colr >> "%vrdlog%" 2>&1
 		REM set Footy_ff_cmd="!ffmpegexe64!" -hide_banner -v verbose -nostats !ff_OpenCL_device_init! !V_cut_start! -i "!scratch_file_qsf!" -vf "setdar=!V_DisplayAspectRatio_String_slash!" !V_cut_duration! !Footy_VO_HQ! !AO_! -y "!destination_file!" >> "%vrdlog%" 2>&1
 		REM
 		IF /I "!Footy_found!" == "TRUE" ( 
 			ECHO "***FF*** " >> "%vrdlog%" 2>&1
 			ECHO "***FF*** Interlaced FOOTY AVC input detected - resetting ff_cmd accordingly ... denoise/sharpen video stream via vapoursynth, with HQ settings, convert audio stream " >> "%vrdlog%" 2>&1
 			ECHO "***FF*** " >> "%vrdlog%" 2>&1
-			set Footy_VO_HQ_DG=-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental -c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres !RTX2060super_extra_flags! -rc:v vbr !x_cq_options! -b:v !Footy_FF_V_Target_BitRate! -minrate:v !Footy_FF_V_Target_Minimum_BitRate! -maxrate:v !Footy_FF_V_Target_Maximum_BitRate! -bufsize !Footy_FF_V_Target_BufSize! -profile:v high -level 5.2 -movflags +faststart+write_colr >> "%vrdlog%" 2>&1
+			set Footy_VO_HQ_DG=-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental -c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres !ffmpeg_RTX2060super_extra_flags! -rc:v vbr !x_cq_options! -b:v !Footy_FF_V_Target_BitRate! -minrate:v !Footy_FF_V_Target_Minimum_BitRate! -maxrate:v !Footy_FF_V_Target_Maximum_BitRate! -bufsize !Footy_FF_V_Target_BufSize! -profile:v high -level 5.2 -movflags +faststart+write_colr >> "%vrdlog%" 2>&1
 			REM Handle an ffmpeg.exe with a removed Opencl
 			REM set Footy_ff_cmd_DG="!VSffmpegexe64_OpenCL!" -hide_banner -v verbose -nostats !ff_OpenCL_device_init! !V_cut_start! -f vapoursynth -i "!_VPY_file!" -i "!scratch_file_qsf!" -map 0:v:0 -map 1:a:0 -vf "setdar=!V_DisplayAspectRatio_String_slash!" !V_cut_duration! !Footy_VO_HQ_DG! !AO_! -y "!destination_file!" >> "%vrdlog%" 2>&1
 			set Footy_ff_cmd_DG="!VSffmpegexe64!" -hide_banner -v verbose -nostats !V_cut_start! -f vapoursynth -i "!_VPY_file!" -i "!scratch_file_qsf!" -map 0:v:0 -map 1:a:0 -vf "setdar=!V_DisplayAspectRatio_String_slash!" !V_cut_duration! !Footy_VO_HQ_DG! !AO_! -y "!destination_file!" >> "%vrdlog%" 2>&1
@@ -1255,10 +1356,10 @@ IF /I "!V_ScanType!" == "Progressive" (
 		ECHO ---------------------------- >> "%vrdlog%" 2>&1
 		REM from mpeg2, always -cq:v 0
 		REM set VO_deint_sharpen=-filter_complex "[0:v]yadif=!yadif_mode!:!yadif_tff_bff!:0,hwupload,unsharp_opencl=lx=3:ly=3:la=1.5:cx=3:cy=3:ca=1.5,hwdownload,format=pix_fmts=yuv420p" >> "%vrdlog%" 2>&1
-		REM set VO_HQ=-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp !VO_deint_sharpen! -strict experimental -c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres !RTX2060super_extra_flags! -rc:v vbr -cq:v 0 -b:v !FF_V_Target_BitRate! -minrate:v !FF_V_Target_Minimum_BitRate! -maxrate:v !FF_V_Target_Maximum_BitRate! -bufsize !FF_V_Target_BufSize! -profile:v high -level 5.2 -movflags +faststart+write_colr >> "%vrdlog%" 2>&1
+		REM set VO_HQ=-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp !VO_deint_sharpen! -strict experimental -c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres !ffmpeg_RTX2060super_extra_flags! -rc:v vbr -cq:v 0 -b:v !FF_V_Target_BitRate! -minrate:v !FF_V_Target_Minimum_BitRate! -maxrate:v !FF_V_Target_Maximum_BitRate! -bufsize !FF_V_Target_BufSize! -profile:v high -level 5.2 -movflags +faststart+write_colr >> "%vrdlog%" 2>&1
 		REM set ff_cmd="!ffmpegexe64!" -hide_banner -v verbose -nostats !ff_OpenCL_device_init! !V_cut_start! -i "!scratch_file_qsf!" -vf "setdar=!V_DisplayAspectRatio_String_slash!" !V_cut_duration! !VO_HQ! !AO_! -y "!destination_file!" >> "%vrdlog%" 2>&1
 		REM
-		set VO_HQ_DG=-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental -c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres !RTX2060super_extra_flags! -rc:v vbr !x_cq_options! -b:v !FF_V_Target_BitRate! -minrate:v !FF_V_Target_Minimum_BitRate! -maxrate:v !FF_V_Target_Maximum_BitRate! -bufsize !FF_V_Target_BufSize! -profile:v high -level 5.2 -movflags +faststart+write_colr >> "%vrdlog%" 2>&1
+		set VO_HQ_DG=-vsync 0 -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental -c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres !ffmpeg_RTX2060super_extra_flags! -rc:v vbr !x_cq_options! -b:v !FF_V_Target_BitRate! -minrate:v !FF_V_Target_Minimum_BitRate! -maxrate:v !FF_V_Target_Maximum_BitRate! -bufsize !FF_V_Target_BufSize! -profile:v high -level 5.2 -movflags +faststart+write_colr >> "%vrdlog%" 2>&1
 		REM Handle an ffmpeg.exe with a removed Opencl
 		REM set ff_cmd_DG="!VSffmpegexe64_OpenCL!" -hide_banner -v verbose -nostats !ff_OpenCL_device_init! !V_cut_start! -f vapoursynth -i "!_VPY_file!" -i "!scratch_file_qsf!" -map 0:v:0 -map 1:a:0 -vf "setdar=!V_DisplayAspectRatio_String_slash!" !V_cut_duration! !VO_HQ_DG! !AO_! -y "!destination_file!" >> "%vrdlog%" 2>&1
 		set ff_cmd_DG="!VSffmpegexe64!" -hide_banner -v verbose -nostats  !V_cut_start! -f vapoursynth -i "!_VPY_file!" -i "!scratch_file_qsf!" -map 0:v:0 -map 1:a:0 -vf "setdar=!V_DisplayAspectRatio_String_slash!" !V_cut_duration! !VO_HQ_DG! !AO_! -y "!destination_file!" >> "%vrdlog%" 2>&1
@@ -1267,7 +1368,7 @@ IF /I "!V_ScanType!" == "Progressive" (
 	)
 )
 ECHO !DATE! !TIME! >> "%vrdlog%" 2>&1
-REM ECHO !DATE! !TIME! RTX2060super_extra_flags="!RTX2060super_extra_flags!">> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! ffmpeg_RTX2060super_extra_flags="!ffmpeg_RTX2060super_extra_flags!">> "!vrdlog!" 2>&1
 REM ECHO !DATE! !TIME! Video, Audio, FF options follow: >> "%vrdlog%" 2>&1
 REM set VO_ >> "%vrdlog%" 2>&1
 REM set AO_ >> "%vrdlog%" 2>&1
@@ -1694,7 +1795,7 @@ REM %~1   -  expands %1 removing any surrounding quotes (")
 REM %~f1  -  expands %1 to a fully qualified path name 
 REM %~d1  -  expands %1 to a drive letter only 
 REM %~p1  -  expands %1 to a path only 
-REM %~n1  -  expands %1 to a file name only 
+REM %~n1  -  expands %1 to a file name only incldionjg the leading "."
 REM %~x1  -  expands %1 to a file extension only 
 REM %~s1  -  expanded path contains short names only 
 REM %~a1  -  expands %1 to file attributes 
