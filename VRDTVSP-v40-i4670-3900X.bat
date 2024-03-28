@@ -541,7 +541,10 @@ ECHO DEL /F "!vrd6_logfiles!" >> "%vrdlog%" 2>&1
 DEL /F "!vrd6_logfiles!" >> "%vrdlog%" 2>&1
 ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+
 REM specify the source file average bitrate !SRC_MI_V_BitRate! in case QSF can't find it (it happens)
+REM can use this when timeouts: tasklist /fo list /fi "IMAGENAME eq VideoRedo*"
+REM can use this when timeouts: taskkill /f /t /fi "IMAGENAME eq VideoRedo*" /im *
 echo cscript //nologo "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" >> "!vrdlog!" 2>&1
 cscript //nologo "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" >> "!vrdlog!" 2>&1
 SET EL=!ERRORLEVEL!
