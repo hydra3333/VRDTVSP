@@ -574,7 +574,7 @@ echo "!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start
 "!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
 
 REM :gather_variables_from_media_file P2 =	the global prefix to use for this gather, one of "SRC_", "QSF_" "TARGET_"
-call :gather_variables_from_media_file "%~f1" "QSF_" 
+call :gather_variables_from_media_file "!QSF_File!" "QSF_" 
 
 REM $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 REM OK, by now we have 
@@ -1929,11 +1929,11 @@ ECHO !DATE! !TIME! !current_prefix!calc_Video_FieldFirst=!tmp_calc_Video_FieldFi
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 echo +++++++++ >> "!vrdlog!" 2>&1
 
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! List all  "!current_prefix!" variables for "!media_filename!" >> "!vrdlog!" 2>&1
-ECHO set !current_prefix! >> "!vrdlog!" 2>&1
-set !current_prefix! >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! List all  "!current_prefix!" variables for "!media_filename!" >> "!vrdlog!" 2>&1
+REM ECHO set !current_prefix! >> "!vrdlog!" 2>&1
+REM set !current_prefix! >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 
 REM ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 REM echo "!mediainfoexe64!" "!media_filename!" --full >> "%vrdlog%" 2>&1
