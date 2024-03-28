@@ -545,6 +545,15 @@ DEL /F "!vrd6_logfiles!" >> "%vrdlog%" 2>&1
 ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 
+
+
+
+set SRC_MI_V_BitRate >> "!vrdlog!" 2>&1
+set SRC_MI_G_OverallBitRate >> "!vrdlog!" 2>&1
+set SRC_FF_G_bit_rate >> "!vrdlog!" 2>&1
+
+
+
 REM specify the source file average bitrate !SRC_MI_V_BitRate! in case QSF can't find it (it happens)
 REM can use this when timeouts: tasklist /fo list /fi "IMAGENAME eq VideoReDo*"
 REM can use this when timeouts: taskkill /f /t /fi "IMAGENAME eq VideoReDo*" /im *
@@ -1998,6 +2007,21 @@ REM ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 REM
 REM Fix up and calculate some variables
 REM
+
+REM sometimes mediainfo omits to return the video bit_rate, so fudge it using other detected bitrates
+call set tmp_MI_V_BitRate=%%!current_prefix!MI_V_BitRate%%
+IF /I "!tmp_MI_V_BitRate!" == "" (
+	call set !current_prefix!MI_V_BitRate=%%!current_prefix!FF_G_bit_rate%%
+)
+call set tmp_MI_V_BitRate=%%!current_prefix!MI_V_BitRate%%
+IF /I "!tmp_MI_V_BitRate!" == "" (
+	call set !current_prefix!MI_V_BitRate=%%!current_prefix!MI_G_OverallBitRate%%
+)
+call set tmp_MI_V_BitRate=%%!current_prefix!MI_V_BitRate%%
+IF /I "!tmp_MI_V_BitRate!" == "" (
+	echo Unable to detect !current_prefix!MI_V_BitRate, failed to fudge it, Aborting >> "!vrdlog!" 2>&1
+	exit 1
+)
 
 REM get a slash version of MI_V_DisplayAspectRatio_String
 call set !current_prefix!MI_V_DisplayAspectRatio_String_slash=%%!current_prefix!MI_V_DisplayAspectRatio_String%%
