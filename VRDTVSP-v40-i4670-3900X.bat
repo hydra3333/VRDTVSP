@@ -681,41 +681,60 @@ ECHO !DATE! !TIME! =============================================================
 REM
 REM QSF is completed.
 REM
-REM Now form variables used in the FFMPEG encoding qsf -> destination
+REM Now claculate variables used in the FFMPEG encoding qsf -> destination0mp4
 REM
 
 set "Target_File=!destination_mp4_Folder!%~n1.!qsf_extension!"
 
+IF /I "!QSF_calc_Video_Encoding!" == "AVC" (
+	REM CALCULATE H.264 TARGET BITRATES FROM THE INCOMING BITRATE
+	set /a "X_bitrate_05percent=!SRC_calc_Video_Max_Bitrate! / 20"
+	set /a "X_bitrate_10percent=!SRC_calc_Video_Max_Bitrate! / 10"
+	set /a "X_bitrate_20percent=!SRC_calc_Video_Max_Bitrate! / 5"
+	set /a "X_bitrate_50percent=!SRC_calc_Video_Max_Bitrate! / 2"
+	REM ffmpeg nvenc typically seems to undershoot the target bitrate, so bump it up.
+	set /a "FFMPEG_V_Target_BitRate=!SRC_calc_Video_Max_Bitrate! + !X_bitrate_05percent!"
+	set /a "extra_bitrate_05percent=!FFMPEG_V_Target_BitRate! / 20"
+	set /a "extra_bitrate_10percent=!FFMPEG_V_Target_BitRate! / 10"
+	set /a "extra_bitrate_20percent=!FFMPEG_V_Target_BitRate! / 5"
+	set /a "extra_bitrate_50percent=!FFMPEG_V_Target_BitRate! / 2"
+	set /a "FFMPEG_V_Target_Minimum_BitRate=!extra_bitrate_20percent!"
+	set /a "FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_BitRate! * 2"
+	set /a "FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BitRate! * 2"
+	REM
+	ECHO !DATE! !TIME! Bitrates are calculated from the max AVC bitrate seen. >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! "AVC"      SRC_calc_Video_Max_Bitrate=!SRC_calc_Video_Max_Bitrate! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! "AVC" FFMPEG_V_Target_Minimum_BitRate=!FFMPEG_V_Target_Minimum_BitRate! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! "AVC"         FFMPEG_V_Target_BitRate=!FFMPEG_V_Target_BitRate! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! "AVC" FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_Maximum_BitRate! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! "AVC"         FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BufSize! >> "!vrdlog!" 2>&1
+) ELSE IF /I "!QSF_calc_Video_Encoding!" == "MPEG2" (
+	REM is MPEG2 input, usually old stuff, so GUESS at reasonable target H.264 TARGET BITRATE
+	set /a "FFMPEG_V_Target_BitRate=2000000"
+	set /a "FFMPEG_V_Target_Minimum_BitRate=100000"
+	set /a "FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_BitRate! * 2"
+	set /a "FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BitRate! * 2"
+	ECHO !DATE! !TIME! Bitrates are fixed and NOT calculated as OK for mpeg2 transcode >> "!vrdlog!" 2>&1
+) ELSE (
+	ECHO !DATE! !TIME! ERROR: UNKNOWN QSF_calc_Video_Encoding="!QSF_calc_Video_Encoding!" to base transcode calculations on.
+	exit 1
+)
 
-REM IF /I "!QSF_calc_Video_Encoding!" == "AVC" (
-REM ) ELSE IF /I "!QSF_calc_Video_Encoding!" == "MPEG2" (
-REM ) ELSE (
-REM )
-REM IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
-REM ) ELSE IF /I "!QSF_calc_Video_Interlacement!" == "INTERLACED" (
-REM ) ELSE (
-REM )
-REM IF /I "!QSF_calc_Video_FieldFirst!" == "TFF" (
-REM ) ELSE IF /I "!QSF_calc_Video_FieldFirst!" == "BFF" (
-REM ) ELSE (
-REM )
-REM SRC_calc_Video_Max_Bitrate
 
 
+
+IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
+) ELSE IF /I "!QSF_calc_Video_Interlacement!" == "INTERLACED" (
+) ELSE (
+)
+IF /I "!QSF_calc_Video_FieldFirst!" == "TFF" (
+) ELSE IF /I "!QSF_calc_Video_FieldFirst!" == "BFF" (
+) ELSE (
+)
 
 
 pause
 exit
-
-
-
-
-
-
-
-
-
-
 
 goto :eof
 
