@@ -548,8 +548,11 @@ DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 
 
 
+echo set SRC_MI_V_BitRate >> "!vrdlog!" 2>&1
 set SRC_MI_V_BitRate >> "!vrdlog!" 2>&1
+echo set SRC_MI_G_OverallBitRate >> "!vrdlog!" 2>&1
 set SRC_MI_G_OverallBitRate >> "!vrdlog!" 2>&1
+echo set SRC_FF_G_bit_rate >> "!vrdlog!" 2>&1
 set SRC_FF_G_bit_rate >> "!vrdlog!" 2>&1
 
 
@@ -2011,15 +2014,37 @@ REM
 REM sometimes mediainfo omits to return the video bit_rate, so fudge it using other detected bitrates
 call set tmp_MI_V_BitRate=%%!current_prefix!MI_V_BitRate%%
 IF /I "!tmp_MI_V_BitRate!" == "" (
+	echo WARNING: !current_prefix!MI_V_BitRate was blank, attempting to fudge to !current_prefix!FF_G_bit_rate >> "!vrdlog!" 2>&1
+	echo set !current_prefix!MI_V_BitRate >> "!vrdlog!" 2>&1
+	set !current_prefix!MI_V_BitRate >> "!vrdlog!" 2>&1
+	echo set !current_prefix!MI_G_OverallBitRate >> "!vrdlog!" 2>&1
+	set !current_prefix!MI_G_OverallBitRate >> "!vrdlog!" 2>&1
+	echo set !current_prefix!FF_G_bit_rate >> "!vrdlog!" 2>&1
+	set !current_prefix!F_G_bit_rate >> "!vrdlog!" 2>&1
+	REM
 	call set !current_prefix!MI_V_BitRate=%%!current_prefix!FF_G_bit_rate%%
 )
 call set tmp_MI_V_BitRate=%%!current_prefix!MI_V_BitRate%%
 IF /I "!tmp_MI_V_BitRate!" == "" (
+	echo WARNING: !current_prefix!MI_V_BitRate was blank, attempting to fudge to !current_prefix!MI_G_OverallBitRate >> "!vrdlog!" 2>&1
+	echo set !current_prefix!MI_V_BitRate >> "!vrdlog!" 2>&1
+	set !current_prefix!MI_V_BitRate >> "!vrdlog!" 2>&1
+	echo set !current_prefix!MI_G_OverallBitRate >> "!vrdlog!" 2>&1
+	set !current_prefix!MI_G_OverallBitRate >> "!vrdlog!" 2>&1
+	echo set !current_prefix!FF_G_bit_rate >> "!vrdlog!" 2>&1
+	set !current_prefix!F_G_bit_rate >> "!vrdlog!" 2>&1
+	REM
 	call set !current_prefix!MI_V_BitRate=%%!current_prefix!MI_G_OverallBitRate%%
 )
 call set tmp_MI_V_BitRate=%%!current_prefix!MI_V_BitRate%%
 IF /I "!tmp_MI_V_BitRate!" == "" (
-	echo Unable to detect !current_prefix!MI_V_BitRate, failed to fudge it, Aborting >> "!vrdlog!" 2>&1
+	echo ERROR: Unable to detect !current_prefix!MI_V_BitRate, failed to fudge it, Aborting >> "!vrdlog!" 2>&1
+	echo set !current_prefix!MI_V_BitRate >> "!vrdlog!" 2>&1
+	set !current_prefix!MI_V_BitRate >> "!vrdlog!" 2>&1
+	echo set !current_prefix!MI_G_OverallBitRate >> "!vrdlog!" 2>&1
+	set !current_prefix!MI_G_OverallBitRate >> "!vrdlog!" 2>&1
+	echo set !current_prefix!FF_G_bit_rate >> "!vrdlog!" 2>&1
+	set !current_prefix!F_G_bit_rate >> "!vrdlog!" 2>&1
 	exit 1
 )
 
