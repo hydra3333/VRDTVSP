@@ -519,7 +519,7 @@ echo "qsf_extension=!qsf_extension!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Start QSF of file: "%~f1" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Input: Video Codec: '!SRC_FF_V_codec_name!' ScanType: '!SRC_calc_Video_Interlacement!' ScanOrder: '!SRC_calc_Video_FieldFirst!' WxH: !SRC_MI_V_Width!x!SRC_MI_V_HEIGHT! dar:'!SRC_FF_V_display_aspect_ratio_slash!' and '!SRC_MI_V_DisplayAspectRatio_String_slash!' >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!        Audio Codec: '!SRC_FF_A_codec_name!' Audio_Delay_ms: '!SRC_MI_A_Audio_Delay!' Video_Delay_ms: '!SRC_MI_A_Video_Delay!' >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME!        Audio Codec: '!SRC_FF_A_codec_name!' Audio_Delay_ms: '!SRC_MI_A_Audio_Delay!' Video_Delay_ms: '!SRC_MI_A_Video_Delay!' Bitrate: !SRC_MI_V_BitRate! >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! _vrd_version_primary='!_vrd_version_primary!' _vrd_version_fallback=!_vrd_version_fallback!' qsf_profile=!qsf_profile!' qsf_extension='!qsf_extension!' >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 REM
@@ -639,7 +639,7 @@ REM		!SRC_calc_Video_Max_Bitrate!"
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! End QSF of file: "%~f1" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Input: Video Codec: '!SRC_FF_V_codec_name!' ScanType: '!SRC_calc_Video_Interlacement!' ScanOrder: '!SRC_calc_Video_FieldFirst!' WxH: !SRC_MI_V_Width!x!SRC_MI_V_HEIGHT! dar:'!SRC_FF_V_display_aspect_ratio_slash!' and '!SRC_MI_V_DisplayAspectRatio_String_slash!' >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!        Audio Codec: '!SRC_FF_A_codec_name!' Audio_Delay_ms: '!SRC_MI_A_Audio_Delay!' Video_Delay_ms: '!SRC_MI_A_Video_Delay!' >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME!        Audio Codec: '!SRC_FF_A_codec_name!' Audio_Delay_ms: '!SRC_MI_A_Audio_Delay!' Video_Delay_ms: '!SRC_MI_A_Video_Delay!' Bitrate: !QSF_MI_V_BitRate! >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! _vrd_version_primary='!_vrd_version_primary!' _vrd_version_fallback=!_vrd_version_fallback!' qsf_profile=!qsf_profile!' qsf_extension='!qsf_extension!' >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 
@@ -674,7 +674,7 @@ IF /I NOT "!SRC_calc_Video_FieldFirst!" == "!QSF_calc_Video_FieldFirst!" (
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! QSF file details: "!QSF_File!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME!   QSF: Video Codec: '!QSF_FF_V_codec_name!' ScanType: '!QSF_calc_Video_Interlacement!' ScanOrder: '!QSF_calc_Video_FieldFirst!' WxH: !QSF_MI_V_Width!x!QSF_MI_V_HEIGHT! dar:'!QSF_FF_V_display_aspect_ratio_slash!' and '!QSF_MI_V_DisplayAspectRatio_String_slash!' >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!        Audio Codec: '!QSF_FF_A_codec_name!' Audio_Delay_ms: '!QSF_MI_A_Audio_Delay!' Video_Delay_ms: '!QSF_MI_A_Video_Delay!' >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME!        Audio Codec: '!QSF_FF_A_codec_name!' Audio_Delay_ms: '!QSF_MI_A_Audio_Delay!' Video_Delay_ms: '!QSF_MI_A_Video_Delay!' QSF_Bitrate: !QSF_MI_V_BitRate! SRC_Bitrate: !SRC_MI_V_BitRate!  SRC_calc_Video_Max_Bitrate=!SRC_calc_Video_Max_Bitrate! >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! _vrd_version_primary='!_vrd_version_primary!' _vrd_version_fallback=!_vrd_version_fallback!' qsf_profile=!qsf_profile!' qsf_extension='!qsf_extension!' >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 
