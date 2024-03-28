@@ -1,4 +1,4 @@
-@ECHO off
+@ECHO ON
 @setlocal ENABLEDELAYEDEXPANSION
 @setlocal enableextensions
 
@@ -558,17 +558,17 @@ if NOT exist "!temp_cmd_file!" (
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
     EXIT 1
 )
-echo TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
-TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+REM echo TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+REM TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 echo call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 echo +++++++++ >> "!vrdlog!" 2>&1
-echo set !qsf_xml_prefix! >> "!vrdlog!" 2>&1
-set !qsf_xml_prefix! >> "!vrdlog!" 2>&1
+REM echo set !qsf_xml_prefix! >> "!vrdlog!" 2>&1
+REM set !qsf_xml_prefix! >> "!vrdlog!" 2>&1
 echo +++++++++ >> "!vrdlog!" 2>&1
-DIR "!QSF_File!"
+REM DIR "!QSF_File!"
 call :get_date_time_String "end_date_time_QSF"
 echo "!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
 "!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
