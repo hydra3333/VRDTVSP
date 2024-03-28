@@ -524,7 +524,7 @@ ECHO !DATE! !TIME! _vrd_version_primary='!_vrd_version_primary!' _vrd_version_fa
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 REM
 set "qsf_xml_prefix=QSFinfo_"
-set QSF_File=!scratch_Folder!%~n1.qsf.!qsf_extension!
+set "QSF_File=!scratch_Folder!%~n1.qsf.!qsf_extension!"
 
 call :get_date_time_String "start_date_time_QSF"
 REM Delete the QSF target and relevant log files before the QSF
@@ -677,6 +677,30 @@ ECHO !DATE! !TIME!   QSF: Video Codec: '!QSF_FF_V_codec_name!' ScanType: '!QSF_c
 ECHO !DATE! !TIME!        Audio Codec: '!QSF_FF_A_codec_name!' Audio_Delay_ms: '!QSF_MI_A_Audio_Delay!' Video_Delay_ms: '!QSF_MI_A_Video_Delay!' QSF_Bitrate: !QSF_MI_V_BitRate! SRC_Bitrate: !SRC_MI_V_BitRate!  SRC_calc_Video_Max_Bitrate=!SRC_calc_Video_Max_Bitrate! >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! _vrd_version_primary='!_vrd_version_primary!' _vrd_version_fallback=!_vrd_version_fallback!' qsf_profile=!qsf_profile!' qsf_extension='!qsf_extension!' >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+
+REM
+REM QSF is completed.
+REM
+REM Now form variables used in the FFMPEG encoding qsf -> destination
+REM
+
+set "Target_File=!destination_mp4_Folder!%~n1.!qsf_extension!"
+
+
+REM IF /I "!QSF_calc_Video_Encoding!" == "AVC" (
+REM ) ELSE IF /I "!QSF_calc_Video_Encoding!" == "MPEG2" (
+REM ) ELSE (
+REM )
+REM IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
+REM ) ELSE IF /I "!QSF_calc_Video_Interlacement!" == "INTERLACED" (
+REM ) ELSE (
+REM )
+REM IF /I "!QSF_calc_Video_FieldFirst!" == "TFF" (
+REM ) ELSE IF /I "!QSF_calc_Video_FieldFirst!" == "BFF" (
+REM ) ELSE (
+REM )
+REM SRC_calc_Video_Max_Bitrate
+
 
 
 
