@@ -545,18 +545,6 @@ DEL /F "!vrd6_logfiles!" >> "%vrdlog%" 2>&1
 ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 
-
-
-
-echo set SRC_MI_V_BitRate >> "!vrdlog!" 2>&1
-set SRC_MI_V_BitRate >> "!vrdlog!" 2>&1
-echo set SRC_MI_G_OverallBitRate >> "!vrdlog!" 2>&1
-set SRC_MI_G_OverallBitRate >> "!vrdlog!" 2>&1
-echo set SRC_FF_G_bit_rate >> "!vrdlog!" 2>&1
-set SRC_FF_G_bit_rate >> "!vrdlog!" 2>&1
-
-
-
 REM specify the source file average bitrate !SRC_MI_V_BitRate! in case QSF can't find it (it happens)
 REM can use this when timeouts: tasklist /fo list /fi "IMAGENAME eq VideoReDo*"
 REM can use this when timeouts: taskkill /f /t /fi "IMAGENAME eq VideoReDo*" /im *
