@@ -84,6 +84,7 @@ Dim fso, wso, objFolder, fileObj
 dim objDict
 dim objDict_key
 Dim Args, argCount
+Dim qsf_timeout_minutes
 
 Set wso = CreateObject("Wscript.Shell")
 Set fso = CreateObject("Scripting.FileSystemObject")
@@ -111,7 +112,11 @@ profile_name_for_qsf =  Args(3)
 output_cmdfile_AbsolutePathName =  Args(4)
 qsf_cmd_variable_prefix = Args(5)
 default_ActualBitrate_bps =  Args(6)
-qsf_timeout_minutes = Args(7)
+If argCount >= 8 Then	' Arg 7 is optional (the 8th argument)
+	qsf_timeout_minutes = Args(7)
+Else
+	qsf_timeout_minutes = Null
+End If
 
 ' Check the argument values, in the order of the commandline parameters
 
@@ -258,7 +263,7 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 	Const wait_ms = 2000	' in milliseconds, the time to break a line of dots
 	'Const giveup_hours = 4	' in hours, the time to let it run before giving up (eg for vrd v6 it can take ages)
 	'Const giveup_minutes = 240	' in minutes, the time to let it run before giving up (eg for vrd v6 it can take ages)
-	giveup_minutes = qsf_timeout_minutes
+	Dim giveup_minutes, one_minute_in_ms
 	
 	Dim dot_count_linebreak_interval, two_hours_in_ms, one_hour_in_ms, half_hour_in_ms, quarter_hour_in_ms, ten_minutes_in_ms, giveup_interval_count
 	Dim xmlDict	' this is a DICTIONARY OBJECT (NOT an XML object) returned with Set VRDTVSP_Run_QSF_with_v5_or_v6 = objDict 
@@ -274,6 +279,8 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 	Dim actual_outputFile, actual_VideoOutputFrameCount, actual_ActualVideoBitrate
 	Dim estimated_outputFile, estimated_VideoOutputFrameCount, estimated_ActualVideoBitrate
 	Dim x
+	'
+	giveup_minutes = qsf_timeout_minutes
 	'
 	one_minute_in_ms = ROUND(1 * 60 * 1000)
 	two_hours_in_ms = CLng( 2 * 60 * 60 * 1000 )
