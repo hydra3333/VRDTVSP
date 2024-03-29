@@ -110,6 +110,10 @@ SET tempfile=!scratch_Folder!%~n0-!header!-temp.txt
 ECHO !DATE! !TIME! DEL /F "!tempfile!" >> "%vrdlog%" 2>&1
 DEL /F "!tempfile!" >> "%vrdlog%" 2>&1
 
+SET tempfile_stderr=!scratch_Folder!%~n0-!header!-temp_stderr.txt
+ECHO !DATE! !TIME! DEL /F "!tempfile!" >> "%vrdlog%" 2>&1
+DEL /F "!tempfile!" >> "%vrdlog%" 2>&1
+
 set "temp_cmd_file=!temp_Folder!temp_cmd_file.bat"
 ECHO !DATE! !TIME! DEL /F "!temp_cmd_file!" >> "%vrdlog%" 2>&1
 DEL /F "!temp_cmd_file!" >> "%vrdlog%" 2>&1
@@ -554,19 +558,31 @@ REM Reset VRD to defaults
 call :set_vrd_qsf_paths "!DEFAULT_vrd_version_primary!"
 
 REM cscript uses _vrd_qsf_timeout_seconds https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/cscript
+DEL /F "!tempfile_stderr!">NUL 2>&1
 REM echo cscript //nologo /t:!_vrd_qsf_timeout_seconds! "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
-REM cscript //nologo /t:!_vrd_qsf_timeout_seconds! "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
+REM cscript //nologo /t:!_vrd_qsf_timeout_seconds! "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>"!tempfile_stderr!"
+REM SET EL=!ERRORLEVEL!
+REM TYPE "!&tempfile_stderr!"
 
 REM cscript uses _vrd_qsf_timeout_seconds https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/cscript
+DEL /F "!tempfile_stderr!">NUL 2>&1
 echo cscript timeout is 1 second ..." >> "!vrdlog!" 2>&1
 echo cscript //nologo /t:1 "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
-cscript //nologo /t:1 "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
-
+cscript //nologo /t:1 "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2> "!tempfile_stderr!"
 SET EL=!ERRORLEVEL!
+DIR "!tempfile_stderr!"
+TYPE "!tempfile_stderr!"
+DEL /F "!tempfile_stderr!">NUL 2>&1
+
 
 ECHO QSF "!_vrd_version_primary!" EL=!ERRORLEVEL! >> "!vrdlog!" 2>&1
 ECHO tasklist /fo list /fi "IMAGENAME eq VideoReDo*" >> "!vrdlog!" 2>&1
 tasklist /fo list /fi "IMAGENAME eq VideoReDo*" >> "!vrdlog!" 2>&1
+ECHO taskkill /f /t /fi "IMAGENAME eq VideoReDo*" /im * >> "!vrdlog!" 2>&1
+taskkill /f /t /fi "IMAGENAME eq VideoReDo*" /im * >> "!vrdlog!" 2>&1
+ECHO tasklist /fo list /fi "IMAGENAME eq VideoReDo*" >> "!vrdlog!" 2>&1
+tasklist /fo list /fi "IMAGENAME eq VideoReDo*" >> "!vrdlog!" 2>&1
+
 
 IF /I "!EL!" NEQ "0" (
 	REM OK, instead of aborting on the first QSF try, so fallback to the other VRD Version and try that
