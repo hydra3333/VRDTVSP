@@ -125,9 +125,13 @@ REM --------- setup LOG file and TEMP filenames ----------------------------
 
 REM --------- setup vrd paths filenames ----------------------------
 REM set the primary and fallback version of VRD to use for QSF
-call :set_vrd_qsf_paths "5"
-REM call :set_vrd_qsf_paths "6"
+REM The QSF fallback process uses these next 2 variables to set/reset which version use when, via "call :set_vrd_qsf_paths NUMBER"
+set "DEFAULT_vrd_version_primary=5"
+set "DEFAULT_vrd_version_fallback=6"
+call :set_vrd_qsf_paths "!DEFAULT_vrd_version_primary!"
 REM
+echo set DEFAULT_vrd_version >> "%vrdlog%" 2>&1
+set DEFAULT_vrd_version >> "%vrdlog%" 2>&1
 echo set _vrd_version_ >> "%vrdlog%" 2>&1
 set _vrd_version_ >> "%vrdlog%" 2>&1
 REM --------- setup vrd paths filenames ----------------------------
