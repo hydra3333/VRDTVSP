@@ -127,18 +127,52 @@ ECHO DEL /F "!vrd6_logfiles!" >> "%vrdlog%" 2>&1
 DEL /F "!vrd6_logfiles!" >> "%vrdlog%" 2>&1
 REM --------- setup LOG file and TEMP filenames ----------------------------
 
-REM --------- setup vrd paths filenames ----------------------------
+REM --------- setup vrd paths filenames etc ----------------------------
 REM set the primary and fallback version of VRD to use for QSF
 REM The QSF fallback process uses these next 2 variables to set/reset which version use when, via "call :set_vrd_qsf_paths NUMBER"
 set "DEFAULT_vrd_version_primary=5"
 set "DEFAULT_vrd_version_fallback=6"
+set "extension_mpeg2=mpg"
+set "extension_h264=mp4"
+set "extension_h265=mp4"
+set "VRDTVSP_QSF_VBS_SCRIPT=!root!VRDTVSP_qsf_script.vbs"
+set "profile_name_for_qsf_mpeg2_vrd6=VRDTVS-for-QSF-MPEG2_VRD6"
+set "profile_name_for_qsf_mpeg2_vrd5=VRDTVS-for-QSF-MPEG2_VRD5"
+set "profile_name_for_qsf_h264_vrd6=VRDTVS-for-QSF-H264_VRD6"
+set "profile_name_for_qsf_h264_vrd5=VRDTVS-for-QSF-H264_VRD5"
+set "profile_name_for_qsf_h265_vrd6=VRDTVS-for-QSF-H265_VRD6"
+set "profile_name_for_qsf_h265_vrd5=VRDTVS-for-QSF-H265_VRD5"
+
+REM qsf timeout in minutes  (VRD v6 takes 4 hours for a large 10Gb footy file); allow extra 10 secs for cscript timeout for vrd to finish
+set "default_qsf_timeout_minutes_VRD6=240"
+set /a default_qsf_timeout_seconds_VRD6=(!default_qsf_timeout_minutes_VRD6! * 60) + 10
+
+set "default_qsf_timeout_minutes_VRD5=15"
+set /a default_qsf_timeout_seconds_VRD5=(!default_qsf_timeout_minutes_VRD5! * 60) + 10
+
+
+echo IN TOP OF MAIN default_qsf_timeout_minutes_VRD5=!default_qsf_timeout_minutes_VRD5!   default_qsf_timeout_seconds_VRD5=!default_qsf_timeout_seconds_VRD5! >> "!vrdlog!" 2>&1
+echo IN TOP OF MAIN default_qsf_timeout_minutes_VRD6=!default_qsf_timeout_minutes_VRD6!   default_qsf_timeout_seconds_VRD5=!default_qsf_timeout_seconds_VRD6! >> "!vrdlog!" 2>&1
+
+
+REM --------- ensure "\" at end of VRD paths
+set "Path_to_vrd6=C:\Program Files (x86)\VideoReDoTVSuite6"
+if /I NOT "!Path_to_vrd6:~-1!" == "\" (set "Path_to_vrd6=!Path_to_vrd6!\")
+FOR /F "delims=" %%i IN ("%Path_to_vrd6%") DO (set "Path_to_vrd6=%%~fi")
+FOR /F "delims=" %%i IN ("%Path_to_vrd6%vp.vbs") DO (set "Path_to_vp_vbs_vrd6=%%~fi")
+REM --------- ensure "\" at end of VRD paths
+set "Path_to_vrd5=C:\Program Files (x86)\VideoReDoTVSuite5"
+if /I NOT "!Path_to_vrd5:~-1!" == "\" (set "Path_to_vrd5=!Path_to_vrd5!")
+FOR /F "delims=" %%i IN ("%Path_to_vrd5%") DO (SET Path_to_vrd5=%%~fi)
+FOR /F "delims=" %%i IN ("%Path_to_vrd5%vp.vbs") DO (set "Path_to_vp_vbs_vrd5=%%~fi")
+REM
 call :set_vrd_qsf_paths "!DEFAULT_vrd_version_primary!"
 REM
 echo set DEFAULT_vrd_ >> "%vrdlog%" 2>&1
 set DEFAULT_vrd_ >> "%vrdlog%" 2>&1
 echo set _vrd_ >> "%vrdlog%" 2>&1
 set _vrd_ >> "%vrdlog%" 2>&1
-REM --------- setup vrd paths filenames ----------------------------
+REM --------- setup vrd paths filenames etc ----------------------------
 
 REM --------- setup .PY fully qualified filenames to pre-created files which rename and re-timestamp filenames etc ---------
 set "Path_to_py_VRDTVSP_Calculate_Duration=!root!VRDTVSP_Calculate_Duration.py"
@@ -492,8 +526,8 @@ IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 ) ELSE IF /I "!SRC_calc_Video_Interlacement!" == "INTERLACED" (
 	echo !DATE! !TIME! >> "!vrdlog!" 2>&1
 ) ELSE (
-	echo !DATE! !TIME! "ERROR: mediainfo/ffmpeg data '!SRC_calc_Video_Interlacement!' yields neither "PROGRESSIVE" nor "INTERLACED" for ???filename??? " >> "!vrdlog!" 2>&1
-	echo !DATE! !TIME! "Hard Aborting ..." >> "!vrdlog!" 2>&1
+	echo !DATE! !TIME! ERROR: mediainfo/ffmpeg data !SRC_calc_Video_Interlacement! yields neither PROGRESSIVE nor INTERLACED for "%~f1" >> "!vrdlog!" 2>&1
+	echo !DATE! !TIME! Hard Aborting ... >> "!vrdlog!" 2>&1
 	!xPAUSE!
 	EXIT
 )
@@ -503,8 +537,8 @@ IF /I "!SRC_calc_Video_FieldFirst!" == "TFF" (
 ) ELSE IF /I "!SRC_calc_Video_FieldFirst!" == "BFF" (
 	echo !DATE! !TIME! >> "!vrdlog!" 2>&1
 ) ELSE (
-	echo !DATE! !TIME! "ERROR: mediainfo/ffmpeg processing '!SRC_calc_Video_FieldFirst!' yields neither 'TFF' nor 'BFF' field-first ,default='TFF', for ???filename??? " >> "!vrdlog!" 2>&1
-	echo !DATE! !TIME! "Hard Aborting ..." >> "!vrdlog!" 2>&1
+	echo !DATE! !TIME! ERROR: mediainfo/ffmpeg processing !SRC_calc_Video_FieldFirst! yields neither 'TFF' nor 'BFF' field-first ,default='TFF', for "%~f1" >> "!vrdlog!" 2>&1
+	echo !DATE! !TIME! Hard Aborting ... >> "!vrdlog!" 2>&1
 	!xPAUSE!
 	EXIT
 )
@@ -512,7 +546,7 @@ IF /I "!SRC_calc_Video_FieldFirst!" == "TFF" (
 REM =======================================================================================================================================================================================
 set "qsf_xml_prefix=QSFinfo_"
 set "QSF_File=!scratch_Folder!%~n1.qsf.!qsf_extension!"
-REM Input Parameters 
+REM Input Parameters to :run_cscript_qsf_with_timeout
 REM 	1	VideoReDo version number to use
 REM		2 	fully qualified filename of the SRC input (usually a .TS file)
 REM 	3	fully qualified filename of name of QSF file to create
@@ -525,17 +559,20 @@ REM		SRC_ variables
 REM		calculated variables SRC_calc_
 REM 	Fudged "!SRC_MI_V_BitRate!"
 REM 	temp_cmd_file
+
 set "check_QSF_failed="
+echo call :run_cscript_qsf_with_timeout "!DEFAULT_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_xml_prefix!" >> "%vrdlog%" 2>&1
 call :run_cscript_qsf_with_timeout "!DEFAULT_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_xml_prefix!"
-REM If it failed, try doing the fallback QSF
 IF /I NOT "!check_QSF_failed!" == "" (
+	REM It failed, try doing the fallback QSF
 	set "check_QSF_failed="
+	echo call :run_cscript_qsf_with_timeout "!DEFAULT_vrd_version_fallback!" "%~f1" "!QSF_File!" "!qsf_xml_prefix!" >> "%vrdlog%" 2>&1
 	call :run_cscript_qsf_with_timeout "!DEFAULT_vrd_version_fallback!" "%~f1" "!QSF_File!" "!qsf_xml_prefix!"
 	IF /I NOT "!check_QSF_failed!" == "" (
 		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 		ECHO !DATE! !TIME! *********  Declaring FAILED:  "%~f1" >> "%vrdlog%" 2>&1
 		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-		call :declare_FAILED "%~f1"
+		call :declare_FAILED "%~fs"
 		Call :get_date_time_String "end_date_time_QSF"
 		echo "!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
 		"!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
@@ -1540,37 +1577,9 @@ REM
 :set_vrd_qsf_paths
 REM setup VRD paths based in parameter p1 = 5 or 6 only
 set "requested_vrd_version=%~1"
-REM set the fixed names
-set "Path_to_vrd6=C:\Program Files (x86)\VideoReDoTVSuite6"
-set "Path_to_vrd5=C:\Program Files (x86)\VideoReDoTVSuite5"
-set "extension_mpeg2=mpg"
-set "extension_h264=mp4"
-set "extension_h265=mp4"
-set "VRDTVSP_QSF_VBS_SCRIPT=!root!VRDTVSP_qsf_script.vbs"
-REM
-set "profile_name_for_qsf_mpeg2_vrd6=VRDTVS-for-QSF-MPEG2_VRD6"
-set "profile_name_for_qsf_mpeg2_vrd5=VRDTVS-for-QSF-MPEG2_VRD5"
-REM
-set "profile_name_for_qsf_h264_vrd6=VRDTVS-for-QSF-H264_VRD6"
-set "profile_name_for_qsf_h264_vrd5=VRDTVS-for-QSF-H264_VRD5"
-REM
-set "profile_name_for_qsf_h265_vrd6=VRDTVS-for-QSF-H265_VRD6"
-set "profile_name_for_qsf_h265_vrd5=VRDTVS-for-QSF-H265_VRD5"
 
-REM qsf timeout in minutes  (VRD v6 takes 4 hours for a large 10Gb footy file); allow extra 10 secs for cscript timeout for vrd to finish
-set "qsf_timeout_minutes_VRD6=240"
-set /a qsf_timeout_seconds_VRD6=(!qsf_timeout_minutes_VRD6! * 60) + 10
-set "qsf_timeout_minutes_VRD5=15"
-set /a qsf_timeout_seconds_VRD5=(!qsf_timeout_minutes_VRD5! * 60) + 10
-
-REM --------- ensure "\" at end of VRD paths
-if /I NOT "!Path_to_vrd6:~-1!" == "\" (set "Path_to_vrd6=!Path_to_vrd6!\")
-FOR /F "delims=" %%i IN ("%Path_to_vrd6%") DO (set "Path_to_vrd6=%%~fi")
-FOR /F "delims=" %%i IN ("%Path_to_vrd6%vp.vbs") DO (set "Path_to_vp_vbs_vrd6=%%~fi")
-
-if /I NOT "!Path_to_vrd5:~-1!" == "\" (set "Path_to_vrd5=!Path_to_vrd5!")
-FOR /F "delims=" %%i IN ("%Path_to_vrd5%") DO (SET Path_to_vrd5=%%~fi)
-FOR /F "delims=" %%i IN ("%Path_to_vrd5%vp.vbs") DO (set "Path_to_vp_vbs_vrd5=%%~fi")
+echo IN set_vrd_qsf_paths default_qsf_timeout_minutes_VRD5=!default_qsf_timeout_minutes_VRD5!   default_qsf_timeout_seconds_VRD5=!default_qsf_timeout_seconds_VRD5! >> "!vrdlog!" 2>&1
+echo IN set_vrd_qsf_paths default_qsf_timeout_minutes_VRD6=!default_qsf_timeout_minutes_VRD6!   default_qsf_timeout_seconds_VRD6=!default_qsf_timeout_seconds_VRD6! >> "!vrdlog!" 2>&1
 
 set "Path_to_vrd="
 set "Path_to_vrd_vp_vbs="
@@ -1585,8 +1594,8 @@ IF /I "!requested_vrd_version!" == "6" (
    set "profile_name_for_qsf_h265=!profile_name_for_qsf_h265_vrd6!"
    set "_vrd_version_primary=6"
    set "_vrd_version_fallback=5"
-   set "_vrd_qsf_timeout_minutes=!qsf_timeout_minutes_VRD6!"
-   set "_vrd_qsf_timeout_seconds=!qsf_timeout_seconds_VRD6!"
+   set "_vrd_qsf_timeout_minutes=!default_qsf_timeout_minutes_VRD6!"
+   set "_vrd_qsf_timeout_seconds=!default_qsf_timeout_seconds_VRD6!"
 ) ELSE IF /I "!requested_vrd_version!" == "5" (
    set "Path_to_vrd=!Path_to_vrd5!"
    set "Path_to_vrd_vp_vbs=!Path_to_vp_vbs_vrd5!"
@@ -1595,13 +1604,16 @@ IF /I "!requested_vrd_version!" == "6" (
    set "profile_name_for_qsf_h265=!profile_name_for_qsf_h265_vrd5!"
    set "_vrd_version_primary=5"
    set "_vrd_version_fallback=6"
-   set "_vrd_qsf_timeout_minutes=!qsf_timeout_minutes_VRD5!"
-   set "_vrd_qsf_timeout_seconds=!qsf_timeout_seconds_VRD5!"
+   set "_vrd_qsf_timeout_minutes=!default_qsf_timeout_minutes_VRD5!"
+   set "_vrd_qsf_timeout_seconds=!default_qsf_timeout_seconds_VRD5!"
 ) ELSE (
    ECHO "VRD Version must be set to 5 or 6 not '!requested_vrd_version!' (_vrd_version_primary=!_vrd_version_primary! _vrd_version_fallback=!_vrd_version_fallback!)... EXITING" >> "!vrdlog!" 2>&1
    !xPAUSE!
    exit
 )
+
+echo EXITING set_vrd_qsf_paths _vrd_qsf_timeout_minutes=!_vrd_qsf_timeout_minutes!   _vrd_qsf_timeout_seconds=!_vrd_qsf_timeout_seconds! >> "!vrdlog!" 2>&1
+
 goto :eof
 
 
@@ -1641,6 +1653,12 @@ REM The modifiers can be combined to get compound results:
 REM %~dp1  -  expands %1 to a drive letter and path only 
 REM %~nx1  -  expands %1 to a file name and extension only 
 
+echo IN run_cscript_qsf_with_timeout  >> "!vrdlog!" 2>&1
+echo 1 "%~1"	VideoReDo version number to use >> "!vrdlog!" 2>&1
+echo 2 "%~2"	fully qualified filename of the SRC input usually a .TS file >> "!vrdlog!" 2>&1
+echo 3 "%~3"	fully qualified filename of name of QSF file to create >> "!vrdlog!" 2>&1
+echo 4 "%~4"	qsf prefix for variables output from the VideoReDo QSF  >> "!vrdlog!" 2>&1
+
 Call :get_date_time_String "start_date_time_QSF"
 
 set "requested_vrd_version=%~1"
@@ -1652,19 +1670,25 @@ REM Preset the error flag to nothing
 set "check_QSF_failed="
 
 REM Reset VRD QSF defaults to the requested version. Note _vrd_version_primary and _vrd_version_fallback.
+echo call :set_vrd_qsf_paths "!requested_vrd_version!" >> "!vrdlog!" 2>&1
 call :set_vrd_qsf_paths "!requested_vrd_version!"
+
+echo ???????????????????????????????????????????????????????????????? >> "!vrdlog!" 2>&1
+echo QSF cscript timeout _vrd_qsf_timeout_seconds is !_vrd_qsf_timeout_seconds! seconds ..." >> "!vrdlog!" 2>&1
+echo QSF VBS     timeout _vrd_qsf_timeout_minutes is !_vrd_qsf_timeout_minutes! minutes ..." >> "!vrdlog!" 2>&1
+echo "_vrd_version_primary=!_vrd_version_primary!" >> "!vrdlog!" 2>&1
+echo "_vrd_version_fallback=!_vrd_version_fallback!" >> "!vrdlog!" 2>&1
+echo ???????????????????????????????????????????????????????????????? >> "!vrdlog!" 2>&1
 
 REM Immediately choose the filename extension base on SRC_ variables and variables set by :set_vrd_qsf_paths
 IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
-	echo !DATE! !TIME! >> "!vrdlog!" 2>&1
 	set "qsf_profile=!profile_name_for_qsf_h264!"
 	set "qsf_extension=!extension_h264!"
 ) ELSE IF /I "!SRC_calc_Video_Encoding!" == "MPEG2" (
-	echo !DATE! !TIME! >> "!vrdlog!" 2>&1
 	set "qsf_profile=!profile_name_for_qsf_mpeg2!"
 	set "qsf_extension=!extension_mpeg2!"
 ) ELSE (
-	set "check_QSF_failed********* ERROR: mediainfo format '!SRC_calc_Video_Encoding!' neither 'AVC' nor 'MPEG2' for '!source_filename!'"
+	set "check_QSF_failed********* ERROR: mediainfo format !SRC_calc_Video_Encoding! neither 'AVC' nor 'MPEG2' for !source_filename!"
 	echo !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! *********  Declaring as FAILED:. "%~f1" >> "%vrdlog%" 2>&1
@@ -1674,8 +1698,11 @@ IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
 echo "SRC_calc_Video_Encoding=!SRC_calc_Video_Encoding!" >> "!vrdlog!" 2>&1
 echo "SRC_calc_Video_Interlacement=!SRC_calc_Video_Interlacement!" >> "!vrdlog!" 2>&1
 echo "SRC_calc_Video_FieldFirst=!SRC_calc_Video_FieldFirst!" >> "!vrdlog!" 2>&1
+echo "requested_vrd_version=!requested_vrd_version!" >> "!vrdlog!" 2>&1
 echo "_vrd_version_primary=!_vrd_version_primary!" >> "!vrdlog!" 2>&1
 echo "_vrd_version_fallback=!_vrd_version_fallback!" >> "!vrdlog!" 2>&1
+echo "_vrd_qsf_timeout_minutes=!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
+echo "_vrd_qsf_timeout_seconds=!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
 echo "qsf_profile=!qsf_profile!" >> "!vrdlog!" 2>&1
 echo "qsf_extension=!qsf_extension!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
@@ -1696,9 +1723,8 @@ ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 
 REM CSCRIPT uses '_vrd_qsf_timeout_seconds' and VBS uses '_vrd_qsf_timeout_minutes' created by ':set_vrd_qsf_paths' 		also see https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/cscript
-echo QSF cscript timeout is !_vrd_qsf_timeout_seconds! seconds ..." >> "!vrdlog!" 2>&1
-echo cscript //nologo /t:!_vrd_qsf_timeout_seconds! "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!qsf_filename!" "!qsf_profile!" "!temp_cmd_file!" "!requested_qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
-cscript //nologo /t:!_vrd_qsf_timeout_seconds! "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!qsf_filename!" "!qsf_profile!" "!temp_cmd_file!" "!requested_qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
+echo cscript //nologo /t:!_vrd_qsf_timeout_seconds! "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "!source_filename!" "!qsf_filename!" "!qsf_profile!" "!temp_cmd_file!" "!requested_qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
+cscript //nologo /t:!_vrd_qsf_timeout_seconds! "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "!source_filename!" "!qsf_filename!" "!qsf_profile!" "!temp_cmd_file!" "!requested_qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
 SET EL=!ERRORLEVEL!
 IF /I "!EL!" NEQ "0" (
 	set "check_QSF_failed=********* ERROR: QSF Error '!EL!' returned from cscript QSF"
@@ -1728,6 +1754,10 @@ IF /I NOT "!check_QSF_failed!" == "" (
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! ********* FAILED:  "%~f1" >> "%vrdlog%" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+
+	pause
+	exit
+
 	goto :eof
 )
 
@@ -1756,7 +1786,12 @@ echo "!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start
 goto :eof
 
 
-
+REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
+REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
+REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
+REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
+REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
+REM
 :declare_FAILED
 REM Input Parameters 
 REM		1 	fully qualified filename of the SRC input which failed and must be moved to the FAILED folder
