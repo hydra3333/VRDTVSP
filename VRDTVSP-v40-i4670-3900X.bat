@@ -568,6 +568,12 @@ REM 	temp_cmd_file
 set "check_QSF_failed="
 echo call :run_cscript_qsf_with_timeout "!DEFAULT_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_xml_prefix!" >> "%vrdlog%" 2>&1
 call :run_cscript_qsf_with_timeout "!DEFAULT_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_xml_prefix!"
+
+
+echo RETURNED FROM FIRST call :run_cscript_qsf_with_timeout >> "%vrdlog%" 2>&1
+pause
+
+
 IF /I NOT "!check_QSF_failed!" == "" (
 	REM It failed, try doing the fallback QSF
 	set "check_QSF_failed="
@@ -584,6 +590,13 @@ IF /I NOT "!check_QSF_failed!" == "" (
 		goto :eof
 	)
 )
+
+
+
+echo PAST SECOND FALLBACK call :run_cscript_qsf_with_timeout >> "%vrdlog%" 2>&1
+pause
+
+
 
 REM Use the max of these actual video bitrates (not the "overall" which includes audio bitrate) 
 REM		SRC_MI_V_BitRate
@@ -603,6 +616,13 @@ REM		!SRC_calc_Video_Encoding!
 REM		!SRC_calc_Video_Interlacement!"
 REM		!SRC_calc_Video_FieldFirst!"
 REM		!SRC_calc_Video_Max_Bitrate!"
+
+
+
+echo PAST calculating bitrates >> "%vrdlog%" 2>&1
+pause
+
+
 
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! End QSF of file: "%~f1" >> "!vrdlog!" 2>&1
