@@ -589,7 +589,7 @@ IF /I "!EL!" NEQ "0" (
 )
 IF /I NOT "check_qsf_failed" == "" (
 	REM OK, instead of aborting on the first QSF try, so fallback to the other VRD Version and try that
-	ECHO !DATE! !TIME! *********  QSF Error !EL! returned, or files not created, from PRIMARY QSF version !_vrd_version_primary!', attempting to use FALLBACK QSF version '!_vrd_version_fallback!' >> "%vrdlog%" 2>&1
+	ECHO !DATE! !TIME! *********  QSF Error !EL! returned, or files not created, from PRIMARY QSF version '!_vrd_version_primary!', attempting to use FALLBACK QSF version '!_vrd_version_fallback!' >> "%vrdlog%" 2>&1
 	ECHO tasklist /fo list /fi "IMAGENAME eq VideoReDo*" >> "!vrdlog!" 2>&1
 	tasklist /fo list /fi "IMAGENAME eq VideoReDo*" >> "!vrdlog!" 2>&1
 	ECHO taskkill /f /t /fi "IMAGENAME eq VideoReDo*" /im * >> "!vrdlog!" 2>&1
@@ -598,14 +598,14 @@ IF /I NOT "check_qsf_failed" == "" (
 	tasklist /fo list /fi "IMAGENAME eq VideoReDo*" >> "!vrdlog!" 2>&1
 	REM
    	REM Reset VRD to fallback and try that now
-	echo "FALLBACK: before verson change ..." >> "%vrdlog%" 2>&1
+	echo "FALLBACK: before version change ..." >> "%vrdlog%" 2>&1
 	echo set _vrd >> "%vrdlog%" 2>&1
 	set _vrd >> "%vrdlog%" 2>&1
 	echo set qsf_profile >> "%vrdlog%" 2>&1
 	set qsf_profile >> "%vrdlog%" 2>&1
 	set "tmp_vrd_version_fallback=!_vrd_version_fallback!" >> "%vrdlog%" 2>&1
 	call :set_vrd_qsf_paths "!tmp_vrd_version_fallback!" >> "%vrdlog%" 2>&1
-	echo "FALLBACK: after verson change ..." >> "%vrdlog%" 2>&1
+	echo "FALLBACK: after version change ..." >> "%vrdlog%" 2>&1
 	IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
 		echo !DATE! !TIME! >> "!vrdlog!" 2>&1
 		set "qsf_profile=!profile_name_for_qsf_h264!"
@@ -646,14 +646,18 @@ IF /I NOT "check_qsf_failed" == "" (
 		set "check_qsf_failed=True"
 	)
 	IF /I NOT "check_qsf_failed" == "" (
-		ECHO !DATE! !TIME! *********  FALLBACK QSF Error !EL! returned, or files not created, from QSF version !_vrd_version_primary!' >> "%vrdlog%" 2>&1
+		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+		ECHO !DATE! !TIME! *********  FALLBACK QSF Error !EL! returned, or files not created, from QSF version '!_vrd_version_primary!' >> "%vrdlog%" 2>&1
+		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 		ECHO tasklist /fo list /fi "IMAGENAME eq VideoReDo*" >> "!vrdlog!" 2>&1
 		tasklist /fo list /fi "IMAGENAME eq VideoReDo*" >> "!vrdlog!" 2>&1
 		ECHO taskkill /f /t /fi "IMAGENAME eq VideoReDo*" /im * >> "!vrdlog!" 2>&1
 		taskkill /f /t /fi "IMAGENAME eq VideoReDo*" /im * >> "!vrdlog!" 2>&1
 		ECHO tasklist /fo list /fi "IMAGENAME eq VideoReDo*" >> "!vrdlog!" 2>&1
 		tasklist /fo list /fi "IMAGENAME eq VideoReDo*" >> "!vrdlog!" 2>&1
-		REM
+		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+		ECHO !DATE! !TIME! *********  Declaring as FAILED:  "%~f1" >> "%vrdlog%" 2>&1
+		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 		!xPAUSE!
 		EXIT
 	)
