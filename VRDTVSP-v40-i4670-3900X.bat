@@ -2008,7 +2008,7 @@ IF /I "!tmp_MI_V_BitRate!" == "" (
 	echo set !current_prefix!MI_G_OverallBitRate >> "!vrdlog!" 2>&1
 	set !current_prefix!MI_G_OverallBitRate >> "!vrdlog!" 2>&1
 	echo set !current_prefix!FF_G_bit_rate >> "!vrdlog!" 2>&1
-	set !current_prefix!F_G_bit_rate >> "!vrdlog!" 2>&1
+	set !current_prefix!FF_G_bit_rate >> "!vrdlog!" 2>&1
 	REM
 	call set !current_prefix!MI_V_BitRate=%%!current_prefix!FF_G_bit_rate%%
 )
@@ -2020,7 +2020,7 @@ IF /I "!tmp_MI_V_BitRate!" == "" (
 	echo set !current_prefix!MI_G_OverallBitRate >> "!vrdlog!" 2>&1
 	set !current_prefix!MI_G_OverallBitRate >> "!vrdlog!" 2>&1
 	echo set !current_prefix!FF_G_bit_rate >> "!vrdlog!" 2>&1
-	set !current_prefix!F_G_bit_rate >> "!vrdlog!" 2>&1
+	set !current_prefix!FF_G_bit_rate >> "!vrdlog!" 2>&1
 	REM
 	call set !current_prefix!MI_V_BitRate=%%!current_prefix!MI_G_OverallBitRate%%
 )
@@ -2032,7 +2032,7 @@ IF /I "!tmp_MI_V_BitRate!" == "" (
 	echo set !current_prefix!MI_G_OverallBitRate >> "!vrdlog!" 2>&1
 	set !current_prefix!MI_G_OverallBitRate >> "!vrdlog!" 2>&1
 	echo set !current_prefix!FF_G_bit_rate >> "!vrdlog!" 2>&1
-	set !current_prefix!F_G_bit_rate >> "!vrdlog!" 2>&1
+	set !current_prefix!FF_G_bit_rate >> "!vrdlog!" 2>&1
 	exit 1
 )
 
