@@ -552,9 +552,22 @@ REM can use this when timeouts: tasklist /fo list /fi "IMAGENAME eq VideoReDo*"
 REM can use this when timeouts: taskkill /f /t /fi "IMAGENAME eq VideoReDo*" /im *
 REM Reset VRD to defaults
 call :set_vrd_qsf_paths "!DEFAULT_vrd_version_primary!"
-echo cscript //nologo "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
-cscript //nologo "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
+
+REM cscript uses _vrd_qsf_timeout_seconds https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/cscript
+REM echo cscript //nologo /t:!_vrd_qsf_timeout_seconds! "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
+REM cscript //nologo /t:!_vrd_qsf_timeout_seconds! "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
+
+REM cscript uses _vrd_qsf_timeout_seconds https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/cscript
+echo cscript timeout is 1 second ..." >> "!vrdlog!" 2>&1
+echo cscript //nologo /t:1 "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
+cscript //nologo /t:1 "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
+
 SET EL=!ERRORLEVEL!
+
+ECHO QSF "!_vrd_version_primary!" EL=!ERRORLEVEL! >> "!vrdlog!" 2>&1
+ECHO tasklist /fo list /fi "IMAGENAME eq VideoReDo*" >> "!vrdlog!" 2>&1
+tasklist /fo list /fi "IMAGENAME eq VideoReDo*" >> "!vrdlog!" 2>&1
+
 IF /I "!EL!" NEQ "0" (
 	REM OK, instead of aborting on the first QSF try, so fallback to the other VRD Version and try that
 	ECHO !DATE! !TIME! *********  QSF Error !EL! returned from PRIMARY QSF version !_vrd_version_primary!', attempting to use FALLBACK QSF version '!_vrd_version_fallback!' >> "%vrdlog%" 2>&1
@@ -1645,9 +1658,11 @@ REM
 set "profile_name_for_qsf_h265_vrd6=VRDTVS-for-QSF-H265_VRD6"
 set "profile_name_for_qsf_h265_vrd5=VRDTVS-for-QSF-H265_VRD5"
 
-REM qsf timeout in minutes  (VRD v6 takes 4 hours for a large 10Gb footy file)
+REM qsf timeout in minutes  (VRD v6 takes 4 hours for a large 10Gb footy file); allow extra 10 secs for cscript timeout for vrd to finish
 set "qsf_timeout_minutes_VRD5=15"
+set /a qsf_timeout_seconds_VRD5=(!qsf_timeout_minutes_VRD5! * 60) + 10
 set "qsf_timeout_minutes_VRD6=240"
+set /a qsf_timeout_seconds_VRD6=(!qsf_timeout_minutes_VRD6! * 60) + 10
 
 REM --------- ensure "\" at end of VRD paths
 if /I NOT "!Path_to_vrd6:~-1!" == "\" (set "Path_to_vrd6=!Path_to_vrd6!\")
@@ -1672,6 +1687,7 @@ IF /I "!requested_vrd_version!" == "6" (
    set "_vrd_version_primary=6"
    set "_vrd_version_fallback=5"
    set "_vrd_qsf_timeout_minutes=!qsf_timeout_minutes_VRD6!"
+   set "_vrd_qsf_timeout_seconds=!qsf_timeout_seconds_VRD6!"
 ) ELSE IF /I "!requested_vrd_version!" == "5" (
    set "Path_to_vrd=!Path_to_vrd5!"
    set "Path_to_vrd_vp_vbs=!Path_to_vp_vbs_vrd5!"
@@ -1681,6 +1697,7 @@ IF /I "!requested_vrd_version!" == "6" (
    set "_vrd_version_primary=5"
    set "_vrd_version_fallback=6"
    set "_vrd_qsf_timeout_minutes=!qsf_timeout_minutes_VRD5!"
+   set "_vrd_qsf_timeout_seconds=!qsf_timeout_seconds_VRD6!"
 ) ELSE (
    ECHO "VRD Version must be set to 5 or 6 not '!requested_vrd_version!' (_vrd_version_primary=!_vrd_version_primary! _vrd_version_fallback=!_vrd_version_fallback!)... EXITING" >> "!vrdlog!" 2>&1
    !xPAUSE!
