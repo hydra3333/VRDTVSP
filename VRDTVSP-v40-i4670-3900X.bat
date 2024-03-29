@@ -41,7 +41,7 @@ REM --------- setup paths and exe filenames ----------------------------
 
 REM -- Header ---------------------------------------------------------------------
 REM set header to date and time and computer name
-call :get_header_String "header"
+CALL :get_header_String "header"
 REM -- Header ---------------------------------------------------------------------
 
 REM -- Prepare the log file ---------------------------------------------------------------------
@@ -129,7 +129,7 @@ REM --------- setup LOG file and TEMP filenames ----------------------------
 
 REM --------- setup vrd paths filenames etc ----------------------------
 REM set the primary and fallback version of VRD to use for QSF
-REM The QSF fallback process uses these next 2 variables to set/reset which version use when, via "call :set_vrd_qsf_paths NUMBER"
+REM The QSF fallback process uses these next 2 variables to set/reset which version use when, via "CALL :set_vrd_qsf_paths NUMBER"
 set "DEFAULT_vrd_version_primary=5"
 set "DEFAULT_vrd_version_fallback=6"
 set "extension_mpeg2=mpg"
@@ -159,7 +159,7 @@ if /I NOT "!Path_to_vrd5:~-1!" == "\" (set "Path_to_vrd5=!Path_to_vrd5!")
 FOR /F "delims=" %%i IN ("%Path_to_vrd5%") DO (SET Path_to_vrd5=%%~fi)
 FOR /F "delims=" %%i IN ("%Path_to_vrd5%vp.vbs") DO (set "Path_to_vp_vbs_vrd5=%%~fi")
 REM
-call :set_vrd_qsf_paths "!DEFAULT_vrd_version_primary!"
+CALL :set_vrd_qsf_paths "!DEFAULT_vrd_version_primary!"
 REM
 echo set DEFAULT_vrd_ >> "%vrdlog%" 2>&1
 set DEFAULT_vrd_ >> "%vrdlog%" 2>&1
@@ -176,7 +176,7 @@ set "Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section=!root!
 set "Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6=!root!VRDTVSP_Run_QSF_with_v5_or_v6.vbs"
 REM --------- setup .VBS and .PS1 and .PY fully qualified filenames to pre-created files which rename and re-timestamp filenames etc ---------
 
-call :get_date_time_String "TOTAL_start_date_time"
+CALL :get_date_time_String "TOTAL_start_date_time"
 
 REM --------- Start Initial Summarize ---------
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
@@ -296,7 +296,7 @@ ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO --------- Start move .TS .MP4 .MPG .VOB files from capture folder "!capture_TS_folder!" to "!source_TS_Folder!" --------- >> "!vrdlog!" 2>&1
-call :get_date_time_String "start_date_time"
+CALL :get_date_time_String "start_date_time"
 ECHO MOVE /Y "!capture_TS_folder!*.TS" "!source_TS_Folder!" >> "!vrdlog!" 2>&1
 MOVE /Y "!capture_TS_folder!*.TS" "!source_TS_Folder!" >> "!vrdlog!" 2>&1
 ECHO MOVE /Y "!capture_TS_folder!*.MP4" "!source_TS_Folder!" >> "!vrdlog!" 2>&1
@@ -305,9 +305,9 @@ ECHO MOVE /Y "!capture_TS_folder!*.MPG" "!source_TS_Folder!" >> "!vrdlog!" 2>&1
 MOVE /Y "!capture_TS_folder!*.MPG" "!source_TS_Folder!" >> "!vrdlog!" 2>&1
 ECHO MOVE /Y "!capture_TS_folder!*.VOB" "!source_TS_Folder!" >> "!vrdlog!" 2>&1
 MOVE /Y "!capture_TS_folder!*.VOB" "!source_TS_Folder!" >> "!vrdlog!" 2>&1
-call :get_date_time_String "end_date_time"
-REM echo "!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "MoveFiles" >> "!vrdlog!" 2>&1
-"!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "MoveFiles" >> "!vrdlog!" 2>&1
+CALL :get_date_time_String "end_date_time"
+REM echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "MoveFiles" >> "!vrdlog!" 2>&1
+"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "MoveFiles" >> "!vrdlog!" 2>&1
 ECHO --------- End   move .TS .MP4 .MPG .VOB files from capture folder "!capture_TS_folder!" to "!source_TS_Folder!" --------- >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
@@ -326,17 +326,17 @@ REM If a filename isn't "safe" then rename it so it really is safe
 REM Allowed only characters a-z,A-Z,0-9,-,_,.,space
 REM
 REM ENFORCE VALID FILENAMES on the source_TS_Folder
-call :get_date_time_String "start_date_time"
+CALL :get_date_time_String "start_date_time"
 set "the_folder=!source_TS_Folder!" 
-call :make_double_backslashes_into_variable "!source_TS_Folder!" "the_folder"
-REM call :remove_trailing_backslash_into_variable "!the_folder!" "the_folder"
+CALL :make_double_backslashes_into_variable "!source_TS_Folder!" "the_folder"
+REM CALL :remove_trailing_backslash_into_variable "!the_folder!" "the_folder"
 echo "!py_exe!" "!Path_to_py_VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles!" --folder "!the_folder!" --recurse >> "!vrdlog!" 2>&1
 "!py_exe!" "!Path_to_py_VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles!" --folder "!the_folder!" --recurse >> "!vrdlog!" 2>&1
-call :get_date_time_String "end_date_time"
+CALL :get_date_time_String "end_date_time"
 echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles !the_folder!" >> "!vrdlog!" 2>&1
 "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles !the_folder!" >> "!vrdlog!" 2>&1
 REM
-call :get_date_time_String "loop_start_date_time"
+CALL :get_date_time_String "loop_start_date_time"
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
@@ -348,19 +348,19 @@ REM --------- Start Loop through the SOURCE files ---------
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-call :get_date_time_String "loop_start_date_time"
+CALL :get_date_time_String "loop_start_date_time"
 for %%f in ("!source_TS_Folder!*.TS", "!source_TS_Folder!*.MPG", "!source_TS_Folder!*.MP4", "!source_TS_Folder!*.VOB") do (
-	call :get_date_time_String "iloop_start_date_time"
+	CALL :get_date_time_String "iloop_start_date_time"
 	ECHO !DATE! !TIME! START ------------------ %%f >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! Input file : "%%~f" >> "!vrdlog!" 2>&1
 	CALL :QSFandCONVERT "%%f"
 	REM no - MOVE "%%f" "!done_TS_Folder!" - INSTEAD do the RENAME/MOVE as a part of the CALL above, depending on whether it's been propcessed correctly
 	ECHO !DATE! !TIME! END ------------------ %%f >> "!vrdlog!" 2>&1
-	call :get_date_time_String "iloop_end_date_time"
+	CALL :get_date_time_String "iloop_end_date_time"
 	echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!iloop_start_date_time!" --end_datetime "!iloop_end_date_time!" --prefix_id ":::::::::: iloop %%f " >> "!vrdlog!" 2>&1
 	"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!iloop_start_date_time!" --end_datetime "!iloop_end_date_time!" --prefix_id ":::::::::: iloop %%f " >> "!vrdlog!" 2>&1
 )
-call :get_date_time_String "loop_end_date_time"
+CALL :get_date_time_String "loop_end_date_time"
 echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!loop_start_date_time!" --end_datetime "!loop_end_date_time!" --prefix_id "Loop_Processing_Files" >> "!vrdlog!" 2>&1
 "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!loop_start_date_time!" --end_datetime "!loop_end_date_time!" --prefix_id "Loop_Processing_Files" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
@@ -380,17 +380,17 @@ REM If a filename isn't "safe" then rename it so it really is safe
 REM Allowed only characters a-z,A-Z,0-9,-,_,.,space
 REM
 REM ENFORCE VALID FILENAMES on the destination_mp4_Folder
-call :get_date_time_String "start_date_time"
+CALL :get_date_time_String "start_date_time"
 set "the_folder=!destination_mp4_Folder!" 
-call :make_double_backslashes_into_variable "!destination_mp4_Folder!" "the_folder"
-REM call :remove_trailing_backslash_into_variable "!the_folder!" "the_folder"
+CALL :make_double_backslashes_into_variable "!destination_mp4_Folder!" "the_folder"
+REM CALL :remove_trailing_backslash_into_variable "!the_folder!" "the_folder"
 echo "!py_exe!" "!Path_to_py_VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles!" --folder "!the_folder!" --recurse >> "!vrdlog!" 2>&1
 "!py_exe!" "!Path_to_py_VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles!" --folder "!the_folder!" --recurse >> "!vrdlog!" 2>&1
-call :get_date_time_String "end_date_time"
+CALL :get_date_time_String "end_date_time"
 echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles !the_folder!" >> "!vrdlog!" 2>&1
 "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles !the_folder!" >> "!vrdlog!" 2>&1
 REM
-call :get_date_time_String "loop_start_date_time"
+CALL :get_date_time_String "loop_start_date_time"
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
@@ -410,10 +410,10 @@ echo DEBUG: BEFORE:  >> "!vrdlog!" 2>&1
 echo dir "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
 dir "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
 
-call :get_date_time_String "start_date_time"
+CALL :get_date_time_String "start_date_time"
 set "the_folder=!destination_mp4_Folder!" 
-call :make_double_backslashes_into_variable "!destination_mp4_Folder!" "the_folder"
-REM call :remove_trailing_backslash_into_variable "!the_folder!" "the_folder"
+CALL :make_double_backslashes_into_variable "!destination_mp4_Folder!" "the_folder"
+REM CALL :remove_trailing_backslash_into_variable "!the_folder!" "the_folder"
 echo "!py_exe!" "!Path_to_py_VRDTVSP_Modify_File_Date_Timestamps!" --folder "!the_folder!" --recurse >> "!vrdlog!" 2>&1
 "!py_exe!" "!Path_to_py_VRDTVSP_Modify_File_Date_Timestamps!" --folder "!the_folder!" --recurse >> "!vrdlog!" 2>&1
 
@@ -421,9 +421,9 @@ echo DEBUG: AFTER: >> "!vrdlog!" 2>&1
 echo dir "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
 dir "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
 
-call :get_date_time_String "end_date_time"
-REM echo "!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "ReTimestamp" >> "!vrdlog!" 2>&1
-"!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "ReTimestamp" >> "!vrdlog!" 2>&1
+CALL :get_date_time_String "end_date_time"
+REM echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "ReTimestamp" >> "!vrdlog!" 2>&1
+"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "ReTimestamp" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! --- END Modify DateCreated and DateModified Timestamps on "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
@@ -450,7 +450,7 @@ ECHO !DATE! !TIME! -------------------------------------------------------------
 REM --------- Swap back to original folder ---------
 
 
-call :get_date_time_String "TOTAL_end_date_time"
+CALL :get_date_time_String "TOTAL_end_date_time"
 echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!TOTAL_start_date_time!" --end_datetime "!TOTAL_end_date_time!" --prefix_id "TOTAL" >> "!vrdlog!" 2>&1
 "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!TOTAL_start_date_time!" --end_datetime "!TOTAL_end_date_time!" --prefix_id "TOTAL" >> "!vrdlog!" 2>&1
 
@@ -485,10 +485,10 @@ REM %~nx1  -  expands %1 to a file name and extension only
 set "file_name_part=%~n1"
 
 REM dispose of a LOT of variables, some of whih are large
-Call :clear_variables
+CALL :clear_variables
 
 REM :gather_variables_from_media_file P2 =	the global prefix to use for this gather, one of "SRC_", "QSF_" "TARGET_"
-Call :gather_variables_from_media_file "%~f1" "SRC_" 
+CALL :gather_variables_from_media_file "%~f1" "SRC_" 
 
 REM "SRC_calc_Video_Encoding=AVC"
 REM "SRC_calc_Video_Encoding=MPEG2"
@@ -545,9 +545,9 @@ IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
 	set "check_QSF_failed********* ERROR: mediainfo format !SRC_calc_Video_Encoding! neither 'AVC' nor 'MPEG2' for !source_filename!"
 	echo !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! *********  Declaring as FAILED:. "%~f2" >> "%vrdlog%" 2>&1
+	ECHO !DATE! !TIME! *********  Declaring as FAILED: "%~f1" >> "%vrdlog%" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	exit
+	exit 1
 )
 set "qsf_xml_prefix=QSFinfo_"
 set "QSF_File=!scratch_Folder!%~n1.qsf.!qsf_extension!"
@@ -566,37 +566,24 @@ REM 	Fudged "!SRC_MI_V_BitRate!"
 REM 	temp_cmd_file
 
 set "check_QSF_failed="
-echo call :run_cscript_qsf_with_timeout "!DEFAULT_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_xml_prefix!" >> "%vrdlog%" 2>&1
-call :run_cscript_qsf_with_timeout "!DEFAULT_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_xml_prefix!"
-
-
-echo RETURNED FROM FIRST call :run_cscript_qsf_with_timeout >> "%vrdlog%" 2>&1
-pause
-
-
+echo CALL :run_cscript_qsf_with_timeout "!DEFAULT_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_xml_prefix!" >> "%vrdlog%" 2>&1
+CALL :run_cscript_qsf_with_timeout "!DEFAULT_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_xml_prefix!"
 IF /I NOT "!check_QSF_failed!" == "" (
 	REM It failed, try doing the fallback QSF
 	set "check_QSF_failed="
-	echo call :run_cscript_qsf_with_timeout "!DEFAULT_vrd_version_fallback!" "%~f1" "!QSF_File!" "!qsf_xml_prefix!" >> "%vrdlog%" 2>&1
-	call :run_cscript_qsf_with_timeout "!DEFAULT_vrd_version_fallback!" "%~f1" "!QSF_File!" "!qsf_xml_prefix!"
+	echo call run_cscript_qsf_with_timeout "!DEFAULT_vrd_version_fallback!" "%~f1" "!QSF_File!" "!qsf_xml_prefix!" >> "%vrdlog%" 2>&1
+	CALL :run_cscript_qsf_with_timeout "!DEFAULT_vrd_version_fallback!" "%~f1" "!QSF_File!" "!qsf_xml_prefix!"
 	IF /I NOT "!check_QSF_failed!" == "" (
 		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 		ECHO !DATE! !TIME! *********  Declaring FAILED:  "%~f1" >> "%vrdlog%" 2>&1
 		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-		call :declare_FAILED "%~fs"
-		Call :get_date_time_String "end_date_time_QSF"
-		REM echo "!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
-		"!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
+		CALL :declare_FAILED "%~f1"
+		CALL :get_date_time_String "end_date_time_QSF"
+		REM echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
+		"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
 		goto :eof
 	)
 )
-
-
-
-echo PAST SECOND FALLBACK call :run_cscript_qsf_with_timeout >> "%vrdlog%" 2>&1
-pause
-
-
 
 REM Use the max of these actual video bitrates (not the "overall" which includes audio bitrate) 
 REM		SRC_MI_V_BitRate
@@ -616,13 +603,6 @@ REM		!SRC_calc_Video_Encoding!
 REM		!SRC_calc_Video_Interlacement!"
 REM		!SRC_calc_Video_FieldFirst!"
 REM		!SRC_calc_Video_Max_Bitrate!"
-
-
-
-echo PAST calculating bitrates >> "%vrdlog%" 2>&1
-pause
-
-
 
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! End QSF of file: "%~f1" >> "!vrdlog!" 2>&1
@@ -666,9 +646,9 @@ ECHO !DATE! !TIME!        Audio Codec: '!QSF_FF_A_codec_name!' Audio_Delay_ms: '
 ECHO !DATE! !TIME! _vrd_version_primary='!_vrd_version_primary!' _vrd_version_fallback=!_vrd_version_fallback!' qsf_profile=!qsf_profile!' qsf_extension='!qsf_extension!' >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 
-Call :get_date_time_String "end_date_time_QSF"
-REM echo "!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
-"!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
+CALL :get_date_time_String "end_date_time_QSF"
+REM echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
+"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
 REM =======================================================================================================================================================================================
 
 
@@ -841,10 +821,10 @@ IF /I "!Footy_found!" == "True" (
 		set "FFMPEG_V_dg_deinterlace=2"
 		vrdtvsp_final_dg_deinterlace = 2	' set for double framerate deinterlace
 		REM use python to calculate rounded values for upped FOOTY double framerate deinterlaced output
-		Call :calc_single_number_result_py "int(round(!FFMPEG_V_Target_BitRate! * 1.75))"       "Footy_FFMPEG_V_Target_BitRate"
-		Call :calc_single_number_result_py "int(round(!Footy_FFMPEG_V_Target_BitRate! * 0.20))" "Footy_FFMPEG_V_Target_Minimum_BitRate"
-		Call :calc_single_number_result_py "int(round(!Footy_FFMPEG_V_Target_BitRate! * 2))"    "Footy_FFMPEG_V_Target_Maximum_BitRate"
-		Call :calc_single_number_result_py "int(round(!Footy_FFMPEG_V_Target_BitRate! * 2))"    "Footy_FFMPEG_V_Target_BufSize"
+		CALL :calc_single_number_result_py "int(round(!FFMPEG_V_Target_BitRate! * 1.75))"       "Footy_FFMPEG_V_Target_BitRate"
+		CALL :calc_single_number_result_py "int(round(!Footy_FFMPEG_V_Target_BitRate! * 0.20))" "Footy_FFMPEG_V_Target_Minimum_BitRate"
+		CALL :calc_single_number_result_py "int(round(!Footy_FFMPEG_V_Target_BitRate! * 2))"    "Footy_FFMPEG_V_Target_Maximum_BitRate"
+		CALL :calc_single_number_result_py "int(round(!Footy_FFMPEG_V_Target_BitRate! * 2))"    "Footy_FFMPEG_V_Target_BufSize"
 		ECHO Interlaced video, Footy words found in filename '!file_name_part!', FFMPEG_V_dg_deinterlace=!FFMPEG_V_dg_deinterlace!  Footy variables set >> "!vrdlog!" 2>&1
 	) ELSE (
 		ECHO !DATE! !TIME! ERROR: UNKNOWN QSF_calc_Video_Interlacement="!QSF_calc_Video_Interlacement!" to base transcode calculations on. >> "!vrdlog!" 2>&1
@@ -1550,33 +1530,33 @@ REM If it gets to here then the conversion has been successful.
 REM
 ECHO DEL /F "!scratch_file_qsf!"  >> "!vrdlog!" 2>&1
 DEL /F "!scratch_file_qsf!"  >> "!vrdlog!" 2>&1
-Call :get_mediainfo_parameter_legacy "Video" "Codec" "D_V_Codec_legacy" "!destination_file!"
-Call :get_mediainfo_parameter "Video" "ScanType" "D_V_ScanType" "!destination_file!" 
+CALL :get_mediainfo_parameter_legacy "Video" "Codec" "D_V_Codec_legacy" "!destination_file!"
+CALL :get_mediainfo_parameter "Video" "ScanType" "D_V_ScanType" "!destination_file!" 
 IF /I "!D_V_ScanType!" == "" (
 	ECHO !DATE! !TIME! "D_V_ScanType blank, setting D_V_ScanType=Progressive" >> "!vrdlog!" 2>&1
 	set "D_V_ScanType=Progressive"
 )
-Call :get_mediainfo_parameter "Video" "ScanOrder" "D_V_ScanOrder" "!destination_file!" 
+CALL :get_mediainfo_parameter "Video" "ScanOrder" "D_V_ScanOrder" "!destination_file!" 
 IF /I "!Q_V_ScanOrder!" == "" (
 	ECHO !DATE! !TIME! "D_V_ScanOrder blank, setting D_V_ScanOrder=TFF" >> "!vrdlog!" 2>&1
 	set "Q_V_ScanOrder=TFF"
 )
-Call :get_mediainfo_parameter "Video" "BitRate" "D_V_BitRate" "!destination_file!" 
-Call :get_mediainfo_parameter "Video" "BitRate/String" "D_V_BitRate_String" "!destination_file!"  
-Call :get_mediainfo_parameter "Video" "BitRate_Minimum" "D_V_BitRate_Minimum" "!destination_file!"  
-Call :get_mediainfo_parameter "Video" "BitRate_Minimum/String" "D_V_BitRate_Minimum_String" "!destination_file!"  
-Call :get_mediainfo_parameter "Video" "BitRate_Maximum" "D_V_BitRate_Maximum" "!destination_file!" 
-Call :get_mediainfo_parameter "Video" "BitRate_Maximum/String" "D_V_BitRate_Maximum_String" "!destination_file!"  
-Call :get_mediainfo_parameter "Video" "BufferSize" "D_V_BufferSize" "!destination_file!" 
-Call :get_mediainfo_parameter "Video" "Width" "D_V_Width" "!destination_file!" 
-Call :get_mediainfo_parameter "Video" "Height" "D_V_Height" "!destination_file!" 
-Call :get_mediainfo_parameter "Video" "DisplayAspectRatio" "D_V_DisplayAspectRatio" "!destination_file!"
+CALL :get_mediainfo_parameter "Video" "BitRate" "D_V_BitRate" "!destination_file!" 
+CALL :get_mediainfo_parameter "Video" "BitRate/String" "D_V_BitRate_String" "!destination_file!"  
+CALL :get_mediainfo_parameter "Video" "BitRate_Minimum" "D_V_BitRate_Minimum" "!destination_file!"  
+CALL :get_mediainfo_parameter "Video" "BitRate_Minimum/String" "D_V_BitRate_Minimum_String" "!destination_file!"  
+CALL :get_mediainfo_parameter "Video" "BitRate_Maximum" "D_V_BitRate_Maximum" "!destination_file!" 
+CALL :get_mediainfo_parameter "Video" "BitRate_Maximum/String" "D_V_BitRate_Maximum_String" "!destination_file!"  
+CALL :get_mediainfo_parameter "Video" "BufferSize" "D_V_BufferSize" "!destination_file!" 
+CALL :get_mediainfo_parameter "Video" "Width" "D_V_Width" "!destination_file!" 
+CALL :get_mediainfo_parameter "Video" "Height" "D_V_Height" "!destination_file!" 
+CALL :get_mediainfo_parameter "Video" "DisplayAspectRatio" "D_V_DisplayAspectRatio" "!destination_file!"
 set "D_V_DisplayAspectRatio_String_slash=!D_V_DisplayAspectRatio_String::=/!"
 set "D_V_DisplayAspectRatio_String_slash=!D_V_DisplayAspectRatio_String_slash:\=/!"
-Call :get_mediainfo_parameter "Video" "DisplayAspectRatio/String" "D_V_DisplayAspectRatio_String" "!destination_file!"
-Call :get_mediainfo_parameter "Video" "PixelAspectRatio" "D_V_PixelAspectRatio" "!destination_file!"
-Call :get_mediainfo_parameter "Video" "PixelAspectRatio/String" "D_V_PixelAspectRatio_String" "!destination_file!"
-Call :get_mediainfo_parameter "Audio" "Video_Delay" "D_A_Video_Delay_ms" "!destination_file!" 
+CALL :get_mediainfo_parameter "Video" "DisplayAspectRatio/String" "D_V_DisplayAspectRatio_String" "!destination_file!"
+CALL :get_mediainfo_parameter "Video" "PixelAspectRatio" "D_V_PixelAspectRatio" "!destination_file!"
+CALL :get_mediainfo_parameter "Video" "PixelAspectRatio/String" "D_V_PixelAspectRatio_String" "!destination_file!"
+CALL :get_mediainfo_parameter "Audio" "Video_Delay" "D_A_Video_Delay_ms" "!destination_file!" 
 IF /I "!D_A_Video_Delay_ms!" == "" (
 	set /a D_A_Audio_Delay_ms=0
 ) ELSE (
@@ -1585,15 +1565,15 @@ IF /I "!D_A_Video_Delay_ms!" == "" (
 ECHO !DATE! !TIME! "D_A_Video_Delay_ms=!D_A_Video_Delay_ms!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! "D_A_Audio_Delay_ms=!D_A_Audio_Delay_ms!" Calculated >> "!vrdlog!" 2>&1
 REM
-Call :get_ffprobe_video_stream_parameter "codec_name" "D_V_CodecID_FF" "!destination_file!" 
-Call :get_ffprobe_video_stream_parameter "codec_tag_String" "D_V_CodecID_String_FF" "!destination_file!" 
-Call :get_ffprobe_video_stream_parameter "width" "D_V_Width_FF" "!destination_file!" 
-Call :get_ffprobe_video_stream_parameter "height" "D_V_Height_FF" "!destination_file!" 
-Call :get_ffprobe_video_stream_parameter "duration" "D_V_Duration_s_FF" "!destination_file!" 
-Call :get_ffprobe_video_stream_parameter "bit_rate" "D_V_BitRate_FF" "!destination_file!" 
-Call :get_ffprobe_video_stream_parameter "max_bit_rate" "D_V_BitRate_Maximum_FF" "!destination_file!" 
-Call :get_mediainfo_parameter_legacy "Audio" "Codec" "D_A_Codec_legacy" "!destination_file!" 
-Call :get_mediainfo_parameter_legacy "Audio" "Video_Delay" "D_A_Video_Delay_ms_legacy" "!destination_file!" 
+CALL :get_ffprobe_video_stream_parameter "codec_name" "D_V_CodecID_FF" "!destination_file!" 
+CALL :get_ffprobe_video_stream_parameter "codec_tag_String" "D_V_CodecID_String_FF" "!destination_file!" 
+CALL :get_ffprobe_video_stream_parameter "width" "D_V_Width_FF" "!destination_file!" 
+CALL :get_ffprobe_video_stream_parameter "height" "D_V_Height_FF" "!destination_file!" 
+CALL :get_ffprobe_video_stream_parameter "duration" "D_V_Duration_s_FF" "!destination_file!" 
+CALL :get_ffprobe_video_stream_parameter "bit_rate" "D_V_BitRate_FF" "!destination_file!" 
+CALL :get_ffprobe_video_stream_parameter "max_bit_rate" "D_V_BitRate_Maximum_FF" "!destination_file!" 
+CALL :get_mediainfo_parameter_legacy "Audio" "Codec" "D_A_Codec_legacy" "!destination_file!" 
+CALL :get_mediainfo_parameter_legacy "Audio" "Video_Delay" "D_A_Video_Delay_ms_legacy" "!destination_file!" 
 IF /I "!D_A_Video_Delay_ms_legacy!" == "" (
 	set /a "D_A_Audio_Delay_ms_legacy=0"
 ) ELSE (
@@ -1713,7 +1693,7 @@ REM echo 2 "%~2"	fully qualified filename of the SRC input usually a .TS file >>
 REM echo 3 "%~3"	fully qualified filename of name of QSF file to create >> "!vrdlog!" 2>&1
 REM echo 4 "%~4"	qsf prefix for variables output from the VideoReDo QSF  >> "!vrdlog!" 2>&1
 
-Call :get_date_time_String "start_date_time_QSF_with_timeout"
+CALL :get_date_time_String "start_date_time_QSF_with_timeout"
 
 set "requested_vrd_version=%~1"
 set "source_filename=%~f2"
@@ -1724,8 +1704,8 @@ REM Preset the error flag to nothing
 set "check_QSF_failed="
 
 REM Reset VRD QSF defaults to the requested version. Note _vrd_version_primary and _vrd_version_fallback.
-echo call :set_vrd_qsf_paths "!requested_vrd_version!" >> "!vrdlog!" 2>&1
-call :set_vrd_qsf_paths "!requested_vrd_version!"
+echo CALL :set_vrd_qsf_paths "!requested_vrd_version!" >> "!vrdlog!" 2>&1
+CALL :set_vrd_qsf_paths "!requested_vrd_version!"
 
 REM echo ???????????????????????????????????????????????????????????????? >> "!vrdlog!" 2>&1
 REM echo QSF cscript timeout _vrd_qsf_timeout_seconds is !_vrd_qsf_timeout_seconds! seconds ..." >> "!vrdlog!" 2>&1
@@ -1745,7 +1725,7 @@ IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
 	set "check_QSF_failed********* ERROR: mediainfo format !SRC_calc_Video_Encoding! neither 'AVC' nor 'MPEG2' for !source_filename!"
 	echo !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! *********  Declaring as FAILED:. "%~f2" >> "%vrdlog%" 2>&1
+	ECHO !DATE! !TIME! *********  Declaring as FAILED: "%~f2" >> "%vrdlog%" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	goto :eof
 )
@@ -1824,14 +1804,14 @@ set !requested_qsf_xml_prefix! >> "!vrdlog!" 2>&1
 echo +++++++++ >> "!vrdlog!" 2>&1
 
 REM :gather_variables_from_media_file P2 =	the global prefix to use for this gather, one of "SRC_", "QSF_" "TARGET_"
-Call :gather_variables_from_media_file "!qsf_filename!" "QSF_" 
+CALL :gather_variables_from_media_file "!qsf_filename!" "QSF_" 
 
 REM Reset VRD QSF defaults back to the original DEFAULT version. Note _vrd_version_primary and _vrd_version_fallback.
-call :set_vrd_qsf_paths "!DEFAULT_vrd_version_primary!"
+CALL :set_vrd_qsf_paths "!DEFAULT_vrd_version_primary!"
 
-Call :get_date_time_String "end_date_time_QSF_with_timeout"
-REM echo "!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start_date_time_QSF_with_timeout!" --end_datetime "!end_date_time_QSF_with_timeout!" --prefix_id "run_cscript_qsf_with_timeout" >> "!vrdlog!" 2>&1
-"!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start_date_time_QSF_with_timeout!" --end_datetime "!end_date_time_QSF_with_timeout!" --prefix_id "run_cscript_qsf_with_timeout" >> "!vrdlog!" 2>&1
+CALL :get_date_time_String "end_date_time_QSF_with_timeout"
+REM echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF_with_timeout!" --end_datetime "!end_date_time_QSF_with_timeout!" --prefix_id "run_cscript_qsf_with_timeout" >> "!vrdlog!" 2>&1
+"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF_with_timeout!" --end_datetime "!end_date_time_QSF_with_timeout!" --prefix_id "run_cscript_qsf_with_timeout" >> "!vrdlog!" 2>&1
 
 goto :eof
 
@@ -1900,7 +1880,7 @@ REM
 :calc_single_number_result
 REM use VBS to evaluate an incoming formula string which has no embedded special characters 
 REM and yield a result which has no embedded special characters
-REM eg   Call :calc_single_number_result "Int((1+2+3+4+5+6)/10.0)" "return_variable_name"
+REM eg   CALL :calc_single_number_result "Int((1+2+3+4+5+6)/10.0)" "return_variable_name"
 set "Datey=%DATE: =0%"
 set "Timey=%time: =0%"
 set "eval_datetime=!Datey:~10,4!-!Datey:~7,2!-!Datey:~4,2!.!Timey:~0,2!.!Timey:~3,2!.!Timey:~6,2!.!Timey:~9,2!"
@@ -1922,7 +1902,7 @@ goto :eof
 :calc_single_number_result_py
 REM Use Python to evaluate an incoming formula string which has no embedded special characters 
 REM and yield a result which has no embedded special characters
-REM Example usage: Call :calc_single_number_result "1+2+3+4+5+6" "return_variable_name"
+REM Example usage: CALL :calc_single_number_result "1+2+3+4+5+6" "return_variable_name"
 set "eval_formula=%~1"
 set "eval_variable_name=%~2"
 set "Datey=%DATE: =0%"
@@ -1962,7 +1942,7 @@ REM ----------------------------------------------------------------------------
 REM return a datetime string with spaces replaced by zeroes and no spaces in format yyyy-mm-dd.hh.mm.ss.hh
 set "ns_datetimestring_variable_name=%~1"
 set "ns_eval_datetime="
-Call :get_date_time_String "ns_eval_datetime"
+CALL :get_date_time_String "ns_eval_datetime"
 set "ns_eval_datetime=!ns_eval_datetime: =.!"
 set "!ns_datetimestring_variable_name!=!ns_eval_datetime!"
 goto :eof
@@ -1975,7 +1955,7 @@ REM ----------------------------------------------------------------------------
 :get_header_String
 REM Create a Header
 set "ghs_header_variable_name=%~1"
-Call :get_date_time_String_nospaces "ghs_date_time_String"
+CALL :get_date_time_String_nospaces "ghs_date_time_String"
 set "!ghs_header_variable_name!=!ghs_date_time_String!-!COMPUTERNAME!"
 goto :eof
 
@@ -2072,7 +2052,7 @@ REM
 set "media_filename=%~f1"
 set "current_prefix=%~2"
 
-Call :get_date_time_String "gather_variables_from_media_file_START"
+CALL :get_date_time_String "gather_variables_from_media_file_START"
 
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Start collecting :gather_variables_from_media_file "!current_prefix!" ffprobe and mediainfo variables ... "!media_filename!" >> "!vrdlog!" 2>&1
@@ -2286,7 +2266,7 @@ REM MI_A_Video_Delay is reported by mediainfo as decimal seconds, not millisecon
 call set tmp_MI_A_Video_Delay=%%!current_prefix!MI_A_Video_Delay%%
 IF /I "!tmp_MI_A_Video_Delay!" == "" (set "tmp_MI_A_Video_Delay=0")
 set "py_eval_string=int(1000.0 * !tmp_MI_A_Video_Delay!)"
-Call :calc_single_number_result_py "!py_eval_string!" "tmp_MI_A_Video_Delay"
+CALL :calc_single_number_result_py "!py_eval_string!" "tmp_MI_A_Video_Delay"
 set /a tmp_MI_A_Audio_Delay=0 - !tmp_MI_A_Video_Delay!
 set "!current_prefix!MI_A_Video_Delay=!tmp_MI_A_Video_Delay!"
 set "!current_prefix!MI_A_Audio_Delay=!tmp_MI_A_Audio_Delay!"
@@ -2390,8 +2370,8 @@ ECHO !DATE! !TIME! =============================================================
 ECHO !DATE! !TIME! End collecting :gather_variables_from_media_file "!current_prefix!" ffprobe and mediainfo variables ... "!media_filename!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 
-Call :get_date_time_String "gather_variables_from_media_file_END"
-REM echo "!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!gather_variables_from_media_file_START!" --end_datetime "!gather_variables_from_media_file_END!" --prefix_id "gather !current_prefix!" >> "!vrdlog!" 2>&1
-"!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!gather_variables_from_media_file_START!" --end_datetime "!gather_variables_from_media_file_END!" --prefix_id "gather !current_prefix!" >> "!vrdlog!" 2>&1
+CALL :get_date_time_String "gather_variables_from_media_file_END"
+REM echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!gather_variables_from_media_file_START!" --end_datetime "!gather_variables_from_media_file_END!" --prefix_id "gather !current_prefix!" >> "!vrdlog!" 2>&1
+"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!gather_variables_from_media_file_START!" --end_datetime "!gather_variables_from_media_file_END!" --prefix_id "gather !current_prefix!" >> "!vrdlog!" 2>&1
 
 goto :eof
