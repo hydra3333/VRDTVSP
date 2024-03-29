@@ -110,7 +110,7 @@ if __name__ == "__main__":
     set_cmd_list.append(f'FOR /F "tokens=1,* delims==" %%G IN (\'SET {prefix}\') DO (SET "%%G=") >NUL 2>&1')
 
     # Run ffprobe command to get JSON output
-    ffprobe_subprocess_command = [ffprobe_path, "-v", "quiet", "-print_format", "json", "-show_format", "-show_streams", mediafile]
+    ffprobe_subprocess_command = [ffprobe_path, "-probesize", "100M", "-v", "quiet", "-print_format", "json", "-show_format", "-show_streams", mediafile]
     #print(f"DEBUG: issuing subprocess command: {ffprobe_subprocess_command}")
     ffprobe_output = subprocess.check_output(ffprobe_subprocess_command).decode()
     #print(f"DEBUG: returned output string: {ffprobe_output}")
