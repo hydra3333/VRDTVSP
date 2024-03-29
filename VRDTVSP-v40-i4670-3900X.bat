@@ -2001,7 +2001,7 @@ REM
 
 REM sometimes mediainfo omits to return the video bit_rate oin .TS files, so fudge it using other detected bitrates
 call set tmp_MI_V_BitRate=%%!current_prefix!MI_V_BitRate%%
-echo "Check #1 !current_prefix!MI_V_BitRate '!tmp_MI_V_BitRate!' for blank ... >> "!vrdlog!" 2>&1
+echo "Fudge Check #1 !current_prefix!MI_V_BitRate '!tmp_MI_V_BitRate!' for blank ... >> "!vrdlog!" 2>&1
 IF /I "!tmp_MI_V_BitRate!" == "" (
 	echo set !current_prefix!MI_V_BitRate >> "!vrdlog!" 2>&1
 	set !current_prefix!MI_V_BitRate >> "!vrdlog!" 2>&1
@@ -2014,7 +2014,7 @@ IF /I "!tmp_MI_V_BitRate!" == "" (
 	call set !current_prefix!MI_V_BitRate=%%!current_prefix!FF_G_bit_rate%%
 )
 call set tmp_MI_V_BitRate=%%!current_prefix!MI_V_BitRate%%
-echo "Check #2 !current_prefix!MI_V_BitRate '!tmp_MI_V_BitRate!' for blank ... >> "!vrdlog!" 2>&1
+echo "Fudge Check #2 !current_prefix!MI_V_BitRate '!tmp_MI_V_BitRate!' for blank ... >> "!vrdlog!" 2>&1
 IF /I "!tmp_MI_V_BitRate!" == "" (
 	echo set !current_prefix!MI_V_BitRate >> "!vrdlog!" 2>&1
 	set !current_prefix!MI_V_BitRate >> "!vrdlog!" 2>&1
@@ -2027,7 +2027,7 @@ IF /I "!tmp_MI_V_BitRate!" == "" (
 	call set !current_prefix!MI_V_BitRate=%%!current_prefix!MI_G_OverallBitRate%%
 )
 call set tmp_MI_V_BitRate=%%!current_prefix!MI_V_BitRate%%
-echo "Check #3 !current_prefix!MI_V_BitRate '!tmp_MI_V_BitRate!' for blank ... >> "!vrdlog!" 2>&1
+echo "Fudge Check #3 !current_prefix!MI_V_BitRate '!tmp_MI_V_BitRate!' for blank ... >> "!vrdlog!" 2>&1
 IF /I "!tmp_MI_V_BitRate!" == "" (
 	echo set !current_prefix!MI_V_BitRate >> "!vrdlog!" 2>&1
 	set !current_prefix!MI_V_BitRate >> "!vrdlog!" 2>&1
