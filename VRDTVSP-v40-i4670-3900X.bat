@@ -590,6 +590,9 @@ IF /I "!EL!" NEQ "0" (
 IF /I NOT "check_qsf_failed" == "" (
 	REM OK, instead of aborting on the first QSF try, so fallback to the other VRD Version and try that
 	ECHO !DATE! !TIME! *********  QSF Error !EL! returned, or files not created, from PRIMARY QSF version '!_vrd_version_primary!', attempting to use FALLBACK QSF version '!_vrd_version_fallback!' >> "%vrdlog%" 2>&1
+	ECHO !DATE! !TIME! ... !check_qsf_failed! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! Ensuring VideoReDo tasks are killed: >> "!vrdlog!" 2>&1
 	ECHO tasklist /fo list /fi "IMAGENAME eq VideoReDo*" >> "!vrdlog!" 2>&1
 	tasklist /fo list /fi "IMAGENAME eq VideoReDo*" >> "!vrdlog!" 2>&1
 	ECHO taskkill /f /t /fi "IMAGENAME eq VideoReDo*" /im * >> "!vrdlog!" 2>&1
