@@ -562,7 +562,8 @@ DEL /F "!tempfile_stderr!">NUL 2>&1
 REM echo cscript //nologo /t:!_vrd_qsf_timeout_seconds! "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
 REM cscript //nologo /t:!_vrd_qsf_timeout_seconds! "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>"!tempfile_stderr!"
 REM SET EL=!ERRORLEVEL!
-REM TYPE "!&tempfile_stderr!"
+REM ECHO TYPE "!&tempfile_stderr!" >> "!vrdlog!" 2>&1
+REM TYPE "!&tempfile_stderr!" >> "!vrdlog!" 2>&1
 
 REM cscript uses _vrd_qsf_timeout_seconds https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/cscript
 DEL /F "!tempfile_stderr!">NUL 2>&1
@@ -570,8 +571,10 @@ echo cscript timeout is 1 second ..." >> "!vrdlog!" 2>&1
 echo cscript //nologo /t:1 "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
 cscript //nologo /t:1 "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2> "!tempfile_stderr!"
 SET EL=!ERRORLEVEL!
-DIR "!tempfile_stderr!"
-TYPE "!tempfile_stderr!"
+ECHO DIR "!tempfile_stderr!" >> "!vrdlog!" 2>&1
+DIR "!tempfile_stderr!" >> "!vrdlog!" 2>&1
+ECHO TYPE "!tempfile_stderr!" >> "!vrdlog!" 2>&1
+TYPE "!tempfile_stderr!" >> "!vrdlog!" 2>&1
 DEL /F "!tempfile_stderr!">NUL 2>&1
 
 
