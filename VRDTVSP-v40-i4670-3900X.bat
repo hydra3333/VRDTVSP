@@ -505,7 +505,6 @@ IF /I "!SRC_calc_Video_FieldFirst!" == "TFF" (
 	EXIT
 )
 REM
-
 IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
 	echo !DATE! !TIME! >> "!vrdlog!" 2>&1
 	set "qsf_profile=!profile_name_for_qsf_h264!"
@@ -557,19 +556,17 @@ echo cscript //nologo "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_versi
 cscript //nologo "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
 SET EL=!ERRORLEVEL!
 IF /I "!EL!" NEQ "0" (
-	REM OK, instead of aborting on the first QSF try, just fallback to the other VRD Version and try that
+	REM OK, instead of aborting on the first QSF try, so fallback to the other VRD Version and try that
 	ECHO !DATE! !TIME! *********  QSF Error !EL! returned from PRIMARY QSF version !_vrd_version_primary!', attempting to use FALLBACK QSF version '!_vrd_version_fallback!' >> "%vrdlog%" 2>&1
    	REM Reset VRD to fallback and try that
-
 	echo "FALLBACK: before verson change ..." >> "%vrdlog%" 2>&1
 	echo set _vrd >> "%vrdlog%" 2>&1
 	set _vrd >> "%vrdlog%" 2>&1
-	set qsf_profile >> "%vrdlog%" 2>&1
 	echo set qsf_profile >> "%vrdlog%" 2>&1
+	set qsf_profile >> "%vrdlog%" 2>&1
 	set "tmp_vrd_version_fallback=!_vrd_version_fallback!" >> "%vrdlog%" 2>&1
 	call :set_vrd_qsf_paths "!tmp_vrd_version_fallback!" >> "%vrdlog%" 2>&1
-
-	echo "FALLBACK: after verson change ..."
+	echo "FALLBACK: after verson change ..." >> "%vrdlog%" 2>&1
 	IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
 		echo !DATE! !TIME! >> "!vrdlog!" 2>&1
 		set "qsf_profile=!profile_name_for_qsf_h264!"
@@ -586,9 +583,9 @@ IF /I "!EL!" NEQ "0" (
 	)
 	echo set _vrd >> "%vrdlog%" 2>&1
 	set _vrd >> "%vrdlog%" 2>&1
-	set qsf_profile >> "%vrdlog%" 2>&1
 	echo set qsf_profile >> "%vrdlog%" 2>&1
-
+	set qsf_profile >> "%vrdlog%" 2>&1
+	REM
 	echo cscript //nologo "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
 	cscript //nologo "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
 	SET EL=!ERRORLEVEL!
@@ -1650,7 +1647,7 @@ set "profile_name_for_qsf_h265_vrd5=VRDTVS-for-QSF-H265_VRD5"
 
 REM qsf timeout in minutes  (VRD v6 takes 4 hours for a large 10Gb footy file)
 set "qsf_timeout_minutes_VRD5=15"
-set "qsf_timeout_minutes_VRD6=1"
+set "qsf_timeout_minutes_VRD6=240"
 
 REM --------- ensure "\" at end of VRD paths
 if /I NOT "!Path_to_vrd6:~-1!" == "\" (set "Path_to_vrd6=!Path_to_vrd6!\")
