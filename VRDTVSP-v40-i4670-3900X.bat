@@ -1643,7 +1643,7 @@ REM %~nx1  -  expands %1 to a file name and extension only
 
 Call :get_date_time_String "start_date_time_QSF"
 
-set "requested_vrd_version=%~f1"
+set "requested_vrd_version=%~1"
 set "source_filename=%~f2"
 set "qsf_filename=%~f3"
 set "requested_qsf_xml_prefix=%~4"
