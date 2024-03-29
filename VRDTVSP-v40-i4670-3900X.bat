@@ -130,10 +130,10 @@ set "DEFAULT_vrd_version_primary=5"
 set "DEFAULT_vrd_version_fallback=6"
 call :set_vrd_qsf_paths "!DEFAULT_vrd_version_primary!"
 REM
-echo set DEFAULT_vrd_version >> "%vrdlog%" 2>&1
-set DEFAULT_vrd_version >> "%vrdlog%" 2>&1
-echo set _vrd_version_ >> "%vrdlog%" 2>&1
-set _vrd_version_ >> "%vrdlog%" 2>&1
+echo set DEFAULT_vrd_ >> "%vrdlog%" 2>&1
+set DEFAULT_vrd_ >> "%vrdlog%" 2>&1
+echo set _vrd_ >> "%vrdlog%" 2>&1
+set _vrd_ >> "%vrdlog%" 2>&1
 REM --------- setup vrd paths filenames ----------------------------
 
 REM --------- setup .PY fully qualified filenames to pre-created files which rename and re-timestamp filenames etc ---------
@@ -552,8 +552,8 @@ DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 REM specify the source file average bitrate !SRC_MI_V_BitRate! in case QSF can't find it (it happens)
 REM can use this when timeouts: tasklist /fo list /fi "IMAGENAME eq VideoReDo*"
 REM can use this when timeouts: taskkill /f /t /fi "IMAGENAME eq VideoReDo*" /im *
-echo cscript //nologo "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" >> "!vrdlog!" 2>&1
-cscript //nologo "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" >> "!vrdlog!" 2>&1
+echo cscript //nologo "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
+cscript //nologo "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
 SET EL=!ERRORLEVEL!
 IF /I "!EL!" NEQ "0" (
    ECHO !DATE! !TIME! *********  QSF Error !EL! returned from cscript QSF >> "%vrdlog%" 2>&1
@@ -1605,6 +1605,10 @@ REM
 set "profile_name_for_qsf_h265_vrd6=VRDTVS-for-QSF-H265_VRD6"
 set "profile_name_for_qsf_h265_vrd5=VRDTVS-for-QSF-H265_VRD5"
 
+REM qsf timeout in minutes  (VRD v6 takes 4 hours for a large 10Gb footy file)
+set "qsf_timeout_minutes_VRD5=15"
+set "qsf_timeout_minutes_VRD6=240"
+
 REM --------- ensure "\" at end of VRD paths
 if /I NOT "!Path_to_vrd6:~-1!" == "\" (set "Path_to_vrd6=!Path_to_vrd6!\")
 FOR /F "delims=" %%i IN ("%Path_to_vrd6%") DO (set "Path_to_vrd6=%%~fi")
@@ -1627,6 +1631,7 @@ IF /I "!requested_vrd_version!" == "6" (
    set "profile_name_for_qsf_h265=!profile_name_for_qsf_h265_vrd6!"
    set "_vrd_version_primary=6"
    set "_vrd_version_fallback=5"
+   set "_vrd_qsf_timeout_minutes=!qsf_timeout_minutes_VRD6!"
 ) ELSE IF /I "!requested_vrd_version!" == "5" (
    set "Path_to_vrd=!Path_to_vrd5!"
    set "Path_to_vrd_vp_vbs=!Path_to_vp_vbs_vrd5!"
@@ -1635,6 +1640,7 @@ IF /I "!requested_vrd_version!" == "6" (
    set "profile_name_for_qsf_h265=!profile_name_for_qsf_h265_vrd5!"
    set "_vrd_version_primary=5"
    set "_vrd_version_fallback=6"
+   set "_vrd_qsf_timeout_minutes=!qsf_timeout_minutes_VRD5!"
 ) ELSE (
    ECHO "VRD Version must be set to 5 or 6 not '!requested_vrd_version!' (_vrd_version_primary=!_vrd_version_primary! _vrd_version_fallback=!_vrd_version_fallback!)... EXITING" >> "!vrdlog!" 2>&1
    !xPAUSE!
