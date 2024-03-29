@@ -1693,7 +1693,7 @@ REM echo 2 "%~2"	fully qualified filename of the SRC input usually a .TS file >>
 REM echo 3 "%~3"	fully qualified filename of name of QSF file to create >> "!vrdlog!" 2>&1
 REM echo 4 "%~4"	qsf prefix for variables output from the VideoReDo QSF  >> "!vrdlog!" 2>&1
 
-Call :get_date_time_String "start_date_time_QSF"
+Call :get_date_time_String "start_date_time_QSF_with_timeout"
 
 set "requested_vrd_version=%~1"
 set "source_filename=%~f2"
@@ -1809,9 +1809,9 @@ Call :gather_variables_from_media_file "!qsf_filename!" "QSF_"
 REM Reset VRD QSF defaults back to the original DEFAULT version. Note _vrd_version_primary and _vrd_version_fallback.
 call :set_vrd_qsf_paths "!DEFAULT_vrd_version_primary!"
 
-Call :get_date_time_String "end_date_time_QSF"
-REM echo "!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
-"!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
+Call :get_date_time_String "end_date_time_QSF_with_timeout"
+REM echo "!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start_date_time_QSF_with_timeout!" --end_datetime "!end_date_time_QSF_with_timeout!" --prefix_id "run_cscript_qsf_with_timeout" >> "!vrdlog!" 2>&1
+"!py_exe!" !Path_to_py_VRDTVSP_Calculate_Duration! --start_datetime "!start_date_time_QSF_with_timeout!" --end_datetime "!end_date_time_QSF_with_timeout!" --prefix_id "run_cscript_qsf_with_timeout" >> "!vrdlog!" 2>&1
 
 goto :eof
 
