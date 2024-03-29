@@ -587,7 +587,7 @@ IF /I "!EL!" NEQ "0" (
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	set "check_qsf_failed=*********  QSF Error Temp cmd file not created: '!temp_cmd_file!'"
 )
-IF /I NOT "check_qsf_failed" == "" (
+IF /I NOT "!check_qsf_failed!" == "" (
 	REM OK, instead of aborting on the first QSF try, so fallback to the other VRD Version and try that
 	ECHO !DATE! !TIME! *********  QSF Error !EL! returned, or files not created, from PRIMARY QSF version '!_vrd_version_primary!', attempting to use FALLBACK QSF version '!_vrd_version_fallback!' >> "%vrdlog%" 2>&1
 	ECHO !DATE! !TIME! ... -!check_qsf_failed!- >> "!vrdlog!" 2>&1
@@ -649,7 +649,7 @@ IF /I NOT "check_qsf_failed" == "" (
 		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 		set "check_qsf_failed=*********  QSF Error Temp cmd file not created: '!temp_cmd_file!'"
 	)
-	IF /I NOT "check_qsf_failed" == "" (
+	IF /I NOT "!check_qsf_failed!" == "" (
 		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 		ECHO !DATE! !TIME! *********  FALLBACK QSF Error !EL! returned, or files not created, from QSF version '!_vrd_version_primary!' >> "%vrdlog%" 2>&1
 		ECHO !DATE! !TIME! ... -!check_qsf_failed!- >> "!vrdlog!" 2>&1
