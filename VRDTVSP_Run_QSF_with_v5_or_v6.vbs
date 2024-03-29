@@ -163,12 +163,16 @@ default_ActualBitrate_bps = CLng(default_ActualBitrate_bps)
 
 If IsNull(qsf_timeout_minutes) Then
 	qsf_timeout_minutes = 240
+	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6 WARNING: qsf_timeout_minutes (a) DEFAULTED TO '" & qsf_timeout_minutes & "'")
 ElseIf IsEmpty(qsf_timeout_minutes) Then
 	qsf_timeout_minutes = 240
-ElseIf qsf_timeout_minutes = Nothing Then
+	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6 WARNING: qsf_timeout_minutes (b) DEFAULTED TO '" & qsf_timeout_minutes & "'")
+ElseIf qsf_timeout_minutes = "" Then
 	qsf_timeout_minutes = 240
+	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6 WARNING: qsf_timeout_minutes (c) DEFAULTED TO '" & qsf_timeout_minutes & "'")
 ElseIf (not IsNumeric(qsf_timeout_minutes)) or (InStr(1, qsf_timeout_minutes, ".") <> 0) Then
 	qsf_timeout_minutes = 240
+	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6 WARNING: qsf_timeout_minutes (d) DEFAULTED TO '" & qsf_timeout_minutes & "'")
 Else
 	qsf_timeout_minutes = CLng(qsf_timeout_minutes)
 End If
