@@ -483,21 +483,6 @@ REM    extension_mpeg2=mpg
 REM    extension_h264=mp4
 REM    extension_h265=mp4
 REM 
-IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
-	echo !DATE! !TIME! >> "!vrdlog!" 2>&1
-	set "qsf_profile=!profile_name_for_qsf_h264!"
-	set "qsf_extension=!extension_h264!"
-) ELSE IF /I "!SRC_calc_Video_Encoding!" == "MPEG2" (
-	echo !DATE! !TIME! >> "!vrdlog!" 2>&1
-	set "qsf_profile=!profile_name_for_qsf_mpeg2!"
-	set "qsf_extension=!extension_mpeg2!"
-) ELSE (
-	echo !DATE! !TIME! "ERROR: mediainfo format '!SRC_calc_Video_Encoding!' neither "AVC" nor "MPEG2" for ???filename??? " >> "!vrdlog!" 2>&1
-	echo !DATE! !TIME! "Hard Aborting ..." >> "!vrdlog!" 2>&1
-	!xPAUSE!
-	EXIT
-)
-REM
 IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 	echo !DATE! !TIME! >> "!vrdlog!" 2>&1
 ) ELSE IF /I "!SRC_calc_Video_Interlacement!" == "INTERLACED" (
@@ -520,6 +505,21 @@ IF /I "!SRC_calc_Video_FieldFirst!" == "TFF" (
 	EXIT
 )
 REM
+
+IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
+	echo !DATE! !TIME! >> "!vrdlog!" 2>&1
+	set "qsf_profile=!profile_name_for_qsf_h264!"
+	set "qsf_extension=!extension_h264!"
+) ELSE IF /I "!SRC_calc_Video_Encoding!" == "MPEG2" (
+	echo !DATE! !TIME! >> "!vrdlog!" 2>&1
+	set "qsf_profile=!profile_name_for_qsf_mpeg2!"
+	set "qsf_extension=!extension_mpeg2!"
+) ELSE (
+	echo !DATE! !TIME! "ERROR: mediainfo format '!SRC_calc_Video_Encoding!' neither "AVC" nor "MPEG2" for ???filename??? " >> "!vrdlog!" 2>&1
+	echo !DATE! !TIME! "Hard Aborting ..." >> "!vrdlog!" 2>&1
+	!xPAUSE!
+	EXIT
+)
 echo "SRC_calc_Video_Encoding=!SRC_calc_Video_Encoding!" >> "!vrdlog!" 2>&1
 echo "SRC_calc_Video_Interlacement=!SRC_calc_Video_Interlacement!" >> "!vrdlog!" 2>&1
 echo "SRC_calc_Video_FieldFirst=!SRC_calc_Video_FieldFirst!" >> "!vrdlog!" 2>&1
@@ -527,7 +527,6 @@ echo "_vrd_version_primary=!_vrd_version_primary!" >> "!vrdlog!" 2>&1
 echo "_vrd_version_fallback=!_vrd_version_fallback!" >> "!vrdlog!" 2>&1
 echo "qsf_profile=!qsf_profile!" >> "!vrdlog!" 2>&1
 echo "qsf_extension=!qsf_extension!" >> "!vrdlog!" 2>&1
-
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Start QSF of file: "%~f1" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Input: Video Codec: '!SRC_FF_V_codec_name!' ScanType: '!SRC_calc_Video_Interlacement!' ScanOrder: '!SRC_calc_Video_FieldFirst!' WxH: !SRC_MI_V_Width!x!SRC_MI_V_HEIGHT! dar:'!SRC_FF_V_display_aspect_ratio_slash!' and '!SRC_MI_V_DisplayAspectRatio_String_slash!' >> "!vrdlog!" 2>&1
@@ -559,15 +558,42 @@ cscript //nologo "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_pr
 SET EL=!ERRORLEVEL!
 IF /I "!EL!" NEQ "0" (
 	REM OK, instead of aborting on the first QSF try, just fallback to the other VRD Version and try that
-	ECHO !DATE! !TIME! *********  QSF Error !EL! returned from PRIMARY QSF version !_vrd_version_fallback!', attempting to use FALLBACK QSF version !_vrd_version_fallback!' >> "%vrdlog%" 2>&1
+	ECHO !DATE! !TIME! *********  QSF Error !EL! returned from PRIMARY QSF version !_vrd_version_primary!', attempting to use FALLBACK QSF version '!_vrd_version_fallback!' >> "%vrdlog%" 2>&1
    	REM Reset VRD to fallback and try that
-	set "tmp_vrd_version_fallback=!_vrd_version_fallback!"
-	call :set_vrd_qsf_paths "!tmp_vrd_version_fallback!"
+
+	echo "FALLBACK: before verson change ..." >> "%vrdlog%" 2>&1
+	echo set _vrd >> "%vrdlog%" 2>&1
+	set _vrd >> "%vrdlog%" 2>&1
+	set qsf_profile >> "%vrdlog%" 2>&1
+	echo set qsf_profile >> "%vrdlog%" 2>&1
+	set "tmp_vrd_version_fallback=!_vrd_version_fallback!" >> "%vrdlog%" 2>&1
+	call :set_vrd_qsf_paths "!tmp_vrd_version_fallback!" >> "%vrdlog%" 2>&1
+
+	echo "FALLBACK: after verson change ..."
+	IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
+		echo !DATE! !TIME! >> "!vrdlog!" 2>&1
+		set "qsf_profile=!profile_name_for_qsf_h264!"
+		set "qsf_extension=!extension_h264!"
+	) ELSE IF /I "!SRC_calc_Video_Encoding!" == "MPEG2" (
+		echo !DATE! !TIME! >> "!vrdlog!" 2>&1
+		set "qsf_profile=!profile_name_for_qsf_mpeg2!"
+		set "qsf_extension=!extension_mpeg2!"
+	) ELSE (
+		echo !DATE! !TIME! "ERROR: mediainfo format '!SRC_calc_Video_Encoding!' neither "AVC" nor "MPEG2" for ???filename??? " >> "!vrdlog!" 2>&1
+		echo !DATE! !TIME! "Hard Aborting ..." >> "!vrdlog!" 2>&1
+		!xPAUSE!
+		EXIT
+	)
+	echo set _vrd >> "%vrdlog%" 2>&1
+	set _vrd >> "%vrdlog%" 2>&1
+	set qsf_profile >> "%vrdlog%" 2>&1
+	echo set qsf_profile >> "%vrdlog%" 2>&1
+
 	echo cscript //nologo "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
 	cscript //nologo "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
 	SET EL=!ERRORLEVEL!
 )
-REM Reset VRD to defaults
+REM Reset VRD back to defaults
 call :set_vrd_qsf_paths "!DEFAULT_vrd_version_primary!"
 REM
 IF /I "!EL!" NEQ "0" (
