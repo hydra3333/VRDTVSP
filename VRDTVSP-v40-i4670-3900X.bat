@@ -130,8 +130,8 @@ REM --------- setup LOG file and TEMP filenames ----------------------------
 REM --------- setup vrd paths filenames ----------------------------
 REM set the primary and fallback version of VRD to use for QSF
 REM The QSF fallback process uses these next 2 variables to set/reset which version use when, via "call :set_vrd_qsf_paths NUMBER"
-set "DEFAULT_vrd_version_primary=6"
-set "DEFAULT_vrd_version_fallback=5"
+set "DEFAULT_vrd_version_primary=5"
+set "DEFAULT_vrd_version_fallback=6"
 call :set_vrd_qsf_paths "!DEFAULT_vrd_version_primary!"
 REM
 echo set DEFAULT_vrd_ >> "%vrdlog%" 2>&1
@@ -566,9 +566,9 @@ REM ECHO TYPE "!&tempfile_stderr!" >> "!vrdlog!" 2>&1
 REM TYPE "!&tempfile_stderr!" >> "!vrdlog!" 2>&1
 
 REM cscript uses _vrd_qsf_timeout_seconds https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/cscript
-echo cscript timeout is 1 seconds ..." >> "!vrdlog!" 2>&1
-echo cscript //nologo /t:1 "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
-cscript //nologo /t:1 "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
+echo QSF cscript timeout is !_vrd_qsf_timeout_seconds! seconds ..." >> "!vrdlog!" 2>&1
+echo cscript //nologo /t:!_vrd_qsf_timeout_seconds! "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
+cscript //nologo /t:!_vrd_qsf_timeout_seconds! "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
 SET EL=!ERRORLEVEL!
 set "check_qsf_failed="
 IF /I "!EL!" NEQ "0" (
@@ -625,8 +625,9 @@ IF /I NOT "check_qsf_failed" == "" (
 	echo set qsf_profile >> "%vrdlog%" 2>&1
 	set qsf_profile >> "%vrdlog%" 2>&1
 	REM
-	echo cscript //nologo /t:1 "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
-	cscript //nologo /t:1 "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
+	echo QSF cscript timeout is !_vrd_qsf_timeout_seconds! seconds ..." >> "!vrdlog!" 2>&1
+	echo cscript //nologo /t:!_vrd_qsf_timeout_seconds! "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
+	cscript //nologo /t:!_vrd_qsf_timeout_seconds! "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_profile!" "!temp_cmd_file!" "!qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
 	SET EL=!ERRORLEVEL!
 	set "check_qsf_failed="
 	IF /I "!EL!" NEQ "0" (
@@ -1698,10 +1699,10 @@ set "profile_name_for_qsf_h265_vrd6=VRDTVS-for-QSF-H265_VRD6"
 set "profile_name_for_qsf_h265_vrd5=VRDTVS-for-QSF-H265_VRD5"
 
 REM qsf timeout in minutes  (VRD v6 takes 4 hours for a large 10Gb footy file); allow extra 10 secs for cscript timeout for vrd to finish
-set "qsf_timeout_minutes_VRD5=15"
-set /a qsf_timeout_seconds_VRD5=(!qsf_timeout_minutes_VRD5! * 60) + 10
 set "qsf_timeout_minutes_VRD6=240"
 set /a qsf_timeout_seconds_VRD6=(!qsf_timeout_minutes_VRD6! * 60) + 10
+set "qsf_timeout_minutes_VRD5=15"
+set /a qsf_timeout_seconds_VRD5=(!qsf_timeout_minutes_VRD5! * 60) + 10
 
 REM --------- ensure "\" at end of VRD paths
 if /I NOT "!Path_to_vrd6:~-1!" == "\" (set "Path_to_vrd6=!Path_to_vrd6!\")
@@ -1736,7 +1737,7 @@ IF /I "!requested_vrd_version!" == "6" (
    set "_vrd_version_primary=5"
    set "_vrd_version_fallback=6"
    set "_vrd_qsf_timeout_minutes=!qsf_timeout_minutes_VRD5!"
-   set "_vrd_qsf_timeout_seconds=!qsf_timeout_seconds_VRD6!"
+   set "_vrd_qsf_timeout_seconds=!qsf_timeout_seconds_VRD5!"
 ) ELSE (
    ECHO "VRD Version must be set to 5 or 6 not '!requested_vrd_version!' (_vrd_version_primary=!_vrd_version_primary! _vrd_version_fallback=!_vrd_version_fallback!)... EXITING" >> "!vrdlog!" 2>&1
    !xPAUSE!
