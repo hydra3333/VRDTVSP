@@ -1106,7 +1106,7 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	REM for Progressive AVC just copy video stream and transcode audio stream
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! ********** Is Progressive-AVC ... just copy streams >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! ********** Is Progressive-AVC ... just copy streams and transcode audio >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	REM ffmpeg throws an error due to "-c:v copy" and this together: -vf "setdar="!QSF_MI_V_DisplayAspectRatio_String_slash!"
 	REM ffmpeg throws an error due to "-c:v copy" and this together: -profile:v high -level 5.2 
@@ -1132,9 +1132,9 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 		goto :eof
 	)
 ) ELSE (
-	REM for [MPEG2 PROGRESSIVE] [MPEG2 INTERLACED] [AVC INTERLACED] transcode video and transcode audio stream
+	REM for [AVC INTERLACED] [MPEG2 PROGRESSIVE] [MPEG2 INTERLACED] transcode video and transcode audio stream
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! ********** Is NOT Progressive-AVC ... use ffmpeg and a .vpy to transcode video and audio >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! ********** Is NOT Progressive-AVC ... use ffmpeg and a .vpy to transcode video and transcode audio >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	set "FFMPEG_vspipe_cmd="!vspipeexe64!" --container y4m --filter-time "!VPY_file!" - "
 	set "FFMPEG_cmd="!ffmpegexe64!""
@@ -1167,16 +1167,6 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	REM
 )
 
-
-REM ??? here check for existence of the target file and "!Target_File!" fail
-
-
-
-REM remove junk files leftover from QSF and transcode
-
-REM ????????? delete the QSF file, VPY file, DGI file, DGI log
-
-
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ECHO DEL /F !scratch_Folder!*.tmp >> "!vrdlog!" 2>&1
 DEL /F !scratch_Folder!*.tmp >> "!vrdlog!" 2>&1
@@ -1186,6 +1176,8 @@ ECHO DEL /F "!VPY_file!" >> "!vrdlog!" 2>&1
 DEL /F "!VPY_file!" >> "!vrdlog!" 2>&1
 ECHO DEL /F "!DGI_file!" >> "!vrdlog!" 2>&1
 DEL /F "!DGI_file!" >> "!vrdlog!" 2>&1
+ECHO DEL /F "!DGI_autolog!" >> "%vrdlog%" 2>&1
+DEL /F "!DGI_autolog!" >> "%vrdlog%" 2>&1
 goto :eof
 
 
