@@ -723,7 +723,7 @@ IF /I "!QSF_calc_Video_Encoding!" == "AVC" (
 	ECHO !DATE! !TIME! "AVC"         FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BufSize! >> "!vrdlog!" 2>&1
 ) ELSE IF /I "!QSF_calc_Video_Encoding!" == "MPEG2" (
 	IF /I "%~x1" == ".MPG" (
-		set /a "FFMPEG_V_Target_BitRate=4000000"
+		set /a "FFMPEG_V_Target_BitRate=3500000"
 		set /a "FFMPEG_V_Target_Minimum_BitRate=100000"
 		set /a "FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_BitRate! * 2"
 		set /a "FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BitRate! * 2"
@@ -757,10 +757,6 @@ IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 ) ELSE IF /I "!QSF_calc_Video_Interlacement!" == "INTERLACED" (
 	REM set for normal single framerate deinterlace
 	set "FFMPEG_V_dg_deinterlace=1"
-	set /a "FFMPEG_V_Target_BitRate=4000000"
-	set /a "FFMPEG_V_Target_Minimum_BitRate=100000"
-	set /a "FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_BitRate! * 2"
-	set /a "FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BitRate! * 2"
 ) ELSE (
 	ECHO !DATE! !TIME! ERROR: UNKNOWN QSF_calc_Video_Interlacement="!QSF_calc_Video_Interlacement!" to base transcode calculations on. >> "!vrdlog!" 2>&1
 	exit 1
@@ -890,6 +886,10 @@ ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 echo set extra_ >> "!vrdlog!" 2>&1
 set extra_ >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+
+
+
+
 
 
 
