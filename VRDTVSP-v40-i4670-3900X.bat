@@ -484,6 +484,7 @@ REM %~nx1  -  expands %1 to a file name and extension only
 CALL :get_date_time_String "start_date_time_QSF"
 
 set "file_name_part=%~n1"
+set "check_QSF_failed="
 
 REM dispose of a LOT of variables, some of whih are large
 CALL :clear_variables
@@ -520,10 +521,16 @@ IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 ) ELSE IF /I "!SRC_calc_Video_Interlacement!" == "INTERLACED" (
 	echo !DATE! !TIME! >> "!vrdlog!" 2>&1
 ) ELSE (
-	echo !DATE! !TIME! ERROR: mediainfo/ffmpeg data !SRC_calc_Video_Interlacement! yields neither PROGRESSIVE nor INTERLACED for "%~f1" >> "!vrdlog!" 2>&1
-	echo !DATE! !TIME! Hard Aborting ... >> "!vrdlog!" 2>&1
-	!xPAUSE!
-	EXIT
+	set "check_QSF_failed=ERROR: mediainfo/ffmpeg data '!SRC_calc_Video_Interlacement!' yields neither PROGRESSIVE nor INTERLACED for '%~f1'"
+	echo !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! *********  Declaring FAILED:  "%~f1" >> "%vrdlog%" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	CALL :declare_FAILED "%~f1"
+	CALL :get_date_time_String "end_date_time_QSF"
+	REM echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
+	"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
+	goto :eof
 )
 REM
 IF /I "!SRC_calc_Video_FieldFirst!" == "TFF" (
@@ -531,25 +538,36 @@ IF /I "!SRC_calc_Video_FieldFirst!" == "TFF" (
 ) ELSE IF /I "!SRC_calc_Video_FieldFirst!" == "BFF" (
 	echo !DATE! !TIME! >> "!vrdlog!" 2>&1
 ) ELSE (
-	echo !DATE! !TIME! ERROR: mediainfo/ffmpeg processing !SRC_calc_Video_FieldFirst! yields neither 'TFF' nor 'BFF' field-first ,default='TFF', for "%~f1" >> "!vrdlog!" 2>&1
-	echo !DATE! !TIME! Hard Aborting ... >> "!vrdlog!" 2>&1
-	!xPAUSE!
-	EXIT
+	set "check_QSF_failed=ERROR: mediainfo/ffmpeg processing '!SRC_calc_Video_FieldFirst!' yields neither 'TFF' nor 'BFF' field-first ,default='TFF', for '%~f1'"
+	echo !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! *********  Declaring FAILED:  "%~f1" >> "%vrdlog%" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	CALL :declare_FAILED "%~f1"
+	CALL :get_date_time_String "end_date_time_QSF"
+	REM echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
+	"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
+	goto :eof
 )
-
-REM =======================================================================================================================================================================================
+REM
 IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
 	set "qsf_extension=!extension_h264!"
 ) ELSE IF /I "!SRC_calc_Video_Encoding!" == "MPEG2" (
 	set "qsf_extension=!extension_mpeg2!"
 ) ELSE (
-	set "check_QSF_failed********* ERROR: mediainfo format !SRC_calc_Video_Encoding! neither 'AVC' nor 'MPEG2' for !source_filename!"
+	set "check_QSF_failed=ERROR: mediainfo format !SRC_calc_Video_Encoding! neither 'AVC' nor 'MPEG2' for '%~f1'"
 	echo !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! *********  Declaring as FAILED: "%~f1" >> "%vrdlog%" 2>&1
+	ECHO !DATE! !TIME! *********  Declaring FAILED:  "%~f1" >> "%vrdlog%" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	exit 1
+	CALL :declare_FAILED "%~f1"
+	CALL :get_date_time_String "end_date_time_QSF"
+	REM echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
+	"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
+	goto :eof
 )
+REM
+
 set "qsf_xml_prefix=QSFinfo_"
 set "QSF_File=!scratch_Folder!%~n1.qsf.!qsf_extension!"
 REM Input Parameters to :run_cscript_qsf_with_timeout
@@ -565,7 +583,6 @@ REM		SRC_ variables
 REM		calculated variables SRC_calc_
 REM 	Fudged "!SRC_MI_V_BitRate!"
 REM 	temp_cmd_file
-set "check_QSF_failed="
 echo CALL :run_cscript_qsf_with_timeout "!DEFAULT_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_xml_prefix!" >> "%vrdlog%" 2>&1
 CALL :run_cscript_qsf_with_timeout "!DEFAULT_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_xml_prefix!"
 IF /I NOT "!check_QSF_failed!" == "" (
@@ -612,28 +629,28 @@ ECHO !DATE! !TIME! _vrd_version_primary='!_vrd_version_primary!' _vrd_version_fa
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 
 IF /I NOT "!SRC_calc_Video_Encoding!" == "!QSF_calc_Video_Encoding!" (
-	ECHO "ERROR - incoming SRC_calc_Video_Encoding '!SRC_calc_Video_Encoding!' NOT EQUAL QSF_calc_Video_Encoding '!QSF_calc_Video_Encoding!'" >> "!vrdlog!" 2>&1
+	ECHO ERROR - incoming SRC_calc_Video_Encoding '!SRC_calc_Video_Encoding!' NOT EQUAL QSF_calc_Video_Encoding '!QSF_calc_Video_Encoding!' >> "!vrdlog!" 2>&1
 	ECHO SRC file="%~f1" >> "!vrdlog!" 2>&1
 	ECHO QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
 	!xPAUSE!
 	exit 1
 )
 IF /I NOT "!SRC_FF_V_codec_name!" == "!QSF_FF_V_codec_name!" (
-	ECHO "ERROR - incoming SRC_FF_V_codec_name '!SRC_FF_V_codec_name!' NOT EQUAL QSF_FF_V_codec_name '!QSF_FF_V_codec_name!'" >> "!vrdlog!" 2>&1
+	ECHO ERROR - incoming SRC_FF_V_codec_name '!SRC_FF_V_codec_name!' NOT EQUAL QSF_FF_V_codec_name '!QSF_FF_V_codec_name!' >> "!vrdlog!" 2>&1
 	ECHO SRC file="%~f1" >> "!vrdlog!" 2>&1
 	ECHO QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
 	!xPAUSE!
 	exit 1
 )
 IF /I NOT "!SRC_calc_Video_Interlacement!" == "!QSF_calc_Video_Interlacement!" (
-	ECHO "ERROR - incoming SRC_calc_Video_Interlacement '!SRC_calc_Video_Interlacement!' NOT EQUAL QSF_calc_Video_Interlacement '!QSF_calc_Video_Interlacement!'" >> "!vrdlog!" 2>&1
+	ECHO ERROR - incoming SRC_calc_Video_Interlacement '!SRC_calc_Video_Interlacement!' NOT EQUAL QSF_calc_Video_Interlacement '!QSF_calc_Video_Interlacement!' >> "!vrdlog!" 2>&1
 	ECHO SRC file="%~f1" >> "!vrdlog!" 2>&1
 	ECHO QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
 	!xPAUSE!
 	exit 1
 )
 IF /I NOT "!SRC_calc_Video_FieldFirst!" == "!QSF_calc_Video_FieldFirst!" (
-	ECHO "ERROR - incoming SRC_calc_Video_FieldFirst '!SRC_calc_Video_FieldFirst!' NOT EQUAL QSF_calc_Video_FieldFirst '!QSF_calc_Video_FieldFirst!'" >> "!vrdlog!" 2>&1
+	ECHO ERROR - incoming SRC_calc_Video_FieldFirst '!SRC_calc_Video_FieldFirst!' NOT EQUAL QSF_calc_Video_FieldFirst '!QSF_calc_Video_FieldFirst!' >> "!vrdlog!" 2>&1
 	ECHO SRC file="%~f1" >> "!vrdlog!" 2>&1
 	ECHO QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
 	!xPAUSE!
@@ -818,7 +835,7 @@ IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
 	)
 	set "FFMPEG_V_final_cq_options=!FFMPEG_V_PROPOSED_x_cq_options!"
 )
-ECHO !DATE! !TIME! "Final FFMPEG_V_final_cq_options=!FFMPEG_V_final_cq_options!" >> "%vrdlog%" 2>&1
+ECHO !DATE! !TIME! Final FFMPEG_V_final_cq_options='!FFMPEG_V_final_cq_options!' >> "%vrdlog%" 2>&1
 
 IF /I "%COMPUTERNAME%" == "3900X" (
 	REM		' -dpb_size 0		means automatic (default)
