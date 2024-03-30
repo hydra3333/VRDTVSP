@@ -984,7 +984,7 @@ IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 			set "FFMPEG_V_dg_vpy_dsharpen=", sh_enable=1, sh_strength=0.3"
 			set "FFMPEG_V_G=50"
 		)
-	) ELSE
+	) ELSE (
 		REM UNKNOWN, assume Progressive MPEG2
 		set "FFMPEG_V_dg_deinterlace=0"
 		set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
@@ -995,7 +995,6 @@ IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 			set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
 			set "FFMPEG_V_dg_vpy_dsharpen=", sh_enable=1, sh_strength=0.3"
 			set "FFMPEG_V_G=50"
-			)
 		)
 	)
 ) ELSE IF /I "!QSF_calc_Video_Interlacement!" == "INTERLACED" (
@@ -1023,7 +1022,7 @@ IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 			set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.3"
 			set "FFMPEG_V_G=50"
 		)
-	) ELSE
+	) ELSE (
 		REM UNKNOWN, assume Interlaced MPEG2
 		set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
 		set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.3"
@@ -1049,6 +1048,8 @@ IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 		)
 	)
 )
+
+pause
 
 REM ======================================================  Do the DGIndexNV ======================================================
 RE re-use error checking variable check_QSF_failed even though we are not doing a QSF
@@ -1102,6 +1103,8 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	TYPE "!VPY_file!" >> "%vrdlog%" 2>&1
 	ECHO ======================================================  Finish Create a VPY_file ====================================================== >> "!vrdlog!" 2>&1
 )
+
+pause
 
 IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	REM for Progressive AVC just copy video stream and transcode audio stream
@@ -1167,6 +1170,10 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	REM
 )
 
+
+pause
+
+
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ECHO DEL /F !scratch_Folder!*.tmp >> "!vrdlog!" 2>&1
 DEL /F !scratch_Folder!*.tmp >> "!vrdlog!" 2>&1
@@ -1178,6 +1185,11 @@ ECHO DEL /F "!DGI_file!" >> "!vrdlog!" 2>&1
 DEL /F "!DGI_file!" >> "!vrdlog!" 2>&1
 ECHO DEL /F "!DGI_autolog!" >> "%vrdlog%" 2>&1
 DEL /F "!DGI_autolog!" >> "%vrdlog%" 2>&1
+
+
+pause
+
+
 goto :eof
 
 
