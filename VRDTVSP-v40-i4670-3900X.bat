@@ -1036,23 +1036,20 @@ IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 		)
 	)
 )
-
-pause
-
 REM ======================================================  Do the DGIndexNV ======================================================
 RE re-use error checking variable check_QSF_failed even though we are not doing a QSF
 IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! DGIndexNV is NOT performed for Progressive-AVC where we just copy streams >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-) ELSE
+) ELSE (
 	ECHO ======================================================  Start the DGIndexNV ====================================================== >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	ECHO !dgindexNVexe64! -version >> "!vrdlog!" 2>&1
 	!dgindexNVexe64! -version  >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	ECHO !dgindexNVexe64! -i "!QSF_File! -e -h -o "!DGI_file!" >> "!vrdlog!" 2>&1
-	!dgindexNVexe64! -i "!QSF_File! -e -h -o "!DGI_file!" >> "!vrdlog!" 2>&1
+	ECHO !dgindexNVexe64! -i "!QSF_File!" -e -h -o "!DGI_file!" >> "!vrdlog!" 2>&1
+	!dgindexNVexe64! -i "!QSF_File!" -e -h -o "!DGI_file!" >> "!vrdlog!" 2>&1
 	SET EL=!ERRORLEVEL!
 	IF /I "!EL!" NEQ "0" (
 		set "check_QSF_failed=********** ERROR: Error Number '!EL!' returned from '!dgindexNVexe64!'"
@@ -1065,6 +1062,7 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 		CALL :declare_FAILED "%~f1"
 		goto :eof
 	)
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	ECHO TYPE "!DGI_autolog!" >> "%vrdlog%" 2>&1
 	TYPE "!DGI_autolog!" >> "%vrdlog%" 2>&1
 	ECHO DEL /F "!DGI_autolog!" >> "%vrdlog%" 2>&1
@@ -1091,9 +1089,6 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	TYPE "!VPY_file!" >> "%vrdlog%" 2>&1
 	ECHO ======================================================  Finish Create a VPY_file ====================================================== >> "!vrdlog!" 2>&1
 )
-
-pause
-
 IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	REM for Progressive AVC just copy video stream and transcode audio stream
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
@@ -1157,10 +1152,6 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
  	!FFMPEG_vspipe_cmd! | !FFMPEG_cmd! >> "%vrdlog%" 2>&1
 	REM
 )
-
-
-pause
-
 
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ECHO DEL /F !scratch_Folder!*.tmp >> "!vrdlog!" 2>&1
