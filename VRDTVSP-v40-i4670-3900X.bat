@@ -271,14 +271,14 @@ REM "!mediainfoexe64!"  --Legacy --Info-Parameters  >> "%vrdlog%" 2>&1
 REM ECHO !DATE! !TIME! ---------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
 REM ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
 
-REM ***** PREVENT PC FROM GOING TO SLEEP *****
+REM ********** PREVENT PC FROM GOING TO SLEEP **********
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
 set iFile=Insomnia-!header!.exe
 ECHO copy "C:\SOFTWARE\Insomnia\32-bit\Insomnia.exe" "!source_TS_Folder!!iFile!" >> "!vrdlog!" 2>&1
 copy "C:\SOFTWARE\Insomnia\32-bit\Insomnia.exe" "!source_TS_Folder!!iFile!" >> "!vrdlog!" 2>&1
 start /min "!iFile!" "!source_TS_Folder!!iFile!"
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
-REM ***** PREVENT PC FROM GOING TO SLEEP *****
+REM ********** PREVENT PC FROM GOING TO SLEEP **********
 
 REM --------- Swap to source folder and save old folder using PUSHD ---------
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
@@ -291,9 +291,9 @@ REM --------- Swap to source folder and save old folder using PUSHD ---------
 
 REM --------- Start move .TS .MP4 .MPG .VOB files from capture folder to source folder
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
 ECHO --------- Start move .TS .MP4 .MPG .VOB files from capture folder "!capture_TS_folder!" to "!source_TS_Folder!" --------- >> "!vrdlog!" 2>&1
 CALL :get_date_time_String "start_date_time"
 ECHO MOVE /Y "!capture_TS_folder!*.TS" "!source_TS_Folder!" >> "!vrdlog!" 2>&1
@@ -308,17 +308,17 @@ CALL :get_date_time_String "end_date_time"
 REM echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "MoveFiles" >> "!vrdlog!" 2>&1
 "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "MoveFiles" >> "!vrdlog!" 2>&1
 ECHO --------- End   move .TS .MP4 .MPG .VOB files from capture folder "!capture_TS_folder!" to "!source_TS_Folder!" --------- >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
 REM --------- End move .TS .MP4 .MPG .VOB files from capture folder to source folder
 
 REM --------- Start Run the py to modify the filenames to enforce validity  i.e. no special characters ---------
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
 REM GRRR - sometimes left and right parentheses etc are seem in filenames of the media files ... 
 REM Check if filenames are a "safe string" without special characters like !~`!@#$%^&*()+=[]{}\|:;'"<>,?/
 REM If a filename isn't "safe" then rename it so it really is safe
@@ -336,17 +336,17 @@ echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!sta
 "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles !the_folder!" >> "!vrdlog!" 2>&1
 REM
 CALL :get_date_time_String "loop_start_date_time"
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
 REM --------- End Run the py to modify the filenames to enforce validity  i.e. no special characters ---------
 
 :before_main_loop
 REM --------- Start Loop through the SOURCE files ---------
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
 CALL :get_date_time_String "loop_start_date_time"
 for %%f in ("!source_TS_Folder!*.TS", "!source_TS_Folder!*.MPG", "!source_TS_Folder!*.MP4", "!source_TS_Folder!*.VOB") do (
 	CALL :get_date_time_String "iloop_start_date_time"
@@ -362,17 +362,17 @@ for %%f in ("!source_TS_Folder!*.TS", "!source_TS_Folder!*.MPG", "!source_TS_Fol
 CALL :get_date_time_String "loop_end_date_time"
 echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!loop_start_date_time!" --end_datetime "!loop_end_date_time!" --prefix_id "Loop_Processing_Files" >> "!vrdlog!" 2>&1
 "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!loop_start_date_time!" --end_datetime "!loop_end_date_time!" --prefix_id "Loop_Processing_Files" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
 REM --------- End Loop through the SOURCE files ---------
 :after_main_loop
 
 REM --------- Start Run the py to modify the filenames to enforce validity  i.e. no special characters ---------
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
 REM GRRR - sometimes left and right parentheses etc are seem in filenames of the media files ... 
 REM Check if filenames are a "safe string" without special characters like !~`!@#$%^&*()+=[]{}\|:;'"<>,?/
 REM If a filename isn't "safe" then rename it so it really is safe
@@ -390,19 +390,19 @@ echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!sta
 "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles !the_folder!" >> "!vrdlog!" 2>&1
 REM
 CALL :get_date_time_String "loop_start_date_time"
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
 REM --------- End Run the py to modify the filenames to enforce validity  i.e. no special characters ---------
 
 
 REM --------- Start Run the py to modify the filename timestamps filenames based on the date in the filename eg 2020-06-03 ---------
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! --- START Modify DateCreated and DateModified Timestamps on "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
 
 echo DEBUG: BEFORE:  >> "!vrdlog!" 2>&1
@@ -424,20 +424,20 @@ CALL :get_date_time_String "end_date_time"
 REM echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "ReTimestamp" >> "!vrdlog!" 2>&1
 "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "ReTimestamp" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! --- END Modify DateCreated and DateModified Timestamps on "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ***** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
 REM --------- End Run the py to modify the filename timestamps filenames based on the date in the filename eg 2020-06-03 ---------
 
-REM ***** ALLOW PC TO GO TO SLEEP AGAIN *****
+REM ********** ALLOW PC TO GO TO SLEEP AGAIN **********
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
 REM "C:\000-PStools\pskill.exe" -t -nobanner "%iFile%" >> "!vrdlog!" 2>&1
 echo taskkill /t /f /im "%iFile%" >> "!vrdlog!" 2>&1
 taskkill /t /f /im "%iFile%" >> "!vrdlog!" 2>&1
 DEL /F "!source_TS_Folder!!iFile!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
-REM ***** ALLOW PC TO GO TO SLEEP AGAIN *****
+REM ********** ALLOW PC TO GO TO SLEEP AGAIN **********
 
 REM --------- Swap back to original folder ---------
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "%vrdlog%" 2>&1
@@ -524,7 +524,7 @@ IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 	set "check_QSF_failed=ERROR: mediainfo/ffmpeg data '!SRC_calc_Video_Interlacement!' yields neither PROGRESSIVE nor INTERLACED for '%~f1'"
 	echo !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! *********  Declaring FAILED:  "%~f1" >> "%vrdlog%" 2>&1
+	ECHO !DATE! !TIME! **********  Declaring FAILED:  "%~f1" >> "%vrdlog%" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	CALL :declare_FAILED "%~f1"
 	CALL :get_date_time_String "end_date_time_QSF"
@@ -541,7 +541,7 @@ IF /I "!SRC_calc_Video_FieldFirst!" == "TFF" (
 	set "check_QSF_failed=ERROR: mediainfo/ffmpeg processing '!SRC_calc_Video_FieldFirst!' yields neither 'TFF' nor 'BFF' field-first ,default='TFF', for '%~f1'"
 	echo !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! *********  Declaring FAILED:  "%~f1" >> "%vrdlog%" 2>&1
+	ECHO !DATE! !TIME! **********  Declaring FAILED:  "%~f1" >> "%vrdlog%" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	CALL :declare_FAILED "%~f1"
 	CALL :get_date_time_String "end_date_time_QSF"
@@ -558,7 +558,7 @@ IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
 	set "check_QSF_failed=ERROR: mediainfo format !SRC_calc_Video_Encoding! neither 'AVC' nor 'MPEG2' for '%~f1'"
 	echo !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! *********  Declaring FAILED:  "%~f1" >> "%vrdlog%" 2>&1
+	ECHO !DATE! !TIME! **********  Declaring FAILED:  "%~f1" >> "%vrdlog%" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	CALL :declare_FAILED "%~f1"
 	CALL :get_date_time_String "end_date_time_QSF"
@@ -592,7 +592,7 @@ IF /I NOT "!check_QSF_failed!" == "" (
 	CALL :run_cscript_qsf_with_timeout "!DEFAULT_vrd_version_fallback!" "%~f1" "!QSF_File!" "!qsf_xml_prefix!"
 	IF /I NOT "!check_QSF_failed!" == "" (
 		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-		ECHO !DATE! !TIME! *********  Declaring FAILED:  "%~f1" >> "%vrdlog%" 2>&1
+		ECHO !DATE! !TIME! **********  Declaring FAILED:  "%~f1" >> "%vrdlog%" 2>&1
 		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 		CALL :declare_FAILED "%~f1"
 		CALL :get_date_time_String "end_date_time_QSF"
@@ -629,32 +629,60 @@ ECHO !DATE! !TIME! _vrd_version_primary='!_vrd_version_primary!' _vrd_version_fa
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 
 IF /I NOT "!SRC_calc_Video_Encoding!" == "!QSF_calc_Video_Encoding!" (
-	ECHO ERROR - incoming SRC_calc_Video_Encoding '!SRC_calc_Video_Encoding!' NOT EQUAL QSF_calc_Video_Encoding '!QSF_calc_Video_Encoding!' >> "!vrdlog!" 2>&1
-	ECHO SRC file="%~f1" >> "!vrdlog!" 2>&1
-	ECHO QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
-	!xPAUSE!
-	exit 1
+	set "check_QSF_failed=ERROR - incoming SRC_calc_Video_Encoding '!SRC_calc_Video_Encoding!' NOT EQUAL QSF_calc_Video_Encoding '!QSF_calc_Video_Encoding!' for '%~f1'"
+	echo !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! SRC file="%~f1" >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! **********  Declaring FAILED:  "%~f1" >> "%vrdlog%" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	CALL :declare_FAILED "%~f1"
+	CALL :get_date_time_String "end_date_time_QSF"
+	REM echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
+	"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
+	goto :eof
 )
 IF /I NOT "!SRC_FF_V_codec_name!" == "!QSF_FF_V_codec_name!" (
-	ECHO ERROR - incoming SRC_FF_V_codec_name '!SRC_FF_V_codec_name!' NOT EQUAL QSF_FF_V_codec_name '!QSF_FF_V_codec_name!' >> "!vrdlog!" 2>&1
-	ECHO SRC file="%~f1" >> "!vrdlog!" 2>&1
-	ECHO QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
-	!xPAUSE!
-	exit 1
+	set "check_QSF_failed=ERROR - incoming SRC_FF_V_codec_name '!SRC_FF_V_codec_name!' NOT EQUAL QSF_FF_V_codec_name '!QSF_FF_V_codec_name!' for '%~f1'"
+	echo !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! SRC file="%~f1" >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! **********  Declaring FAILED:  "%~f1" >> "%vrdlog%" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	CALL :declare_FAILED "%~f1"
+	CALL :get_date_time_String "end_date_time_QSF"
+	REM echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
+	"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
+	goto :eof
 )
 IF /I NOT "!SRC_calc_Video_Interlacement!" == "!QSF_calc_Video_Interlacement!" (
-	ECHO ERROR - incoming SRC_calc_Video_Interlacement '!SRC_calc_Video_Interlacement!' NOT EQUAL QSF_calc_Video_Interlacement '!QSF_calc_Video_Interlacement!' >> "!vrdlog!" 2>&1
-	ECHO SRC file="%~f1" >> "!vrdlog!" 2>&1
-	ECHO QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
-	!xPAUSE!
-	exit 1
+	set "check_QSF_failed=ERROR - incoming SRC_calc_Video_Interlacement '!SRC_calc_Video_Interlacement!' NOT EQUAL QSF_calc_Video_Interlacement '!QSF_calc_Video_Interlacement!' for '%~f1'"
+	echo !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! SRC file="%~f1" >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! **********  Declaring FAILED:  "%~f1" >> "%vrdlog%" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	CALL :declare_FAILED "%~f1"
+	CALL :get_date_time_String "end_date_time_QSF"
+	REM echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
+	"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
+	goto :eof
 )
 IF /I NOT "!SRC_calc_Video_FieldFirst!" == "!QSF_calc_Video_FieldFirst!" (
-	ECHO ERROR - incoming SRC_calc_Video_FieldFirst '!SRC_calc_Video_FieldFirst!' NOT EQUAL QSF_calc_Video_FieldFirst '!QSF_calc_Video_FieldFirst!' >> "!vrdlog!" 2>&1
-	ECHO SRC file="%~f1" >> "!vrdlog!" 2>&1
-	ECHO QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
-	!xPAUSE!
-	exit 1
+	set "check_QSF_failed=ERROR - incoming SRC_calc_Video_FieldFirst '!SRC_calc_Video_FieldFirst!' NOT EQUAL QSF_calc_Video_FieldFirst '!QSF_calc_Video_FieldFirst!' for '%~f1'"
+	echo !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! SRC file="%~f1" >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! **********  Declaring FAILED:  "%~f1" >> "%vrdlog%" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	CALL :declare_FAILED "%~f1"
+	CALL :get_date_time_String "end_date_time_QSF"
+	REM echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
+	"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
+	goto :eof
 )
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! QSF file details: "!QSF_File!" >> "!vrdlog!" 2>&1
@@ -1017,7 +1045,7 @@ ECHO !DATE! !TIME! FF_V_Target_Maximum_BitRate=!FF_V_Target_Maximum_BitRate! >> 
 ECHO !DATE! !TIME! FF_V_Target_BufSize=!FF_V_Target_BufSize! >> "!vrdlog!" 2>&1
 REM +++++++++++++++++++++++++
 :do_loudnorm_detection
-ECHO !DATE! !TIME! ***************************** start Find Audio Loudness ***************************** >> "%vrdlog%" 2>&1
+ECHO !DATE! !TIME! ******************************** start Find Audio Loudness ******************************** >> "%vrdlog%" 2>&1
 REM
 set "loudnorm_filter="
 set "AUDIO_process="
@@ -1036,8 +1064,8 @@ ECHO !DATE! !TIME! "!ffmpegexe64!"  -nostats -nostdin -y -hide_banner -i "!scrat
 "!ffmpegexe64!"  -nostats -nostdin -y -hide_banner -i "!scratch_file_qsf!" -threads 0 -vn -af loudnorm=I=%loudnorm_I%:TP=%loudnorm_TP%:LRA=%loudnorm_LRA%:print_format=json -f null - 2> "%jsonFile%"  
 SET EL=!ERRORLEVEL!
 IF /I "!EL!" NEQ "0" (
-   ECHO !DATE! !TIME! *********  loudnorm scan Error !EL! was found >> "%vrdlog%" 2>&1
-   ECHO !DATE! !TIME! *********  ABORTING ... >> "%vrdlog%" 2>&1
+   ECHO !DATE! !TIME! **********  loudnorm scan Error !EL! was found >> "%vrdlog%" 2>&1
+   ECHO !DATE! !TIME! **********  ABORTING ... >> "%vrdlog%" 2>&1
    !xPAUSE!
    EXIT !EL!
 )
@@ -1090,7 +1118,7 @@ IF /I "%AUDIO_process%" == "loudnorm" (
    set loudnorm_filter=-af "loudnorm=I=%loudnorm_I%:TP=%loudnorm_TP%:LRA=%loudnorm_LRA%:measured_I=%loudnorm_input_i%:measured_LRA=%loudnorm_input_lra%:measured_TP=%loudnorm_input_tp%:measured_thresh=%loudnorm_input_thresh%:offset=%loudnorm_target_offset%:linear=true:print_format=summary"
    ECHO !DATE! !TIME! "loudnorm_filter=%loudnorm_filter%" >> "%vrdlog%" 2>&1
 ) ELSE (
-   ECHO !DATE! !TIME! "********* ERROR VALUES DETECTED FROM LOUDNORM - Doing UNUSUAL dynaudnorm audio normalisation instead ..." >> "%vrdlog%" 2>&1
+   ECHO !DATE! !TIME! "********** ERROR VALUES DETECTED FROM LOUDNORM - Doing UNUSUAL dynaudnorm audio normalisation instead ..." >> "%vrdlog%" 2>&1
    set loudnorm_filter=-af "dynaudnorm"
    ECHO !DATE! !TIME! "loudnorm_filter=%loudnorm_filter% (Should be dynaudnorm because loudnorm scan returned bad values)" >> "%vrdlog%" 2>&1
 )
@@ -1795,10 +1823,10 @@ IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
 	set "qsf_profile=!profile_name_for_qsf_mpeg2!"
 	set "qsf_extension=!extension_mpeg2!"
 ) ELSE (
-	set "check_QSF_failed********* ERROR: mediainfo format !SRC_calc_Video_Encoding! neither 'AVC' nor 'MPEG2' for !source_filename!"
+	set "check_QSF_failed********** ERROR: mediainfo format !SRC_calc_Video_Encoding! neither 'AVC' nor 'MPEG2' for !source_filename!"
 	echo !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! *********  Declaring as FAILED: "%~f2" >> "%vrdlog%" 2>&1
+	ECHO !DATE! !TIME! **********  Declaring as FAILED: "%~f2" >> "%vrdlog%" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	goto :eof
 )
@@ -1834,17 +1862,17 @@ echo cscript //nologo /t:!_vrd_qsf_timeout_seconds! "!Path_to_vbs_VRDTVSP_Run_QS
 cscript //nologo /t:!_vrd_qsf_timeout_seconds! "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "!source_filename!" "!qsf_filename!" "!qsf_profile!" "!temp_cmd_file!" "!requested_qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
 SET EL=!ERRORLEVEL!
 IF /I "!EL!" NEQ "0" (
-	set "check_QSF_failed=********* ERROR: QSF Error '!EL!' returned from cscript QSF"
+	set "check_QSF_failed=********** ERROR: QSF Error '!EL!' returned from cscript QSF"
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! !check_QSF_failed! >> "%vrdlog%" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ) ELSE if NOT exist "!qsf_filename!" ( 
-	set "check_QSF_failed=********* ERROR: QSF Error QSF file not created: '!qsf_filename!'"
+	set "check_QSF_failed=********** ERROR: QSF Error QSF file not created: '!qsf_filename!'"
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! !check_QSF_failed! >> "%vrdlog%" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ) ELSE if NOT exist "!temp_cmd_file!" ( 
-	set "check_QSF_failed=********* ERROR: QSF Error Temp cmd file not created: '!temp_cmd_file!'"
+	set "check_QSF_failed=********** ERROR: QSF Error Temp cmd file not created: '!temp_cmd_file!'"
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! !check_QSF_failed! >> "%vrdlog%" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
@@ -1859,7 +1887,7 @@ IF /I NOT "!check_QSF_failed!" == "" (
 	ECHO tasklist /fo list /fi "IMAGENAME eq VideoReDo*" >> "!vrdlog!" 2>&1
 	tasklist /fo list /fi "IMAGENAME eq VideoReDo*" >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! ********* FAILED:  "%~f1" >> "%vrdlog%" 2>&1
+	ECHO !DATE! !TIME! ********** FAILED:  "%~f1" >> "%vrdlog%" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	goto :eof
 )
@@ -1913,10 +1941,12 @@ REM The modifiers can be combined to get compound results:
 REM %~dp1  -  expands %1 to a drive letter and path only 
 REM %~nx1  -  expands %1 to a file name and extension only 
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ****** Moving "%~f1" to "!failed_conversion_TS_Folder!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! **********  Declaring FAILED:  "%~f1" >> "%vrdlog%" 2>&1
+ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** Moving "%~f1" to "!failed_conversion_TS_Folder!" >> "!vrdlog!" 2>&1
 ECHO MOVE /Y "%~f1" "!failed_conversion_TS_Folder!" >> "%vrdlog%" 2>&1
 MOVE /Y "%~f1" "!failed_conversion_TS_Folder!" >> "%vrdlog%" 2>&1
-REM remvove junk files leftover from QSF if it timed out or something
+REM remove junk files leftover from QSF if it timed out or something
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ECHO DEL /F !scratch_Folder!*.tmp >> "!vrdlog!" 2>&1
 DEL /F !scratch_Folder!*.tmp >> "!vrdlog!" 2>&1
@@ -2160,8 +2190,8 @@ echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_s
 "!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "!media_filename!" --prefix "!derived_prefix_FF!" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
 SET EL=!ERRORLEVEL!
 IF /I "!EL!" NEQ "0" (
-   ECHO !DATE! !TIME! *********  ffprobe "!derived_prefix_FF!" Error !EL! returned from !Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section! >> "%vrdlog%" 2>&1
-   ECHO !DATE! !TIME! *********  ABORTING ... >> "%vrdlog%" 2>&1
+   ECHO !DATE! !TIME! **********  ffprobe "!derived_prefix_FF!" Error !EL! returned from !Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section! >> "%vrdlog%" 2>&1
+   ECHO !DATE! !TIME! **********  ABORTING ... >> "%vrdlog%" 2>&1
    !xPAUSE!
    EXIT !EL!
 )
@@ -2181,8 +2211,8 @@ echo "!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in
 "!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "!media_filename!" --prefix "!derived_prefix_MI!" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
 SET EL=!ERRORLEVEL!
 IF /I "!EL!" NEQ "0" (
-   ECHO !DATE! !TIME! *********  mediainfo "!derived_prefix_MI!" Error !EL! returned from !Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section! >> "%vrdlog%" 2>&1
-   ECHO !DATE! !TIME! *********  ABORTING ... >> "%vrdlog%" 2>&1
+   ECHO !DATE! !TIME! **********  mediainfo "!derived_prefix_MI!" Error !EL! returned from !Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section! >> "%vrdlog%" 2>&1
+   ECHO !DATE! !TIME! **********  ABORTING ... >> "%vrdlog%" 2>&1
    !xPAUSE!
    EXIT !EL!
 )
