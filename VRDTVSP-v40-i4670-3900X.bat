@@ -1188,24 +1188,25 @@ ECHO EXAMPLE WHICH WORKS ELSEWHERE >> "!vrdlog!" 2>&1
 ECHO "!vspipeexe64!" --container y4m --filter-time "!VPY_file!" - -pipe- "!ffmpegexe64!" -hide_banner -v verbose -nostats -f yuv4mpegpipe -i pipe: -probesize 200M -analyzeduration 200M  -i "!QSF_File!" -map 0:v:0 -map 1:a:0 -vf "setdar=16/9" -fps_mode passthrough -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental -c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 25 -coder:v cabac -spatial-aq 1 -temporal-aq 1 -dpb_size 0 -bf:v 3 -b_ref_mode:v 0 -rc:v vbr -cq:v 0 -b:v 2163414 -minrate:v 432682 -maxrate:v 4326828 -bufsize 4326828  -profile:v high -level 5.2 -movflags +faststart+write_colr  -c:a libfdk_aac -cutoff 18000 -ab 256k -ar 48000 -y  "!Target_File!" >> "!vrdlog!" 2>&1
 "!vspipeexe64!" --container y4m --filter-time "!VPY_file!" - | "!ffmpegexe64!" -hide_banner -v verbose -nostats -f yuv4mpegpipe -i pipe: -probesize 200M -analyzeduration 200M  -i "!QSF_File!" -map 0:v:0 -map 1:a:0 -vf "setdar=16/9" -fps_mode passthrough -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental -c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 25 -coder:v cabac -spatial-aq 1 -temporal-aq 1 -dpb_size 0 -bf:v 3 -b_ref_mode:v 0 -rc:v vbr -cq:v 0 -b:v 2163414 -minrate:v 432682 -maxrate:v 4326828 -bufsize 4326828  -profile:v high -level 5.2 -movflags +faststart+write_colr  -c:a libfdk_aac -cutoff 18000 -ab 256k -ar 48000 -y  "!Target_File!" >> "!vrdlog!" 2>&1
 
+
 pause
 exit
 
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ECHO DEL /F !scratch_Folder!*.tmp >> "!vrdlog!" 2>&1
 DEL /F !scratch_Folder!*.tmp >> "!vrdlog!" 2>&1
-ECHO DEL /F "!QSF_file!" >> "!vrdlog!" 2>&1
-DEL /F "!QSF_file!" >> "!vrdlog!" 2>&1
-ECHO DEL /F "!VPY_file!" >> "!vrdlog!" 2>&1
-DEL /F "!VPY_file!" >> "!vrdlog!" 2>&1
-ECHO DEL /F "!DGI_file!" >> "!vrdlog!" 2>&1
-DEL /F "!DGI_file!" >> "!vrdlog!" 2>&1
+REM ECHO DEL /F "!QSF_file!" >> "!vrdlog!" 2>&1
+REM DEL /F "!QSF_file!" >> "!vrdlog!" 2>&1
+REM ECHO DEL /F "!VPY_file!" >> "!vrdlog!" 2>&1
+REM DEL /F "!VPY_file!" >> "!vrdlog!" 2>&1
+REM ECHO DEL /F "!DGI_file!" >> "!vrdlog!" 2>&1
+REM DEL /F "!DGI_file!" >> "!vrdlog!" 2>&1
 ECHO DEL /F "!DGI_autolog!" >> "!vrdlog!" 2>&1
 DEL /F "!DGI_autolog!" >> "!vrdlog!" 2>&1
 
 
 pause
-
+exit
 
 goto :eof
 
