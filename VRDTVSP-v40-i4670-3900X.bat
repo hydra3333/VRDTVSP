@@ -567,6 +567,11 @@ REM
 
 set "qsf_xml_prefix=QSFinfo_"
 set "QSF_File=!scratch_Folder!%~n1.qsf.!qsf_extension!"
+set "DGI_file=!scratch_Folder!%~n1.qsf.dgi"
+set "DGI_autolog=!scratch_Folder!%~n1.qsf.log"
+set "VPY_file=!scratch_Folder!%~n1.qsf.vpy"
+set "Target_File=!destination_mp4_Folder!%~n1.!qsf_extension!"
+
 REM Input Parameters to :run_cscript_qsf_with_timeout
 REM 	1	VideoReDo version number to use
 REM		2 	fully qualified filename of the SRC input (usually a .TS file)
@@ -741,8 +746,6 @@ REM $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 REM
 REM Now claculate variables used in the FFMPEG encoding qsf -> destination0mp4
 REM
-
-set "Target_File=!destination_mp4_Folder!%~n1.!qsf_extension!"
 
 IF /I "!QSF_calc_Video_Encoding!" == "AVC" (
 	REM CALCULATE H.264 TARGET BITRATES FROM THE INCOMING BITRATE
@@ -946,8 +949,6 @@ IF /I "!Footy_found!" == "True" (
 		"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
 		goto :eof
 	)
-
-
 ) ELSE (
 	echo NO Footy words found in filename '!file_name_part!', FFMPEG_V_dg_deinterlace unchanged=!FFMPEG_V_dg_deinterlace!, NO footy variables set  >> "!vrdlog!" 2>&1
 )
@@ -965,18 +966,51 @@ REM echo set extra_ >> "!vrdlog!" 2>&1
 REM set extra_ >> "!vrdlog!" 2>&1
 REM ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 
+REM ======================================================  Do the DGIndexNV ======================================================
 
 
 
+IF QSF_calc_Video_Is_Progessive_AVC == "True" (
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! DGIndexNV is NOT performed for Progressive-AVC where we just copy streams >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+) ELSE
+	ECHO ======================================================  Start the DGIndexNV ====================================================== >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	ECHO !dgindexNVexe64! -version >> "!vrdlog!" 2>&1
+	!dgindexNVexe64! -version  >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	ECHO !dgindexNVexe64! -i "!QSF_File! -e -h -o "!DGI_file!" >> "!vrdlog!" 2>&1
+	!dgindexNVexe64! -i "!QSF_File! -e -h -o "!DGI_file!" >> "!vrdlog!" 2>&1
+	ECHO TYPE "!DGI_autolog!" >> "%vrdlog%" 2>&1
+	TYPE "!DGI_autolog!" >> "%vrdlog%" 2>&1
+	ECHO DEL /F "!DGI_autolog!" >> "%vrdlog%" 2>&1
+	DEL /F "!DGI_autolog!" >> "%vrdlog%" 2>&1
+	ECHO ======================================================  Finish the DGIndexNV ====================================================== >> "!vrdlog!" 2>&1
+)
+
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! Start FFMPEG Transcode of "!QSF_File!" into "!Target_File!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+
+IF QSF_calc_Video_Is_Progessive_AVC == "True" (
+	REM for Progressive AVC just copy video stream and convert audtio stream
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! Is Progressive-AVC ... just copy streams >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	REM ffmpeg throws an error due to "-c:v copy" and this together: -vf "setdar="!QSF_MI_V_DisplayAspectRatio_String_slash!"
+	REM ffmpeg throws an error due to "-c:v copy" and this together: -profile:v high -level 5.2 
+	set "Target_Video_options=-c:v copy -fps_mode passthrough"
+	set "Target_Audio_options=-c:a libfdk_aac -b:a 256k -ar 48000"
+	"!ffmpegexe64!" -hide_banner -v verbose -nostats -i "!QSF_File!" -probesize 100M -analyzeduration 100M !Target_Video_options! -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental -movflags +faststart+write_colr !Target_Audio_options! -y "!Target_File!" >> "%vrdlog%" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+) ELSE (
+	REM for MPEG2 or Interlaced sources, we need to create a .VPY file and transcode the video and audio
 
 
-
-
-
-
-
-
-
+)
 
 
 REM remove junk files leftover from QSF if it timed out or something
@@ -2470,6 +2504,15 @@ REM echo +++++++++ >> "!vrdlog!" 2>&1
 echo set !current_prefix!calc_Video_FieldFirst >> "!vrdlog!" 2>&1
 set !current_prefix!calc_Video_FieldFirst >> "!vrdlog!" 2>&1
 echo +++++++++ >> "!vrdlog!" 2>&1
+
+call set tmp_calc_Video_Interlacement=%%!current_prefix!calc_Video_Interlacement%%
+call set tmp_calc_Video_Encoding=%%!current_prefix!calc_Video_Encoding%%
+set "!current_prefix!calc_Video_Is_Progessive_AVC=False"
+IF /I "!tmp_calc_Video_Interlacement!" == "PROGRESSIVE" ( 
+	IF /I "!tmp_calc_Video_Encoding!" == "AVC" (
+		set "!current_prefix!calc_Video_Is_Progessive_AVC=True"
+	)
+)
 
 REM display all calculated variables
 echo +++++++++ >> "!vrdlog!" 2>&1
