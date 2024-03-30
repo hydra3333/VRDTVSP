@@ -1023,18 +1023,6 @@ IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 			set "FFMPEG_V_G=50"
 		)
 	) ELSE (
-		REM UNKNOWN, assume Interlaced MPEG2
-		set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
-		set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.3"
-		set "FFMPEG_V_dg_deinterlace=1"
-		set "FFMPEG_V_G=25"
-		IF /I "!Footy_found!" == "True" (
-			set "FFMPEG_V_dg_deinterlace=2"
-			set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
-			set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.3"
-			set "FFMPEG_V_G=50"
-		)
-	) ELSE (
 		REM UNKNOWN, assume Interlaced AVC
 		set "FFMPEG_V_dg_deinterlace=1"
 		set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
