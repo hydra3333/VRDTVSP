@@ -1155,13 +1155,13 @@ REM -c:a libfdk_aac -cutoff 18000 -ab 256k -ar 48000
 REM -y  "G:\TEST-vrdtvsp-v40\VRDTVSP-Converted\Animation-Cartoon-PAW_Patrol-Pups_Save_A_Robosaurus-Pups_Save_A_Film_Festival-Nickelodeon.2024-03-24.mp4" 
 
 
-
-
 	REM
 	REM ECHO "!vspipeexe64!" -h >> "!vrdlog!" 2>&1
 	REM "!vspipeexe64!" -h >> "!vrdlog!" 2>&1
+
 	ECHO "!vspipeexe64!" --version  >> "!vrdlog!" 2>&1
 	"!vspipeexe64!" --version  >> "!vrdlog!" 2>&1
+
 	ECHO "!vspipeexe64!" --info "!VPY_file!" >> "!vrdlog!" 2>&1
 	"!vspipeexe64!" --info "!VPY_file!" >> "!vrdlog!" 2>&1
 
@@ -1177,9 +1177,7 @@ REM -y  "G:\TEST-vrdtvsp-v40\VRDTVSP-Converted\Animation-Cartoon-PAW_Patrol-Pups
 )
 
 echo !FFMPEG_vspipe_cmd! ^>NUL >> "!vrdlog!" 2>&1
-pause
-!FFMPEG_vspipe_cmd! >NUL
-pause
+!FFMPEG_vspipe_cmd! >NUL 2>>"!vrdlog!"
 
 ECHO !FFMPEG_vspipe_cmd! -PIPE- !FFMPEG_cmd! >> "!vrdlog!" 2>&1
 REM pause
@@ -1188,10 +1186,9 @@ REM pause
 
 ECHO EXAMPLE WHICH WORKS ELSEWHERE >> "!vrdlog!" 2>&1
 ECHO "!vspipeexe64!" --container y4m --filter-time "!VPY_file!" - -pipe- "!ffmpegexe64!" -hide_banner -v verbose -nostats -f yuv4mpegpipe -i pipe: -probesize 200M -analyzeduration 200M  -i "!QSF_File!" -map 0:v:0 -map 1:a:0 -vf "setdar=16/9" -fps_mode passthrough -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental -c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 25 -coder:v cabac -spatial-aq 1 -temporal-aq 1 -dpb_size 0 -bf:v 3 -b_ref_mode:v 0 -rc:v vbr -cq:v 0 -b:v 2163414 -minrate:v 432682 -maxrate:v 4326828 -bufsize 4326828  -profile:v high -level 5.2 -movflags +faststart+write_colr  -c:a libfdk_aac -cutoff 18000 -ab 256k -ar 48000 -y  "!Target_File!" >> "!vrdlog!" 2>&1
-pause
-"!vspipeexe64!" --container y4m --filter-time "!VPY_file!" - | "!ffmpegexe64!" -hide_banner -v verbose -nostats -f yuv4mpegpipe -i pipe: -probesize 200M -analyzeduration 200M  -i "!QSF_File!" -map 0:v:0 -map 1:a:0 -vf "setdar=16/9" -fps_mode passthrough -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental -c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 25 -coder:v cabac -spatial-aq 1 -temporal-aq 1 -dpb_size 0 -bf:v 3 -b_ref_mode:v 0 -rc:v vbr -cq:v 0 -b:v 2163414 -minrate:v 432682 -maxrate:v 4326828 -bufsize 4326828  -profile:v high -level 5.2 -movflags +faststart+write_colr  -c:a libfdk_aac -cutoff 18000 -ab 256k -ar 48000 -y  "!Target_File!"
-pause
+"!vspipeexe64!" --container y4m --filter-time "!VPY_file!" - | "!ffmpegexe64!" -hide_banner -v verbose -nostats -f yuv4mpegpipe -i pipe: -probesize 200M -analyzeduration 200M  -i "!QSF_File!" -map 0:v:0 -map 1:a:0 -vf "setdar=16/9" -fps_mode passthrough -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental -c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g 25 -coder:v cabac -spatial-aq 1 -temporal-aq 1 -dpb_size 0 -bf:v 3 -b_ref_mode:v 0 -rc:v vbr -cq:v 0 -b:v 2163414 -minrate:v 432682 -maxrate:v 4326828 -bufsize 4326828  -profile:v high -level 5.2 -movflags +faststart+write_colr  -c:a libfdk_aac -cutoff 18000 -ab 256k -ar 48000 -y  "!Target_File!" >> "!vrdlog!" 2>&1
 
+pause
 exit
 
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
