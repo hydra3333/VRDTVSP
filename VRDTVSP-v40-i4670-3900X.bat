@@ -928,6 +928,10 @@ IF /I "!Footy_found!" == "True" (
 		CALL :calc_single_number_result_py "int(round(!Footy_FFMPEG_V_Target_BitRate! * 2))"    "Footy_FFMPEG_V_Target_Maximum_BitRate"
 		CALL :calc_single_number_result_py "int(round(!Footy_FFMPEG_V_Target_BitRate! * 2))"    "Footy_FFMPEG_V_Target_BufSize"
 		ECHO Interlaced video, Footy words found in filename '!file_name_part!', FFMPEG_V_dg_deinterlace=!FFMPEG_V_dg_deinterlace!  Footy variables set >> "!vrdlog!" 2>&1
+		set /a FFMPEG_V_Target_BitRate=!Footy_FFMPEG_V_Target_BitRate!
+		set /a FFMPEG_V_Target_Minimum_BitRate=!Footy_FFMPEG_V_Target_Minimum_BitRate!
+		set /a FFMPEG_V_Target_Maximum_BitRate=!Footy_FFMPEG_V_Target_Maximum_BitRate!
+		set /a FFMPEG_V_Target_BufSize=!Footy_FFMPEG_V_Target_BufSize!
 	) ELSE (
 		set "check_QSF_failed=UNKNOWN QSF_calc_Video_Interlacement="!QSF_calc_Video_Interlacement!" to base transcode calculations on, for '%~f1'"
 		echo !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
@@ -942,6 +946,8 @@ IF /I "!Footy_found!" == "True" (
 		"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
 		goto :eof
 	)
+
+
 ) ELSE (
 	echo NO Footy words found in filename '!file_name_part!', FFMPEG_V_dg_deinterlace unchanged=!FFMPEG_V_dg_deinterlace!, NO footy variables set  >> "!vrdlog!" 2>&1
 )
@@ -952,12 +958,12 @@ ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 echo set Footy_ >> "!vrdlog!" 2>&1
 set Footy_ >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-echo set X_ >> "!vrdlog!" 2>&1
-set X_ >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-echo set extra_ >> "!vrdlog!" 2>&1
-set extra_ >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+REM echo set X_ >> "!vrdlog!" 2>&1
+REM set X_ >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+REM echo set extra_ >> "!vrdlog!" 2>&1
+REM set extra_ >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 
 
 
