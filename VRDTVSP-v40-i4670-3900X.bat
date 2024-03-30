@@ -733,7 +733,7 @@ IF /I "!QSF_calc_Video_Encoding!" == "AVC" (
 		set /a "FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_BitRate! * 2"
 		set /a "FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BitRate! * 2"
 	) ELSE (
-		set /a "FFMPEG_V_Target_BitRate=2000000"
+		set /a "FFMPEG_V_Target_BitRate=2250000"
 		set /a "FFMPEG_V_Target_Minimum_BitRate=100000"
 		set /a "FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_BitRate! * 2"
 		set /a "FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BitRate! * 2"
@@ -775,11 +775,70 @@ IF /I "!QSF_calc_Video_FieldFirst!" == "TFF" (
 	exit 1
 )
 
-REM Default CQ options:
+ECHO !DATE! !TIME! "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" >> "%vrdlog%" 2>&1
+ECHO !DATE! !TIME! NOTE: After testing, it has been found that ffprobe can mis-report bitrates in the QSF'd file by about double. >> "%vrdlog%" 2>&1
+ECHO !DATE! !TIME!       Although mediainfo and the "QSF log" values are reasonably close, testing shows ffprobe gets it more "right" when encoding. >> "%vrdlog%" 2>&1
+ECHO !DATE! !TIME!       Although hopefully correct, this can result in a much lower transcoded filesizes than the originals. >> "%vrdlog%" 2>&1
+ECHO !DATE! !TIME!       For now, accept what we PROPOSE on whether to "Up" the CQ from 0 to 24. >> "%vrdlog%" 2>&1
+REM Default CQ options, default to cq0
 set "FFMPEG_V_cq0=-cq:v 0"
 set "FFMPEG_V_cq24=-cq:v 24 -qmin 16 -qmax 48"
 set "FFMPEG_V_PROPOSED_x_cq_options=!FFMPEG_V_cq0!"
 set "FFMPEG_V_final_cq_options=!FFMPEG_V_cq0!"
+ECHO !DATE! !TIME! "Initial Default FFMPEG_V_final_cq_options=!FFMPEG_V_final_cq_options!" >> "%vrdlog%" 2>&1
+
+REM
+REM FOR AVC INPUT FILES ONLY, calculate the CQ to use (default to CQ0)
+REM --- NOTE 2024.03.30 WE HAVE CANGED THIS TO JUST A QUICK RAW TEST FOR LOW TARGET BITRATE ---
+REM There are special cases where Mediainfo detects a lower bitrate than FFPROBE
+REM and MediaInfo is likely right ... however FFPROBE is what we want it to be.
+REM When this happens, if we just leave the bitrate CQ as-is then ffmpeg just undershoots 
+REM even though we specify the higher bitrate of FFPROBE.
+REM If we detect such a case, change to CQ24 instead of CQ0 and leave the 
+REM specified bitrate unchanged ... which "should" fix it up.
+REM
+IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
+	ECHO !DATE! !TIME! "????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????" >> "%vrdlog%" 2>&1
+	ECHO Example table of values and actions >> "%vrdlog%" 2>&1
+	ECHO	MI		FF		INCOMING	ACTION >> "%vrdlog%" 2>&1
+	ECHO	0		0		5Mb			set to CQ 0 >> "%vrdlog%" 2>&1
+	ECHO	0		1.5Mb	1.5Mb		set to CQ 24 >> "%vrdlog%" 2>&1
+	ECHO	0		4Mb		4Mb			set to CQ 0 >> "%vrdlog%" 2>&1
+	ECHO	1.5Mb	0		1.5Mb		set to CQ 24 >> "%vrdlog%" 2>&1
+	ECHO	1.5Mb 	1.5Mb	1.5Mb		set to CQ 24 >> "%vrdlog%" 2>&1
+	ECHO	1.5Mb	4Mb		4Mb			set to CQ 24 *** this one >> "%vrdlog%" 2>&1
+	ECHO	4Mb		0		4Mb			set to CQ 0 >> "%vrdlog%" 2>&1
+	ECHO	4Mb		1.5Mb	4Mb			set to CQ 0 >> "%vrdlog%" 2>&1
+	ECHO	4Mb		5Mb		5Mb			set to CQ 0 >> "%vrdlog%" 2>&1
+	ECHO !DATE! !TIME! "????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????" >> "%vrdlog%" 2>&1
+	ECHO !DATE! !TIME! "Calculating whether to Bump CQ from 0 to 24 ..." >> "%vrdlog%" 2>&1
+	ECHO !DATE! !TIME! "FFMPEG_V_Target_BitRate=!FFMPEG_V_Target_BitRate!" >> "%vrdlog%" 2>&1
+	REM There were Nested IF statements which is why the CHECK and SET are done this way
+	If !FFMPEG_V_Target_BitRate! LSS 2200000 (
+		REM low bitrate, do not touch the bitrate itself, instead bump to CQ24
+		set "FFMPEG_V_PROPOSED_x_cq_options=!FFMPEG_V_cq24!"
+		ECHO !DATE! !TIME! "yes to Low INCOMING_BITRATE !INCOMING_BITRATE! LSS 2200000" >> "%vrdlog%" 2>&1
+		ECHO !DATE! !TIME! "FFMPEG_V_PROPOSED_x_cq_options=!FFMPEG_V_PROPOSED_x_cq_options!" >> "%vrdlog%" 2>&1
+	)
+	set "FFMPEG_V_final_cq_options=!FFMPEG_V_PROPOSED_x_cq_options!"
+)
+ECHO !DATE! !TIME! "Final FFMPEG_V_final_cq_options=!FFMPEG_V_final_cq_options!" >> "%vrdlog%" 2>&1
+
+
+--------------
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 IF /I "%COMPUTERNAME%" == "3900X" (
 	REM		' -dpb_size 0		means automatic (default)
