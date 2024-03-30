@@ -566,6 +566,7 @@ IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
 REM
 
 set "qsf_xml_prefix=QSFinfo_"
+set "SOURCE_File=!~f1!"
 set "QSF_File=!scratch_Folder!%~n1.qsf.!qsf_extension!"
 set "DGI_file=!scratch_Folder!%~n1.qsf.dgi"
 set "DGI_autolog=!scratch_Folder!%~n1.qsf.log"
@@ -638,8 +639,6 @@ IF /I NOT "!SRC_calc_Video_Encoding!" == "!QSF_calc_Video_Encoding!" (
 	ECHO !DATE! !TIME! SRC file="%~f1" >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! **********  Declaring FAILED:  "%~f1" >> "%vrdlog%" 2>&1
-	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	CALL :declare_FAILED "%~f1"
 	CALL :get_date_time_String "end_date_time_QSF"
 	REM echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
@@ -651,8 +650,6 @@ IF /I NOT "!SRC_FF_V_codec_name!" == "!QSF_FF_V_codec_name!" (
 	echo !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! SRC file="%~f1" >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! **********  Declaring FAILED:  "%~f1" >> "%vrdlog%" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	CALL :declare_FAILED "%~f1"
 	CALL :get_date_time_String "end_date_time_QSF"
@@ -666,8 +663,6 @@ IF /I NOT "!SRC_calc_Video_Interlacement!" == "!QSF_calc_Video_Interlacement!" (
 	ECHO !DATE! !TIME! SRC file="%~f1" >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! **********  Declaring FAILED:  "%~f1" >> "%vrdlog%" 2>&1
-	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	CALL :declare_FAILED "%~f1"
 	CALL :get_date_time_String "end_date_time_QSF"
 	REM echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
@@ -679,8 +674,6 @@ IF /I NOT "!SRC_calc_Video_FieldFirst!" == "!QSF_calc_Video_FieldFirst!" (
 	echo !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! SRC file="%~f1" >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! **********  Declaring FAILED:  "%~f1" >> "%vrdlog%" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	CALL :declare_FAILED "%~f1"
 	CALL :get_date_time_String "end_date_time_QSF"
@@ -810,8 +803,6 @@ IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 	ECHO !DATE! !TIME! SRC file="%~f1" >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! **********  Declaring FAILED:  "%~f1" >> "%vrdlog%" 2>&1
-	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	CALL :declare_FAILED "%~f1"
 	CALL :get_date_time_String "end_date_time_QSF"
 	REM echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
@@ -828,8 +819,6 @@ IF /I "!QSF_calc_Video_FieldFirst!" == "TFF" (
 	echo !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! SRC file="%~f1" >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! **********  Declaring FAILED:  "%~f1" >> "%vrdlog%" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	CALL :declare_FAILED "%~f1"
 	CALL :get_date_time_String "end_date_time_QSF"
@@ -941,8 +930,6 @@ IF /I "!Footy_found!" == "True" (
 		ECHO !DATE! !TIME! SRC file="%~f1" >> "!vrdlog!" 2>&1
 		ECHO !DATE! !TIME! QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
 		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-		ECHO !DATE! !TIME! **********  Declaring FAILED:  "%~f1" >> "%vrdlog%" 2>&1
-		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 		CALL :declare_FAILED "%~f1"
 		CALL :get_date_time_String "end_date_time_QSF"
 		REM echo "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
@@ -969,7 +956,7 @@ REM ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 REM ======================================================  Do the DGIndexNV ======================================================
 
 
-
+RE re-use error checking variable check_QSF_failed even though we are not doing a QSF
 IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! DGIndexNV is NOT performed for Progressive-AVC where we just copy streams >> "!vrdlog!" 2>&1
@@ -982,6 +969,19 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	ECHO !dgindexNVexe64! -i "!QSF_File! -e -h -o "!DGI_file!" >> "!vrdlog!" 2>&1
 	!dgindexNVexe64! -i "!QSF_File! -e -h -o "!DGI_file!" >> "!vrdlog!" 2>&1
+	SET EL=!ERRORLEVEL!
+	IF /I "!EL!" NEQ "0" (
+		set "check_QSF_failed=********** ERROR: Error Number '!EL!' returned from '!dgindexNVexe64!'"
+		echo !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
+		ECHO !DATE! !TIME! SRC file="%~f1" >> "!vrdlog!" 2>&1
+		ECHO !DATE! !TIME! QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
+		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+		ECHO !DATE! !TIME! **********  Declaring FAILED:  "%~f1" >> "%vrdlog%" 2>&1
+		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+		CALL :declare_FAILED "%~f1"
+		goto :eof
+	)
+)
 	ECHO TYPE "!DGI_autolog!" >> "%vrdlog%" 2>&1
 	TYPE "!DGI_autolog!" >> "%vrdlog%" 2>&1
 	ECHO DEL /F "!DGI_autolog!" >> "%vrdlog%" 2>&1
@@ -998,22 +998,39 @@ ECHO !DATE! !TIME! =============================================================
 IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	REM for Progressive AVC just copy video stream and convert audtio stream
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! Is Progressive-AVC ... just copy streams >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! ********** Is Progressive-AVC ... just copy streams >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	REM ffmpeg throws an error due to "-c:v copy" and this together: -vf "setdar="!QSF_MI_V_DisplayAspectRatio_String_slash!"
 	REM ffmpeg throws an error due to "-c:v copy" and this together: -profile:v high -level 5.2 
 	set "Target_Video_options=-c:v copy -fps_mode passthrough"
 	set "Target_Audio_options=-c:a libfdk_aac -b:a 256k -ar 48000"
+	ECHO "!ffmpegexe64!" -hide_banner -v verbose -nostats -i "!QSF_File!" -probesize 100M -analyzeduration 100M !Target_Video_options! -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental -movflags +faststart+write_colr !Target_Audio_options! -y "!Target_File!" >> "%vrdlog%" 2>&1
 	"!ffmpegexe64!" -hide_banner -v verbose -nostats -i "!QSF_File!" -probesize 100M -analyzeduration 100M !Target_Video_options! -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental -movflags +faststart+write_colr !Target_Audio_options! -y "!Target_File!" >> "%vrdlog%" 2>&1
-	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	SET EL=!ERRORLEVEL!
+	IF /I "!EL!" NEQ "0" (
+		set "check_QSF_failed=********** ERROR: Error Number '!EL!' returned from '!ffmpegexe64!'"
+		echo !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
+		ECHO !DATE! !TIME! SRC file="%~f1" >> "!vrdlog!" 2>&1
+		ECHO !DATE! !TIME! QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
+		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+		CALL :declare_FAILED "%~f1"
+		goto :eof
+	)
 ) ELSE (
-	REM for MPEG2 or Interlaced sources, we need to create a .VPY file and transcode the video and audio
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! ********** Is NOT Progressive-AVC ... use ffmpeg and a .vpy to transcode video and audio >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	REM for MPEG2 or AVC/MPEG2 Interlaced sources, we need to create a .VPY file and transcode the video and audio
 
 
 )
 
+??? here check for existence of the target file and "!Target_File!" fail
 
-REM remove junk files leftover from QSF if it timed out or something
+
+REM remove junk files leftover from QSF and transcode
+
+????????? delete the QSF file, VPY file, DGI file, DGI log
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ECHO DEL /F !scratch_Folder!*.tmp >> "!vrdlog!" 2>&1
 DEL /F !scratch_Folder!*.tmp >> "!vrdlog!" 2>&1
