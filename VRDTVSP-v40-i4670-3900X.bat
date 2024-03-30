@@ -1149,9 +1149,16 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	REM
 	ECHO FFMPEG_vspipe_cmd='!FFMPEG_vspipe_cmd!' >> "%vrdlog%" 2>&1
 	ECHO FFMPEG_cmd='!FFMPEG_cmd!' >> "%vrdlog%" 2>&1
- 	!FFMPEG_vspipe_cmd! | !FFMPEG_cmd! >> "%vrdlog%" 2>&1
-	REM
+	ECHO !FFMPEG_vspipe_cmd! :pipe: !FFMPEG_cmd! >> "%vrdlog%" 2>&1
+
+ 	REM !FFMPEG_vspipe_cmd! | !FFMPEG_cmd! >> "%vrdlog%" 2>&1
+	REM test for EL noon zero abd declare bad
+
+	pause
 )
+
+
+pause
 
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ECHO DEL /F !scratch_Folder!*.tmp >> "!vrdlog!" 2>&1
