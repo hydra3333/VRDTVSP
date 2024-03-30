@@ -849,13 +849,13 @@ ECHO !DATE! !TIME! "Initial Default FFMPEG_V_final_cq_options=!FFMPEG_V_final_cq
 
 REM
 REM FOR AVC INPUT FILES ONLY, calculate the CQ to use (default to CQ0)
-REM --- NOTE 2024.03.30 WE HAVE CANGED THIS TO JUST A QUICK RAW TEST FOR LOW TARGET BITRATE ---
-REM There are special cases where Mediainfo detects a lower bitrate than FFPROBE
-REM and MediaInfo is likely right ... however FFPROBE is what we want it to be.
-REM When this happens, if we just leave the bitrate CQ as-is then ffmpeg just undershoots 
-REM even though we specify the higher bitrate of FFPROBE.
-REM If we detect such a case, change to CQ24 instead of CQ0 and leave the 
-REM specified bitrate unchanged ... which "should" fix it up.
+REM *** NOTE 2024.03.30 WE HAVE CHANGED THIS TO JUST A QUICK RAW TEST FOR LOW TARGET BITRATE ***
+REM	From:	There are special cases where Mediainfo detects a lower bitrate than FFPROBE
+REM			and MediaInfo is likely right ... however FFPROBE is what we want it to be.
+REM			When this happens, if we just leave the bitrate CQ as-is then ffmpeg just undershoots 
+REM			even though we specify the higher bitrate of FFPROBE.
+REM			If we detect such a case, change to CQ24 instead of CQ0 and leave the 
+REM			specified bitrate unchanged ... which "should" fix it up.
 REM
 IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
 	ECHO !DATE! !TIME! "????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????" >> "%vrdlog%" 2>&1
@@ -873,7 +873,7 @@ IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
 	ECHO !DATE! !TIME! "????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????" >> "%vrdlog%" 2>&1
 	ECHO !DATE! !TIME! "Calculating whether to Bump CQ from 0 to 24 ..." >> "%vrdlog%" 2>&1
 	ECHO !DATE! !TIME! "FFMPEG_V_Target_BitRate=!FFMPEG_V_Target_BitRate!" >> "%vrdlog%" 2>&1
-	REM There were Nested IF statements which is why the CHECK and SET are done this way
+	REM There were nested IF statements which is why the IFs and SETs are done this way
 	If !FFMPEG_V_Target_BitRate! LSS 2200000 (
 		REM low bitrate, do not touch the bitrate itself, instead bump to CQ24
 		set "FFMPEG_V_PROPOSED_x_cq_options=!FFMPEG_V_cq24!"
@@ -913,7 +913,6 @@ IF /I NOT "!file_name_part!"=="!file_name_part:AFL=_____!" (
 	set "Footy_found=False"
 	echo NO Footy words found in filename '!file_name_part!' >> "!vrdlog!" 2>&1
 )
-
 IF /I "!Footy_found!" == "True" (
 	IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 		REM set for no deinterlace
@@ -946,7 +945,6 @@ IF /I "!Footy_found!" == "True" (
 ) ELSE (
 	echo NO Footy words found in filename '!file_name_part!', FFMPEG_V_dg_deinterlace unchanged=!FFMPEG_V_dg_deinterlace!, NO footy variables set  >> "!vrdlog!" 2>&1
 )
-
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 echo set FFMPEG_ >> "!vrdlog!" 2>&1
 set FFMPEG_ >> "!vrdlog!" 2>&1
@@ -975,11 +973,12 @@ ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 
 
 
-REM remvove junk files leftover from QSF if it timed out or something
+REM remove junk files leftover from QSF if it timed out or something
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ECHO DEL /F !scratch_Folder!*.tmp >> "!vrdlog!" 2>&1
 DEL /F !scratch_Folder!*.tmp >> "!vrdlog!" 2>&1
 goto :eof
+
 
 
 BAD BAD BAD FROM HERE DOWN
