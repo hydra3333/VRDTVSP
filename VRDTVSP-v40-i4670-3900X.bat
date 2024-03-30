@@ -142,7 +142,6 @@ set "profile_name_for_qsf_h264_vrd6=VRDTVS-for-QSF-H264_VRD6"
 set "profile_name_for_qsf_h264_vrd5=VRDTVS-for-QSF-H264_VRD5"
 set "profile_name_for_qsf_h265_vrd6=VRDTVS-for-QSF-H265_VRD6"
 set "profile_name_for_qsf_h265_vrd5=VRDTVS-for-QSF-H265_VRD5"
-
 REM qsf timeout in minutes  (VRD v6 takes 4 hours for a large 10Gb footy file); allow extra 10 secs for cscript timeout for vrd to finish
 set "default_qsf_timeout_minutes_VRD6=240"
 set /a default_qsf_timeout_seconds_VRD6=(!default_qsf_timeout_minutes_VRD6! * 60) + 10
@@ -1843,6 +1842,10 @@ ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ****** Moving "%~f1" to "!failed_conversion_TS_Folder!" >> "!vrdlog!" 2>&1
 ECHO MOVE /Y "%~f1" "!failed_conversion_TS_Folder!" >> "%vrdlog%" 2>&1
 MOVE /Y "%~f1" "!failed_conversion_TS_Folder!" >> "%vrdlog%" 2>&1
+ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+REM remvove junk files leftover from QSF if it timed out or something
+ECHO DEL /F !scratch_Folder!*.tmp >> "!vrdlog!" 2>&1
+DEL /F !scratch_Folder!*.tmp >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 goto :eof
 
