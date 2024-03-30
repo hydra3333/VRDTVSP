@@ -995,6 +995,119 @@ ECHO !DATE! !TIME! Start FFMPEG Transcode of "!QSF_File!" into "!Target_File!" >
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 
+
+
+
+
+REM FFMPEG_V_dg_deinterlace is already set ...
+IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
+	IF /I "!QSF_calc_Video_Encoding!" == "AVC" (
+		REM Progressive AVC
+		set "FFMPEG_V_dg_deinterlace=0"
+		set "FFMPEG_V_dg_vpy_denoise="
+		set "FFMPEG_V_dg_vpy_dsharpen="
+		IF /I "!Footy_found!" == "True" (
+			set "FFMPEG_V_dg_deinterlace=0"
+			set "FFMPEG_V_dg_vpy_denoise="
+			set "FFMPEG_V_dg_vpy_dsharpen="
+		)
+	) ELSE IF /I "!QSF_calc_Video_Encoding!" == "MPEG2" (
+		REM Progressive MPEG2
+		set "FFMPEG_V_dg_deinterlace=0"
+		set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
+		set "FFMPEG_V_dg_vpy_dsharpen=", sh_enable=1, sh_strength=0.3"
+		IF /I "!Footy_found!" == "True" (
+			set "FFMPEG_V_dg_deinterlace=0"
+			set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
+			set "FFMPEG_V_dg_vpy_dsharpen=", sh_enable=1, sh_strength=0.3"
+		)
+	) ELSE
+		REM UNKNOWN, assume Progressive MPEG2
+		set "FFMPEG_V_dg_deinterlace=0"
+		set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
+		set "FFMPEG_V_dg_vpy_dsharpen=", sh_enable=1, sh_strength=0.3"
+		IF /I "!Footy_found!" == "True" (
+			set "FFMPEG_V_dg_deinterlace=0"
+			set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
+			set "FFMPEG_V_dg_vpy_dsharpen=", sh_enable=1, sh_strength=0.3"
+			IF /I "!Footy_found!" == "True" (
+				set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
+				set "FFMPEG_V_dg_vpy_dsharpen=", sh_enable=1, sh_strength=0.3"
+			)
+		)
+	)
+) ELSE IF /I "!QSF_calc_Video_Interlacement!" == "INTERLACED" (
+	IF /I "!QSF_calc_Video_Encoding!" == "AVC" (
+		REM Interlaced AVC
+		set "FFMPEG_V_dg_deinterlace=1"
+		set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
+		set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.3"																		' flag sharpening for progressive mpeg2
+		IF /I "!Footy_found!" == "True" (
+			set "FFMPEG_V_dg_deinterlace=2"
+			set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.04, dn_cstrength=0.04, dn_tthresh=75.0, dn_show=0"
+			set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.25"																		' flag sharpening for progressive mpeg2
+		)
+	) ELSE IF /I "!QSF_calc_Video_Encoding!" == "MPEG2" (
+		REM Interlaced MPEG2
+		set "FFMPEG_V_dg_deinterlace=1"
+		set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
+		set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.3"
+		IF /I "!Footy_found!" == "True" (
+			set "FFMPEG_V_dg_deinterlace=2"
+			set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
+			set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.3"
+		)
+	) ELSE
+		REM UNKNOWN, assume Interlaced MPEG2
+		set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
+		set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.3"
+		set "FFMPEG_V_dg_deinterlace=1"
+		IF /I "!Footy_found!" == "True" (
+			set "FFMPEG_V_dg_deinterlace=2"
+			set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
+			set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.3"
+		)
+	) ELSE (
+		REM UNKNOWN, assume Interlaced AVC
+		set "FFMPEG_V_dg_deinterlace=1"
+		set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
+		set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.3"																		' flag sharpening for progressive mpeg2
+		IF /I "!Footy_found!" == "True" (
+			set "FFMPEG_V_dg_deinterlace=2"
+			set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.04, dn_cstrength=0.04, dn_tthresh=75.0, dn_show=0"
+			set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.25"																		' flag sharpening for progressive mpeg2
+		)
+	)
+)
+
+PROGRESSIVE
+-----------
+AVC Progressive
+			copy video stream
+
+Mpeg2 Progressive
+			vpy_denoise  = " , dn_enable=3, dn_quality=""good"", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0 "	' flag denoising for progressive mpeg2
+			vpy_dsharpen = " , sh_enable=1, sh_strength=0.3 "																		' flag sharpening for progressive mpeg2
+
+INTERLACED
+-----------
+AVC Interlaced non-Footy
+			vpy_denoise  = " , dn_enable=3, dn_quality=""good"", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0 "	' flag denoising for progressive mpeg2
+			vpy_dsharpen = " , sh_enable=1, sh_strength=0.3 "																		' flag sharpening for progressive mpeg2
+
+AVC Interlaced Footy
+				vpy_denoise  = " , dn_enable=3, dn_quality=""good"", dn_strength=0.04, dn_cstrength=0.04, dn_tthresh=75.0, dn_show=0 "	' flag denoising  for footy interlaced avc, since it seems to be blurry and noisy as at 2022.06
+				vpy_dsharpen = " , sh_enable=1, sh_strength=0.25 "																		' flag denoising  for footy interlaced avc, since it seems to be blurry and noisy as at 2022.06
+
+MPEG2 Interlaced
+----------------
+			vpy_denoise  = " , dn_enable=3, dn_quality=""good"", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0 "	' flag denoising  for interlaced mpeg2
+			vpy_dsharpen = " , sh_enable=1, sh_strength=0.3 "																		' flag denoising  for interlaced mpeg2
+
+
+
+???????????????????????????????????????????????????
+
 IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	REM for Progressive AVC just copy video stream and convert audtio stream
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
