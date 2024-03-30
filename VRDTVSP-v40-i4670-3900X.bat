@@ -522,9 +522,8 @@ IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 	echo !DATE! !TIME! >> "!vrdlog!" 2>&1
 ) ELSE (
 	set "check_QSF_failed=ERROR: mediainfo/ffmpeg data '!SRC_calc_Video_Interlacement!' yields neither PROGRESSIVE nor INTERLACED for '%~f1'"
-	echo !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! **********  Declaring FAILED:  "%~f1" >> "%vrdlog%" 2>&1
+	echo !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	CALL :declare_FAILED "%~f1"
 	CALL :get_date_time_String "end_date_time_QSF"
@@ -539,9 +538,8 @@ IF /I "!SRC_calc_Video_FieldFirst!" == "TFF" (
 	echo !DATE! !TIME! >> "!vrdlog!" 2>&1
 ) ELSE (
 	set "check_QSF_failed=ERROR: mediainfo/ffmpeg processing '!SRC_calc_Video_FieldFirst!' yields neither 'TFF' nor 'BFF' field-first ,default='TFF', for '%~f1'"
-	echo !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! **********  Declaring FAILED:  "%~f1" >> "%vrdlog%" 2>&1
+	echo !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	CALL :declare_FAILED "%~f1"
 	CALL :get_date_time_String "end_date_time_QSF"
@@ -556,9 +554,8 @@ IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
 	set "qsf_extension=!extension_mpeg2!"
 ) ELSE (
 	set "check_QSF_failed=ERROR: mediainfo format !SRC_calc_Video_Encoding! neither 'AVC' nor 'MPEG2' for '%~f1'"
-	echo !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! **********  Declaring FAILED:  "%~f1" >> "%vrdlog%" 2>&1
+	echo !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	CALL :declare_FAILED "%~f1"
 	CALL :get_date_time_String "end_date_time_QSF"
@@ -585,14 +582,16 @@ REM 	Fudged "!SRC_MI_V_BitRate!"
 REM 	temp_cmd_file
 echo CALL :run_cscript_qsf_with_timeout "!DEFAULT_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_xml_prefix!" >> "%vrdlog%" 2>&1
 CALL :run_cscript_qsf_with_timeout "!DEFAULT_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_xml_prefix!"
+REM check result returned from :run_cscript_qsf_with_timeout
 IF /I NOT "!check_QSF_failed!" == "" (
 	REM It failed, try doing the fallback QSF
 	set "check_QSF_failed="
 	echo call run_cscript_qsf_with_timeout "!DEFAULT_vrd_version_fallback!" "%~f1" "!QSF_File!" "!qsf_xml_prefix!" >> "%vrdlog%" 2>&1
 	CALL :run_cscript_qsf_with_timeout "!DEFAULT_vrd_version_fallback!" "%~f1" "!QSF_File!" "!qsf_xml_prefix!"
+	REM check result returned from :run_cscript_qsf_with_timeout
 	IF /I NOT "!check_QSF_failed!" == "" (
 		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-		ECHO !DATE! !TIME! **********  Declaring FAILED:  "%~f1" >> "%vrdlog%" 2>&1
+		echo !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 		CALL :declare_FAILED "%~f1"
 		CALL :get_date_time_String "end_date_time_QSF"
