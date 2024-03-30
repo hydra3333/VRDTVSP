@@ -824,22 +824,6 @@ IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
 )
 ECHO !DATE! !TIME! "Final FFMPEG_V_final_cq_options=!FFMPEG_V_final_cq_options!" >> "%vrdlog%" 2>&1
 
-
---------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 IF /I "%COMPUTERNAME%" == "3900X" (
 	REM		' -dpb_size 0		means automatic (default)
 	REM		' -bf:v 3			means use 3 b-frames (dont use more than 3)
@@ -908,6 +892,19 @@ set extra_ >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 
 
+
+
+
+
+
+
+
+
+
+REM remvove junk files leftover from QSF if it timed out or something
+ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+ECHO DEL /F !scratch_Folder!*.tmp >> "!vrdlog!" 2>&1
+DEL /F !scratch_Folder!*.tmp >> "!vrdlog!" 2>&1
 goto :eof
 
 
@@ -1902,8 +1899,8 @@ ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ****** Moving "%~f1" to "!failed_conversion_TS_Folder!" >> "!vrdlog!" 2>&1
 ECHO MOVE /Y "%~f1" "!failed_conversion_TS_Folder!" >> "%vrdlog%" 2>&1
 MOVE /Y "%~f1" "!failed_conversion_TS_Folder!" >> "%vrdlog%" 2>&1
-ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 REM remvove junk files leftover from QSF if it timed out or something
+ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ECHO DEL /F !scratch_Folder!*.tmp >> "!vrdlog!" 2>&1
 DEL /F !scratch_Folder!*.tmp >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
