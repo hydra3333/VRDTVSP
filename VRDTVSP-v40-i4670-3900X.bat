@@ -142,11 +142,11 @@ set "profile_name_for_qsf_h264_vrd6=VRDTVS-for-QSF-H264_VRD6"
 set "profile_name_for_qsf_h264_vrd5=VRDTVS-for-QSF-H264_VRD5"
 set "profile_name_for_qsf_h265_vrd6=VRDTVS-for-QSF-H265_VRD6"
 set "profile_name_for_qsf_h265_vrd5=VRDTVS-for-QSF-H265_VRD5"
-REM qsf timeout in minutes  (VRD v6 takes 4 hours for a large 10Gb footy file); allow extra 10 secs for cscript timeout for vrd to finish
+REM qsf timeout in minutes  (VRD v6 takes 4 hours for a large 10Gb footy file); allow extra 10 secs for cscript timeout for vrd to finish copying .tmp file to .mp4 file
 set "default_qsf_timeout_minutes_VRD6=240"
-set /a default_qsf_timeout_seconds_VRD6=(!default_qsf_timeout_minutes_VRD6! * 60) + 10
+set /a default_qsf_timeout_seconds_VRD6=(!default_qsf_timeout_minutes_VRD6! * 60) + 30
 set "default_qsf_timeout_minutes_VRD5=15"
-set /a default_qsf_timeout_seconds_VRD5=(!default_qsf_timeout_minutes_VRD5! * 60) + 10
+set /a default_qsf_timeout_seconds_VRD5=(!default_qsf_timeout_minutes_VRD5! * 60) + 30
 REM --------- ensure "\" at end of VRD paths
 set "Path_to_vrd6=C:\Program Files (x86)\VideoReDoTVSuite6"
 if /I NOT "!Path_to_vrd6:~-1!" == "\" (set "Path_to_vrd6=!Path_to_vrd6!\")
