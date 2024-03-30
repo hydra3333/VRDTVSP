@@ -953,42 +953,6 @@ REM echo set extra_ >> "!vrdlog!" 2>&1
 REM set extra_ >> "!vrdlog!" 2>&1
 REM ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 
-REM ======================================================  Do the DGIndexNV ======================================================
-
-
-RE re-use error checking variable check_QSF_failed even though we are not doing a QSF
-IF QSF_calc_Video_Is_Progessive_AVC == "True" (
-	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! DGIndexNV is NOT performed for Progressive-AVC where we just copy streams >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-) ELSE
-	ECHO ======================================================  Start the DGIndexNV ====================================================== >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	ECHO !dgindexNVexe64! -version >> "!vrdlog!" 2>&1
-	!dgindexNVexe64! -version  >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	ECHO !dgindexNVexe64! -i "!QSF_File! -e -h -o "!DGI_file!" >> "!vrdlog!" 2>&1
-	!dgindexNVexe64! -i "!QSF_File! -e -h -o "!DGI_file!" >> "!vrdlog!" 2>&1
-	SET EL=!ERRORLEVEL!
-	IF /I "!EL!" NEQ "0" (
-		set "check_QSF_failed=********** ERROR: Error Number '!EL!' returned from '!dgindexNVexe64!'"
-		echo !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
-		ECHO !DATE! !TIME! SRC file="%~f1" >> "!vrdlog!" 2>&1
-		ECHO !DATE! !TIME! QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
-		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-		ECHO !DATE! !TIME! **********  Declaring FAILED:  "%~f1" >> "%vrdlog%" 2>&1
-		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-		CALL :declare_FAILED "%~f1"
-		goto :eof
-	)
-)
-	ECHO TYPE "!DGI_autolog!" >> "%vrdlog%" 2>&1
-	TYPE "!DGI_autolog!" >> "%vrdlog%" 2>&1
-	ECHO DEL /F "!DGI_autolog!" >> "%vrdlog%" 2>&1
-	DEL /F "!DGI_autolog!" >> "%vrdlog%" 2>&1
-	ECHO ======================================================  Finish the DGIndexNV ====================================================== >> "!vrdlog!" 2>&1
-)
-
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Start FFMPEG Transcode of "!QSF_File!" into "!Target_File!" >> "!vrdlog!" 2>&1
@@ -1086,6 +1050,59 @@ IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 	)
 )
 
+REM ======================================================  Do the DGIndexNV ======================================================
+RE re-use error checking variable check_QSF_failed even though we are not doing a QSF
+IF QSF_calc_Video_Is_Progessive_AVC == "True" (
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! DGIndexNV is NOT performed for Progressive-AVC where we just copy streams >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+) ELSE
+	ECHO ======================================================  Start the DGIndexNV ====================================================== >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	ECHO !dgindexNVexe64! -version >> "!vrdlog!" 2>&1
+	!dgindexNVexe64! -version  >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	ECHO !dgindexNVexe64! -i "!QSF_File! -e -h -o "!DGI_file!" >> "!vrdlog!" 2>&1
+	!dgindexNVexe64! -i "!QSF_File! -e -h -o "!DGI_file!" >> "!vrdlog!" 2>&1
+	SET EL=!ERRORLEVEL!
+	IF /I "!EL!" NEQ "0" (
+		set "check_QSF_failed=********** ERROR: Error Number '!EL!' returned from '!dgindexNVexe64!'"
+		echo !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
+		ECHO !DATE! !TIME! SRC file="%~f1" >> "!vrdlog!" 2>&1
+		ECHO !DATE! !TIME! QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
+		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+		ECHO !DATE! !TIME! **********  Declaring FAILED:  "%~f1" >> "%vrdlog%" 2>&1
+		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+		CALL :declare_FAILED "%~f1"
+		goto :eof
+	)
+	ECHO TYPE "!DGI_autolog!" >> "%vrdlog%" 2>&1
+	TYPE "!DGI_autolog!" >> "%vrdlog%" 2>&1
+	ECHO DEL /F "!DGI_autolog!" >> "%vrdlog%" 2>&1
+	DEL /F "!DGI_autolog!" >> "%vrdlog%" 2>&1
+	ECHO ======================================================  Finish the DGIndexNV ====================================================== >> "!vrdlog!" 2>&1
+	ECHO ======================================================  Start Create a VPY_file ====================================================== >> "!vrdlog!" 2>&1
+	DEL /F "!VPY_file!">NUL 2>&1
+	ECHO import vapoursynth as vs		# this allows use of constants eg vs.YUV420P8 >> "!VPY_file!" 2>&1
+	ECHO from vapoursynth import core	# actual vapoursynth core >> "!VPY_file!" 2>&1
+	ECHO #import functool >> "!VPY_file!" 2>&1
+	ECHO #import mvsfunc as mvs			# this relies on the .py residing at the VS folder root level - see run_vsrepo.bat >> "!VPY_file!" 2>&1
+	ECHO #import havsfunc as haf		# this relies on the .py residing at the VS folder root level - see run_vsrepo.bat >> "!VPY_file!" 2>&1
+	ECHO core.std.LoadPlugin^(r'!vs_root!\DGIndex\DGDecodeNV.dll'^) # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765 >> "!VPY_file!" 2>&1
+	ECHO core.avs.LoadPlugin^(r'!vs_root!\DGIndex\DGDecodeNV.dll'^) # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765 >> "!VPY_file!" 2>&1
+	ECHO # NOTE: deinterlace=1, use_top_field=True for "Interlaced"/"TFF" >> "!VPY_file!" 2>&1
+	ECHO # NOTE: deinterlace=2, use_top_field=True for "Interlaced"/"TFF" >> "!VPY_file!" 2>&1
+	ECHO # dn_enable=x DENOISE >> "!VPY_file!" 2>&1
+	ECHO # default 0  0: disabled  1: spatial denoising only  2: temporal denoising only  3: spatial and temporal denoising >> "!VPY_file!" 2>&1
+	ECHO # dn_quality="x" default "good"    "good" "better" "best" ... "best" halves the speed compared pre-CUDASynth >> "!VPY_file!" 2>&1
+	ECHO video = core.dgdecodenv.DGSource^( r'!DGI_file!', deinterlace=!FFMPEG_V_dg_deinterlace!, use_top_field=!FFMPEG_V_dg_use_TFF!, use_pf=False !FFMPEG_V_dg_vpy_denoise! !FFMPEG_V_dg_vpy_dsharpen! ^) >> "!VPY_file!" 2>&1
+	ECHO #video = vs.core.text.ClipInfo^(video^) >> "!VPY_file!" 2>&1
+	ECHO video.set_output^(^) >> "!VPY_file!" 2>&1
+	ECHO TYPE "!VPY_file!" >> "%vrdlog%" 2>&1
+	TYPE "!VPY_file!" >> "%vrdlog%" 2>&1
+	ECHO ======================================================  Finish Create a VPY_file ====================================================== >> "!vrdlog!" 2>&1
+)
+
 IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	REM for Progressive AVC just copy video stream and transcode audio stream
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
@@ -1136,9 +1153,18 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	set "FFMPEG_cmd=!FFMPEG_cmd! -profile:v high -level 5.2 -movflags +faststart+write_colr"
 	set "FFMPEG_cmd=!FFMPEG_cmd! -c:a libfdk_aac -b:a 256k -ar 48000"
 	set "FFMPEG_cmd=!FFMPEG_cmd! -y "!Target_File!""
+	REM
+	REM ECHO "!vspipeexe64!" -h >> "%vrdlog%" 2>&1
+	REM "!vspipeexe64!" -h >> "%vrdlog%" 2>&1
+	ECHO "!vspipeexe64!" --version  >> "%vrdlog%" 2>&1
+	"!vspipeexe64!" --version  >> "%vrdlog%" 2>&1
+	ECHO "!vspipeexe64!" --info "!VPY_file!" >> "%vrdlog%" 2>&1
+	"!vspipeexe64!" --info "!VPY_file!" >> "%vrdlog%" 2>&1
+	REM
 	ECHO FFMPEG_vspipe_cmd='!FFMPEG_vspipe_cmd!' >> "%vrdlog%" 2>&1
 	ECHO FFMPEG_cmd='!FFMPEG_cmd!' >> "%vrdlog%" 2>&1
  	!FFMPEG_vspipe_cmd! | !FFMPEG_cmd! >> "%vrdlog%" 2>&1
+	REM
 )
 
 
@@ -1154,6 +1180,12 @@ REM ????????? delete the QSF file, VPY file, DGI file, DGI log
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ECHO DEL /F !scratch_Folder!*.tmp >> "!vrdlog!" 2>&1
 DEL /F !scratch_Folder!*.tmp >> "!vrdlog!" 2>&1
+ECHO DEL /F "!QSF_file!" >> "!vrdlog!" 2>&1
+DEL /F "!QSF_file!" >> "!vrdlog!" 2>&1
+ECHO DEL /F "!VPY_file!" >> "!vrdlog!" 2>&1
+DEL /F "!VPY_file!" >> "!vrdlog!" 2>&1
+ECHO DEL /F "!DGI_file!" >> "!vrdlog!" 2>&1
+DEL /F "!DGI_file!" >> "!vrdlog!" 2>&1
 goto :eof
 
 
