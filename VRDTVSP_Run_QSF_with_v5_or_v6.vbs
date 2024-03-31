@@ -15,7 +15,7 @@ Option Explicit
 	' Args(4) is path/name of a file of a .bat which will contain SET commands for DOS environment variables from QSF XML values - a fully qualified path name
 	' Args(5) a prefix eg "QSFinfo_" to be used as the variables prefix for the DOS variables in SET commands
 	' Args(6) is a number: the ActualBitrate number, in bps, to use if "//VRDOutputInfo/ActualVideoBitrate" is not returned by VRD, eg 4000000
-	' Args(7) is a number: the timeout in minutes before a QSF is deemed taking too long and is terminated, default 240
+	' Args(7) is a number: the timeout in minutes before a QSF is deemed taking too long and is terminated, default 300
 	'
 	'       The .BAT cmd commands file contains data for the most recently completed output file 
 	'       (hopefully the QSF) from a call to OutputGetCompletedInfo() or FileGetOpenedFileProgramInfo().
@@ -162,16 +162,16 @@ End If
 default_ActualBitrate_bps = CLng(default_ActualBitrate_bps)
 
 If IsNull(qsf_timeout_minutes) Then
-	qsf_timeout_minutes = 240
+	qsf_timeout_minutes = 300
 	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6 WARNING: qsf_timeout_minutes (a) DEFAULTED TO '" & qsf_timeout_minutes & "'")
 ElseIf IsEmpty(qsf_timeout_minutes) Then
-	qsf_timeout_minutes = 240
+	qsf_timeout_minutes = 300
 	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6 WARNING: qsf_timeout_minutes (b) DEFAULTED TO '" & qsf_timeout_minutes & "'")
 ElseIf qsf_timeout_minutes = "" Then
-	qsf_timeout_minutes = 240
+	qsf_timeout_minutes = 300
 	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6 WARNING: qsf_timeout_minutes (c) DEFAULTED TO '" & qsf_timeout_minutes & "'")
 ElseIf (not IsNumeric(qsf_timeout_minutes)) or (InStr(1, qsf_timeout_minutes, ".") <> 0) Then
-	qsf_timeout_minutes = 240
+	qsf_timeout_minutes = 300
 	Wscript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6 WARNING: qsf_timeout_minutes (d) DEFAULTED TO '" & qsf_timeout_minutes & "'")
 Else
 	qsf_timeout_minutes = CLng(qsf_timeout_minutes)
@@ -266,7 +266,7 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 
 	Const wait_ms = 2000	' in milliseconds, the time to break a line of dots
 	'Const giveup_hours = 4	' in hours, the time to let it run before giving up (eg for vrd v6 it can take ages)
-	'Const giveup_minutes = 240	' in minutes, the time to let it run before giving up (eg for vrd v6 it can take ages)
+	'Const giveup_minutes = 300	' in minutes, the time to let it run before giving up (eg for vrd v6 it can take ages)
 	Dim giveup_minutes, one_minute_in_ms
 	
 	Dim dot_count_linebreak_interval, two_hours_in_ms, one_hour_in_ms, half_hour_in_ms, quarter_hour_in_ms, ten_minutes_in_ms, giveup_interval_count
