@@ -130,8 +130,8 @@ REM --------- setup LOG file and TEMP filenames ----------------------------
 REM --------- setup vrd paths filenames etc ----------------------------
 REM set the primary and fallback version of VRD to use for QSF
 REM The QSF fallback process uses these next 2 variables to set/reset which version use when, via "CALL :set_vrd_qsf_paths NUMBER"
-set "DEFAULT_vrd_version_primary=5"
-set "DEFAULT_vrd_version_fallback=6"
+set "DEFAULT_vrd_version_primary=6"
+set "DEFAULT_vrd_version_fallback=5"
 set "extension_mpeg2=mpg"
 set "extension_h264=mp4"
 set "extension_h265=mp4"
@@ -961,14 +961,18 @@ ECHO !DATE! !TIME! Start FFMPEG Transcode of "!QSF_File!" into "!Target_File!" >
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 
+ECHO !DATE! !TIME! FFMPEGVARS: Determining FFMPEG_ variables helpful in encoding >> "!vrdlog!" 2>&1
 IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
+	ECHO !DATE! !TIME! FFMPEGVARS: PROGRESSIVE detected >> "!vrdlog!" 2>&1
 	IF /I "!QSF_calc_Video_Encoding!" == "AVC" (
 		REM Progressive AVC
+		ECHO !DATE! !TIME! FFMPEGVARS: PROGRESSIVE AVC detected >> "!vrdlog!" 2>&1
 		set "FFMPEG_V_dg_deinterlace=0"
 		set "FFMPEG_V_dg_vpy_denoise="
 		set "FFMPEG_V_dg_vpy_dsharpen="
 		set "FFMPEG_V_G=25"
 		IF /I "!Footy_found!" == "True" (
+			ECHO !DATE! !TIME! FFMPEGVARS: PROGRESSIVE AVC FOOTY detected >> "!vrdlog!" 2>&1
 			set "FFMPEG_V_dg_deinterlace=0"
 			set "FFMPEG_V_dg_vpy_denoise="
 			set "FFMPEG_V_dg_vpy_dsharpen="
@@ -976,11 +980,13 @@ IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 		)
 	) ELSE IF /I "!QSF_calc_Video_Encoding!" == "MPEG2" (
 		REM Progressive MPEG2
+		ECHO !DATE! !TIME! FFMPEGVARS: PROGRESSIVE MPEG2 detected >> "!vrdlog!" 2>&1
 		set "FFMPEG_V_dg_deinterlace=0"
 		set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
 		set "FFMPEG_V_dg_vpy_dsharpen=", sh_enable=1, sh_strength=0.3"
 		set "FFMPEG_V_G=25"
 		IF /I "!Footy_found!" == "True" (
+			ECHO !DATE! !TIME! FFMPEGVARS: PROGRESSIVE MPEG2 FOOTY detected >> "!vrdlog!" 2>&1
 			set "FFMPEG_V_dg_deinterlace=0"
 			set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
 			set "FFMPEG_V_dg_vpy_dsharpen=", sh_enable=1, sh_strength=0.3"
@@ -988,11 +994,13 @@ IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 		)
 	) ELSE (
 		REM UNKNOWN, assume Progressive MPEG2
+		ECHO !DATE! !TIME! FFMPEGVARS: PROGRESSIVE UNKNOWN codec detected >> "!vrdlog!" 2>&1
 		set "FFMPEG_V_dg_deinterlace=0"
 		set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
 		set "FFMPEG_V_dg_vpy_dsharpen=", sh_enable=1, sh_strength=0.3"
 		set "FFMPEG_V_G=25"
 		IF /I "!Footy_found!" == "True" (
+			ECHO !DATE! !TIME! FFMPEGVARS: PROGRESSIVE UNKNOWN codec FOOTY detected >> "!vrdlog!" 2>&1
 			set "FFMPEG_V_dg_deinterlace=0"
 			set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
 			set "FFMPEG_V_dg_vpy_dsharpen=", sh_enable=1, sh_strength=0.3"
@@ -1000,13 +1008,16 @@ IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 		)
 	)
 ) ELSE IF /I "!QSF_calc_Video_Interlacement!" == "INTERLACED" (
+	ECHO !DATE! !TIME! FFMPEGVARS: INTERLACED detected >> "!vrdlog!" 2>&1
 	IF /I "!QSF_calc_Video_Encoding!" == "AVC" (
 		REM Interlaced AVC
+		ECHO !DATE! !TIME! FFMPEGVARS: INTERLACED AVC detected >> "!vrdlog!" 2>&1
 		set "FFMPEG_V_dg_deinterlace=1"
 		set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
 		set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.3"																		' flag sharpening for progressive mpeg2
 		set "FFMPEG_V_G=25"
 		IF /I "!Footy_found!" == "True" (
+			ECHO !DATE! !TIME! FFMPEGVARS: INTERLACED AVC FOOTY detected >> "!vrdlog!" 2>&1
 			set "FFMPEG_V_dg_deinterlace=2"
 			set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.04, dn_cstrength=0.04, dn_tthresh=75.0, dn_show=0"
 			set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.25"																		' flag sharpening for progressive mpeg2
@@ -1014,11 +1025,13 @@ IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 		)
 	) ELSE IF /I "!QSF_calc_Video_Encoding!" == "MPEG2" (
 		REM Interlaced MPEG2
+		ECHO !DATE! !TIME! FFMPEGVARS: INTERLACED MPEG2 detected >> "!vrdlog!" 2>&1
 		set "FFMPEG_V_dg_deinterlace=1"
 		set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
 		set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.3"
 		set "FFMPEG_V_G=25"
 		IF /I "!Footy_found!" == "True" (
+			ECHO !DATE! !TIME! FFMPEGVARS: INTERLACED MPEG2 FOOTY detected >> "!vrdlog!" 2>&1
 			set "FFMPEG_V_dg_deinterlace=2"
 			set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
 			set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.3"
@@ -1026,11 +1039,13 @@ IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 		)
 	) ELSE (
 		REM UNKNOWN, assume Interlaced AVC
+		ECHO !DATE! !TIME! FFMPEGVARS: INTERLACED UNKNOWN codec detected >> "!vrdlog!" 2>&1
 		set "FFMPEG_V_dg_deinterlace=1"
 		set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
 		set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.3"
 		set "FFMPEG_V_G=25"
 		IF /I "!Footy_found!" == "True" (
+			ECHO !DATE! !TIME! FFMPEGVARS: INTERLACED UNKNOWN codec FOOTY detected >> "!vrdlog!" 2>&1
 			set "FFMPEG_V_dg_deinterlace=2"
 			set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.04, dn_cstrength=0.04, dn_tthresh=75.0, dn_show=0"
 			set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.25"
@@ -1041,10 +1056,13 @@ IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 REM ======================================================  Do the DGIndexNV ======================================================
 RE re-use error checking variable check_QSF_failed even though we are not doing a QSF
 IF QSF_calc_Video_Is_Progessive_AVC == "True" (
-	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! QSF_calc_Video_Is_Progessive_AVC=!QSF_calc_Video_Is_Progessive_AVC! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! DGIndexNV is NOT performed for Progressive-AVC where we just copy streams >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ) ELSE (
+	ECHO !DATE! !TIME! QSF_calc_Video_Is_Progessive_AVC=!QSF_calc_Video_Is_Progessive_AVC! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! DGIndexNV WILL be performed for NON Progressive-AVC and a .VPY will be created >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	ECHO ======================================================  Start the DGIndexNV ====================================================== >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	ECHO !dgindexNVexe64! -version >> "!vrdlog!" 2>&1
@@ -1095,7 +1113,8 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	REM for Progressive AVC just copy video stream and transcode audio stream
 	ECHO ======================================================  Start Run FFMPEG copy video stream ====================================================== >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! ********** Is Progressive-AVC ... just copy streams and transcode audio >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! ********** QSF_calc_Video_Is_Progessive_AVC=!QSF_calc_Video_Is_Progessive_AVC! ... so IS Progressive-AVC ... just copy video stream and transcode audio >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! ********** IS Progressive-AVC ... use ffmpeg to just copy video stream and transcode audio >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	REM ffmpeg throws an error due to "-c:v copy" and this together: -vf "setdar="!QSF_MI_V_DisplayAspectRatio_String_slash!"
 	REM ffmpeg throws an error due to "-c:v copy" and this together: -profile:v high -level 5.2 
@@ -1125,7 +1144,8 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	REM for [AVC INTERLACED] [MPEG2 PROGRESSIVE] [MPEG2 INTERLACED] transcode video and transcode audio stream
 	ECHO ======================================================  Start Run FFMPEG transcode ====================================================== >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! ********** Is NOT Progressive-AVC ... use ffmpeg and a .vpy to transcode video and transcode audio >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! ********** QSF_calc_Video_Is_Progessive_AVC=!QSF_calc_Video_Is_Progessive_AVC! ... so NOT Progressive-AVC ... transcode video and transcode audio >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! ********** NOT Progressive-AVC ... use ffmpeg and a .vpy to transcode video and transcode audio >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	set "FFMPEG_vspipe_cmd="!vspipeexe64!" --container y4m --filter-time "!VPY_file!" -"
 	set "FFMPEG_cmd="!ffmpegexe64!""
