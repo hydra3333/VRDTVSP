@@ -1148,21 +1148,20 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	"!vspipeexe64!" --info "!VPY_file!" >> "!vrdlog!" 2>&1
 	ECHO "!vspipeexe64!" --filter-time --progress --container y4m "!VPY_file!" -- >> "!vrdlog!" 2>&1
 	"!vspipeexe64!" --filter-time --progress --container y4m "!VPY_file!" -- >> "!vrdlog!" 2>&1
-	ECHO FFMPEG_vspipe_cmd='!FFMPEG_vspipe_cmd!' >> "!vrdlog!" 2>&1
-	ECHO FFMPEG_cmd='!FFMPEG_cmd!' >> "!vrdlog!" 2>&1
-
+	REM
+	REM ECHO FFMPEG_vspipe_cmd='!FFMPEG_vspipe_cmd!' >> "!vrdlog!" 2>&1
+	REM ECHO FFMPEG_cmd='!FFMPEG_cmd!' >> "!vrdlog!" 2>&1
 	DEL /F "!temp_cmd_file!">NUL 2>&1
 	echo @ECHO ON>>"!temp_cmd_file!" 2>&1
-	ECHO !FFMPEG_vspipe_cmd! ^^^| !FFMPEG_cmd!>>"!temp_cmd_file!" 2>&1
-	ECHO set "ERRORLEVEL=99">>"!temp_cmd_file!" 2>&1
-	ECHO set "EL=^^^!ERRORLEVEL^^^!">>"!temp_cmd_file!" 2>&1
+	ECHO !FFMPEG_vspipe_cmd!^^^|!FFMPEG_cmd!>>"!temp_cmd_file!" 2>&1
+	ECHO set "EL=^!ERRORLEVEL^!">>"!temp_cmd_file!" 2>&1
 	echo goto :eof>>"!temp_cmd_file!" 2>&1
 	echo CALL "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 	CALL "!temp_cmd_file!" >> "!vrdlog!" 2>&1
-
 	echo EL="!EL!" >> "!vrdlog!" 2>&1
 	pause
 	exit
+	??????? check EL and declare if required
 	DEL /F "!temp_cmd_file!">NUL 2>&1
 )
 
