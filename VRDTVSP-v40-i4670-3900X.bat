@@ -1129,8 +1129,7 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	set "FFMPEG_cmd=!FFMPEG_cmd! -strict experimental"
 	set "FFMPEG_cmd=!FFMPEG_cmd! -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp"
 	set "FFMPEG_cmd=!FFMPEG_cmd! -movflags +faststart+write_colr"
-	REM set "FFMPEG_cmd=!FFMPEG_cmd! -c:a libfdk_aac -b:a 256k -ar 48000"
-	set "FFMPEG_cmd=!FFMPEG_cmd! -c:a libfdk_aac -ab 256k -ar 48000"
+	set "FFMPEG_cmd=!FFMPEG_cmd! -c:a libfdk_aac -b:a 256k -ar 48000"
 	set "FFMPEG_cmd=!FFMPEG_cmd! -y "!Target_File!""
 	ECHO !FFMPEG_cmd! >> "!vrdlog!" 2>&1
  	!FFMPEG_cmd! >> "!vrdlog!" 2>&1
@@ -1168,8 +1167,7 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	set "FFMPEG_cmd=!FFMPEG_cmd! -strict experimental"
 	REM set "FFMPEG_cmd=!FFMPEG_cmd! -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp"
 	set "FFMPEG_cmd=!FFMPEG_cmd! -profile:v high -level 5.2 -movflags +faststart+write_colr"
-	REM set "FFMPEG_cmd=!FFMPEG_cmd! -c:a libfdk_aac -b:a 256k -ar 48000"
-	set "FFMPEG_cmd=!FFMPEG_cmd! -c:a libfdk_aac -ab 256k -ar 48000"
+	set "FFMPEG_cmd=!FFMPEG_cmd! -c:a libfdk_aac -b:a 256k -ar 48000"
 	set "FFMPEG_cmd=!FFMPEG_cmd! -y "!Target_File!""
 	REM
 	REM ECHO "!vspipeexe64!" -h >> "!vrdlog!" 2>&1
