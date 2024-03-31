@@ -1171,10 +1171,12 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	"!vspipeexe64!" --version  >> "!vrdlog!" 2>&1
 	ECHO "!vspipeexe64!" --info "!VPY_file!" >> "!vrdlog!" 2>&1
 	"!vspipeexe64!" --info "!VPY_file!" >> "!vrdlog!" 2>&1
-	REM ECHO "!vspipeexe64!" --filter-time --progress --container y4m "!VPY_file!" -- >> "!vrdlog!" 2>&1
-	REM "!vspipeexe64!" --filter-time --progress --container y4m "!VPY_file!" -- >> "!vrdlog!" 2>&1
-	REM ECHO FFMPEG_vspipe_cmd='!FFMPEG_vspipe_cmd!' >> "!vrdlog!" 2>&1
-	REM ECHO FFMPEG_cmd='!FFMPEG_cmd!' >> "!vrdlog!" 2>&1
+	ECHO "!vspipeexe64!" --filter-time --progress --container y4m "!VPY_file!" -- >> "!vrdlog!" 2>&1
+	"!vspipeexe64!" --filter-time --progress --container y4m "!VPY_file!" -- >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	ECHO FFMPEG_vspipe_cmd='!FFMPEG_vspipe_cmd!' >> "!vrdlog!" 2>&1
+	ECHO FFMPEG_cmd='!FFMPEG_cmd!' >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	DEL /F "!temp_cmd_file!">NUL 2>&1
 	echo @ECHO ON>>"!temp_cmd_file!" 2>&1
 	ECHO !FFMPEG_vspipe_cmd!^^^|!FFMPEG_cmd!>>"!temp_cmd_file!" 2>&1
