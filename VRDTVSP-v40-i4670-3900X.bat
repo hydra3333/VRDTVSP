@@ -988,7 +988,7 @@ IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 		IF /I "!Footy_found!" == "True" (
 			ECHO !DATE! !TIME! FFMPEGVARS: PROGRESSIVE MPEG2 FOOTY detected >> "!vrdlog!" 2>&1
 			set "FFMPEG_V_dg_deinterlace=0"
-			set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
+			set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.04, dn_cstrength=0.04, dn_tthresh=75.0, dn_show=0"
 			set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.3"
 			set "FFMPEG_V_G=25"
 		)
@@ -1002,7 +1002,7 @@ IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 		IF /I "!Footy_found!" == "True" (
 			ECHO !DATE! !TIME! FFMPEGVARS: PROGRESSIVE UNKNOWN codec FOOTY detected >> "!vrdlog!" 2>&1
 			set "FFMPEG_V_dg_deinterlace=0"
-			set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
+			set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.04, dn_cstrength=0.04, dn_tthresh=75.0, dn_show=0"
 			set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.3"
 			set "FFMPEG_V_G=25"
 		)
@@ -1019,7 +1019,7 @@ IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 		IF /I "!Footy_found!" == "True" (
 			ECHO !DATE! !TIME! FFMPEGVARS: INTERLACED AVC FOOTY detected >> "!vrdlog!" 2>&1
 			set "FFMPEG_V_dg_deinterlace=2"
-			set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
+			set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.04, dn_cstrength=0.04, dn_tthresh=75.0, dn_show=0"
 			set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.25"
 			set "FFMPEG_V_G=50"
 		)
@@ -1033,7 +1033,7 @@ IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 		IF /I "!Footy_found!" == "True" (
 			ECHO !DATE! !TIME! FFMPEGVARS: INTERLACED MPEG2 FOOTY detected >> "!vrdlog!" 2>&1
 			set "FFMPEG_V_dg_deinterlace=2"
-			set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
+			set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.04, dn_cstrength=0.04, dn_tthresh=75.0, dn_show=0"
 			set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.3"
 			set "FFMPEG_V_G=50"
 		)
@@ -1047,7 +1047,7 @@ IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 		IF /I "!Footy_found!" == "True" (
 			ECHO !DATE! !TIME! FFMPEGVARS: INTERLACED UNKNOWN codec FOOTY detected >> "!vrdlog!" 2>&1
 			set "FFMPEG_V_dg_deinterlace=2"
-			set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
+			set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.04, dn_cstrength=0.04, dn_tthresh=75.0, dn_show=0"
 			set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.25"
 			set "FFMPEG_V_G=50"
 		)
