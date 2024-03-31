@@ -1184,8 +1184,8 @@ ECHO DEL /F "!DGI_file!" >> "!vrdlog!" 2>&1
 DEL /F "!DGI_file!" >> "!vrdlog!" 2>&1
 ECHO DEL /F "!DGI_autolog!" >> "!vrdlog!" 2>&1
 DEL /F "!DGI_autolog!" >> "!vrdlog!" 2>&1
-ECHO DEL /F "!temp_cmd_file!">NUL 2>&1
-DEL /F "!temp_cmd_file!">NUL 2>&1
+ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 
 goto :eof
 
