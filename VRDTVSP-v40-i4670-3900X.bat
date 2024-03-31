@@ -573,7 +573,7 @@ set "QSF_File=!scratch_Folder!%~n1.qsf.!qsf_extension!"
 set "DGI_file=!scratch_Folder!%~n1.qsf.dgi"
 set "DGI_autolog=!scratch_Folder!%~n1.qsf.log"
 set "VPY_file=!scratch_Folder!%~n1.qsf.vpy"
-set "Target_File=!destination_mp4_Folder!%~n1.!qsf_extension!"
+set "Target_File=!destination_mp4_Folder!%~n1.MP4"
 
 REM Input Parameters to :run_cscript_qsf_with_timeout
 REM 	1	VideoReDo version number to use
@@ -1206,10 +1206,6 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 		ECHO !DATE! !TIME! temp_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
 		dir /s /b "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-
-		pause
-		exit
-
 		CALL :declare_FAILED "%~f1"
 		goto :eof
 	)
