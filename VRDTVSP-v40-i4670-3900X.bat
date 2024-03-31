@@ -1098,7 +1098,7 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	REM ffmpeg throws an error due to "-c:v copy" and this together: -vf "setdar="!QSF_MI_V_DisplayAspectRatio_String_slash!"
 	REM ffmpeg throws an error due to "-c:v copy" and this together: -profile:v high -level 5.2 
 	set "FFMPEG_cmd="!ffmpegexe64!""
-	set "FFMPEG_cmd=!FFMPEG_cmd! -hide_banner -v verbose -nostats"
+	set "FFMPEG_cmd=!FFMPEG_cmd! -hide_banner -v info -nostats"
 	set "FFMPEG_cmd=!FFMPEG_cmd! -i "!QSF_File!" -probesize 100M -analyzeduration 100M"
 	set "FFMPEG_cmd=!FFMPEG_cmd! -c:v copy -fps_mode passthrough"
 	set "FFMPEG_cmd=!FFMPEG_cmd! -strict experimental"
@@ -1127,7 +1127,7 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	set "FFMPEG_vspipe_cmd="!vspipeexe64!" --container y4m --filter-time "!VPY_file!" -"
 	set "FFMPEG_cmd="!ffmpegexe64!""
-	set "FFMPEG_cmd=!FFMPEG_cmd! -hide_banner -v verbose -nostats"
+	set "FFMPEG_cmd=!FFMPEG_cmd! -hide_banner -v info -nostats"
 	set "FFMPEG_cmd=!FFMPEG_cmd! -f yuv4mpegpipe -i pipe: -probesize 100M -analyzeduration 100M"
 	set "FFMPEG_cmd=!FFMPEG_cmd! -i "!QSF_File!""
 	set "FFMPEG_cmd=!FFMPEG_cmd! -map 0:v:0 -map 1:a:0"
