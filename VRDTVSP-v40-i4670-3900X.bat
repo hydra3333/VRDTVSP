@@ -795,10 +795,10 @@ IF /I "!QSF_calc_Video_Encoding!" == "AVC" (
 
 IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 	REM set for no deinterlace
-	REM set "FFMPEG_V_dg_deinterlace=0"
+	set "FFMPEG_V_dg_deinterlace=0"
 ) ELSE IF /I "!QSF_calc_Video_Interlacement!" == "INTERLACED" (
 	REM set for normal single framerate deinterlace
-	REM set "FFMPEG_V_dg_deinterlace=1"
+	set "FFMPEG_V_dg_deinterlace=1"
 ) ELSE (
 	set "check_QSF_failed=ERROR: UNKNOWN QSF_calc_Video_Interlacement="!QSF_calc_Video_Interlacement!" to base transcode calculations on, for '%~f1'"
 	echo !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
