@@ -1091,6 +1091,7 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 )
 IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	REM for Progressive AVC just copy video stream and transcode audio stream
+	ECHO ======================================================  Start Run FFMPEG copy video stream ====================================================== >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! ********** Is Progressive-AVC ... just copy streams and transcode audio >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
@@ -1109,7 +1110,7 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
  	!FFMPEG_cmd! >> "!vrdlog!" 2>&1
  	SET EL=!ERRORLEVEL!
 	IF /I "!EL!" NEQ "0" (
-		set "check_QSF_failed=********** ERROR: Error Number '!EL!' returned from '!ffmpegexe64!'"
+		set "check_QSF_failed=********** ERROR: Error Number '!EL!' returned from '!ffmpegexe64!' copy video stream "
 		echo !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 		ECHO !DATE! !TIME! SRC file="%~f1" >> "!vrdlog!" 2>&1
 		ECHO !DATE! !TIME! QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
@@ -1117,8 +1118,10 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 		CALL :declare_FAILED "%~f1"
 		goto :eof
 	)
+	ECHO ======================================================  Finish Run FFMPEG copy video stream ====================================================== >> "!vrdlog!" 2>&1
 ) ELSE (
 	REM for [AVC INTERLACED] [MPEG2 PROGRESSIVE] [MPEG2 INTERLACED] transcode video and transcode audio stream
+	ECHO ======================================================  Start Run FFMPEG transcode ====================================================== >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! ********** Is NOT Progressive-AVC ... use ffmpeg and a .vpy to transcode video and transcode audio >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
@@ -1158,33 +1161,31 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	echo goto :eof>>"!temp_cmd_file!" 2>&1
 	echo CALL "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 	CALL "!temp_cmd_file!" >> "!vrdlog!" 2>&1
-	echo EL="!EL!" >> "!vrdlog!" 2>&1
-	pause
-	exit
-	??????? check EL and declare if required
-	DEL /F "!temp_cmd_file!">NUL 2>&1
+	IF /I "!EL!" NEQ "0" (
+		set "check_QSF_failed=********** ERROR: Error Number '!EL!' returned from '!ffmpegexe64!' transcode"
+		echo !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
+		ECHO !DATE! !TIME! SRC file="%~f1" >> "!vrdlog!" 2>&1
+		ECHO !DATE! !TIME! QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
+		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+		CALL :declare_FAILED "%~f1"
+		goto :eof
+	)
+	ECHO ======================================================  Finish Run FFMPEG transcode ====================================================== >> "!vrdlog!" 2>&1
 )
-
-
-
-pause
-exit
 
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ECHO DEL /F !scratch_Folder!*.tmp >> "!vrdlog!" 2>&1
 DEL /F !scratch_Folder!*.tmp >> "!vrdlog!" 2>&1
-REM ECHO DEL /F "!QSF_file!" >> "!vrdlog!" 2>&1
-REM DEL /F "!QSF_file!" >> "!vrdlog!" 2>&1
-REM ECHO DEL /F "!VPY_file!" >> "!vrdlog!" 2>&1
-REM DEL /F "!VPY_file!" >> "!vrdlog!" 2>&1
-REM ECHO DEL /F "!DGI_file!" >> "!vrdlog!" 2>&1
-REM DEL /F "!DGI_file!" >> "!vrdlog!" 2>&1
+ECHO DEL /F "!QSF_file!" >> "!vrdlog!" 2>&1
+DEL /F "!QSF_file!" >> "!vrdlog!" 2>&1
+ECHO DEL /F "!VPY_file!" >> "!vrdlog!" 2>&1
+DEL /F "!VPY_file!" >> "!vrdlog!" 2>&1
+ECHO DEL /F "!DGI_file!" >> "!vrdlog!" 2>&1
+DEL /F "!DGI_file!" >> "!vrdlog!" 2>&1
 ECHO DEL /F "!DGI_autolog!" >> "!vrdlog!" 2>&1
 DEL /F "!DGI_autolog!" >> "!vrdlog!" 2>&1
-
-
-pause
-exit
+ECHO DEL /F "!temp_cmd_file!">NUL 2>&1
+DEL /F "!temp_cmd_file!">NUL 2>&1
 
 goto :eof
 
