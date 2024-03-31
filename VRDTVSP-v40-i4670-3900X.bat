@@ -1061,7 +1061,7 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ) ELSE (
 	ECHO !DATE! !TIME! QSF_calc_Video_Is_Progessive_AVC=!QSF_calc_Video_Is_Progessive_AVC! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! DGIndexNV WILL be performed for NON Progressive-AVC and a .VPY will be created >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! DGIndexNV WILL be performed for [AVC INTERLACED] [MPEG2 PROGRESSIVE] [MPEG2 INTERLACED] and a .VPY will be created >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	ECHO ======================================================  Start the DGIndexNV ====================================================== >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
