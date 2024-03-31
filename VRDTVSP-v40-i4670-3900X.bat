@@ -1014,13 +1014,13 @@ IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 		ECHO !DATE! !TIME! FFMPEGVARS: INTERLACED AVC detected >> "!vrdlog!" 2>&1
 		set "FFMPEG_V_dg_deinterlace=1"
 		set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
-		set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.3"																		' flag sharpening for progressive mpeg2
+		set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.3"
 		set "FFMPEG_V_G=25"
 		IF /I "!Footy_found!" == "True" (
 			ECHO !DATE! !TIME! FFMPEGVARS: INTERLACED AVC FOOTY detected >> "!vrdlog!" 2>&1
 			set "FFMPEG_V_dg_deinterlace=2"
-			set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.04, dn_cstrength=0.04, dn_tthresh=75.0, dn_show=0"
-			set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.25"																		' flag sharpening for progressive mpeg2
+			set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
+			set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.25"
 			set "FFMPEG_V_G=50"
 		)
 	) ELSE IF /I "!QSF_calc_Video_Encoding!" == "MPEG2" (
@@ -1047,7 +1047,7 @@ IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 		IF /I "!Footy_found!" == "True" (
 			ECHO !DATE! !TIME! FFMPEGVARS: INTERLACED UNKNOWN codec FOOTY detected >> "!vrdlog!" 2>&1
 			set "FFMPEG_V_dg_deinterlace=2"
-			set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.04, dn_cstrength=0.04, dn_tthresh=75.0, dn_show=0"
+			set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
 			set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.25"
 			set "FFMPEG_V_G=50"
 		)
@@ -1087,8 +1087,8 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	TYPE "!DGI_autolog!" >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	ECHO TYPE "!DGI_file!" >> "!vrdlog!" 2>&1
-	TYPE "!DGI_file!" >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	REM TYPE "!DGI_file!" >> "!vrdlog!" 2>&1
+	REM ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	ECHO DEL /F "!DGI_autolog!" >> "!vrdlog!" 2>&1
 	DEL /F "!DGI_autolog!" >> "!vrdlog!" 2>&1
 	ECHO ======================================================  Finish the DGIndexNV ====================================================== >> "!vrdlog!" 2>&1
@@ -1155,7 +1155,7 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	set "FFMPEG_vspipe_cmd="!vspipeexe64!" --container y4m --filter-time "!VPY_file!" -"
 	set "FFMPEG_cmd="!ffmpegexe64!""
 	REM set "FFMPEG_cmd=!FFMPEG_cmd! -hide_banner -v info -nostats"
-	set "FFMPEG_cmd=!FFMPEG_cmd! -hide_banner -v debug -nostats"
+	set "FFMPEG_cmd=!FFMPEG_cmd! -hide_banner -v verbose -nostats"
 	set "FFMPEG_cmd=!FFMPEG_cmd! -f yuv4mpegpipe -i pipe: -probesize 100M -analyzeduration 100M"
 	set "FFMPEG_cmd=!FFMPEG_cmd! -i "!QSF_File!""
 	set "FFMPEG_cmd=!FFMPEG_cmd! -map 0:v:0 -map 1:a:0"
@@ -1198,8 +1198,20 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 		ECHO !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 		ECHO !DATE! !TIME! SRC file="%~f1" >> "!vrdlog!" 2>&1
+		dir /s /b "%~f1" >> "!vrdlog!" 2>&1
 		ECHO !DATE! !TIME! QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
+		dir /s /b "!QSF_File!" >> "!vrdlog!" 2>&1
+		ECHO !DATE! !TIME! DGI_file="!DGI_file!" >> "!vrdlog!" 2>&1
+		dir /s /b "!DGI_file!" >> "!vrdlog!" 2>&1
+		ECHO !DATE! !TIME! VPY_file="!VPY_file!" >> "!vrdlog!" 2>&1
+		dir /s /b "!VPY_file!" >> "!vrdlog!" 2>&1
+		ECHO !DATE! !TIME! temp_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
+		dir /s /b "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+
+		pause
+		exit
+
 		CALL :declare_FAILED "%~f1"
 		goto :eof
 	)
