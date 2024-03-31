@@ -961,7 +961,7 @@ ECHO !DATE! !TIME! Start FFMPEG Transcode of "!QSF_File!" into "!Target_File!" >
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 
-ECHO !DATE! !TIME! FFMPEGVARS: Determining FFMPEG_ variables helpful in encoding >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! FFMPEGVARS: Determining FFMPEG_ variables helpful in encoding from "!QSF_File!"  >> "!vrdlog!" 2>&1
 IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 	ECHO !DATE! !TIME! FFMPEGVARS: PROGRESSIVE detected >> "!vrdlog!" 2>&1
 	IF /I "!QSF_calc_Video_Encoding!" == "AVC" (
@@ -1459,6 +1459,15 @@ REM remove junk files leftover from QSF if it timed out or something
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ECHO DEL /F !scratch_Folder!*.tmp >> "!vrdlog!" 2>&1
 DEL /F !scratch_Folder!*.tmp >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+ECHO set SRC_ >> "!vrdlog!" 2>&1
+set SRC_ >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+ECHO set QSF_ >> "!vrdlog!" 2>&1
+set QSF_ >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+ECHO set FFMPEG_ >> "!vrdlog!" 2>&1
+set FFMPEG_ >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 goto :eof
 
