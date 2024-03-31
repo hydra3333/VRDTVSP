@@ -765,7 +765,7 @@ IF /I "!QSF_calc_Video_Encoding!" == "AVC" (
 	ECHO !DATE! !TIME! "AVC"         FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BufSize! >> "!vrdlog!" 2>&1
 ) ELSE IF /I "!QSF_calc_Video_Encoding!" == "MPEG2" (
 	IF /I "%~x1" == ".MPG" (
-		set /a "FFMPEG_V_Target_BitRate=3500000"
+		set /a "FFMPEG_V_Target_BitRate=2500000"
 		set /a "FFMPEG_V_Target_Minimum_BitRate=100000"
 		set /a "FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_BitRate! * 2"
 		set /a "FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BitRate! * 2"
@@ -775,7 +775,7 @@ IF /I "!QSF_calc_Video_Encoding!" == "AVC" (
 		set /a "FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_BitRate! * 2"
 		set /a "FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BitRate! * 2"
 	) ELSE (
-		set /a "FFMPEG_V_Target_BitRate=2250000"
+		set /a "FFMPEG_V_Target_BitRate=2500000"
 		set /a "FFMPEG_V_Target_Minimum_BitRate=100000"
 		set /a "FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_BitRate! * 2"
 		set /a "FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BitRate! * 2"
@@ -868,10 +868,10 @@ IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
 	ECHO !DATE! !TIME! "Calculating whether to Bump CQ from 0 to 24 ..." >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! "FFMPEG_V_Target_BitRate=!FFMPEG_V_Target_BitRate!" >> "!vrdlog!" 2>&1
 	REM There were nested IF statements which is why the IFs and SETs are done this way
-	If !FFMPEG_V_Target_BitRate! LSS 2200000 (
+	If !FFMPEG_V_Target_BitRate! LSS 2000000 (
 		REM low bitrate, do not touch the bitrate itself, instead bump to CQ24
 		set "FFMPEG_V_PROPOSED_x_cq_options=!FFMPEG_V_cq24!"
-		ECHO !DATE! !TIME! "yes to Low INCOMING_BITRATE !INCOMING_BITRATE! LSS 2200000" >> "!vrdlog!" 2>&1
+		ECHO !DATE! !TIME! "yes to Low INCOMING_BITRATE !INCOMING_BITRATE! LSS 2000000" >> "!vrdlog!" 2>&1
 		ECHO !DATE! !TIME! "FFMPEG_V_PROPOSED_x_cq_options=!FFMPEG_V_PROPOSED_x_cq_options!" >> "!vrdlog!" 2>&1
 	)
 	set "FFMPEG_V_final_cq_options=!FFMPEG_V_PROPOSED_x_cq_options!"
