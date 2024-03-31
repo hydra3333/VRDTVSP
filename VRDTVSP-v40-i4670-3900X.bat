@@ -983,13 +983,13 @@ IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 		ECHO !DATE! !TIME! FFMPEGVARS: PROGRESSIVE MPEG2 detected >> "!vrdlog!" 2>&1
 		set "FFMPEG_V_dg_deinterlace=0"
 		set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
-		set "FFMPEG_V_dg_vpy_dsharpen=", sh_enable=1, sh_strength=0.3"
+		set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.3"
 		set "FFMPEG_V_G=25"
 		IF /I "!Footy_found!" == "True" (
 			ECHO !DATE! !TIME! FFMPEGVARS: PROGRESSIVE MPEG2 FOOTY detected >> "!vrdlog!" 2>&1
 			set "FFMPEG_V_dg_deinterlace=0"
 			set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
-			set "FFMPEG_V_dg_vpy_dsharpen=", sh_enable=1, sh_strength=0.3"
+			set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.3"
 			set "FFMPEG_V_G=25"
 		)
 	) ELSE (
@@ -997,13 +997,13 @@ IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 		ECHO !DATE! !TIME! FFMPEGVARS: PROGRESSIVE UNKNOWN codec detected >> "!vrdlog!" 2>&1
 		set "FFMPEG_V_dg_deinterlace=0"
 		set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
-		set "FFMPEG_V_dg_vpy_dsharpen=", sh_enable=1, sh_strength=0.3"
+		set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.3"
 		set "FFMPEG_V_G=25"
 		IF /I "!Footy_found!" == "True" (
 			ECHO !DATE! !TIME! FFMPEGVARS: PROGRESSIVE UNKNOWN codec FOOTY detected >> "!vrdlog!" 2>&1
 			set "FFMPEG_V_dg_deinterlace=0"
 			set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
-			set "FFMPEG_V_dg_vpy_dsharpen=", sh_enable=1, sh_strength=0.3"
+			set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.3"
 			set "FFMPEG_V_G=25"
 		)
 	)
@@ -1085,6 +1085,10 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	ECHO TYPE "!DGI_autolog!" >> "!vrdlog!" 2>&1
 	TYPE "!DGI_autolog!" >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	ECHO TYPE "!DGI_file!" >> "!vrdlog!" 2>&1
+	TYPE "!DGI_file!" >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	ECHO DEL /F "!DGI_autolog!" >> "!vrdlog!" 2>&1
 	DEL /F "!DGI_autolog!" >> "!vrdlog!" 2>&1
 	ECHO ======================================================  Finish the DGIndexNV ====================================================== >> "!vrdlog!" 2>&1
@@ -1125,7 +1129,8 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	set "FFMPEG_cmd=!FFMPEG_cmd! -strict experimental"
 	set "FFMPEG_cmd=!FFMPEG_cmd! -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp"
 	set "FFMPEG_cmd=!FFMPEG_cmd! -movflags +faststart+write_colr"
-	set "FFMPEG_cmd=!FFMPEG_cmd! -c:a libfdk_aac -b:a 256k -ar 48000"
+	REM set "FFMPEG_cmd=!FFMPEG_cmd! -c:a libfdk_aac -b:a 256k -ar 48000"
+	set "FFMPEG_cmd=!FFMPEG_cmd! -c:a libfdk_aac -ab 256k -ar 48000"
 	set "FFMPEG_cmd=!FFMPEG_cmd! -y "!Target_File!""
 	ECHO !FFMPEG_cmd! >> "!vrdlog!" 2>&1
  	!FFMPEG_cmd! >> "!vrdlog!" 2>&1
@@ -1149,7 +1154,8 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	set "FFMPEG_vspipe_cmd="!vspipeexe64!" --container y4m --filter-time "!VPY_file!" -"
 	set "FFMPEG_cmd="!ffmpegexe64!""
-	set "FFMPEG_cmd=!FFMPEG_cmd! -hide_banner -v info -nostats"
+	REM set "FFMPEG_cmd=!FFMPEG_cmd! -hide_banner -v info -nostats"
+	set "FFMPEG_cmd=!FFMPEG_cmd! -hide_banner -v debug -nostats"
 	set "FFMPEG_cmd=!FFMPEG_cmd! -f yuv4mpegpipe -i pipe: -probesize 100M -analyzeduration 100M"
 	set "FFMPEG_cmd=!FFMPEG_cmd! -i "!QSF_File!""
 	set "FFMPEG_cmd=!FFMPEG_cmd! -map 0:v:0 -map 1:a:0"
@@ -1162,7 +1168,8 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	set "FFMPEG_cmd=!FFMPEG_cmd! -strict experimental"
 	REM set "FFMPEG_cmd=!FFMPEG_cmd! -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp"
 	set "FFMPEG_cmd=!FFMPEG_cmd! -profile:v high -level 5.2 -movflags +faststart+write_colr"
-	set "FFMPEG_cmd=!FFMPEG_cmd! -c:a libfdk_aac -b:a 256k -ar 48000"
+	REM set "FFMPEG_cmd=!FFMPEG_cmd! -c:a libfdk_aac -b:a 256k -ar 48000"
+	set "FFMPEG_cmd=!FFMPEG_cmd! -c:a libfdk_aac -ab 256k -ar 48000"
 	set "FFMPEG_cmd=!FFMPEG_cmd! -y "!Target_File!""
 	REM
 	REM ECHO "!vspipeexe64!" -h >> "!vrdlog!" 2>&1
