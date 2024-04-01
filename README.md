@@ -3,13 +3,16 @@
 ### NOTHING WORKS FOR THE TIME BEING
 #### REDEVEOPMENT IN PROGRESS .vbs -> .bat/.py/.ps1
 
+
 ### built primarily with DOS-batch/python3/vbscript in 1970's coding styles   
+
 
 #### ONLY works on a Win10X64/Win11x64 PC with    
 #### - specific licensed software (VideoReDo, although that is no longer sold)    
 #### - and free software   
 #### - and preset folder/file locations   
 #### - and TV Scheduler Pro recordings   
+
 
 #### If anyone knows of a tool (to replace VideoReDo) which can be run from a
 #### commandline-interface (cli) which can parse a .TS and an .MP4 (eg from
