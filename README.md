@@ -13,9 +13,10 @@
 ---
 #### If anyone knows of a tool (to replace VideoReDo) which can be run from a
 #### commandline-interface (cli) which can parse a .TS and an .MP4 (eg from
-#### over-the-air TV captures) checking for glitches and "fix" them so that
-#### DGtools/Valpursynth/ffmpeg will not crash when trying to transcode them
-#### ... please leave a comment !!
+#### over-the-air TV captures, AVC and MPEG2) checking for glitches and "fix"
+#### the glitches so that DGtools/Vapoursynth/ffmpeg will not crash when trying
+#### to transcode them ...
+#### Please leave a comment !!
 ---
 ## Is suited only to tailored personal needs rather than being a general tool
 ---
