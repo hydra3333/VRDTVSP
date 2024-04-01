@@ -1,11 +1,10 @@
-@ECHO ON
+@ECHO OFF
 @setlocal ENABLEDELAYEDEXPANSION
 @setlocal enableextensions
 
 REM --------- set whether pause statements take effect ----------------------------
-SET xPAUSE=REM
+SET "xPAUSE=REM"
 REM set "xPAUSE=PAUSE"
-
 REM --------- set whether pause statements take effect ----------------------------
 
 REM --------- setup paths and exe filenames ----------------------------
