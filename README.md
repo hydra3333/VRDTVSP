@@ -11,12 +11,12 @@
 #### - and preset folder/file locations   
 #### - and TV Scheduler Pro recordings   
 ---
-#### $${\color{blue}If anyone knows of a tool (to replace VideoReDo) which can be run from a}$$
-#### $${\color{blue}commandline-interface (cli) which can parse a .TS and an .MP4 (eg from}$$
-#### $${\color{blue}over-the-air TV captures, AVC and MPEG2) checking for glitches and "fix"}$$
-#### $${\color{blue}the glitches so that DGtools/Vapoursynth/ffmpeg will not crash when trying}$$
-#### $${\color{blue}to transcode them ...}$$
-#### $${\color{blue}Please leave a comment !!}$$
+#### If anyone knows of a tool (to replace VideoReDo) which can be run from a
+#### commandline-interface (cli) which can parse a .TS and an .MP4 (eg from
+#### over-the-air TV captures, AVC and MPEG2) checking for glitches and "fix"
+#### the glitches so that DGtools/Vapoursynth/ffmpeg will not crash when trying
+#### to transcode them ...
+#### Please leave a comment !!
 ---
 ## Is suited only to tailored personal needs rather than being a general tool
 ---
