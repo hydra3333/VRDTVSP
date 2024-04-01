@@ -10,9 +10,9 @@ REM --------- set whether pause statements take effect -------------------------
 
 REM --------- setup paths and exe filenames ----------------------------
 
-set "root=G:\TEST-vrdtvsp-v40\"
-set "vs_root=G:\TEST-vrdtvsp-v40\Vapoursynth-x64\"
-set "destination_mp4_Folder=G:\TEST-vrdtvsp-v40\VRDTVSP-Converted\"
+set "root=G:\HDTV\"
+set "vs_root=C:\SOFTWARE\Vapoursynth-x64\"
+set "destination_mp4_Folder=T:\HDTV\VRDTVSP-Converted\"
 set "scratch_Folder=D:\VRDTVSP-SCRATCH\"
 
 if /I NOT "!root:~-1!" == "\" (set "root=!root!\")
