@@ -1,0 +1,54 @@
+https://learn.microsoft.com/en-au/windows/win32/taskschd/taskschedulerschema-priority-settingstype-element
+
+Task
+priority	Priority Class					Priority Level
+0			REALTIME_PRIORITY_CLASS			THREAD_PRIORITY_TIME_CRITICAL
+1			HIGH_PRIORITY_CLASS				THREAD_PRIORITY_HIGHEST
+2			ABOVE_NORMAL_PRIORITY_CLASS		THREAD_PRIORITY_ABOVE_NORMAL
+3			ABOVE_NORMAL_PRIORITY_CLASS		THREAD_PRIORITY_ABOVE_NORMAL
+4			NORMAL_PRIORITY_CLASS			THREAD_PRIORITY_NORMAL
+5			NORMAL_PRIORITY_CLASS			THREAD_PRIORITY_NORMAL
+6			NORMAL_PRIORITY_CLASS			THREAD_PRIORITY_NORMAL
+7			BELOW_NORMAL_PRIORITY_CLASS		THREAD_PRIORITY_BELOW_NORMAL
+8			BELOW_NORMAL_PRIORITY_CLASS		THREAD_PRIORITY_BELOW_NORMAL
+9			IDLE_PRIORITY_CLASS				THREAD_PRIORITY_LOWEST
+10			IDLE_PRIORITY_CLASS				THREAD_PRIORITY_IDLE
+
+
+
+
+
+@echo off
+
+REM Get the PID of the current Command Prompt window
+for /f "tokens=2" %%a in ('wmic process where "CommandLine like '%%<your_batch_file_name.bat%%'" get ParentProcessID /format:list ^| findstr "="') do (
+    echo Current Command Prompt PPID: %%a
+    set "PPID=%%a"
+)
+
+REM Get the PID of the batch file's Command Prompt window
+for /f "tokens=2" %%b in ('wmic process where (ParentProcessID^="%PPID%") get ProcessID /format:list ^| findstr "="') do (
+    echo Batch File Command Prompt PID: %%b
+    set "PID=%%b"
+)
+
+REM Get the current priority of the Command Prompt window associated with the batch file
+for /f "tokens=2 delims==" %%c in ('wmic process where ProcessID^="%PID%" get Priority /format:list ^| findstr "="') do (
+    echo Current Priority: %%c
+    set "CurrentPriority=%%c"
+)
+
+REM Set the priority of the Command Prompt window associated with the batch file
+echo Setting priority for PID: %PID%
+wmic process where ProcessID=%PID% CALL setpriority "normal"
+
+REM Get the priority after setting it
+for /f "tokens=2 delims==" %%d in ('wmic process where ProcessID^="%PID%" get Priority /format:list ^| findstr "="') do (
+    echo New Priority: %%d
+    set "NewPriority=%%d"
+)
+
+:: Your batch file commands here
+
+pause
+exit
