@@ -1153,7 +1153,8 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	ECHO !DATE! !TIME! ********** QSF_calc_Video_Is_Progessive_AVC=!QSF_calc_Video_Is_Progessive_AVC! ... so NOT Progressive-AVC ... transcode video and transcode audio >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! ********** NOT Progressive-AVC ... use ffmpeg and a .vpy to transcode video and transcode audio >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	set "FFMPEG_vspipe_cmd="!vspipeexe64!" --container y4m --filter-time "!VPY_file!" -"
+	REM set "FFMPEG_vspipe_cmd="!vspipeexe64!" --container y4m --filter-time "!VPY_file!" -"
+	set "FFMPEG_vspipe_cmd="!vspipeexe64!" --container y4m "!VPY_file!" -"
 	set "FFMPEG_cmd="!ffmpegexe64!""
 	set "FFMPEG_cmd=!FFMPEG_cmd! -hide_banner -v info -nostats"
 	REM set "FFMPEG_cmd=!FFMPEG_cmd! -hide_banner -v verbose -nostats"
