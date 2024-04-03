@@ -60,8 +60,7 @@ if __name__ == "__main__":
     #
     # Get the local timezone
     #local_tz = pytz.timezone('Australia/Adelaide')  # Set your local timezone
-    local_tz = get_localzone()
-    utc_tz = pytz.utc # Create a timezone object for UTC
+    local_tz = get_localzone()  # Get the local timezone dynamically
     #
     for old_full_filename in file_list:
         filename = os.path.basename(old_full_filename)
@@ -77,7 +76,7 @@ if __name__ == "__main__":
             creation_time = os.path.getctime(old_full_filename)
             date_from_file = datetime.fromtimestamp(creation_time)
             date_from_file = local_tz.localize(date_from_file).replace(hour=0, minute=0, second=0, microsecond=0)  # Replace time portion with 00:00:00.00 in local timezone
-            fs = "creaton-date"
+            fs = "creation-date"
             #print(f"DEBUG: --- date pattern match NOT found in filename, using creation date of the file instead: {date_from_file} {old_full_filename}")
         # Set only modification date timestamp based on the date in the string. 
         # Python cannot set creation time.
@@ -87,7 +86,7 @@ if __name__ == "__main__":
         # Set BOTH creation and modification date timestamp based on the date in the string.
         # Convert datetime object to Windows FILETIME format
         #time_windows = int((date_from_file - datetime(1601, 1, 1)).total_seconds() * 10**7)
-        datetime_1601 = datetime(1601, 1, 1, tzinfo=utc_tz)
+        datetime_1601 = datetime(1601, 1, 1, tzinfo=pytz.utc)
         time_difference = (date_from_file - datetime_1601).total_seconds() # Calculate time difference in seconds
         time_windows = int(time_difference * 10**7) # Convert time difference to FILETIME format
         # Open the file
