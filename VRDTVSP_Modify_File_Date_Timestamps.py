@@ -59,8 +59,8 @@ if __name__ == "__main__":
     date_pattern = r'\b\d{4}-\d{2}-\d{2}\b'
     #
     # Get the local timezone
-    #local_tz = pytz.timezone('Australia/Adelaide')  # Set your local timezone
-    local_tz = get_localzone()  # Get the local timezone dynamically
+    local_tz = pytz.timezone('Australia/Adelaide')  # Set your local timezone
+    #local_tz = get_localzone()  # Get the local timezone dynamically fails later
     #
     for old_full_filename in file_list:
         filename = os.path.basename(old_full_filename)
