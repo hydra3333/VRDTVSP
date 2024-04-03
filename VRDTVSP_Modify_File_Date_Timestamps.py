@@ -63,13 +63,15 @@ if __name__ == "__main__":
         if match:
             date_string = match.group()
             date_from_file = datetime.strptime(date_string, "%Y-%m-%d") # Convert to datetime object
-            date_from_file = date_from_file.replace(hour=0, minute=0, second=0, microsecond=0)  # Replace time portion with 00:00:00.00
+            #date_from_file = date_from_file.replace(hour=0, minute=0, second=0, microsecond=0)  # Replace time portion with 00:00:00.00
+            date_from_file = local_tz.localize(date_from_file).replace(hour=0, minute=0, second=0, microsecond=0)  # Replace time portion with 00:00:00.00 in local timezone
             fs = "filename-date"
             #print(f"DEBUG: +++ date pattern match found in filename: {date_from_file} {old_full_filename}")
         else:
             creation_time = os.path.getctime(old_full_filename)
             date_from_file = datetime.fromtimestamp(creation_time)
-            date_from_file = date_from_file.replace(hour=0, minute=0, second=0, microsecond=0)  # Replace time portion with 00:00:00.00
+            #date_from_file = date_from_file.replace(hour=0, minute=0, second=0, microsecond=0)  # Replace time portion with 00:00:00.00
+            date_from_file = local_tz.localize(date_from_file).replace(hour=0, minute=0, second=0, microsecond=0)  # Replace time portion with 00:00:00.00 in local timezone
             fs = "creaton-date"
             #print(f"DEBUG: --- date pattern match NOT found in filename, using creation date of the file instead: {date_from_file} {old_full_filename}")
         # Set only modification date timestamp based on the date in the string. 
