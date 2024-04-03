@@ -3,6 +3,7 @@ import sys
 import re
 import argparse
 from datetime import datetime
+from tzlocal import get_localzone
 import pytz 
 import ctypes
 from ctypes import wintypes
@@ -57,7 +58,9 @@ if __name__ == "__main__":
     # Regex for extracting date string from filename
     date_pattern = r'\b\d{4}-\d{2}-\d{2}\b'
     #
-    local_tz = pytz.timezone('Australia/Adelaide')  # Set your local timezone
+    # Get the local timezone
+    #local_tz = pytz.timezone('Australia/Adelaide')  # Set your local timezone
+    local_tz = get_localzone()
     utc_tz = pytz.utc # Create a timezone object for UTC
     #
     for old_full_filename in file_list:
