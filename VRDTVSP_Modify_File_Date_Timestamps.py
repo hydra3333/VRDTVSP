@@ -70,7 +70,7 @@ if __name__ == "__main__":
             date_from_file = datetime.fromtimestamp(creation_time)
             date_from_file = date_from_file.replace(hour=0, minute=0, second=0, microsecond=0)  # Replace time portion with 00:00:00.00
             fs = "creaton-date"
-            print(f"DEBUG: --- date pattern match NOT found in filename, using creation date of the file instead: {date_from_file} {old_full_filename}")
+            #print(f"DEBUG: --- date pattern match NOT found in filename, using creation date of the file instead: {date_from_file} {old_full_filename}")
         # Set only modification date timestamp based on the date in the string. 
         # Python cannot set creation time.
         #    Usage: os.utime(filename, access_time, modification_time)
