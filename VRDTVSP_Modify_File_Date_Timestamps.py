@@ -66,14 +66,12 @@ if __name__ == "__main__":
         if match:
             date_string = match.group()
             date_from_file = datetime.strptime(date_string, "%Y-%m-%d") # Convert to datetime object
-            #date_from_file = date_from_file.replace(hour=0, minute=0, second=0, microsecond=0)  # Replace time portion with 00:00:00.00
             date_from_file = local_tz.localize(date_from_file).replace(hour=0, minute=0, second=0, microsecond=0)  # Replace time portion with 00:00:00.00 in local timezone
             fs = "filename-date"
             #print(f"DEBUG: +++ date pattern match found in filename: {date_from_file} {old_full_filename}")
         else:
             creation_time = os.path.getctime(old_full_filename)
             date_from_file = datetime.fromtimestamp(creation_time)
-            #date_from_file = date_from_file.replace(hour=0, minute=0, second=0, microsecond=0)  # Replace time portion with 00:00:00.00
             date_from_file = local_tz.localize(date_from_file).replace(hour=0, minute=0, second=0, microsecond=0)  # Replace time portion with 00:00:00.00 in local timezone
             fs = "creaton-date"
             #print(f"DEBUG: --- date pattern match NOT found in filename, using creation date of the file instead: {date_from_file} {old_full_filename}")
@@ -84,7 +82,10 @@ if __name__ == "__main__":
         #---
         # Set BOTH creation and modification date timestamp based on the date in the string.
         # Convert datetime object to Windows FILETIME format
-        time_windows = int((date_from_file - datetime(1601, 1, 1)).total_seconds() * 10**7)
+        #time_windows = int((date_from_file - datetime(1601, 1, 1)).total_seconds() * 10**7)
+        datetime_1601 = datetime(1601, 1, 1, tzinfo=utc_tz)
+        time_difference = (date_from_file - datetime_1601).total_seconds() # Calculate time difference in seconds
+        time_windows = int(time_difference * 10**7) # Convert time difference to FILETIME format
         # Open the file
         handle = ctypes.windll.kernel32.CreateFileW(old_full_filename, ctypes.wintypes.DWORD(256), 0, None, ctypes.wintypes.DWORD(3), 0, None)
         # Change BOTH creation and modification times
