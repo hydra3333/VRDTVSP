@@ -18,7 +18,8 @@
 #### to transcode them ...
 #### Please leave a comment !!
 ---
-## Is suited only to tailored personal needs rather than being a general tool
+## Is suited only to tailored personal needs rather than being a general tool.
+#### VRDTVSP_Modify_File_Date_Timestamps.py is currently hard-coded to Australia/Adelaide timezone !
 ---
 
 Tries to convert time-shifted (thus free in AU) OTA interlaced and progressive recordings
