@@ -58,6 +58,7 @@ if __name__ == "__main__":
     date_pattern = r'\b\d{4}-\d{2}-\d{2}\b'
     #
     local_tz = pytz.timezone('Australia/Adelaide')  # Set your local timezone
+    utc_tz = pytz.utc # Create a timezone object for UTC
     #
     for old_full_filename in file_list:
         filename = os.path.basename(old_full_filename)
