@@ -3,6 +3,7 @@ import sys
 import re
 import argparse
 from datetime import datetime
+import pytz 
 import ctypes
 from ctypes import wintypes
 from ctypes import *        # for mediainfo ... load via ctypes.CDLL(r'.\MediaInfo.dll')
@@ -14,7 +15,6 @@ import subprocess
 import pprint
 #from MediaInfoDLL3 import MediaInfo, Stream, Info, InfoOption
 from pymediainfo import MediaInfo
-
 
 def add_variable_to_list(key, value, set_cmd_list):
     set_cmd_list.append(f'SET "{key}={value}"')
