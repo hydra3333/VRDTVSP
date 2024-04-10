@@ -1560,12 +1560,12 @@ IF /I "!tmp_MI_V_ScanType!" == "Interlaced"     (set "!current_prefix!calc_Video
 IF /I "!tmp_FF_V_field_order!" == "tt"          (set "!current_prefix!calc_Video_Interlacement=INTERLACED")
 IF /I "!tmp_MI_V_ScanType!" == ""               (set "!current_prefix!calc_Video_Interlacement=PROGRESSIVE")
 IF /I "!tmp_FF_V_field_order!" == "progressive" (set "!current_prefix!calc_Video_Interlacement=PROGRESSIVE")
-REM ECHO +++++++++ >> "!vrdlog!" 2>&1
-REM ECHO set tmp_MI_V_ScanType >> "!vrdlog!" 2>&1
-REM set tmp_MI_V_ScanType >> "!vrdlog!" 2>&1
-REM ECHO +++++++++ >> "!vrdlog!" 2>&1
-REM ECHO set tmp_FF_V_field_order >> "!vrdlog!" 2>&1
-REM set tmp_FF_V_field_order >> "!vrdlog!" 2>&1
+ECHO +++++++++ >> "!vrdlog!" 2>&1
+ECHO set tmp_MI_V_ScanType >> "!vrdlog!" 2>&1
+set tmp_MI_V_ScanType >> "!vrdlog!" 2>&1
+ECHO +++++++++ >> "!vrdlog!" 2>&1
+ECHO set tmp_FF_V_field_order >> "!vrdlog!" 2>&1
+set tmp_FF_V_field_order >> "!vrdlog!" 2>&1
 ECHO +++++++++ >> "!vrdlog!" 2>&1
 ECHO set !current_prefix!calc_Video_Interlacement >> "!vrdlog!" 2>&1
 set !current_prefix!calc_Video_Interlacement >> "!vrdlog!" 2>&1
