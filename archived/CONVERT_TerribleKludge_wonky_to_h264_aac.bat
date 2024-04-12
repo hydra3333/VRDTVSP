@@ -51,17 +51,16 @@ REM -- Prepare the log file ----------------------------------------------------
 REM ---------Setup Folders --------- (ensure trailing backslash exists)
 set "temp_Folder=!scratch_Folder!"
 
-
 REM ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 REM ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 REM set "source_mp4_Folder=F:\mp4library\TEST\"
 REM set "source_mp4_Folder=F:\mp4library\BigIdeas\"
 REM set "source_mp4_Folder=F:\mp4library\BigIdeas\WhatMakesUsHappy\"
 REM set "source_mp4_Folder=F:\mp4library\CharlieWalsh\"
-set "source_mp4_Folder=F:\mp4library\ClassicDocumentaries\"
+REM set "source_mp4_Folder=F:\mp4library\ClassicDocumentaries\"
 REM set "source_mp4_Folder=F:\mp4library\ClassicMovies\"
 REM set "source_mp4_Folder=F:\mp4library\Comedy\"
-REM set "source_mp4_Folder=F:\mp4library\Documentaries\"
+set "source_mp4_Folder=F:\mp4library\Documentaries\"
 REM REM set "source_mp4_Folder=F:\mp4library\Footy\"
 REM set "source_mp4_Folder=F:\mp4library\HomePics\"
 REM set "source_mp4_Folder=F:\mp4library\MOVIES\"
@@ -87,6 +86,9 @@ if /I NOT "!done_h265_aac:~-1!" == "\" (set "done_h265_aac=!done_h265_aac!\")
 
 set "done_h265_mp3=!source_mp4_Folder!done_h265_mp3\"
 if /I NOT "!done_h265_mp3:~-1!" == "\" (set "done_h265_mp3=!done_h265_mp3!\")
+
+set "done_bad=!source_mp4_Folder!done_bad\"
+if /I NOT "!done_bad:~-1!" == "\" (set "done_bad=!done_bad!\")
 REM
 
 REM the trailing backslash ensures it detects it as a folder
@@ -99,6 +101,7 @@ if not exist "!done_avc_aac!" (mkdir "!done_avc_aac!")
 if not exist "!done_avc_mp3!" (mkdir "!done_avc_mp3!")
 if not exist "!done_h265_aac!" (mkdir "!done_h265_aac!")
 if not exist "!done_h265_mp3!" (mkdir "!done_h265_mp3!")
+if not exist "!done_bad!" (mkdir "!done_bad!")
 
 REM --------- resolve any relative paths into absolute paths --------- 
 REM --------- ensure no spaces between brackets and first/last parts of the the SET statement inside the DO --------- 
@@ -132,6 +135,10 @@ REM ECHO !DATE! !TIME! after done_h265_aac="%done_h265_aac%" >> "!vrdlog!" 2>&1
 REM ECHO !DATE! !TIME! before done_h265_mp3="%done_h265_mp3%" >> "!vrdlog!" 2>&1
 FOR /F %%i IN ("!done_h265_mp3!") DO (set "done_h265_mp3=%%~fi")
 REM ECHO !DATE! !TIME! after done_h265_mp3="%done_h265_mp3%" >> "!vrdlog!" 2>&1
+
+REM ECHO !DATE! !TIME! before done_h265_mp3="%done_bad%" >> "!vrdlog!" 2>&1
+FOR /F %%i IN ("!done_bad!") DO (set "done_bad=%%~fi")
+REM ECHO !DATE! !TIME! after done_bad="%done_bad%" >> "!vrdlog!" 2>&1
 REM ---------Setup Folders ---------
 
 REM --------- setup LOG file and TEMP filenames ----------------------------
@@ -192,6 +199,7 @@ ECHO !DATE! !TIME! done_avc_aac="!done_avc_aac!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! done_avc_mp3="!done_avc_mp3!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! done_h265_aac="!done_h265_aac!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! done_h265_mp3="!done_h265_mp3!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! done_bad="!done_bad!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! PSlog="!PSlog!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! tempfile="!tempfile!" >> "!vrdlog!" 2>&1
 
@@ -298,8 +306,10 @@ for %%f in ("!source_mp4_Folder!*.mp4") do (
 	CALL :get_date_time_String "iloop_start_date_time"
 	ECHO !DATE! !TIME! START ------------------ %%f >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! Input file : "%%~f" >> "!vrdlog!" 2>&1
+	REM check parmaters in the media file
 	CALL :getvariables "%%f"
-	CALL :convert_to_h264_aac "%%f"
+	REM if the media file passed tests in :getvariables then process the media file
+	if exist "%%f" (CALL :convert_to_h264_aac "%%f")
 	ECHO !DATE! !TIME! END ------------------ %%f >> "!vrdlog!" 2>&1
 	CALL :get_date_time_String "iloop_end_date_time"
 	ECHO "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!iloop_start_date_time!" --end_datetime "!iloop_end_date_time!" --prefix_id ":::::::::: iloop %%f " >> "!vrdlog!" 2>&1
@@ -398,7 +408,7 @@ ECHO "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!TOT
 "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!TOTAL_start_date_time!" --end_datetime "!TOTAL_end_date_time!" --prefix_id "TOTAL" >> "!vrdlog!" 2>&1
 
 !xPAUSE!
-exit
+goto :eof
 
 
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -470,8 +480,10 @@ IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	!xPAUSE!
-	exit
+	REM !xPAUSE!
+	REM exit 1
+	call :move_to_bad "!the_Source_File!"
+	goto :eof
 )
 REM
 IF /I "!SRC_calc_Video_FieldFirst!" == "TFF" (
@@ -479,11 +491,14 @@ IF /I "!SRC_calc_Video_FieldFirst!" == "TFF" (
 ) ELSE IF /I "!SRC_calc_Video_FieldFirst!" == "BFF" (
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ) ELSE (
-	set "check_QSF_failed=ERROR: mediainfo/ffmpeg processing '!SRC_calc_Video_FieldFirst!' yields neither 'TFF' nor 'BFF' field-first ,default='TFF', for '%~f1'"
+	set "check_QSF_failed=ERROR: mediainfo/ffmpeg processing '!SRC_calc_Video_FieldFirst!' yields neither 'TFF' nor 'BFF' field-first for '%~f1'"
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	!xPAUSE!
+	REM !xPAUSE!
+	REM exit 1
+	call :move_to_bad "!the_Source_File!"
+	goto :eof
 )
 REM
 IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
@@ -495,7 +510,10 @@ IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	!xPAUSE!
+	REM !xPAUSE!
+	REM exit 1
+	call :move_to_bad "!the_Source_File!"
+	goto :eof
 )
 
 REM
@@ -561,8 +579,10 @@ IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
 	ECHO !DATE! !TIME! ERROR: UNKNOWN SRC_calc_Video_Encoding="!SRC_calc_Video_Encoding!" to base the transcode calculations on. MUST be AVC or HEVC >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! ERROR: UNKNOWN SRC_calc_Video_Encoding="!SRC_calc_Video_Encoding!" to base the transcode calculations on. MUST be AVC or HEVC >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! ERROR: UNKNOWN SRC_calc_Video_Encoding="!SRC_calc_Video_Encoding!" to base the transcode calculations on. MUST be AVC or HEVC >> "!vrdlog!" 2>&1
-	!xPAUSE!
-	exit 1
+	REM !xPAUSE!
+	REM exit 1
+	call :move_to_bad "!the_Source_File!"
+	goto :eof
 )
 
 IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
@@ -580,6 +600,9 @@ IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 	CALL :get_date_time_String "end_date_time_QSF"
 	REM ECHO "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
 	"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
+	REM !xPAUSE!
+	REM exit 1
+	call :move_to_bad "!the_Source_File!"
 	goto :eof
 )
 
@@ -596,6 +619,9 @@ IF /I "!SRC_calc_Video_FieldFirst!" == "TFF" (
 	CALL :get_date_time_String "end_date_time_QSF"
 	REM ECHO "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
 	"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
+	REM !xPAUSE!
+	REM exit 1
+	call :move_to_bad "!the_Source_File!"
 	goto :eof
 )
 
@@ -700,8 +726,10 @@ IF /I "!Footy_found!" == "True" (
 		set "check_QSF_failed=UNKNOWN SRC_calc_Video_Interlacement="!SRC_calc_Video_Interlacement!" to base transcode calculations on, for '%~f1'"
 		ECHO !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 		ECHO !DATE! !TIME! the_Source_File="!the_Source_File!" >> "!vrdlog!" 2>&1
-		!xPAUSE!
-		exit
+		REM !xPAUSE!
+		REM exit 1
+		call :move_to_bad "!the_Source_File!"
+		goto :eof
 	)
 ) ELSE (
 	ECHO NO Footy words found in filename '!the_file_name_part!', FFMPEG_V_dg_deinterlace unchanged=!FFMPEG_V_dg_deinterlace!, NO footy variables set  >> "!vrdlog!" 2>&1
@@ -782,8 +810,10 @@ IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 	) ELSE (
 		REM UNKNOWN
 		ECHO !DATE! !TIME! FFMPEGVARS: UNKNOWN PROGRESSIVE SRC_calc_Video_Encoding '!SRC_calc_Video_Encoding!' detected SRC_MI_V_FrameRate_Num='!SRC_MI_V_FrameRate_Num!' >> "!vrdlog!" 2>&1
-		!xPAUSE!
-		exit
+		REM !xPAUSE!
+		REM exit 1
+		call :move_to_bad "!the_Source_File!"
+		goto :eof
 	)
 ) ELSE IF /I "!SRC_calc_Video_Interlacement!" == "INTERLACED" (
 	ECHO !DATE! !TIME! FFMPEGVARS: INTERLACED detected SRC_MI_V_FrameRate_Num='!SRC_MI_V_FrameRate_Num!' >> "!vrdlog!" 2>&1
@@ -837,8 +867,10 @@ IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 	) ELSE (
 		REM UNKNOWN
 		ECHO !DATE! !TIME! FFMPEGVARS: UNKNOWN INTERLACED SRC_calc_Video_Encoding '!SRC_calc_Video_Encoding!' detected SRC_MI_V_FrameRate_Num='!SRC_MI_V_FrameRate_Num!' >> "!vrdlog!" 2>&1
-		!xPAUSE!
-		exit
+		REM !xPAUSE!
+		REM exit 1
+		call :move_to_bad "!the_Source_File!"
+		goto :eof
 	)
 )
 REM display all FFMPEG_ variables
@@ -849,9 +881,7 @@ set FFMPEG_ >> "!vrdlog!" 2>&1
 ECHO +++++++++ >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-
 goto :eof
-
 
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -884,6 +914,9 @@ REM ECHO in :convert_to_h264_aac ... from :getvariables the_DGI_file="!the_DGI_f
 REM ECHO in :convert_to_h264_aac ... from :getvariables the_DGI_autolog="!the_DGI_autolog!" >> "!vrdlog!" 2>&1
 REM ECHO in :convert_to_h264_aac ... from :getvariables the_VPY_file="!the_VPY_file!" >> "!vrdlog!" 2>&1
 REM !xPAUSE!
+
+REM the_Source_File is already set by :gather_variables_from_media_file
+
 
 REM display all SRC_ variables
 ECHO +++++++++ >> "!vrdlog!" 2>&1
@@ -939,8 +972,10 @@ IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 				set "check_QSF_failed=********** ERROR: Error Number '!EL!' returned from '!ffmpegexe64!' copy video stream, copy audio stream "
 				ECHO !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 				ECHO !DATE! !TIME! the_Source_File="!the_Source_File!" >> "!vrdlog!" 2>&1
-				!xPAUSE!
-				exit
+				REM !xPAUSE!
+				REM exit !EL!
+				call :move_to_bad "!the_Source_File!"
+				goto :eof
 			)
 			ECHO ======================================================  Finish Run FFMPEG copy video stream, copy audio stream for PROGRESSIVE AVC AAC ====================================================== >> "!vrdlog!" 2>&1
 			ECHO MOVE /Y "!the_Source_File!" "!done_avc_aac!" >> "!vrdlog!" 2>&1
@@ -968,8 +1003,10 @@ IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 				set "check_QSF_failed=********** ERROR: Error Number '!EL!' returned from '!ffmpegexe64!' copy video stream, transcode audio stream "
 				ECHO !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 				ECHO !DATE! !TIME! the_Source_File="!the_Source_File!" >> "!vrdlog!" 2>&1
-				!xPAUSE!
-				exit
+				REM !xPAUSE!
+				REM exit !EL!
+				call :move_to_bad "!the_Source_File!"
+				goto :eof
 			)
 			ECHO ======================================================  Finish Run FFMPEG copy video stream, transcode audio stream for PROGRESSIVE AVC MP3 ====================================================== >> "!vrdlog!" 2>&1
 			ECHO MOVE /Y "!the_Source_File!" "!done_avc_mp3!" >> "!vrdlog!" 2>&1
@@ -977,8 +1014,10 @@ IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 		) ELSE (
 			ECHO !DATE! !TIME! PROGRESSIVE AVC SRC_FF_A_codec_name "!SRC_FF_A_codec_name!" NOT IN ['.aac', '.mp3' ] >> "!vrdlog!" 2>&1
 			ECHO !DATE! !TIME! the_Source_File="!the_Source_File!" >> "!vrdlog!" 2>&1
-			!xPAUSE!
-			EXIT
+			REM !xPAUSE!
+			REM EXIT 1
+			call :move_to_bad "!the_Source_File!"
+			goto :eof
 		)
 	) ELSE IF /I "!SRC_calc_Video_Encoding!" == "HEVC" (
 		IF /I "!SRC_FF_A_codec_name!" == "aac" (
@@ -1008,8 +1047,10 @@ IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 				set "check_QSF_failed=********** ERROR: Error Number '!EL!' returned from '!ffmpegexe64!' transcode video stream, copy audio stream "
 				ECHO !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 				ECHO !DATE! !TIME! the_Source_File="!the_Source_File!" >> "!vrdlog!" 2>&1
-				!xPAUSE!
-				exit
+				REM !xPAUSE!
+				REM exit !EL!
+				call :move_to_bad "!the_Source_File!"
+				goto :eof
 			)
 			ECHO ======================================================  Finish Run FFMPEG transcode video stream, copy audio stream for PROGRESSIVE HEVC AAC ====================================================== >> "!vrdlog!" 2>&1
 			ECHO MOVE /Y "!the_Source_File!" "!done_h265_aac!" >> "!vrdlog!" 2>&1
@@ -1041,8 +1082,10 @@ IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 				set "check_QSF_failed=********** ERROR: Error Number '!EL!' returned from '!ffmpegexe64!' transcode video stream, transcode audio stream "
 				ECHO !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 				ECHO !DATE! !TIME! the_Source_File="!the_Source_File!" >> "!vrdlog!" 2>&1
-				!xPAUSE!
-				exit
+				REM !xPAUSE!
+				REM exit !EL!
+				call :move_to_bad "!the_Source_File!"
+				goto :eof
 			)
 			ECHO ======================================================  Finish Run FFMPEG transcode video stream, transcode audio stream for PROGRESSIVE HEVC MP3 ====================================================== >> "!vrdlog!" 2>&1
 			ECHO MOVE /Y "!the_Source_File!" "!done_h265_mp3!" >> "!vrdlog!" 2>&1
@@ -1050,14 +1093,18 @@ IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 		) ELSE (
 			ECHO !DATE! !TIME! PROGRESSIVE HEVC SRC_FF_A_codec_name "!SRC_FF_A_codec_name!" NOT IN ['.aac', '.mp3' ] >> "!vrdlog!" 2>&1
 			ECHO !DATE! !TIME! the_Source_File="!the_Source_File!" >> "!vrdlog!" 2>&1
-			!xPAUSE!
-			EXIT
+			REM !xPAUSE!
+			REM EXIT 1
+			call :move_to_bad "!the_Source_File!"
+			goto :eof
 		)
 	) ELSE (
 		ECHO !DATE! !TIME! PROGRESSIVE SRC_calc_Video_Encoding "!SRC_calc_Video_Encoding!" not in [ 'AVC', 'HEVC' ] >> "!vrdlog!" 2>&1
 		ECHO !DATE! !TIME! the_Source_File="!the_Source_File!" >> "!vrdlog!" 2>&1
-		!xPAUSE!
-		EXIT
+		REM !xPAUSE!
+		REM EXIT 1
+		call :move_to_bad "!the_Source_File!"
+		goto :eof
 	)
 ) ELSE IF /I "!SRC_calc_Video_Interlacement!" == "INTERLACED" (
 	REM for INTERLACED we do not care about the source codec, we ALWAYS deinterlace and transcode the video; the audio is transcoded only if not AAC
@@ -1076,8 +1123,10 @@ IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 		ECHO !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 		ECHO !DATE! !TIME! the_Source_File="!the_Source_File!" >> "!vrdlog!" 2>&1
 		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-		!xPAUSE!
-		EXIT
+		REM !xPAUSE!
+		REM EXIT
+		call :move_to_bad "!the_Source_File!"
+		goto :eof
 	)
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	ECHO TYPE "!the_DGI_autolog!" >> "!vrdlog!" 2>&1
@@ -1119,6 +1168,10 @@ IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 			SET "the_FFMPEG_AUDIO_treatment=-c:a copy"
 			call :run_ffmpeg_vapoursynth_DG_deinterlace_transcode
 			ECHO ======================================================  Finish Run FFMPEG vapoursynth/DG/deinterlace transcode video stream, copy audio stream for INTERLACED AVC AAC ====================================================== >> "!vrdlog!" 2>&1
+			IF /I "!EL!" NEQ "0" (
+				call :move_to_bad "!the_Source_File!"
+				goto :eof
+			)
 			ECHO MOVE /Y "!the_Source_File!" "!done_avc_aac!" >> "!vrdlog!" 2>&1
 			MOVE /Y "!the_Source_File!" "!done_avc_aac!" >> "!vrdlog!" 2>&1
 		) ELSE IF /I "!SRC_FF_A_codec_name!" == "mp3" (
@@ -1129,13 +1182,19 @@ IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 			SET "the_FFMPEG_AUDIO_treatment=-c:a libfdk_aac -b:a 256k -ar 48000"
 			call :run_ffmpeg_vapoursynth_DG_deinterlace_transcode
 			ECHO ======================================================  Finish Run FFMPEG vapoursynth/DG/deinterlace transcode video stream, transcode audio stream for INTERLACED AVC MP3 ====================================================== >> "!vrdlog!" 2>&1
+			IF /I "!EL!" NEQ "0" (
+				call :move_to_bad "!the_Source_File!"
+				goto :eof
+			)
 			ECHO MOVE /Y "!the_Source_File!" "!done_avc_mp3!" >> "!vrdlog!" 2>&1
 			MOVE /Y "!the_Source_File!" "!done_avc_mp3!" >> "!vrdlog!" 2>&1
 		) ELSE (
 			ECHO !DATE! !TIME! INTERLACED AVC SRC_FF_A_codec_name "!SRC_FF_A_codec_name!" NOT IN ['.aac', '.mp3' ]
 			ECHO !DATE! !TIME! the_Source_File="!the_Source_File!" >> "!vrdlog!" 2>&1
-			!xPAUSE!
-			EXIT
+			REM !xPAUSE!
+			REM EXIT
+			call :move_to_bad "!the_Source_File!"
+			goto :eof
 		)
 	) ELSE IF /I "!SRC_calc_Video_Encoding!" == "HEVC" (
 		IF /I "!SRC_FF_A_codec_name!" == "aac" (
@@ -1146,6 +1205,10 @@ IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 			SET "the_FFMPEG_AUDIO_treatment=-c:a copy"
 			call :run_ffmpeg_vapoursynth_DG_deinterlace_transcode
 			ECHO ======================================================  Finish Run FFMPEG vapoursynth/DG/deinterlace transcode video stream, copy audio stream for INTERLACED HEVC AAC ====================================================== >> "!vrdlog!" 2>&1
+			IF /I "!EL!" NEQ "0" (
+				call :move_to_bad "!the_Source_File!"
+				goto :eof
+			)
 			ECHO MOVE /Y "!the_Source_File!" "!done_h265_aac!" >> "!vrdlog!" 2>&1
 			MOVE /Y "!the_Source_File!" "!done_h265_aac!" >> "!vrdlog!" 2>&1
 		) ELSE IF /I "!SRC_FF_A_codec_name!" == "mp3" (
@@ -1156,25 +1219,35 @@ IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 			SET "the_FFMPEG_AUDIO_treatment=-c:a libfdk_aac -b:a 256k -ar 48000"
 			call :run_ffmpeg_vapoursynth_DG_deinterlace_transcode
 			ECHO ======================================================  Finish Run FFMPEG vapoursynth/DG/deinterlace transcode video stream, transcode audio stream for INTERLACED HEVC MP3 ====================================================== >> "!vrdlog!" 2>&1
+			IF /I "!EL!" NEQ "0" (
+				call :move_to_bad "!the_Source_File!"
+				goto :eof
+			)
 			ECHO MOVE /Y "!the_Source_File!" "!done_h265_mp3!" >> "!vrdlog!" 2>&1
 			MOVE /Y "!the_Source_File!" "!done_h265_mp3!" >> "!vrdlog!" 2>&1
 		) ELSE (
 			ECHO !DATE! !TIME! INTERLACED HEVC SRC_FF_A_codec_name "!SRC_FF_A_codec_name!" NOT IN ['.aac', '.mp3' ] >> "!vrdlog!" 2>&1
 			ECHO !DATE! !TIME! the_Source_File="!the_Source_File!" >> "!vrdlog!" 2>&1
-			!xPAUSE!
-			EXIT
+			REM !xPAUSE!
+			REM EXIT 1
+			call :move_to_bad "!the_Source_File!"
+			goto :eof
 		)
 	) ELSE (
 		ECHO !DATE! !TIME! PROGRESSIVE SRC_calc_Video_Encoding "!SRC_calc_Video_Encoding!" not in [ 'AVC', 'HEVC' ] >> "!vrdlog!" 2>&1
 		ECHO !DATE! !TIME! the_Source_File="!the_Source_File!" >> "!vrdlog!" 2>&1
-		!xPAUSE!
-		EXIT
+		REM !xPAUSE!
+		REM EXIT 1
+		call :move_to_bad "!the_Source_File!"
+		goto :eof
 	)
 ) ELSE (
 	ECHO !DATE! !TIME! SRC_calc_Video_Interlacement "!SRC_calc_Video_Interlacement!" NOT IN ['PROGRESSIVE', 'INTERLACED' ] >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! the_Source_File="!the_Source_File!" >> "!vrdlog!" 2>&1
-	!xPAUSE!
-	EXIT
+	REM !xPAUSE!
+	REM EXIT 1
+	call :move_to_bad "!the_Source_File!"
+	goto :eof
 )
 goto :eof
 
@@ -1238,11 +1311,42 @@ IF /I "!EL!" NEQ "0" (
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! the_Source_File="!the_Source_File!" >> "!vrdlog!" 2>&1
-	!xPAUSE!
-	exit
+	REM !xPAUSE!
+	REM exit !EL!
+	REM call :move_to_bad "!the_Source_File!"
+	goto :eof
 )
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ECHO ======================================================  Finish Run FFMPEG vapoursynth/DG/deinterlace transcode ====================================================== >> "!vrdlog!" 2>&1
+goto :eof
+
+
+
+REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
+REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
+REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
+REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
+REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
+REM
+:move_to_bad
+REM NOTES:
+REM %~1  -  expands %1 removing any surrounding quotes (") 
+REM %~f1  -  expands %1 to a fully qualified path name 
+REM %~d1  -  expands %1 to a drive letter only 
+REM %~p1  -  expands %1 to a path only 
+REM %~n1  -  expands %1 to a file name only including the leading "."
+REM %~x1  -  expands %1 to a file extension only 
+REM %~s1  -  expanded path contains short names only 
+REM %~a1  -  expands %1 to file attributes 
+REM %~t1  -  expands %1 to date/time of file 
+REM %~z1  -  expands %1 to size of file 
+REM The modifiers can be combined to get compound results:
+REM %~dp1  -  expands %1 to a drive letter and path only 
+REM %~nx1  -  expands %1 to a file name and extension only 
+ECHO !DATE! !TIME! ==================== START MOVE TO BAD "%~f1" ==================== >> "!vrdlog!" 2>&1
+ECHO MOVE /Y "%~f1" "!done_bad!" >> "!vrdlog!" 2>&1
+MOVE /Y "%~f1" "!done_bad!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ==================== FINISH MOVE TO BAD "%~f1" ==================== >> "!vrdlog!" 2>&1
 goto :eof
 
 
