@@ -1772,14 +1772,31 @@ ECHO set !current_prefix!MI_A_Audio_Delay >> "!vrdlog!" 2>&1
 set !current_prefix!MI_A_Audio_Delay >> "!vrdlog!" 2>&1
 ECHO +++++++++ >> "!vrdlog!" 2>&1
 
-REM Determine which type of encoding, AVC or MPEG2
+REM Determine which type of encoding, AVC or MPEG2 or HEVC or VP9
 call set tmp_MI_V_Format=%%!current_prefix!MI_V_Format%%
 call set tmp_FF_V_codec_name=%%!current_prefix!FF_V_codec_name%%
-set "!current_prefix!calc_Video_Encoding=AVC"
+set "!current_prefix!calc_Video_Encoding=VP9"
+set "!current_prefix!calc_Video_Encoding_original=VP9"
 IF /I "!tmp_MI_V_Format!" == "AVC"            (set "!current_prefix!calc_Video_Encoding=AVC")
 IF /I "!tmp_FF_V_codec_name!" == "h264"       (set "!current_prefix!calc_Video_Encoding=AVC")
 IF /I "!tmp_MI_V_Format!" == "MPEG_Video"     (set "!current_prefix!calc_Video_Encoding=MPEG2")
 IF /I "!tmp_FF_V_codec_name!" == "mpeg2video" (set "!current_prefix!calc_Video_Encoding=MPEG2")
+IF /I "!tmp_MI_V_Format!" == "HEVC"           (set "!current_prefix!calc_Video_Encoding=HEVC")
+IF /I "!tmp_FF_V_codec_name!" == "hevc"       (set "!current_prefix!calc_Video_Encoding=HEVC")
+IF /I "!tmp_MI_V_Format!" == "vp09"           (set "!current_prefix!calc_Video_Encoding=VP9")
+IF /I "!tmp_FF_V_codec_name!" == "vp9"        (set "!current_prefix!calc_Video_Encoding=VP9")
+call set !current_prefix!calc_Video_Encoding_original=%%!current_prefix!calc_Video_Encoding%%
+REM ***** Trick conversion by fooling info unknown input is HEVC which could in the future force re-encoding into h.264 AVC
+call set tmp_FF_V_codec_name_original=%%!current_prefix!calc_Video_Encoding_original%%
+IF /I NOT "!tmp_FF_V_codec_name_original!" == "AVC" (
+	IF /I NOT "!tmp_FF_V_codec_name_original!" == "HEVC" (
+		IF /I NOT "!tmp_FF_V_codec_name_original!" == "MPEG2" (
+			IF /I NOT "!tmp_FF_V_codec_name_original!" == "VP9" (
+				set "!current_prefix!calc_Video_Encoding=HEVC"
+			)
+		)
+	)
+)
 REM ECHO +++++++++ >> "!vrdlog!" 2>&1
 REM ECHO set tmp_MI_V_Format >> "!vrdlog!" 2>&1
 REM set tmp_MI_V_Format >> "!vrdlog!" 2>&1
@@ -1787,6 +1804,8 @@ REM ECHO +++++++++ >> "!vrdlog!" 2>&1
 REM ECHO set tmp_FF_V_codec_name >> "!vrdlog!" 2>&1
 REM set tmp_FF_V_codec_name >> "!vrdlog!" 2>&1
 ECHO +++++++++ >> "!vrdlog!" 2>&1
+ECHO set !current_prefix!calc_Video_Encoding_original >> "!vrdlog!" 2>&1
+set !current_prefix!calc_Video_Encoding_original >> "!vrdlog!" 2>&1
 ECHO set !current_prefix!calc_Video_Encoding >> "!vrdlog!" 2>&1
 set !current_prefix!calc_Video_Encoding >> "!vrdlog!" 2>&1
 ECHO +++++++++ >> "!vrdlog!" 2>&1
