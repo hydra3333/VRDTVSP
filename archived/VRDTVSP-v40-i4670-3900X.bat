@@ -894,7 +894,6 @@ IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 	REM set for no deinterlace
 	set "FFMPEG_V_dg_deinterlace=0"
 	set "FFMPEG_V_vp9_deinterlace_mode="
-	REM set "FFMPEG_V_vp9_fc=-filter_complex "format=pix_fmts=yuv420p,setdar=dar=!SRC_MI_V_DisplayAspectRatio_String_slash!""
 ) ELSE IF /I "!QSF_calc_Video_Interlacement!" == "INTERLACED" (
 	REM set for normal single framerate deinterlace
 	set "FFMPEG_V_dg_deinterlace=1"
@@ -1217,7 +1216,7 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ) ELSE (
 	ECHO !DATE! !TIME! QSF_calc_Video_Is_Progessive_AVC=!QSF_calc_Video_Is_Progessive_AVC! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! DGIndexNV WILL be performed for [AVC INTERLACED] [MPEG2 PROGRESSIVE] [MPEG2 INTERLACED] [HEVC PROGRESSIVE] [HEVC INTERLACED] [VP9 PROGRESSIVE] [VP9 INTERLACED] and a .VPY will be created >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! DGIndexNV WILL be performed for [AVC INTERLACED] [MPEG2 PROGRESSIVE] [MPEG2 INTERLACED] [HEVC PROGRESSIVE] [HEVC INTERLACED] and a .VPY will be created >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	ECHO ======================================================  Start the DGIndexNV ====================================================== >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
@@ -1303,9 +1302,9 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 ) ELSE IF /I "!QSF_calc_Video_Encoding!" == "VP9" (
 	REM [VP9 PROGRESSIVE] [VP9 INTERLACED] transcode video and transcode audio stream
 	REM vp9 without bwdif_vulkan
-	REM -filter_complex "[0:v]unsharp=lx=3:ly=3:la=0.5:cx=3:cy=3:ca=0.5,format=pix_fmts=yuv420p,setdar=dar=!SRC_MI_V_DisplayAspectRatio_String_slash!"
+	REM -filter_complex "[0:v]unsharp=lx=3:ly=3:la=0.5:cx=3:cy=3:ca=0.5,format=pix_fmts=yuv420p,setdar='!SRC_MI_V_DisplayAspectRatio_String_slash!'"
 	REM vp9 with bwdif_vulkan
-	REM -filter_complex "[0:v]bwdif_vulkan=mode=0:parity=0:deint=0,unsharp=lx=3:ly=3:la=0.5:cx=3:cy=3:ca=0.5,format=pix_fmts=yuv420p,setdar=dar=!SRC_MI_V_DisplayAspectRatio_String_slash!"
+	REM -filter_complex "[0:v]bwdif_vulkan=mode=0:parity=0:deint=0,unsharp=lx=3:ly=3:la=0.5:cx=3:cy=3:ca=0.5,format=pix_fmts=yuv420p,setdar='!SRC_MI_V_DisplayAspectRatio_String_slash!'"
 	REM		mode	The interlacing mode to adopt. It accepts one of the following values:
 	REM			0, send_frame	Output one frame for each frame. Single framerate.
 	REM			1, send_field	Output one frame for each field. Double framerate.
@@ -1320,10 +1319,10 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	REM			1, interlaced	Only deinterlace frames marked as interlaced.
 	REM			The default value is all.
 	IF /I "!FFMPEG_V_vp9_deinterlace_mode!" == "" (
-		set "FFMPEG_V_vp9_fc=-filter_complex "[0:v]unsharp=lx=3:ly=3:la=0.5:cx=3:cy=3:ca=0.5,format=pix_fmts=yuv420p,setdar=dar=!SRC_MI_V_DisplayAspectRatio_String_slash!""
+		set "FFMPEG_V_vp9_fc=-filter_complex "[0:v]unsharp=lx=3:ly=3:la=0.5:cx=3:cy=3:ca=0.5,format=pix_fmts=yuv420p,setdar='!SRC_MI_V_DisplayAspectRatio_String_slash!'""
 	) ELSE (
-		REM set "FFMPEG_V_vp9_fc=-filter_complex "[0:v]bwdif=mode=!FFMPEG_V_vp9_deinterlace_mode!:parity=!FFMPEG_V_vp9_deinterlace_parity!:deint=0,unsharp=lx=3:ly=3:la=0.5:cx=3:cy=3:ca=0.5,format=pix_fmts=yuv420p,setdar=dar=!SRC_MI_V_DisplayAspectRatio_String_slash!""
-		set "FFMPEG_V_vp9_fc=-filter_complex "[0:v]bwdif_vulkan=mode=!FFMPEG_V_vp9_deinterlace_mode!:parity=!FFMPEG_V_vp9_deinterlace_parity!:deint=0,unsharp=lx=3:ly=3:la=0.5:cx=3:cy=3:ca=0.5,format=pix_fmts=yuv420p,setdar=dar=!SRC_MI_V_DisplayAspectRatio_String_slash!""
+		REM set "FFMPEG_V_vp9_fc=-filter_complex "[0:v]bwdif=mode=!FFMPEG_V_vp9_deinterlace_mode!:parity=!FFMPEG_V_vp9_deinterlace_parity!:deint=0,unsharp=lx=3:ly=3:la=0.5:cx=3:cy=3:ca=0.5,format=pix_fmts=yuv420p,setdar=!SRC_MI_V_DisplayAspectRatio_String_slash!""
+		set "FFMPEG_V_vp9_fc=-filter_complex "[0:v]bwdif_vulkan=mode=!FFMPEG_V_vp9_deinterlace_mode!:parity=!FFMPEG_V_vp9_deinterlace_parity!:deint=0,unsharp=lx=3:ly=3:la=0.5:cx=3:cy=3:ca=0.5,format=pix_fmts=yuv420p,setdar=!SRC_MI_V_DisplayAspectRatio_String_slash!""
 	)
 	ECHO ======================================================  Start Run FFMPEG VP9 transcode ====================================================== >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
@@ -1333,6 +1332,7 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	set "FFMPEG_cmd="!ffmpegexe64!""
 	set "FFMPEG_cmd=!FFMPEG_cmd! -hide_banner -v info -nostats"
 	REM set "FFMPEG_cmd=!FFMPEG_cmd! -hide_banner -v verbose -nostats"
+	REM set "FFMPEG_cmd=!FFMPEG_cmd! -hide_banner -v debug -nostats"
 	set "FFMPEG_cmd=!FFMPEG_cmd! -i "!QSF_File!" -probesize 100M -analyzeduration 100M"
 	set "FFMPEG_cmd=!FFMPEG_cmd! !FFMPEG_V_vp9_fc!"
 	set "FFMPEG_cmd=!FFMPEG_cmd! -fps_mode passthrough -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental"
@@ -1344,7 +1344,7 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	REM set "FFMPEG_cmd=!FFMPEG_cmd! -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp"
 	set "FFMPEG_cmd=!FFMPEG_cmd! -profile:v high -level 5.2 -movflags +faststart+write_colr"
 	set "FFMPEG_cmd=!FFMPEG_cmd! -c:a libfdk_aac -b:a 256k -ar 48000"
-	set "FFMPEG_cmd=!FFMPEG_cmd! -y "!Target_File!
+	set "FFMPEG_cmd=!FFMPEG_cmd! -y "!Target_File!""
 	ECHO !FFMPEG_cmd! >> "!vrdlog!" 2>&1
  	!FFMPEG_cmd! >> "!vrdlog!" 2>&1
  	SET EL=!ERRORLEVEL!
