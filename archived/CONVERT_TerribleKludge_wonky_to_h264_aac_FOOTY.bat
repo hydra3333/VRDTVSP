@@ -59,15 +59,16 @@ REM set "source_mp4_Folder=F:\mp4library\BigIdeas\WhatMakesUsHappy\"
 REM set "source_mp4_Folder=F:\mp4library\CharlieWalsh\"
 REM set "source_mp4_Folder=F:\mp4library\ClassicDocumentaries\"
 REM set "source_mp4_Folder=F:\mp4library\ClassicMovies\"
+REM set "source_mp4_Folder=F:\mp4library\ClassicMovies\PENDING\"
 REM set "source_mp4_Folder=F:\mp4library\Comedy\"
 REM set "source_mp4_Folder=F:\mp4library\Documentaries\"
-REM set "source_mp4_Folder=F:\mp4library\Documentaries\pending\"
-REM REM set "source_mp4_Folder=F:\mp4library\Footy\"
+set "source_mp4_Folder=F:\mp4library\Footy\Pending\"
 REM set "source_mp4_Folder=F:\mp4library\HomePics\"
 REM set "source_mp4_Folder=F:\mp4library\MOVIES\"
-set "source_mp4_Folder=F:\mp4library\ClassicMovies\PENDING\"
+REM set "source_mp4_Folder=F:\mp4library\MOVIES\Pending\"
 REM set "source_mp4_Folder=F:\mp4library\oldMovies\"
 REM set "source_mp4_Folder=F:\mp4library\oldSciFi\"
+REM set "source_mp4_Folder=F:\mp4library\SciFi\PENDING\"
 REM REM set "source_mp4_Folder=F:\mp4library\Series\"
 if /I NOT "!source_mp4_Folder:~-1!" == "\" (set "source_mp4_Folder=!source_mp4_Folder!\")
 REM ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -968,7 +969,7 @@ IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 			set "FFMPEG_cmd=!FFMPEG_cmd! -c:a copy"
 			set "FFMPEG_cmd=!FFMPEG_cmd! -y "!the_Target_File!""
 			ECHO !FFMPEG_cmd! >> "!vrdlog!" 2>&1
-			!FFMPEG_cmd! >> "!vrdlog!" 2>&1
+			REM !FFMPEG_cmd! >> "!vrdlog!" 2>&1
 			SET EL=!ERRORLEVEL!
 			IF /I "!EL!" NEQ "0" (
 				set "check_QSF_failed=********** ERROR: Error Number '!EL!' returned from '!ffmpegexe64!' copy video stream, copy audio stream "
@@ -999,7 +1000,7 @@ IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 			set "FFMPEG_cmd=!FFMPEG_cmd! -c:a libfdk_aac -b:a 256k -ar 48000"
 			set "FFMPEG_cmd=!FFMPEG_cmd! -y "!the_Target_File!""
 			ECHO !FFMPEG_cmd! >> "!vrdlog!" 2>&1
-			!FFMPEG_cmd! >> "!vrdlog!" 2>&1
+			REM !FFMPEG_cmd! >> "!vrdlog!" 2>&1
 			SET EL=!ERRORLEVEL!
 			IF /I "!EL!" NEQ "0" (
 				set "check_QSF_failed=********** ERROR: Error Number '!EL!' returned from '!ffmpegexe64!' copy video stream, transcode audio stream "
@@ -1043,7 +1044,7 @@ IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 			set "FFMPEG_cmd=!FFMPEG_cmd! -c:a copy"
 			set "FFMPEG_cmd=!FFMPEG_cmd! -y "!the_Target_File!""
 			ECHO !FFMPEG_cmd! >> "!vrdlog!" 2>&1
-			!FFMPEG_cmd! >> "!vrdlog!" 2>&1
+			REM !FFMPEG_cmd! >> "!vrdlog!" 2>&1
 			SET EL=!ERRORLEVEL!
 			IF /I "!EL!" NEQ "0" (
 				set "check_QSF_failed=********** ERROR: Error Number '!EL!' returned from '!ffmpegexe64!' transcode video stream, copy audio stream "
@@ -1078,7 +1079,7 @@ IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 			set "FFMPEG_cmd=!FFMPEG_cmd! -c:a libfdk_aac -b:a 256k -ar 48000"
 			set "FFMPEG_cmd=!FFMPEG_cmd! -y "!the_Target_File!""
 			ECHO !FFMPEG_cmd! >> "!vrdlog!" 2>&1
-			!FFMPEG_cmd! >> "!vrdlog!" 2>&1
+			REM !FFMPEG_cmd! >> "!vrdlog!" 2>&1
 			SET EL=!ERRORLEVEL!
 			IF /I "!EL!" NEQ "0" (
 				set "check_QSF_failed=********** ERROR: Error Number '!EL!' returned from '!ffmpegexe64!' transcode video stream, transcode audio stream "
@@ -1309,7 +1310,7 @@ ECHO goto :eof>>"!temp_cmd_file!" 2>&1
 ECHO TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 ECHO CALL "!temp_cmd_file!" >> "!vrdlog!" 2>&1
-CALL "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+REM CALL "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 IF /I "!EL!" NEQ "0" (
 	set "check_QSF_failed=********** ERROR: Error Number '!EL!' returned from '!ffmpegexe64!' vapoursynth/DG/deinterlace transcode"
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1

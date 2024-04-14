@@ -53,7 +53,7 @@ set "temp_Folder=!scratch_Folder!"
 
 REM ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 REM ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-REM set "source_mp4_Folder=F:\mp4library\TEST\"
+set "source_mp4_Folder=F:\mp4library\"
 REM set "source_mp4_Folder=F:\mp4library\BigIdeas\"
 REM set "source_mp4_Folder=F:\mp4library\BigIdeas\WhatMakesUsHappy\"
 REM set "source_mp4_Folder=F:\mp4library\CharlieWalsh\"
@@ -65,14 +65,13 @@ REM set "source_mp4_Folder=F:\mp4library\Documentaries\pending\"
 REM REM set "source_mp4_Folder=F:\mp4library\Footy\"
 REM set "source_mp4_Folder=F:\mp4library\HomePics\"
 REM set "source_mp4_Folder=F:\mp4library\MOVIES\"
-set "source_mp4_Folder=F:\mp4library\ClassicMovies\PENDING\"
+REM set "source_mp4_Folder=F:\mp4library\ClassicMovies\PENDING\"
 REM set "source_mp4_Folder=F:\mp4library\oldMovies\"
 REM set "source_mp4_Folder=F:\mp4library\oldSciFi\"
 REM REM set "source_mp4_Folder=F:\mp4library\Series\"
 if /I NOT "!source_mp4_Folder:~-1!" == "\" (set "source_mp4_Folder=!source_mp4_Folder!\")
 REM ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 REM ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
 
 set "destination_mp4_Folder=!source_mp4_Folder!converted\"
 if /I NOT "!destination_mp4_Folder:~-1!" == "\" (set "destination_mp4_Folder=!destination_mp4_Folder!\")
@@ -94,16 +93,16 @@ if /I NOT "!done_bad:~-1!" == "\" (set "done_bad=!done_bad!\")
 REM
 
 REM the trailing backslash ensures it detects it as a folder
-if not exist "!source_mp4_Folder!" (mkdir "!source_mp4_Folder!")
-if not exist "!destination_mp4_Folder!" (mkdir "!destination_mp4_Folder!")
-if not exist "!scratch_Folder!" (mkdir "!scratch_Folder!")
-if not exist "!temp_Folder!" (mkdir "!temp_Folder!")
+REM if not exist "!source_mp4_Folder!" (mkdir "!source_mp4_Folder!")
+REM if not exist "!destination_mp4_Folder!" (mkdir "!destination_mp4_Folder!")
+REM if not exist "!scratch_Folder!" (mkdir "!scratch_Folder!")
+REM if not exist "!temp_Folder!" (mkdir "!temp_Folder!")
 
-if not exist "!done_avc_aac!" (mkdir "!done_avc_aac!")
-if not exist "!done_avc_mp3!" (mkdir "!done_avc_mp3!")
-if not exist "!done_h265_aac!" (mkdir "!done_h265_aac!")
-if not exist "!done_h265_mp3!" (mkdir "!done_h265_mp3!")
-if not exist "!done_bad!" (mkdir "!done_bad!")
+REM if not exist "!done_avc_aac!" (mkdir "!done_avc_aac!")
+REM if not exist "!done_avc_mp3!" (mkdir "!done_avc_mp3!")
+REM if not exist "!done_h265_aac!" (mkdir "!done_h265_aac!")
+REM if not exist "!done_h265_mp3!" (mkdir "!done_h265_mp3!")
+REM if not exist "!done_bad!" (mkdir "!done_bad!")
 
 REM --------- resolve any relative paths into absolute paths --------- 
 REM --------- ensure no spaces between brackets and first/last parts of the the SET statement inside the DO --------- 
@@ -160,6 +159,10 @@ DEL /F "!tempfile!" >> "!vrdlog!" 2>&1
 set "temp_cmd_file=!temp_Folder!temp_cmd_file.bat"
 ECHO !DATE! !TIME! DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+
+set "FOUND_file=%~dpn0.log"
+ECHO !DATE! !TIME! DEL /F "!FOUND_file!" >> "!vrdlog!" 2>&1
+DEL /F "!FOUND_file!" >> "!vrdlog!" 2>&1
 REM --------- setup LOG file and TEMP filenames ----------------------------
 
 REM --------- setup .PY fully qualified filenames to pre-created files which rename and re-timestamp filenames etc ---------
@@ -270,121 +273,38 @@ CD >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "!vrdlog!" 2>&1
 REM --------- Swap to source folder and save old folder using PUSHD ---------
 
-REM --------- Start Run the py to modify the filenames to enforce validity  i.e. no special characters ---------
-ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-REM GRRR - sometimes left and right parentheses etc are seem in filenames of the media files ... 
-REM Check if filenames are a "safe string" without special characters like !~`!@#$%^&*()+=[]{}\|:;'"<>,?/
-REM If a filename isn't "safe" then rename it so it really is safe
-REM Allowed only characters a-z,A-Z,0-9,-,_,.,space
-REM
-REM ENFORCE VALID FILENAMES on the source_mp4_Folder
-CALL :get_date_time_String "start_date_time"
-set "the_folder=!source_mp4_Folder!" 
-CALL :make_double_backslashes_into_variable "!source_mp4_Folder!" "the_folder"
-REM CALL :remove_trailing_backslash_into_variable "!the_folder!" "the_folder"
-ECHO "!py_exe!" "!Path_to_py_VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles!" --folder "!the_folder!" --recurse >> "!vrdlog!" 2>&1
-"!py_exe!" "!Path_to_py_VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles!" --folder "!the_folder!" --recurse >> "!vrdlog!" 2>&1
-CALL :get_date_time_String "end_date_time"
-ECHO "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles !the_folder!" >> "!vrdlog!" 2>&1
-"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles !the_folder!" >> "!vrdlog!" 2>&1
-REM
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "!vrdlog!" 2>&1
-REM --------- End Run the py to modify the filenames to enforce validity  i.e. no special characters ---------
-
 REM ****************************************************************************************************************************************
 REM ****************************************************************************************************************************************
 :before_main_loop
 ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-CALL :get_date_time_String "loop_start_date_time"
-for %%f in ("!source_mp4_Folder!*.mp4") do (
-	CALL :get_date_time_String "iloop_start_date_time"
-	ECHO !DATE! !TIME! START ------------------ %%f >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! Input file : "%%~f" >> "!vrdlog!" 2>&1
+REM CALL :get_date_time_String "loop_start_date_time"
+REM PUSHD has been done before this ...
+for /R %%f in ("*.TS", "*.MPG", "*.MP4", "*.VOB", "*.AVI") do (
+	REM CALL :get_date_time_String "iloop_start_date_time"
 	REM check parmaters in the media file
 	CALL :getvariables "%%f"
-	REM if the media file passed tests in :getvariables then process the media file
-	if exist "%%f" (CALL :convert_to_h264_aac "%%f")
-	ECHO !DATE! !TIME! END ------------------ %%f >> "!vrdlog!" 2>&1
-	CALL :get_date_time_String "iloop_end_date_time"
-	ECHO "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!iloop_start_date_time!" --end_datetime "!iloop_end_date_time!" --prefix_id ":::::::::: iloop %%f " >> "!vrdlog!" 2>&1
-	"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!iloop_start_date_time!" --end_datetime "!iloop_end_date_time!" --prefix_id ":::::::::: iloop %%f " >> "!vrdlog!" 2>&1
+	set "show_file=False"
+	IF /I NOT "!SRC_FF_A_codec_name!" == "aac" (set "show_file=True")
+	IF /I NOT "!SRC_calc_Video_Encoding_original!" == "AVC" (set "show_file=True")
+	IF /I "!show_file!" == "True" (	
+		ECHO '!SRC_FF_A_codec_name!' '!SRC_calc_Video_Encoding_original!' '!SRC_calc_Video_Encoding!' '%%f'>> "!FOUND_file!" 2>&1
+		ECHO REQUIRES TRANSCODING '!SRC_FF_A_codec_name!' '!SRC_calc_Video_Encoding_original!' '!SRC_calc_Video_Encoding!' '%%f'>> "!vrdlog!" 2>&1
+	) ELSE (
+		ECHO IS OK '!SRC_FF_A_codec_name!' '!SRC_calc_Video_Encoding_original!' '!SRC_calc_Video_Encoding!' '%%f'>> "!vrdlog!" 2>&1
+	)
 )
-CALL :get_date_time_String "loop_end_date_time"
-ECHO "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!loop_start_date_time!" --end_datetime "!loop_end_date_time!" --prefix_id "Loop_Processing_Files" >> "!vrdlog!" 2>&1
-"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!loop_start_date_time!" --end_datetime "!loop_end_date_time!" --prefix_id "Loop_Processing_Files" >> "!vrdlog!" 2>&1
+ECHO.>> "!FOUND_file!" 2>&1
+REM CALL :get_date_time_String "loop_end_date_time"
+REM ECHO "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!loop_start_date_time!" --end_datetime "!loop_end_date_time!" --prefix_id "Loop_Processing_Files" >> "!vrdlog!" 2>&1
+REM "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!loop_start_date_time!" --end_datetime "!loop_end_date_time!" --prefix_id "Loop_Processing_Files" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
 :after_main_loop
 REM ****************************************************************************************************************************************
 REM ****************************************************************************************************************************************
-
-REM --------- Start Run the py to modify the filenames to enforce validity  i.e. no special characters ---------
-ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-REM GRRR - sometimes left and right parentheses etc are seem in filenames of the media files ... 
-REM Check if filenames are a "safe string" without special characters like !~`!@#$%^&*()+=[]{}\|:;'"<>,?/
-REM If a filename isn't "safe" then rename it so it really is safe
-REM Allowed only characters a-z,A-Z,0-9,-,_,.,space
-REM
-REM ENFORCE VALID FILENAMES on the destination_mp4_Folder
-CALL :get_date_time_String "start_date_time"
-set "the_folder=!destination_mp4_Folder!" 
-CALL :make_double_backslashes_into_variable "!destination_mp4_Folder!" "the_folder"
-REM CALL :remove_trailing_backslash_into_variable "!the_folder!" "the_folder"
-ECHO "!py_exe!" "!Path_to_py_VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles!" --folder "!the_folder!" --recurse >> "!vrdlog!" 2>&1
-"!py_exe!" "!Path_to_py_VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles!" --folder "!the_folder!" --recurse >> "!vrdlog!" 2>&1
-CALL :get_date_time_String "end_date_time"
-ECHO "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles !the_folder!" >> "!vrdlog!" 2>&1
-"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles !the_folder!" >> "!vrdlog!" 2>&1
-REM
-CALL :get_date_time_String "loop_start_date_time"
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "!vrdlog!" 2>&1
-REM --------- End Run the py to modify the filenames to enforce validity  i.e. no special characters ---------
-
-
-REM --------- Start Run the py to modify the filename timestamps filenames based on the date in the filename eg 2020-06-03 ---------
-ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! --- START Modify DateCreated and DateModified Timestamps on "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
-
-REM ECHO DEBUG: BEFORE:  >> "!vrdlog!" 2>&1
-REM ECHO dir "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
-REM dir "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
-CALL :get_date_time_String "start_date_time"
-set "the_folder=!destination_mp4_Folder!" 
-CALL :make_double_backslashes_into_variable "!destination_mp4_Folder!" "the_folder"
-REM CALL :remove_trailing_backslash_into_variable "!the_folder!" "the_folder"
-ECHO "!py_exe!" "!Path_to_py_VRDTVSP_Modify_File_Date_Timestamps!" --folder "!the_folder!" --recurse >> "!vrdlog!" 2>&1
-"!py_exe!" "!Path_to_py_VRDTVSP_Modify_File_Date_Timestamps!" --folder "!the_folder!" --recurse >> "!vrdlog!" 2>&1
-REM ECHO DEBUG: AFTER: >> "!vrdlog!" 2>&1
-REM ECHO dir "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
-REM dir "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
-CALL :get_date_time_String "end_date_time"
-REM ECHO "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "ReTimestamp" >> "!vrdlog!" 2>&1
-"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "ReTimestamp" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! --- END Modify DateCreated and DateModified Timestamps on "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "!vrdlog!" 2>&1
-REM --------- End Run the py to modify the filename timestamps filenames based on the date in the filename eg 2020-06-03 ---------
 
 REM ********** ALLOW PC TO GO TO SLEEP AGAIN **********
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "!vrdlog!" 2>&1
@@ -403,7 +323,6 @@ POPD >> "!vrdlog!" 2>&1
 CD >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "!vrdlog!" 2>&1
 REM --------- Swap back to original folder ---------
-
 
 CALL :get_date_time_String "TOTAL_end_date_time"
 ECHO "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!TOTAL_start_date_time!" --end_datetime "!TOTAL_end_date_time!" --prefix_id "TOTAL" >> "!vrdlog!" 2>&1
@@ -980,8 +899,8 @@ IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 				goto :eof
 			)
 			ECHO ======================================================  Finish Run FFMPEG copy video stream, copy audio stream for PROGRESSIVE AVC AAC ====================================================== >> "!vrdlog!" 2>&1
-			ECHO MOVE /Y "!the_Source_File!" "!done_avc_aac!" >> "!vrdlog!" 2>&1
-			MOVE /Y "!the_Source_File!" "!done_avc_aac!" >> "!vrdlog!" 2>&1
+			ECHO REM MOVE /Y "!the_Source_File!" "!done_avc_aac!" >> "!vrdlog!" 2>&1
+			REM MOVE /Y "!the_Source_File!" "!done_avc_aac!" >> "!vrdlog!" 2>&1
 		) ELSE IF /I "!SRC_FF_A_codec_name!" == "mp3" (
 			ECHO !DATE! !TIME! PROGRESSIVE AVC MP3  >> "!vrdlog!" 2>&1
 			REM c:v copy c:a CONVERT TO AAC
@@ -1011,8 +930,8 @@ IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 				goto :eof
 			)
 			ECHO ======================================================  Finish Run FFMPEG copy video stream, transcode audio stream for PROGRESSIVE AVC MP3 ====================================================== >> "!vrdlog!" 2>&1
-			ECHO MOVE /Y "!the_Source_File!" "!done_avc_mp3!" >> "!vrdlog!" 2>&1
-			MOVE /Y "!the_Source_File!" "!done_avc_mp3!" >> "!vrdlog!" 2>&1
+			ECHO REM MOVE /Y "!the_Source_File!" "!done_avc_mp3!" >> "!vrdlog!" 2>&1
+			REM MOVE /Y "!the_Source_File!" "!done_avc_mp3!" >> "!vrdlog!" 2>&1
 		) ELSE (
 			ECHO !DATE! !TIME! PROGRESSIVE AVC SRC_FF_A_codec_name "!SRC_FF_A_codec_name!" NOT IN ['.aac', '.mp3' ] >> "!vrdlog!" 2>&1
 			ECHO !DATE! !TIME! the_Source_File="!the_Source_File!" >> "!vrdlog!" 2>&1
@@ -1055,8 +974,8 @@ IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 				goto :eof
 			)
 			ECHO ======================================================  Finish Run FFMPEG transcode video stream, copy audio stream for PROGRESSIVE HEVC AAC ====================================================== >> "!vrdlog!" 2>&1
-			ECHO MOVE /Y "!the_Source_File!" "!done_h265_aac!" >> "!vrdlog!" 2>&1
-			MOVE /Y "!the_Source_File!" "!done_h265_aac!" >> "!vrdlog!" 2>&1
+			ECHO REM MOVE /Y "!the_Source_File!" "!done_h265_aac!" >> "!vrdlog!" 2>&1
+			REM MOVE /Y "!the_Source_File!" "!done_h265_aac!" >> "!vrdlog!" 2>&1
 		) ELSE IF /I "!SRC_FF_A_codec_name!" == "mp3" (
 			ECHO !DATE! !TIME! PROGRESSIVE HEVC MP3 >> "!vrdlog!" 2>&1
 			REM c:v CONVERT TO H264 c:a CONVERT TO AAC
@@ -1090,8 +1009,8 @@ IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 				goto :eof
 			)
 			ECHO ======================================================  Finish Run FFMPEG transcode video stream, transcode audio stream for PROGRESSIVE HEVC MP3 ====================================================== >> "!vrdlog!" 2>&1
-			ECHO MOVE /Y "!the_Source_File!" "!done_h265_mp3!" >> "!vrdlog!" 2>&1
-			MOVE /Y "!the_Source_File!" "!done_h265_mp3!" >> "!vrdlog!" 2>&1
+			ECHO REM MOVE /Y "!the_Source_File!" "!done_h265_mp3!" >> "!vrdlog!" 2>&1
+			REM MOVE /Y "!the_Source_File!" "!done_h265_mp3!" >> "!vrdlog!" 2>&1
 		) ELSE (
 			ECHO !DATE! !TIME! PROGRESSIVE HEVC SRC_FF_A_codec_name "!SRC_FF_A_codec_name!" NOT IN ['.aac', '.mp3' ] >> "!vrdlog!" 2>&1
 			ECHO !DATE! !TIME! the_Source_File="!the_Source_File!" >> "!vrdlog!" 2>&1
@@ -1174,8 +1093,8 @@ IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 				call :move_to_bad "!the_Source_File!"
 				goto :eof
 			)
-			ECHO MOVE /Y "!the_Source_File!" "!done_avc_aac!" >> "!vrdlog!" 2>&1
-			MOVE /Y "!the_Source_File!" "!done_avc_aac!" >> "!vrdlog!" 2>&1
+			ECHO REM MOVE /Y "!the_Source_File!" "!done_avc_aac!" >> "!vrdlog!" 2>&1
+			REM MOVE /Y "!the_Source_File!" "!done_avc_aac!" >> "!vrdlog!" 2>&1
 		) ELSE IF /I "!SRC_FF_A_codec_name!" == "mp3" (
 			ECHO !DATE! !TIME! INTERLACED AVC MP3 >> "!vrdlog!" 2>&1
 			REM c:v DEINTERLACE AND convert to H264 c:a CONVERT TO AAC
@@ -1188,8 +1107,8 @@ IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 				call :move_to_bad "!the_Source_File!"
 				goto :eof
 			)
-			ECHO MOVE /Y "!the_Source_File!" "!done_avc_mp3!" >> "!vrdlog!" 2>&1
-			MOVE /Y "!the_Source_File!" "!done_avc_mp3!" >> "!vrdlog!" 2>&1
+			ECHO REM MOVE /Y "!the_Source_File!" "!done_avc_mp3!" >> "!vrdlog!" 2>&1
+			REM MOVE /Y "!the_Source_File!" "!done_avc_mp3!" >> "!vrdlog!" 2>&1
 		) ELSE (
 			ECHO !DATE! !TIME! INTERLACED AVC SRC_FF_A_codec_name "!SRC_FF_A_codec_name!" NOT IN ['.aac', '.mp3' ]
 			ECHO !DATE! !TIME! the_Source_File="!the_Source_File!" >> "!vrdlog!" 2>&1
@@ -1211,8 +1130,8 @@ IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 				call :move_to_bad "!the_Source_File!"
 				goto :eof
 			)
-			ECHO MOVE /Y "!the_Source_File!" "!done_h265_aac!" >> "!vrdlog!" 2>&1
-			MOVE /Y "!the_Source_File!" "!done_h265_aac!" >> "!vrdlog!" 2>&1
+			ECHO REM MOVE /Y "!the_Source_File!" "!done_h265_aac!" >> "!vrdlog!" 2>&1
+			REM MOVE /Y "!the_Source_File!" "!done_h265_aac!" >> "!vrdlog!" 2>&1
 		) ELSE IF /I "!SRC_FF_A_codec_name!" == "mp3" (
 			ECHO !DATE! !TIME! INTERLACED HEVC MP3 >> "!vrdlog!" 2>&1
 			REM c:v DEINTERLACE AND convert to H264 c:a CONVERT TO AAC
@@ -1225,8 +1144,8 @@ IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 				call :move_to_bad "!the_Source_File!"
 				goto :eof
 			)
-			ECHO MOVE /Y "!the_Source_File!" "!done_h265_mp3!" >> "!vrdlog!" 2>&1
-			MOVE /Y "!the_Source_File!" "!done_h265_mp3!" >> "!vrdlog!" 2>&1
+			ECHO REM MOVE /Y "!the_Source_File!" "!done_h265_mp3!" >> "!vrdlog!" 2>&1
+			REM MOVE /Y "!the_Source_File!" "!done_h265_mp3!" >> "!vrdlog!" 2>&1
 		) ELSE (
 			ECHO !DATE! !TIME! INTERLACED HEVC SRC_FF_A_codec_name "!SRC_FF_A_codec_name!" NOT IN ['.aac', '.mp3' ] >> "!vrdlog!" 2>&1
 			ECHO !DATE! !TIME! the_Source_File="!the_Source_File!" >> "!vrdlog!" 2>&1
@@ -1348,8 +1267,8 @@ REM The modifiers can be combined to get compound results:
 REM %~dp1  -  expands %1 to a drive letter and path only 
 REM %~nx1  -  expands %1 to a file name and extension only 
 ECHO !DATE! !TIME! ==================== START MOVE TO BAD "%~f1" ==================== >> "!vrdlog!" 2>&1
-ECHO MOVE /Y "%~f1" "!done_bad!" >> "!vrdlog!" 2>&1
-MOVE /Y "%~f1" "!done_bad!" >> "!vrdlog!" 2>&1
+ECHO REM MOVE /Y "%~f1" "!done_bad!" >> "!vrdlog!" 2>&1
+REM MOVE /Y "%~f1" "!done_bad!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ==================== FINISH MOVE TO BAD "%~f1" ==================== >> "!vrdlog!" 2>&1
 goto :eof
 
@@ -1443,8 +1362,9 @@ SET EL=!ERRORLEVEL!
 IF /I "!EL!" NEQ "0" (
    ECHO !DATE! !TIME! **********  ffprobe "!derived_prefix_FF!" Error !EL! returned from !Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section! >> "!vrdlog!" 2>&1
    ECHO !DATE! !TIME! **********  ABORTING ... >> "!vrdlog!" 2>&1
-   !xPAUSE!
-   EXIT !EL!
+   REM !xPAUSE!
+   REM EXIT !EL!
+   goto :eof
 )
 ECHO ### "!derived_prefix_FF!" >> "!vrdlog!" 2>&1
 REM ECHO TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
@@ -1464,8 +1384,9 @@ SET EL=!ERRORLEVEL!
 IF /I "!EL!" NEQ "0" (
    ECHO !DATE! !TIME! **********  mediainfo "!derived_prefix_MI!" Error !EL! returned from !Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section! >> "!vrdlog!" 2>&1
    ECHO !DATE! !TIME! **********  ABORTING ... >> "!vrdlog!" 2>&1
-   !xPAUSE!
-   EXIT !EL!
+   REM !xPAUSE!
+   REM EXIT !EL!
+   goto :eof
 )
 ECHO ### "!derived_prefix_MI!" >> "!vrdlog!" 2>&1
 REM ECHO TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
@@ -1930,8 +1851,3 @@ REM now make double backslashes
 set "rtbiv_path=!rtbiv_path:\=\\!"
 set "!rtbiv_variable!=!rtbiv_path!"
 goto :eof
-
-
-
-
-
