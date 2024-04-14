@@ -136,13 +136,16 @@ REM
 set "extension_mpeg2=mpg"
 set "extension_h264=mp4"
 set "extension_h265=mp4"
+set "extension_vp9=mp4"
 set "VRDTVSP_QSF_VBS_SCRIPT=!root!VRDTVSP_qsf_script.vbs"
 set "profile_name_for_qsf_mpeg2_vrd6=VRDTVS-for-QSF-MPEG2_VRD6"
 set "profile_name_for_qsf_mpeg2_vrd5=VRDTVS-for-QSF-MPEG2_VRD5"
 set "profile_name_for_qsf_h264_vrd6=VRDTVS-for-QSF-H264_VRD6"
 set "profile_name_for_qsf_h264_vrd5=VRDTVS-for-QSF-H264_VRD5"
-set "profile_name_for_qsf_h265_vrd6=VRDTVS-for-QSF-H265_VRD6"
-set "profile_name_for_qsf_h265_vrd5=VRDTVS-for-QSF-H265_VRD5"
+set "profile_name_for_qsf_h265_vrd6="
+set "profile_name_for_qsf_h265_vrd5="
+set "profile_name_for_qsf_vp9_vrd6="
+set "profile_name_for_qsf_vp9_vrd5="
 REM qsf timeout in minutes  (VRD v6 takes 4 hours for a large 10Gb footy file); allow extra 10 secs for cscript timeout for vrd to finish copying .tmp file to .mp4 file
 set "default_qsf_timeout_minutes_VRD6=300"
 set /a default_qsf_timeout_seconds_VRD6=(!default_qsf_timeout_minutes_VRD6! * 60) + 30
@@ -212,7 +215,6 @@ ECHO !DATE! !TIME! tempfile="!tempfile!" >> "!vrdlog!" 2>&1
 
 ECHO !DATE! !TIME! extension_mpeg2="!extension_mpeg2!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! extension_h264="!extension_h264!" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! extension_h265="!extension_h265!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! VRDTVSP_QSF_VBS_SCRIPT="!VRDTVSP_QSF_VBS_SCRIPT!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Path_to_vrd6="!Path_to_vrd6!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Path_to_vp_vbs_vrd6="!Path_to_vp_vbs_vrd6!" >> "!vrdlog!" 2>&1
@@ -495,6 +497,13 @@ CALL :gather_variables_from_media_file "%~f1" "SRC_"
 
 REM "SRC_calc_Video_Encoding=AVC"
 REM "SRC_calc_Video_Encoding=MPEG2"
+REM "SRC_calc_Video_Encoding=HEVC"
+REM "SRC_calc_Video_Encoding=VP9"
+REM "SRC_calc_Video_Encoding_original=AVC"
+REM "SRC_calc_Video_Encoding_original=MPEG2"
+REM "SRC_calc_Video_Encoding_original=HEVC"
+REM "SRC_calc_Video_Encoding=VP9"
+
 REM 
 REM "SRC_calc_Video_Interlacement=PROGRESSIVE"
 REM "SRC_calc_Video_Interlacement=INTERLACED"
@@ -508,14 +517,15 @@ REM
 REM "extension_mpeg2=mpg"
 REM "extension_h264=mp4"
 REM "extension_h265=mp4"
+REM "extension_vp9=mp4"
 REM 
 REM Providing subroutine :set_vrd_qsf_paths has been called, then these have been preset:
 REM    profile_name_for_qsf_mpeg2
 REM    profile_name_for_qsf_h264
-REM    profile_name_for_qsf_h265
 REM    extension_mpeg2=mpg
 REM    extension_h264=mp4
 REM    extension_h265=mp4
+REM    extension_vp9=vp9
 REM 
 IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
@@ -553,8 +563,12 @@ IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
 	set "qsf_extension=!extension_h264!"
 ) ELSE IF /I "!SRC_calc_Video_Encoding!" == "MPEG2" (
 	set "qsf_extension=!extension_mpeg2!"
+) ELSE IF /I "!SRC_calc_Video_Encoding!" == "HEVC" (
+	set "qsf_extension=!extension_h265!"
+) ELSE IF /I "!SRC_calc_Video_Encoding!" == "VP9" (
+	set "qsf_extension=!extension_vp9!"
 ) ELSE (
-	set "check_QSF_failed=ERROR: mediainfo format !SRC_calc_Video_Encoding! neither 'AVC' nor 'MPEG2' for '%~f1'"
+	set "check_QSF_failed=ERROR: mediainfo format !SRC_calc_Video_Encoding! neither 'AVC' nor 'MPEG2' nor 'HEVC' nor 'VP9' for '%~f1'"
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
@@ -574,28 +588,56 @@ set "DGI_autolog=!scratch_Folder!%~n1.qsf.log"
 set "VPY_file=!scratch_Folder!%~n1.qsf.vpy"
 set "Target_File=!destination_mp4_Folder!%~n1.MP4"
 
-REM Input Parameters to :run_cscript_qsf_with_timeout
-REM 	1	VideoReDo version number to use
-REM		2 	fully qualified filename of the SRC input (usually a .TS file)
-REM 	3	fully qualified filename of name of QSF file to create
-REM		4	qsf prefix for variables output from the VideoReDo QSF 
-REM RETURN Parameters 
-REM		QSF_ parameters from  :gather_variables_from_media_file
-REM		!check_QSF_failed! is non-blank if we abort
-REM Expected preset variables
-REM		SRC_ variables
-REM		calculated variables SRC_calc_
-REM 	Fudged "!SRC_MI_V_BitRate!"
-REM 	temp_cmd_file
-ECHO CALL :run_cscript_qsf_with_timeout "!DEFAULT_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_xml_prefix!" >> "!vrdlog!" 2>&1
-CALL :run_cscript_qsf_with_timeout "!DEFAULT_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_xml_prefix!"
-REM check result returned from :run_cscript_qsf_with_timeout
-IF /I NOT "!check_QSF_failed!" == "" (
-	REM It failed, try doing the fallback QSF
-	set "check_QSF_failed="
-	ECHO call run_cscript_qsf_with_timeout "!DEFAULT_vrd_version_fallback!" "%~f1" "!QSF_File!" "!qsf_xml_prefix!" >> "!vrdlog!" 2>&1
-	CALL :run_cscript_qsf_with_timeout "!DEFAULT_vrd_version_fallback!" "%~f1" "!QSF_File!" "!qsf_xml_prefix!"
+set "can_do_qsf=False"
+IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
+	set "can_do_qsf=True"
+) ELSE IF /I "!SRC_calc_Video_Encoding!" == "MPEG2" (
+	set "can_do_qsf=True"
+) ELSE IF /I "!SRC_calc_Video_Encoding!" == "HEVC" (
+	set "can_do_qsf=False"
+) ELSE IF /I "!SRC_calc_Video_Encoding!" == "VP9" (
+	set "can_do_qsf=False"
+) ELSE (
+	set "can_do_qsf=False"
+)
+IF /I "!can_do_qsf!" == "True" (
+	REM Input Parameters to :run_cscript_qsf_with_timeout
+	REM 	1	VideoReDo version number to use
+	REM		2 	fully qualified filename of the SRC input (usually a .TS file)
+	REM 	3	fully qualified filename of name of QSF file to create
+	REM		4	qsf prefix for variables output from the VideoReDo QSF 
+	REM RETURN Parameters 
+	REM		QSF_ parameters from  :gather_variables_from_media_file
+	REM		!check_QSF_failed! is non-blank if we abort
+	REM Expected preset variables
+	REM		SRC_ variables
+	REM		calculated variables SRC_calc_
+	REM 	Fudged "!SRC_MI_V_BitRate!"
+	REM 	temp_cmd_file
+	ECHO CALL :run_cscript_qsf_with_timeout "!DEFAULT_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_xml_prefix!" >> "!vrdlog!" 2>&1
+	CALL :run_cscript_qsf_with_timeout "!DEFAULT_vrd_version_primary!" "%~f1" "!QSF_File!" "!qsf_xml_prefix!"
 	REM check result returned from :run_cscript_qsf_with_timeout
+	IF /I NOT "!check_QSF_failed!" == "" (
+		REM It failed, try doing the fallback QSF
+		set "check_QSF_failed="
+		ECHO call run_cscript_qsf_with_timeout "!DEFAULT_vrd_version_fallback!" "%~f1" "!QSF_File!" "!qsf_xml_prefix!" >> "!vrdlog!" 2>&1
+		CALL :run_cscript_qsf_with_timeout "!DEFAULT_vrd_version_fallback!" "%~f1" "!QSF_File!" "!qsf_xml_prefix!"
+		REM check result returned from :run_cscript_qsf_with_timeout
+		IF /I NOT "!check_QSF_failed!" == "" (
+			ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+			ECHO !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
+			ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+			CALL :declare_FAILED "%~f1"
+			CALL :get_date_time_String "end_date_time_QSF"
+			REM ECHO "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
+			"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
+			goto :eof
+		)
+	)
+) ELSE (
+	ECHO CALL :run_ffmpeg_stream_copy_instead_of_qsf "%~f1" "!QSF_File!" "!qsf_xml_prefix!" >> "!vrdlog!" 2>&1
+	CALL :run_ffmpeg_stream_copy_instead_of_qsf "%~f1" "!QSF_File!" "!qsf_xml_prefix!"
+	REM check result returned from :run_ffmpeg_stream_copy_instead_of_qsf
 	IF /I NOT "!check_QSF_failed!" == "" (
 		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 		ECHO !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
@@ -613,12 +655,20 @@ REM		SRC_MI_V_BitRate
 REM		QSF_MI_V_BitRate
 REM		QSFinfo_ActualVideoBitrate
 set /a SRC_calc_Video_Max_Bitrate=0
-if !SRC_MI_V_BitRate! gtr !SRC_calc_Video_Max_Bitrate! set /a SRC_calc_Video_Max_Bitrate=!SRC_MI_V_BitRate!
+if !SRC_MI_V_BitRate! gtr !SRC_calc_Video_Max_Bitrate! (set /a SRC_calc_Video_Max_Bitrate=!SRC_MI_V_BitRate!)
+
+REM deal with cases of no QSF done
+IF /I "!QSF_calc_Video_Encoding!" == "HEVC" (
+	set "QSFinfo_ActualVideoBitrate=!QSF_MI_V_BitRate!"
+) ELSE IF /I "!QSF_calc_Video_Encoding!" == "VP9" (
+	set "QSFinfo_ActualVideoBitrate=!QSF_MI_V_BitRate!"
+)
+
 REM 	' NOTE:	After testing, it has been found that ffprobe can mis-report bitrates in the QSF'd file by about double.
 REM 	'		Although mediainfo and the "QSF log" values are reasonably close, testing shows ffprobe gets it more "right" when encoding.
 REM 	'		Although hopefully correct, this can result in a much lower transcoded filesizes than the originals.
-if !QSF_MI_V_BitRate! gtr !SRC_calc_Video_Max_Bitrate! set /a SRC_calc_Video_Max_Bitrate=!QSF_MI_V_BitRate!
-if !QSFinfo_ActualVideoBitrate! gtr !SRC_calc_Video_Max_Bitrate! set /a SRC_calc_Video_Max_Bitrate=!QSFinfo_ActualVideoBitrate!
+if !QSF_MI_V_BitRate! gtr !SRC_calc_Video_Max_Bitrate! (set /a SRC_calc_Video_Max_Bitrate=!QSF_MI_V_BitRate!)
+if !QSFinfo_ActualVideoBitrate! gtr !SRC_calc_Video_Max_Bitrate! (set /a SRC_calc_Video_Max_Bitrate=!QSFinfo_ActualVideoBitrate!)
 ECHO SRC_calc_Video_Max_Bitrate=!SRC_calc_Video_Max_Bitrate! from !SRC_MI_V_BitRate!, !QSF_MI_V_BitRate!, !QSFinfo_ActualVideoBitrate! >> "!vrdlog!" 2>&1
 REM Now, SRC_calc_Video_Max_Bitrate contains the max video bitrate observed
 REM And handy variables include
@@ -746,12 +796,14 @@ IF /I "!QSF_calc_Video_Encoding!" == "AVC" (
 	set /a "X_bitrate_05percent=!SRC_calc_Video_Max_Bitrate! / 20"
 	set /a "X_bitrate_10percent=!SRC_calc_Video_Max_Bitrate! / 10"
 	set /a "X_bitrate_20percent=!SRC_calc_Video_Max_Bitrate! / 5"
+	set /a "X_bitrate_25percent=!SRC_calc_Video_Max_Bitrate! / 4"
 	set /a "X_bitrate_50percent=!SRC_calc_Video_Max_Bitrate! / 2"
 	REM ffmpeg nvenc typically seems to undershoot the target bitrate, so bump it up.
 	set /a "FFMPEG_V_Target_BitRate=!SRC_calc_Video_Max_Bitrate! + !X_bitrate_05percent!"
 	set /a "extra_bitrate_05percent=!FFMPEG_V_Target_BitRate! / 20"
 	set /a "extra_bitrate_10percent=!FFMPEG_V_Target_BitRate! / 10"
 	set /a "extra_bitrate_20percent=!FFMPEG_V_Target_BitRate! / 5"
+	set /a "extra_bitrate_25percent=!FFMPEG_V_Target_BitRate! / 4"
 	set /a "extra_bitrate_50percent=!FFMPEG_V_Target_BitRate! / 2"
 	set /a "FFMPEG_V_Target_Minimum_BitRate=!extra_bitrate_20percent!"
 	set /a "FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_BitRate! * 2"
@@ -781,23 +833,71 @@ IF /I "!QSF_calc_Video_Encoding!" == "AVC" (
 	)
 	ECHO !DATE! !TIME! Bitrates are fixed and NOT calculated, for mpeg2 transcode >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! Bitrates are assumed based on the MPEG2 extension ""%~x1"" being [.mpg/.vob] or [anything else] >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! "AVC" FFMPEG_V_Target_Minimum_BitRate=!FFMPEG_V_Target_Minimum_BitRate! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! "AVC"         FFMPEG_V_Target_BitRate=!FFMPEG_V_Target_BitRate! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! "AVC" FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_Maximum_BitRate! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! "AVC"         FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BufSize! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! "MPEG2" FFMPEG_V_Target_Minimum_BitRate=!FFMPEG_V_Target_Minimum_BitRate! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! "MPEG2"         FFMPEG_V_Target_BitRate=!FFMPEG_V_Target_BitRate! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! "MPEG2" FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_Maximum_BitRate! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! "MPEG2"         FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BufSize! >> "!vrdlog!" 2>&1
+) ELSE IF /I "!QSF_calc_Video_Encoding!" == "HEVC" (
+	REM CALCULATE H.264 TARGET BITRATES FROM THE INCOMING BITRATE
+	set /a "X_bitrate_05percent=!SRC_calc_Video_Max_Bitrate! / 20"
+	set /a "X_bitrate_10percent=!SRC_calc_Video_Max_Bitrate! / 10"
+	set /a "X_bitrate_20percent=!SRC_calc_Video_Max_Bitrate! / 5"
+	set /a "X_bitrate_25percent=!SRC_calc_Video_Max_Bitrate! / 4"
+	set /a "X_bitrate_50percent=!SRC_calc_Video_Max_Bitrate! / 2"
+	REM ffmpeg nvenc typically seems to undershoot the target bitrate, so bump it up.
+	set /a "FFMPEG_V_Target_BitRate=!SRC_calc_Video_Max_Bitrate! + !X_bitrate_25percent!"
+	set /a "extra_bitrate_05percent=!FFMPEG_V_Target_BitRate! / 20"
+	set /a "extra_bitrate_10percent=!FFMPEG_V_Target_BitRate! / 10"
+	set /a "extra_bitrate_20percent=!FFMPEG_V_Target_BitRate! / 5"
+	set /a "extra_bitrate_25percent=!FFMPEG_V_Target_BitRate! / 4"
+	set /a "extra_bitrate_50percent=!FFMPEG_V_Target_BitRate! / 2"
+	set /a "FFMPEG_V_Target_Minimum_BitRate=!extra_bitrate_20percent!"
+	set /a "FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_BitRate! * 2"
+	set /a "FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BitRate! * 2"
+	ECHO !DATE! !TIME! Bitrates are calculated from the max HEVC bitrate seen. >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! "HEVC"      SRC_calc_Video_Max_Bitrate=!SRC_calc_Video_Max_Bitrate! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! "HEVC" FFMPEG_V_Target_Minimum_BitRate=!FFMPEG_V_Target_Minimum_BitRate! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! "HEVC"         FFMPEG_V_Target_BitRate=!FFMPEG_V_Target_BitRate! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! "HEVC" FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_Maximum_BitRate! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! "HEVC"         FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BufSize! >> "!vrdlog!" 2>&1
+) ELSE IF /I "!QSF_calc_Video_Encoding!" == "VP9" (
+	REM CALCULATE H.264 TARGET BITRATES FROM THE INCOMING BITRATE
+	set /a "X_bitrate_05percent=!SRC_calc_Video_Max_Bitrate! / 20"
+	set /a "X_bitrate_10percent=!SRC_calc_Video_Max_Bitrate! / 10"
+	set /a "X_bitrate_20percent=!SRC_calc_Video_Max_Bitrate! / 5"
+	set /a "X_bitrate_25percent=!SRC_calc_Video_Max_Bitrate! / 4"
+	set /a "X_bitrate_50percent=!SRC_calc_Video_Max_Bitrate! / 2"
+	REM ffmpeg nvenc typically seems to undershoot the target bitrate, so bump it up.
+	set /a "FFMPEG_V_Target_BitRate=!SRC_calc_Video_Max_Bitrate! + !X_bitrate_20percent!"
+	set /a "extra_bitrate_05percent=!FFMPEG_V_Target_BitRate! / 20"
+	set /a "extra_bitrate_10percent=!FFMPEG_V_Target_BitRate! / 10"
+	set /a "extra_bitrate_20percent=!FFMPEG_V_Target_BitRate! / 5"
+	set /a "extra_bitrate_25percent=!FFMPEG_V_Target_BitRate! / 4"
+	set /a "extra_bitrate_50percent=!FFMPEG_V_Target_BitRate! / 2"
+	set /a "FFMPEG_V_Target_Minimum_BitRate=!extra_bitrate_20percent!"
+	set /a "FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_BitRate! * 2"
+	set /a "FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BitRate! * 2"
+	ECHO !DATE! !TIME! Bitrates are calculated from the max HEVC bitrate seen. >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! "VP9"      SRC_calc_Video_Max_Bitrate=!SRC_calc_Video_Max_Bitrate! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! "VP9" FFMPEG_V_Target_Minimum_BitRate=!FFMPEG_V_Target_Minimum_BitRate! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! "VP9"         FFMPEG_V_Target_BitRate=!FFMPEG_V_Target_BitRate! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! "VP9" FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_Maximum_BitRate! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! "VP9"         FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BufSize! >> "!vrdlog!" 2>&1
 ) ELSE (
-	ECHO !DATE! !TIME! ERROR: UNKNOWN QSF_calc_Video_Encoding="!QSF_calc_Video_Encoding!" to base the transcode calculations on. MUST be AVC or MPEG2 >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! ERROR: UNKNOWN QSF_calc_Video_Encoding="!QSF_calc_Video_Encoding!" to base the transcode calculations on. MUST be AVC or MPEG2 >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! ERROR: UNKNOWN QSF_calc_Video_Encoding="!QSF_calc_Video_Encoding!" to base the transcode calculations on. MUST be AVC or MPEG2 >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! ERROR: UNKNOWN QSF_calc_Video_Encoding="!QSF_calc_Video_Encoding!" to base the transcode calculations on. MUST be AVC or MPEG2 or HEVC or VP9 >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! ERROR: UNKNOWN QSF_calc_Video_Encoding="!QSF_calc_Video_Encoding!" to base the transcode calculations on. MUST be AVC or MPEG2 or HEVC or VP9 >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! ERROR: UNKNOWN QSF_calc_Video_Encoding="!QSF_calc_Video_Encoding!" to base the transcode calculations on. MUST be AVC or MPEG2 or HEVC or VP9 >> "!vrdlog!" 2>&1
 	exit 1
 )
 
 IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 	REM set for no deinterlace
 	set "FFMPEG_V_dg_deinterlace=0"
+	set "FFMPEG_V_vp9_deinterlace_mode="
 ) ELSE IF /I "!QSF_calc_Video_Interlacement!" == "INTERLACED" (
 	REM set for normal single framerate deinterlace
 	set "FFMPEG_V_dg_deinterlace=1"
+	set "FFMPEG_V_vp9_deinterlace_mode=0"
 ) ELSE (
 	set "check_QSF_failed=ERROR: UNKNOWN QSF_calc_Video_Interlacement="!QSF_calc_Video_Interlacement!" to base transcode calculations on, for '%~f1'"
 	ECHO !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
@@ -813,8 +913,10 @@ IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 
 IF /I "!QSF_calc_Video_FieldFirst!" == "TFF" (
 	set "FFMPEG_V_dg_use_TFF=True"
+	set "FFMPEG_V_vp9_deinterlace_parity=1"
 ) ELSE IF /I "!QSF_calc_Video_FieldFirst!" == "BFF" (
 	set "FFMPEG_V_dg_use_TFF=False"
+	set "FFMPEG_V_vp9_deinterlace_parity=0"
 ) ELSE (
 	set "check_QSF_failed=ERROR: UNKNOWN QSF_calc_Video_FieldFirst="!QSF_calc_Video_FieldFirst!" to base transcode calculations on, for '%~f1'"
 	ECHO !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
@@ -910,17 +1012,18 @@ IF /I "!Footy_found!" == "True" (
 	IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 		REM set for no deinterlace
 		set "FFMPEG_V_dg_deinterlace=0"
-		ECHO Already Progressive video, Footy words found in filename '!file_name_part!', FFMPEG_V_dg_deinterlace=!FFMPEG_V_dg_deinterlace! NO Footy variables set >> "!vrdlog!" 2>&1
+		set "FFMPEG_V_vp9_deinterlace_mode="
+		ECHO Already Progressive video, Footy words found in filename '!file_name_part!', FFMPEG_V_dg_deinterlace=!FFMPEG_V_dg_deinterlace! FFMPEG_V_vp9_deinterlace_mode='!FFMPEG_V_vp9_deinterlace_mode!' NO Footy variables set >> "!vrdlog!" 2>&1
 	) ELSE IF /I "!QSF_calc_Video_Interlacement!" == "INTERLACED" (
 		REM set for double framerate deinterlace
 		set "FFMPEG_V_dg_deinterlace=2"
-		vrdtvsp_final_dg_deinterlace = 2	' set for double framerate deinterlace
+		set "FFMPEG_V_vp9_deinterlace_mode=1"
 		REM use python to calculate rounded values for upped FOOTY double framerate deinterlaced output
 		CALL :calc_single_number_result_py "int(round(!FFMPEG_V_Target_BitRate! * 1.75))"       "Footy_FFMPEG_V_Target_BitRate"
 		CALL :calc_single_number_result_py "int(round(!Footy_FFMPEG_V_Target_BitRate! * 0.20))" "Footy_FFMPEG_V_Target_Minimum_BitRate"
 		CALL :calc_single_number_result_py "int(round(!Footy_FFMPEG_V_Target_BitRate! * 2))"    "Footy_FFMPEG_V_Target_Maximum_BitRate"
 		CALL :calc_single_number_result_py "int(round(!Footy_FFMPEG_V_Target_BitRate! * 2))"    "Footy_FFMPEG_V_Target_BufSize"
-		ECHO Interlaced video, Footy words found in filename '!file_name_part!', FFMPEG_V_dg_deinterlace=!FFMPEG_V_dg_deinterlace!  Footy variables set >> "!vrdlog!" 2>&1
+		ECHO Interlaced video, Footy words found in filename '!file_name_part!', FFMPEG_V_dg_deinterlace=!FFMPEG_V_dg_deinterlace! FFMPEG_V_vp9_deinterlace_mode='!FFMPEG_V_vp9_deinterlace_mode!' Footy variables set >> "!vrdlog!" 2>&1
 		set /a FFMPEG_V_Target_BitRate=!Footy_FFMPEG_V_Target_BitRate!
 		set /a FFMPEG_V_Target_Minimum_BitRate=!Footy_FFMPEG_V_Target_Minimum_BitRate!
 		set /a FFMPEG_V_Target_Maximum_BitRate=!Footy_FFMPEG_V_Target_Maximum_BitRate!
@@ -991,6 +1094,30 @@ IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 			set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.3"
 			set "FFMPEG_V_G=25"
 		)
+	) ELSE IF /I "!QSF_calc_Video_Encoding!" == "HEVC" (
+		REM Progressive HEVC
+		ECHO !DATE! !TIME! FFMPEGVARS: PROGRESSIVE HEVC detected >> "!vrdlog!" 2>&1
+		set "FFMPEG_V_dg_deinterlace=0"
+		set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
+		set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.3"
+		set "FFMPEG_V_G=25"
+		IF /I "!Footy_found!" == "True" (
+			ECHO !DATE! !TIME! FFMPEGVARS: PROGRESSIVE HEVC FOOTY detected >> "!vrdlog!" 2>&1
+			set "FFMPEG_V_dg_deinterlace=0"
+			set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.04, dn_cstrength=0.04, dn_tthresh=75.0, dn_show=0"
+			set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.25"
+			set "FFMPEG_V_G=25"
+		)
+	) ELSE IF /I "!QSF_calc_Video_Encoding!" == "VP9" (
+		REM Progressive VP9
+		ECHO !DATE! !TIME! FFMPEGVARS: PROGRESSIVE VP9 detected >> "!vrdlog!" 2>&1
+		set "FFMPEG_V_vp9_deinterlace_mode="
+		set "FFMPEG_V_G=25"
+		IF /I "!Footy_found!" == "True" (
+			ECHO !DATE! !TIME! FFMPEGVARS: PROGRESSIVE VP9 FOOTY detected >> "!vrdlog!" 2>&1
+			set "FFMPEG_V_vp9_deinterlace_mode="
+			set "FFMPEG_V_G=25"
+		)
 	) ELSE (
 		REM UNKNOWN, assume Progressive MPEG2
 		ECHO !DATE! !TIME! FFMPEGVARS: PROGRESSIVE UNKNOWN codec detected >> "!vrdlog!" 2>&1
@@ -1036,6 +1163,30 @@ IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 			set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.3"
 			set "FFMPEG_V_G=50"
 		)
+	) ELSE IF /I "!QSF_calc_Video_Encoding!" == "HEVC" (
+		REM Interlaced HEVC
+		ECHO !DATE! !TIME! FFMPEGVARS: INTERLACED HEVC detected >> "!vrdlog!" 2>&1
+		set "FFMPEG_V_dg_deinterlace=1"
+		set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.06, dn_cstrength=0.06, dn_tthresh=75.0, dn_show=0"
+		set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.3"
+		set "FFMPEG_V_G=25"
+		IF /I "!Footy_found!" == "True" (
+			ECHO !DATE! !TIME! FFMPEGVARS: INTERLACED HEVC FOOTY detected >> "!vrdlog!" 2>&1
+			set "FFMPEG_V_dg_deinterlace=2"
+			set "FFMPEG_V_dg_vpy_denoise=, dn_enable=3, dn_quality="good", dn_strength=0.04, dn_cstrength=0.04, dn_tthresh=75.0, dn_show=0"
+			set "FFMPEG_V_dg_vpy_dsharpen=, sh_enable=1, sh_strength=0.25"
+			set "FFMPEG_V_G=50"
+		)
+	) ELSE IF /I "!QSF_calc_Video_Encoding!" == "VP9" (
+		REM Interlaced VP9
+		ECHO !DATE! !TIME! FFMPEGVARS: INTERLACED VP9 detected >> "!vrdlog!" 2>&1
+		set "FFMPEG_V_vp9_deinterlace_mode=0"
+		set "FFMPEG_V_G=25"
+		IF /I "!Footy_found!" == "True" (
+			ECHO !DATE! !TIME! FFMPEGVARS: INTERLACED VP9 FOOTY detected >> "!vrdlog!" 2>&1
+			set "FFMPEG_V_vp9_deinterlace_mode=1"
+			set "FFMPEG_V_G=50"
+		)
 	) ELSE (
 		REM UNKNOWN, assume Interlaced AVC
 		ECHO !DATE! !TIME! FFMPEGVARS: INTERLACED UNKNOWN codec detected >> "!vrdlog!" 2>&1
@@ -1053,14 +1204,19 @@ IF /I "!QSF_calc_Video_Interlacement!" == "PROGRESSIVE" (
 	)
 )
 REM ======================================================  Do the DGIndexNV ======================================================
-RE re-use error checking variable check_QSF_failed even though we are not doing a QSF
+REM re-use error checking variable check_QSF_failed even though we are not doing a QSF
 IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	ECHO !DATE! !TIME! QSF_calc_Video_Is_Progessive_AVC=!QSF_calc_Video_Is_Progessive_AVC! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! DGIndexNV is NOT performed for Progressive-AVC where we just copy streams >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+) ELSE IF /I "!QSF_calc_Video_Encoding!" == "VP9" (
+	REM vp9 not supported by DG tools, so do plain ffmpeg instead
+	ECHO !DATE! !TIME! QSF_calc_Video_Is_Progessive_AVC=!QSF_calc_Video_Is_Progessive_AVC! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! DGIndexNV is NOT supported by DG so is NOT performed for VP9 where we instead use ffmpeg transcode ... with deinterlace if required >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ) ELSE (
 	ECHO !DATE! !TIME! QSF_calc_Video_Is_Progessive_AVC=!QSF_calc_Video_Is_Progessive_AVC! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! DGIndexNV WILL be performed for [AVC INTERLACED] [MPEG2 PROGRESSIVE] [MPEG2 INTERLACED] and a .VPY will be created >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! DGIndexNV WILL be performed for [AVC INTERLACED] [MPEG2 PROGRESSIVE] [MPEG2 INTERLACED] [HEVC PROGRESSIVE] [HEVC INTERLACED] and a .VPY will be created >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	ECHO ======================================================  Start the DGIndexNV ====================================================== >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
@@ -1143,8 +1299,68 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 		goto :eof
 	)
 	ECHO ======================================================  Finish Run FFMPEG copy video stream ====================================================== >> "!vrdlog!" 2>&1
+) ELSE IF /I "!QSF_calc_Video_Encoding!" == "VP9" (
+	REM [VP9 PROGRESSIVE] [VP9 INTERLACED] transcode video and transcode audio stream
+	REM vp9 without bwdif_vulkan
+	REM -filter_complex "[0:v]unsharp=lx=3:ly=3:la=0.5:cx=3:cy=3:ca=0.5,format=pix_fmts=yuv420p,setdar='!SRC_MI_V_DisplayAspectRatio_String_slash!'"
+	REM vp9 with bwdif_vulkan
+	REM -filter_complex "[0:v]bwdif_vulkan=mode=0:parity=0:deint=0,unsharp=lx=3:ly=3:la=0.5:cx=3:cy=3:ca=0.5,format=pix_fmts=yuv420p,setdar='!SRC_MI_V_DisplayAspectRatio_String_slash!'"
+	REM		mode	The interlacing mode to adopt. It accepts one of the following values:
+	REM			0, send_frame	Output one frame for each frame. Single framerate.
+	REM			1, send_field	Output one frame for each field. Double framerate.
+	REM			The default value is send_field.
+	REM		parity	The picture field parity assumed for the input interlaced video. It accepts one of the following values:
+	REM			0, tff	Assume the top field is first.
+	REM			1, bff	Assume the bottom field is first.
+	REM			-1, auto	Enable automatic detection of field parity.
+	REM			The default value is auto. If the interlacing is unknown or the decoder does not export this information, top field first will be assumed.
+	REM		deint	Specify which frames to deinterlace. Accepts one of the following values:
+	REM			0, all	Deinterlace all frames.
+	REM			1, interlaced	Only deinterlace frames marked as interlaced.
+	REM			The default value is all.
+	IF /I "!FFMPEG_V_vp9_deinterlace_mode!" == "" (
+		set "FFMPEG_V_vp9_fc=-filter_complex "[0:v]unsharp=lx=3:ly=3:la=0.5:cx=3:cy=3:ca=0.5,format=pix_fmts=yuv420p,setdar='!SRC_MI_V_DisplayAspectRatio_String_slash!'""
+	) ELSE (
+		REM set "FFMPEG_V_vp9_fc=-filter_complex "[0:v]bwdif=mode=!FFMPEG_V_vp9_deinterlace_mode!:parity=!FFMPEG_V_vp9_deinterlace_parity!:deint=0,unsharp=lx=3:ly=3:la=0.5:cx=3:cy=3:ca=0.5,format=pix_fmts=yuv420p,setdar=!SRC_MI_V_DisplayAspectRatio_String_slash!""
+		set "FFMPEG_V_vp9_fc=-filter_complex "[0:v]bwdif_vulkan=mode=!FFMPEG_V_vp9_deinterlace_mode!:parity=!FFMPEG_V_vp9_deinterlace_parity!:deint=0,unsharp=lx=3:ly=3:la=0.5:cx=3:cy=3:ca=0.5,format=pix_fmts=yuv420p,setdar=!SRC_MI_V_DisplayAspectRatio_String_slash!""
+	)
+	ECHO ======================================================  Start Run FFMPEG VP9 transcode ====================================================== >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! ********** QSF_calc_Video_Is_Progessive_AVC=!QSF_calc_Video_Is_Progessive_AVC! ... so NOT Progressive-AVC ... transcode VP9 video and transcode audio >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! ********** NOT Progressive-AVC ... use ffmpeg and a .vpy to transcode video and transcode audio >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	set "FFMPEG_cmd="!ffmpegexe64!""
+	set "FFMPEG_cmd=!FFMPEG_cmd! -hide_banner -v info -nostats"
+	REM set "FFMPEG_cmd=!FFMPEG_cmd! -hide_banner -v verbose -nostats"
+	REM set "FFMPEG_cmd=!FFMPEG_cmd! -hide_banner -v debug -nostats"
+	set "FFMPEG_cmd=!FFMPEG_cmd! -i "!QSF_File!" -probesize 100M -analyzeduration 100M"
+	set "FFMPEG_cmd=!FFMPEG_cmd! !FFMPEG_V_vp9_fc!"
+	set "FFMPEG_cmd=!FFMPEG_cmd! -fps_mode passthrough -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental"
+	set "FFMPEG_cmd=!FFMPEG_cmd! -c:v h264_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g !FFMPEG_V_G! -coder:v cabac"
+	set "FFMPEG_cmd=!FFMPEG_cmd! !FFMPEG_V_RTX2060super_extra_flags!"
+	set "FFMPEG_cmd=!FFMPEG_cmd! -rc:v vbr !FFMPEG_V_final_cq_options!"
+	set "FFMPEG_cmd=!FFMPEG_cmd! -b:v !FFMPEG_V_Target_BitRate! -minrate:v !FFMPEG_V_Target_Minimum_BitRate! -maxrate:v !FFMPEG_V_Target_Maximum_BitRate! -bufsize !FFMPEG_V_Target_Maximum_BitRate!"
+	set "FFMPEG_cmd=!FFMPEG_cmd! -strict experimental"
+	REM set "FFMPEG_cmd=!FFMPEG_cmd! -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp"
+	set "FFMPEG_cmd=!FFMPEG_cmd! -profile:v high -level 5.2 -movflags +faststart+write_colr"
+	set "FFMPEG_cmd=!FFMPEG_cmd! -c:a libfdk_aac -b:a 256k -ar 48000"
+	set "FFMPEG_cmd=!FFMPEG_cmd! -y "!Target_File!""
+	ECHO !FFMPEG_cmd! >> "!vrdlog!" 2>&1
+ 	!FFMPEG_cmd! >> "!vrdlog!" 2>&1
+ 	SET EL=!ERRORLEVEL!
+	IF /I "!EL!" NEQ "0" (
+		set "check_QSF_failed=********** ERROR: Error Number '!EL!' returned from '!ffmpegexe64!' transcode VP9 video and transcode audio"
+		ECHO !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
+		ECHO !DATE! !TIME! SRC file="%~f1" >> "!vrdlog!" 2>&1
+		ECHO !DATE! !TIME! QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
+		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+		CALL :declare_FAILED "%~f1"
+		goto :eof
+	)
+	ECHO ======================================================  Finish Run FFMPEG VP9 transcode ====================================================== >> "!vrdlog!" 2>&1
 ) ELSE (
-	REM for [AVC INTERLACED] [MPEG2 PROGRESSIVE] [MPEG2 INTERLACED] transcode video and transcode audio stream
+	REM for the rest:
+	REM [AVC INTERLACED] [MPEG2 PROGRESSIVE] [MPEG2 INTERLACED] [HEVC PROGRESSIVE] [HEVC INTERLACED] transcode video and transcode audio stream
 	ECHO ======================================================  Start Run FFMPEG transcode ====================================================== >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! ********** QSF_calc_Video_Is_Progessive_AVC=!QSF_calc_Video_Is_Progessive_AVC! ... so NOT Progressive-AVC ... transcode video and transcode audio >> "!vrdlog!" 2>&1
@@ -1251,12 +1467,14 @@ set "Path_to_vrd_vp_vbs="
 set "profile_name_for_qsf_mpeg2="
 set "profile_name_for_qsf_h264="
 set "profile_name_for_qsf_h265="
+set "profile_name_for_qsf_vp9="
 IF /I "!requested_vrd_version!" == "6" (
    set "Path_to_vrd=!Path_to_vrd6!"
    set "Path_to_vrd_vp_vbs=!Path_to_vp_vbs_vrd6!"
    set "profile_name_for_qsf_mpeg2=!profile_name_for_qsf_mpeg2_vrd6!"
    set "profile_name_for_qsf_h264=!profile_name_for_qsf_h264_vrd6!"
-   set "profile_name_for_qsf_h265=!profile_name_for_qsf_h265_vrd6!"
+   set "profile_name_for_qsf_h265="
+   set "profile_name_for_qsf_vp9="
    set "_vrd_version_primary=6"
    set "_vrd_version_fallback=5"
    set "_vrd_qsf_timeout_minutes=!default_qsf_timeout_minutes_VRD6!"
@@ -1266,7 +1484,8 @@ IF /I "!requested_vrd_version!" == "6" (
    set "Path_to_vrd_vp_vbs=!Path_to_vp_vbs_vrd5!"
    set "profile_name_for_qsf_mpeg2=!profile_name_for_qsf_mpeg2_vrd5!"
    set "profile_name_for_qsf_h264=!profile_name_for_qsf_h264_vrd5!"
-   set "profile_name_for_qsf_h265=!profile_name_for_qsf_h265_vrd5!"
+   set "profile_name_for_qsf_h265="
+   set "profile_name_for_qsf_vp9="
    set "_vrd_version_primary=5"
    set "_vrd_version_fallback=6"
    set "_vrd_qsf_timeout_minutes=!default_qsf_timeout_minutes_VRD5!"
@@ -1350,8 +1569,14 @@ IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
 ) ELSE IF /I "!SRC_calc_Video_Encoding!" == "MPEG2" (
 	set "qsf_profile=!profile_name_for_qsf_mpeg2!"
 	set "qsf_extension=!extension_mpeg2!"
+) ELSE IF /I "!SRC_calc_Video_Encoding!" == "HEVC" (
+	set "qsf_profile=!profile_name_for_qsf_h265!"
+	set "qsf_extension=!extension_h265!"
+) ELSE IF /I "!SRC_calc_Video_Encoding!" == "vp9" (
+	set "qsf_profile=!profile_name_for_qsf_vp9!"
+	set "qsf_extension=!extension_vp9!"
 ) ELSE (
-	set "check_QSF_failed********** ERROR: mediainfo format !SRC_calc_Video_Encoding! neither 'AVC' nor 'MPEG2' for !source_filename!"
+	set "check_QSF_failed=********** ERROR: run_cscript_qsf_with_timeout mediainfo format !SRC_calc_Video_Encoding! neither 'AVC' nor 'MPEG2' for !source_filename!"
 	ECHO !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! **********  Declaring as FAILED: "%~f2" >> "!vrdlog!" 2>&1
@@ -1390,32 +1615,24 @@ ECHO cscript //nologo /t:!_vrd_qsf_timeout_seconds! "!Path_to_vbs_VRDTVSP_Run_QS
 cscript //nologo /t:!_vrd_qsf_timeout_seconds! "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "!source_filename!" "!qsf_filename!" "!qsf_profile!" "!temp_cmd_file!" "!requested_qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
 SET EL=!ERRORLEVEL!
 IF /I "!EL!" NEQ "0" (
-	set "check_QSF_failed=********** ERROR: QSF Error '!EL!' returned from cscript QSF"
+	set "check_QSF_failed=********** ERROR: run_cscript_qsf_with_timeout QSF Error '!EL!' returned from cscript QSF"
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ) ELSE if NOT exist "!qsf_filename!" ( 
-	set "check_QSF_failed=********** ERROR: QSF Error QSF file not created: '!qsf_filename!'"
+	set "check_QSF_failed=********** ERROR: run_cscript_qsf_with_timeout QSF Error QSF file not created: '!qsf_filename!'"
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ) ELSE if NOT exist "!temp_cmd_file!" ( 
-	set "check_QSF_failed=********** ERROR: QSF Error Temp cmd file not created: '!temp_cmd_file!'"
+	set "check_QSF_failed=********** ERROR: run_cscript_qsf_with_timeout QSF Error Temp cmd file not created: '!temp_cmd_file!'"
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 )
 IF /I NOT "!check_QSF_failed!" == "" (
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! Ensuring VideoReDo tasks are killed: >> "!vrdlog!" 2>&1
-	ECHO tasklist /fo list /fi "IMAGENAME eq VideoReDo*" >> "!vrdlog!" 2>&1
-	tasklist /fo list /fi "IMAGENAME eq VideoReDo*" >> "!vrdlog!" 2>&1
-	ECHO taskkill /f /t /fi "IMAGENAME eq VideoReDo*" /im * >> "!vrdlog!" 2>&1
-	taskkill /f /t /fi "IMAGENAME eq VideoReDo*" /im * >> "!vrdlog!" 2>&1
-	ECHO tasklist /fo list /fi "IMAGENAME eq VideoReDo*" >> "!vrdlog!" 2>&1
-	tasklist /fo list /fi "IMAGENAME eq VideoReDo*" >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! ********** FAILED:  "%~f1" >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! ********** FAILED: run_cscript_qsf_with_timeout "%~f1" >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	goto :eof
 )
@@ -1432,7 +1649,7 @@ ECHO set !requested_qsf_xml_prefix! >> "!vrdlog!" 2>&1
 set !requested_qsf_xml_prefix! >> "!vrdlog!" 2>&1
 ECHO +++++++++ >> "!vrdlog!" 2>&1
 
-REM :gather_variables_from_media_file P2 =	the global prefix to use for this gather, one of "SRC_", "QSF_" "TARGET_"
+REM :gather_variables_from_media_file P =	the global prefix to use for this gather, one of "SRC_", "QSF_" "TARGET_"
 CALL :gather_variables_from_media_file "!qsf_filename!" "QSF_" 
 
 REM Reset VRD QSF defaults back to the original DEFAULT version. Note _vrd_version_primary and _vrd_version_fallback.
@@ -1441,6 +1658,178 @@ CALL :set_vrd_qsf_paths "!DEFAULT_vrd_version_primary!"
 CALL :get_date_time_String "end_date_time_QSF_with_timeout"
 REM ECHO "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF_with_timeout!" --end_datetime "!end_date_time_QSF_with_timeout!" --prefix_id "run_cscript_qsf_with_timeout" >> "!vrdlog!" 2>&1
 "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF_with_timeout!" --end_datetime "!end_date_time_QSF_with_timeout!" --prefix_id "run_cscript_qsf_with_timeout" >> "!vrdlog!" 2>&1
+
+goto :eof
+
+
+REM ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
+REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
+REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
+REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
+REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
+REM
+:run_ffmpeg_stream_copy_instead_of_qsf
+REM Input Parameters 
+REM		1 	fully qualified filename of the SRC input (usually a .TS file)
+REM 	2	fully qualified filename of name of QSF file to create
+REM		3	qsf prefix for variables output from the VideoReDo QSF 
+REM RETURN Parameters 
+REM		QSF_ parameters from  :gather_variables_from_media_file
+REM		!check_QSF_failed! is non-blank if we abort
+REM Expected preset variables
+REM		SRC_ variables
+REM		calculated variables SRC_calc_
+REM 	Fudged "!SRC_MI_V_BitRate!"
+REM 	temp_cmd_file
+REM NOTES:
+REM %~1  -  expands %1 removing any surrounding quotes (") 
+REM %~f1  -  expands %1 to a fully qualified path name 
+REM %~d1  -  expands %1 to a drive letter only 
+REM %~p1  -  expands %1 to a path only 
+REM %~n1  -  expands %1 to a file name only including the leading "."
+REM %~x1  -  expands %1 to a file extension only 
+REM %~s1  -  expanded path contains short names only 
+REM %~a1  -  expands %1 to file attributes 
+REM %~t1  -  expands %1 to date/time of file 
+REM %~z1  -  expands %1 to size of file 
+REM The modifiers can be combined to get compound results:
+REM %~dp1  -  expands %1 to a drive letter and path only 
+REM %~nx1  -  expands %1 to a file name and extension only 
+
+REM ECHO IN run_cscript_qsf_with_timeout  >> "!vrdlog!" 2>&1
+REM ECHO 1 "%~1"	fully qualified filename of the SRC input usually a .TS file >> "!vrdlog!" 2>&1
+REM ECHO 2 "%~2"	fully qualified filename of name of QSF file to create >> "!vrdlog!" 2>&1
+REM ECHO 3 "%~3"	qsf prefix for variables output from the VideoReDo QSF  >> "!vrdlog!" 2>&1
+
+CALL :get_date_time_String "start_date_time_ffmpeg_stream_copy_instead_of_qsf"
+
+set "source_filename=%~f1"
+set "qsf_filename=%~f2"
+set "requested_qsf_xml_prefix=%~3"
+
+REM Preset the error flag to nothing
+set "check_QSF_failed="
+
+REM Immediately choose the filename extension base on SRC_ variables and variables set by :set_vrd_qsf_paths
+IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
+	set "qsf_profile=!profile_name_for_qsf_h264!"
+	set "qsf_extension=!extension_h264!"
+) ELSE IF /I "!SRC_calc_Video_Encoding!" == "MPEG2" (
+	set "qsf_profile=!profile_name_for_qsf_mpeg2!"
+	set "qsf_extension=!extension_mpeg2!"
+) ELSE IF /I "!SRC_calc_Video_Encoding!" == "HEVC" (
+	set "qsf_profile=!profile_name_for_qsf_h265!"
+	set "qsf_extension=!extension_h265!"
+) ELSE IF /I "!SRC_calc_Video_Encoding!" == "VP9" (
+	set "qsf_profile=!profile_name_for_qsf_vp9!"
+	set "qsf_extension=!extension_vp9!"
+) ELSE (
+	set "check_QSF_failed=********** ERROR: run_ffmpeg_stream_copy_instead_of_qsf mediainfo format !SRC_calc_Video_Encoding! neither 'AVC' nor 'MPEG2' nor "HEVC" nor "VP9" for !source_filename!"
+	ECHO !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! **********  Declaring as FAILED: "%~f2" >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	goto :eof
+)
+REM ECHO "SRC_calc_Video_Encoding=!SRC_calc_Video_Encoding!" >> "!vrdlog!" 2>&1
+REM ECHO "SRC_calc_Video_Interlacement=!SRC_calc_Video_Interlacement!" >> "!vrdlog!" 2>&1
+REM ECHO "SRC_calc_Video_FieldFirst=!SRC_calc_Video_FieldFirst!" >> "!vrdlog!" 2>&1
+REM ECHO "qsf_profile=!qsf_profile!" >> "!vrdlog!" 2>&1
+REM ECHO "qsf_extension=!qsf_extension!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! Start non-QSF FFMPEG STREAM COPY of file: "!source_filename!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! Input: Video Codec: '!SRC_FF_V_codec_name!' ScanType: '!SRC_calc_Video_Interlacement!' ScanOrder: '!SRC_calc_Video_FieldFirst!' WxH: !SRC_MI_V_Width!x!SRC_MI_V_HEIGHT! dar:'!SRC_FF_V_display_aspect_ratio_slash!' and '!SRC_MI_V_DisplayAspectRatio_String_slash!' >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME!        Audio Codec: '!SRC_FF_A_codec_name!' Audio_Delay_ms: '!SRC_MI_A_Audio_Delay!' Video_Delay_ms: '!SRC_MI_A_Video_Delay!' Bitrate: !SRC_MI_V_BitRate! >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! _vrd_version_primary='!_vrd_version_primary!' _vrd_version_fallback=!_vrd_version_fallback!' qsf_profile=!qsf_profile!' qsf_extension='!qsf_extension!' >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+
+REM Delete the QSF target and relevant log files before doing the non-QSF
+ECHO DEL /F "!qsf_filename!"  >> "!vrdlog!" 2>&1
+DEL /F "!qsf_filename!"  >> "!vrdlog!" 2>&1
+ECHO DEL /F "!vrd5_logfiles!" >> "!vrdlog!" 2>&1
+DEL /F "!vrd5_logfiles!" >> "!vrdlog!" 2>&1
+ECHO DEL /F "!vrd6_logfiles!" >> "!vrdlog!" 2>&1
+DEL /F "!vrd6_logfiles!" >> "!vrdlog!" 2>&1
+ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+
+ECHO ======================================================  Start Run non-QSF FFMPEG copy video and audio streams ====================================================== >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** QSF_calc_Video_Is_Progessive_AVC=!QSF_calc_Video_Is_Progessive_AVC! ... so IS Progressive-AVC ... just copy video stream and transcode audio >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** IS Progressive-AVC ... use ffmpeg to just copy video stream and transcode audio >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+REM ffmpeg throws an error due to "-c:v copy" and this together: -vf "setdar="!QSF_MI_V_DisplayAspectRatio_String_slash!"
+REM ffmpeg throws an error due to "-c:v copy" and this together: -profile:v high -level 5.2 
+set "FFMPEG_cmd="!ffmpegexe64!""
+set "FFMPEG_cmd=!FFMPEG_cmd! -hide_banner -v info -nostats"
+set "FFMPEG_cmd=!FFMPEG_cmd! -i "!source_filename!" -probesize 100M -analyzeduration 100M"
+set "FFMPEG_cmd=!FFMPEG_cmd! -c:v copy -fps_mode passthrough"
+set "FFMPEG_cmd=!FFMPEG_cmd! -strict experimental"
+set "FFMPEG_cmd=!FFMPEG_cmd! -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp"
+set "FFMPEG_cmd=!FFMPEG_cmd! -movflags +faststart+write_colr"
+set "FFMPEG_cmd=!FFMPEG_cmd! -c:a copy"
+set "FFMPEG_cmd=!FFMPEG_cmd! -y "!qsf_filename!""
+ECHO !FFMPEG_cmd! >> "!vrdlog!" 2>&1
+!FFMPEG_cmd! >> "!vrdlog!" 2>&1
+SET EL=!ERRORLEVEL!
+IF /I "!EL!" NEQ "0" (
+	set "check_QSF_failed=********** ERROR: run_ffmpeg_stream_copy_instead_of_qsf  Error '!EL!' returned from ffmpeg"
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+) ELSE if NOT exist "!qsf_filename!" ( 
+	set "check_QSF_failed=********** ERROR: run_ffmpeg_stream_copy_instead_of_qsf  Error QSF file not created: '!qsf_filename!'"
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+)
+IF /I NOT "!check_QSF_failed!" == "" (
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! ********** FAILED: run_ffmpeg_stream_copy_instead_of_qsf "%~f1" >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	goto :eof
+)
+REM There is NOT a  .cmd file  created to see the !requested_qsf_xml_prefix! variables created by the QSF ...
+REM So create those variables here now ...
+REM Example Returned xml string: from VideoReDo.OutputGetCompletedInfo()
+REM VideoReDo.OutputGetCompletedInfo() MUST be called immediately AFTER a QSF FileSaveAs and BEFORE the .Close of the source file for the QSF
+REM This is a well-formed single-item XML string, which make it really easy to find things.
+REM <VRDOutputInfo outputFile="G:\HDTV\000-TO-BE-PROCESSED\zzz-TEST\VRDTVSP-Source\News-National_Nine_News_Afternoon_Edition.2021-02-05.ts.QSF">
+REM  <OutputType desc="Output format:" hidden="1">MP4</OutputType>
+REM  <OutputDurationSecs desc="Video length:" val_type="int" hidden="1">65</OutputDurationSecs>
+REM  <OutputDuration desc="Video length:">00:01:05</OutputDuration>
+REM  <OutputSizeMB desc="Video size:" val_type="int" val_format="%dMB">27</OutputSizeMB>
+REM  <OutputSceneCount desc="Output scenes:" val_type="int">1</OutputSceneCount>
+REM  <VideoOutputFrameCount desc="Video output frames:" val_type="int">1625</VideoOutputFrameCount>
+REM  <AudioOutputFrameCount desc="Audio output frames:" val_type="int">2033</AudioOutputFrameCount>
+REM  <ProcessingTimeSecs desc="Processing time (secs):" val_type="int">1</ProcessingTimeSecs>
+REM  <ProcessedFramePerSec desc="Processed frames/sec:" val_type="float" val_format="%.2f">1625.000000</ProcessedFramePerSec>
+REM  <ActualVideoBitrate desc="Actual Video Bitrate:" val_type="int">2552071</ActualVideoBitrate>
+REM  <lkfs_values hidden="1"/>
+REM  <audio_level_changes hidden="1"/>
+REM </VRDOutputInfo>
+REM
+set "default_ActualBitrate_bps=!SRC_MI_V_BitRate!"
+set "!requested_qsf_xml_prefix!outputFile=!qsf_filename!"
+set "!requested_qsf_xml_prefix!OutputType=!qsf_extension!"
+set "!requested_qsf_xml_prefix!OutputDurationSecs=0"
+set "!requested_qsf_xml_prefix!OutputDuration=00:00:00"
+set "!requested_qsf_xml_prefix!OutputSizeMB=0"
+set "!requested_qsf_xml_prefix!OutputSceneCount=1"
+set "!requested_qsf_xml_prefix!VideoOutputFrameCount=0"
+set "!requested_qsf_xml_prefix!AudioOutputFrameCount=0"
+set "!requested_qsf_xml_prefix!ProcessingTimeSecs0"
+set "!requested_qsf_xml_prefix!ProcessedFramePerSec=0"
+set "!requested_qsf_xml_prefix!ActualVideoBitrate=!default_ActualBitrate_bps!"
+ECHO ======================================================  Finish Run non-QSF FFMPEG copy video and audio streams ====================================================== >> "!vrdlog!" 2>&1
+
+REM :gather_variables_from_media_file P2 =	the global prefix to use for this gather, one of "SRC_", "QSF_" "TARGET_"
+CALL :gather_variables_from_media_file "!qsf_filename!" "QSF_" 
+
+CALL :get_date_time_String "end_date_time_ffmpeg_stream_copy_instead_of_qsf"
+REM ECHO "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_ffmpeg_stream_copy_instead_of_qsf!" --end_datetime "!end_date_time_ffmpeg_stream_copy_instead_of_qsf!" --prefix_id "run_ffmpeg_stream_copy_instead_of_qsf" >> "!vrdlog!" 2>&1
+"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_ffmpeg_stream_copy_instead_of_qsf!" --end_datetime "!end_date_time_ffmpeg_stream_copy_instead_of_qsf!" --prefix_id "run_ffmpeg_stream_copy_instead_of_qsf" >> "!vrdlog!" 2>&1
 
 goto :eof
 
