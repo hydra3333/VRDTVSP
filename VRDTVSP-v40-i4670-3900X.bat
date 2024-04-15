@@ -1301,10 +1301,12 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	ECHO ======================================================  Finish Run FFMPEG copy video stream ====================================================== >> "!vrdlog!" 2>&1
 ) ELSE IF /I "!QSF_calc_Video_Encoding!" == "VP9" (
 	REM [VP9 PROGRESSIVE] [VP9 INTERLACED] transcode video and transcode audio stream
-	REM vp9 without bwdif_vulkan
+	REM
+	REM vp9 without bwdif or yadif deinterlacers
 	REM -filter_complex "[0:v]unsharp=lx=3:ly=3:la=0.5:cx=3:cy=3:ca=0.5,format=pix_fmts=yuv420p,setdar='!SRC_MI_V_DisplayAspectRatio_String_slash!'"
-	REM vp9 with bwdif_vulkan
-	REM -filter_complex "[0:v]bwdif_vulkan=mode=0:parity=0:deint=0,unsharp=lx=3:ly=3:la=0.5:cx=3:cy=3:ca=0.5,format=pix_fmts=yuv420p,setdar='!SRC_MI_V_DisplayAspectRatio_String_slash!'"
+	REM
+	REM vp9 with bwdif
+	REM -filter_complex "[0:v]bwdif=mode=0:parity=0:deint=0,unsharp=lx=3:ly=3:la=0.5:cx=3:cy=3:ca=0.5,format=pix_fmts=yuv420p,setdar='!SRC_MI_V_DisplayAspectRatio_String_slash!'"
 	REM		mode	The interlacing mode to adopt. It accepts one of the following values:
 	REM			0, send_frame	Output one frame for each frame. Single framerate.
 	REM			1, send_field	Output one frame for each field. Double framerate.
@@ -1318,11 +1320,33 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	REM			0, all	Deinterlace all frames.
 	REM			1, interlaced	Only deinterlace frames marked as interlaced.
 	REM			The default value is all.
+	REM
+	REM vp9 with yadif
+	REM -filter_complex "[0:v]yadif=mode=0:parity=0:deint=0,unsharp=lx=3:ly=3:la=0.5:cx=3:cy=3:ca=0.5,format=pix_fmts=yuv420p,setdar='!SRC_MI_V_DisplayAspectRatio_String_slash!'"
+	REM Deinterlace the input video ("yadif" means "yet another deinterlacing filter").
+	REM It accepts the following parameters:
+	REM mode	The interlacing mode to adopt. It accepts one of the following values:
+	REM 	0, send_frame	Output one frame for each frame.
+	REM 	1, send_field	Output one frame for each field.
+	REM 	2, send_frame_nospatial	Like send_frame, but it skips the spatial interlacing check.
+	REM 	3, send_field_nospatial	Like send_field, but it skips the spatial interlacing check.
+	REM 	The default value is send_frame.
+	REM parity	The picture field parity assumed for the input interlaced video. It accepts one of the following values:
+	REM 	0, tff	Assume the top field is first.
+	REM 	1, bff	Assume the bottom field is first.
+	REM 	-1, auto	Enable automatic detection of field parity.
+	REM 	The default value is auto. If the interlacing is unknown or the decoder does not export this information, top field first will be assumed.
+	REM deint	Specify which frames to deinterlace. Accepts one of the following values:
+	REM 	0, all	Deinterlace all frames.
+	REM 	1, interlaced	Only deinterlace frames marked as interlaced.
+	REM 	The default value is all.
+	REM
+	set "FFMPEG_V_vp9_deinterlacer=bwdif"
+	REM set "FFMPEG_V_vp9_deinterlacer=yadif"
 	IF /I "!FFMPEG_V_vp9_deinterlace_mode!" == "" (
 		set "FFMPEG_V_vp9_fc=-filter_complex "[0:v]unsharp=lx=3:ly=3:la=0.5:cx=3:cy=3:ca=0.5,format=pix_fmts=yuv420p,setdar='!SRC_MI_V_DisplayAspectRatio_String_slash!'""
 	) ELSE (
-		REM set "FFMPEG_V_vp9_fc=-filter_complex "[0:v]bwdif=mode=!FFMPEG_V_vp9_deinterlace_mode!:parity=!FFMPEG_V_vp9_deinterlace_parity!:deint=0,unsharp=lx=3:ly=3:la=0.5:cx=3:cy=3:ca=0.5,format=pix_fmts=yuv420p,setdar=!SRC_MI_V_DisplayAspectRatio_String_slash!""
-		set "FFMPEG_V_vp9_fc=-filter_complex "[0:v]bwdif_vulkan=mode=!FFMPEG_V_vp9_deinterlace_mode!:parity=!FFMPEG_V_vp9_deinterlace_parity!:deint=0,unsharp=lx=3:ly=3:la=0.5:cx=3:cy=3:ca=0.5,format=pix_fmts=yuv420p,setdar=!SRC_MI_V_DisplayAspectRatio_String_slash!""
+		set "FFMPEG_V_vp9_fc=-filter_complex "[0:v]!FFMPEG_V_vp9_deinterlacer!=mode=!FFMPEG_V_vp9_deinterlace_mode!:parity=!FFMPEG_V_vp9_deinterlace_parity!:deint=0,unsharp=lx=3:ly=3:la=0.5:cx=3:cy=3:ca=0.5,format=pix_fmts=yuv420p,setdar='!SRC_MI_V_DisplayAspectRatio_String_slash!'""
 	)
 	ECHO ======================================================  Start Run FFMPEG VP9 transcode ====================================================== >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
