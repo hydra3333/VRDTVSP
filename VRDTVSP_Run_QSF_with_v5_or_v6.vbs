@@ -73,7 +73,7 @@ Option Explicit
 	'  <AudioOutputFrameCount desc="Audio output frames:" val_type="int">2033</AudioOutputFrameCount>
 	'  <ProcessingTimeSecs desc="Processing time (secs):" val_type="int">1</ProcessingTimeSecs>
 	'  <ProcessedFramePerSec desc="Processed frames/sec:" val_type="float" val_format="%.2f">1625.000000</ProcessedFramePerSec>
-	'  <ActualVideoBitrate desc="Actual Video Bitrate:" desc_format="%24s" val_type="float" val_format="%0.2f Mbps">2.912357</ActualVideoBitrate>
+	'  <ActualVideoBitrate desc="Actual Video Bitrate:" val_type="int">2552071</ActualVideoBitrate>
 	'  <lkfs_values hidden="1"/>
 	'  <audio_level_changes hidden="1"/>
 	'</VRDOutputInfo>
