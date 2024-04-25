@@ -2337,6 +2337,22 @@ REM The argument for this subroutine is the variable NAME.
 FOR %%i IN (" a= A" " b= B" " c= C" " d= D" " e= E" " f= F" " g= G" " h= H" " i= I" " j= J" " k= K" " l= L" " m= M" " n= N" " o= O" " p= P" " q= Q" " r= R" " s= S" " t= T" " u= U" " v= V" " w= W" " x= X" " y= Y" " z= Z") DO CALL set "%1=%%%1:%%~i%%"
 goto :eof
 
+:TCase2
+REM Subroutine to convert a variable VALUE to Title Case.
+REM The argument for this subroutine is the variable NAME.
+call :LoCase %1
+FOR %%i IN (" a= A" " b= B" " c= C" " d= D" " e= E" " f= F" " g= G" " h= H" " i= I" " j= J" " k= K" " l= L" " m= M" " n= N" " o= O" " p= P" " q= Q" " r= R" " s= S" " t= T" " u= U" " v= V" " w= W" " x= X" " y= Y" " z= Z" ^
+           ".a=.A" ".b=.B" ".c=.C" ".d=.D" ".e=.E" ".f=.F" ".g=.G" ".h=.H" ".i=.I" ".j=.J" ".k=.K" ".l=.L" ".m=.M" ".n=.N" ".o=.O" ".p=.P" ".q=.Q" ".r=.R" ".s=.S" ".t=.T" ".u=.U" ".v=.V" ".w=.W" ".x=.X" ".y=.Y" ".z=.Z" ^
+           "_a=_A" "_b=_B" "_c=_C" "_d=_D" "_e=_E" "_f=_F" "_g=_G" "_h=_H" "_i=_I" "_j=_J" "_k=_K" "_l=_L" "_m=_M" "_n=_N" "_o=_O" "_p=_P" "_q=_Q" "_r=_R" "_s=_S" "_t=_T" "_u=_U" "_v=_V" "_w=_W" "_x=_X" "_y=_Y" "_z=_Z" ^
+           "-a=-A" "-b=-B" "-c=-C" "-d=-D" "-e=-E" "-f=-F" "-g=-G" "-h=-H" "-i=-I" "-j=-J" "-k=-K" "-l=-L" "-m=-M" "-n=-N" "-o=-O" "-p=-P" "-q=-Q" "-r=-R" "-s=-S" "-t=-T" "-u=-U" "-v=-V" "-w=-W" "-x=-X" "-y=-Y" "-z=-Z") DO (
+				CALL set "%1=%%%1:%%~i%%"
+			)
+call set "first_letter=!%1:~0,1!"
+call set "rest_of_string=!%1:~1!"
+call :UpCase first_letter
+Call CALL set "%1=!first_letter!!rest_of_string!"
+goto :eof
+
 
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
