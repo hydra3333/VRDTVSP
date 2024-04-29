@@ -7,8 +7,7 @@ SET "xPAUSE=REM"
 REM set "xPAUSE=PAUSE"
 REM --------- set whether pause statements take effect ----------------------------
 
-REM --------- setup paths and exe filenames ----------------------------
-
+ECHO !DATE! !TIME! --------- Start setup paths and exe filenames ---------------------------- >> "!vrdlog!" 2>&1
 set "root=G:\HDTV\"
 set "vs_root=C:\SOFTWARE\Vapoursynth-x64\"
 set "destination_mp4_Folder=T:\HDTV\VRDTVSP-Converted\"
@@ -36,20 +35,20 @@ set "dgindexNVexe64=!vs_root!DGIndex\DGIndexNV.exe"
 set "vspipeexe64=!vs_root!VSPipe.exe"
 set "py_exe=!vs_root!python.exe"
 set "Insomniaexe64=C:\SOFTWARE\Insomnia\64-bit\Insomnia.exe"
-REM --------- setup paths and exe filenames ----------------------------
+ECHO !DATE! !TIME! --------- Finish setup paths and exe filenames ---------------------------- >> "!vrdlog!" 2>&1
 
-REM -- Header ---------------------------------------------------------------------
+ECHO !DATE! !TIME! -- Start Header --------------------------------------------------------------------- >> "!vrdlog!" 2>&1
 REM set header to date and time and computer name
 CALL :get_header_String "header"
-REM -- Header ---------------------------------------------------------------------
+ECHO !DATE! !TIME! -- Finish Header --------------------------------------------------------------------- >> "!vrdlog!" 2>&1
 
-REM -- Prepare the log file ---------------------------------------------------------------------
+ECHO !DATE! !TIME! -- Start Prepare the log file --------------------------------------------------------------------- >> "!vrdlog!" 2>&1
 SET vrdlog=!root!%~n0-vrdlog-!header!.log
 REM ECHO !DATE! !TIME! DEL /F "!vrdlog!"
 DEL /F "!vrdlog!" >NUL 2>&1
-REM -- Prepare the log file ---------------------------------------------------------------------
+ECHO !DATE! !TIME! -- Finish Prepare the log file --------------------------------------------------------------------- >> "!vrdlog!" 2>&1
 
-REM ---------Setup Folders --------- (ensure trailing backslash exists)
+ECHO !DATE! !TIME! --------- Start Setup Folders --------- ensure trailing backslash exists >> "!vrdlog!" 2>&1
 set "capture_TS_folder=!root!"
 set "source_TS_Folder=!capture_TS_folder!000-TO-BE-PROCESSED\"
 set "done_TS_Folder=!source_TS_Folder!VRDTVSP-done\"
@@ -76,30 +75,30 @@ if not exist "!destination_mp4_Folder!" (mkdir "!destination_mp4_Folder!")
 REM --------- resolve any relative paths into absolute paths --------- 
 REM --------- ensure no spaces between brackets and first/last parts of the the SET statement inside the DO --------- 
 REM --------- this also puts a trailing "\" on the end ---------
-REM ECHO !DATE! !TIME! before capture_TS_folder="%capture_TS_folder%" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! before capture_TS_folder="%capture_TS_folder%" >> "!vrdlog!" 2>&1
 FOR /F %%i IN ("!capture_TS_folder!") DO (set "capture_TS_folder=%%~fi")
-REM ECHO !DATE! !TIME! after capture_TS_folder="%capture_TS_folder%" >> "!vrdlog!" 2>&1
-REM ECHO !DATE! !TIME! before source_TS_Folder="%source_TS_Folder%" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! after capture_TS_folder="%capture_TS_folder%" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! before source_TS_Folder="%source_TS_Folder%" >> "!vrdlog!" 2>&1
 FOR /F %%i IN ("!source_TS_Folder!") DO (set "source_TS_Folder=%%~fi")
-REM ECHO !DATE! !TIME! after source_TS_Folder="%source_TS_Folder%" >> "!vrdlog!" 2>&1
-REM ECHO !DATE! !TIME! before done_TS_Folder="%done_TS_Folder%" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! after source_TS_Folder="%source_TS_Folder%" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! before done_TS_Folder="%done_TS_Folder%" >> "!vrdlog!" 2>&1
 FOR /F %%i IN ("!done_TS_Folder!") DO (set "done_TS_Folder=%%~fi")
-REM ECHO !DATE! !TIME! after done_TS_Folder="%done_TS_Folder%" >> "!vrdlog!" 2>&1
-REM ECHO !DATE! !TIME! before failed_conversion_TS_Folder="%failed_conversion_TS_Folder%" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! after done_TS_Folder="%done_TS_Folder%" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! before failed_conversion_TS_Folder="%failed_conversion_TS_Folder%" >> "!vrdlog!" 2>&1
 FOR /F %%i IN ("!failed_conversion_TS_Folder!") DO (set "failed_conversion_TS_Folder=%%~fi")
-REM ECHO !DATE! !TIME! after failed_conversion_TS_Folder="%failed_conversion_TS_Folder%" >> "!vrdlog!" 2>&1
-REM ECHO !DATE! !TIME! before scratch_Folder="%scratch_Folder%" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! after failed_conversion_TS_Folder="%failed_conversion_TS_Folder%" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! before scratch_Folder="%scratch_Folder%" >> "!vrdlog!" 2>&1
 FOR /F %%i IN ("!scratch_Folder!") DO (set "scratch_Folder=%%~fi")
-REM ECHO !DATE! !TIME! after scratch_Folder="%scratch_Folder%" >> "!vrdlog!" 2>&1
-REM ECHO !DATE! !TIME! before temp_Folder="%temp_Folder%" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! after scratch_Folder="%scratch_Folder%" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! before temp_Folder="%temp_Folder%" >> "!vrdlog!" 2>&1
 FOR /F %%i IN ("!temp_Folder!") DO (set "temp_Folder=%%~fi")
-REM ECHO !DATE! !TIME! after temp_Folder="%temp_Folder%" >> "!vrdlog!" 2>&1
-REM ECHO !DATE! !TIME! before destination_mp4_Folder="%destination_mp4_Folder%" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! after temp_Folder="%temp_Folder%" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! before destination_mp4_Folder="%destination_mp4_Folder%" >> "!vrdlog!" 2>&1
 FOR /F %%i IN ("!destination_mp4_Folder!") DO (set "destination_mp4_Folder=%%~fi")
-REM ECHO !DATE! !TIME! after destination_mp4_Folder="%destination_mp4_Folder%" >> "!vrdlog!" 2>&1
-REM ---------Setup Folders ---------
+ECHO !DATE! !TIME! after destination_mp4_Folder="%destination_mp4_Folder%" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! --------- Finish Setup Folders --------- >> "!vrdlog!" 2>&1
 
-REM --------- setup LOG file and TEMP filenames ----------------------------
+ECHO !DATE! !TIME! --------- Start setup LOG file and TEMP filenames ---------------------------- >> "!vrdlog!" 2>&1
 REM base the filenames on the running script filename using %~n0
 set PSlog=!source_TS_Folder!%~n0-!header!-PSlog.log
 ECHO !DATE! !TIME! DEL /F "!PSlog!" >> "!vrdlog!" 2>&1
@@ -124,9 +123,9 @@ DEL /F "!vrd5_logfiles!" >> "!vrdlog!" 2>&1
 set "vrd6_logfiles=G:\HDTV\VideoReDo6_*.Log"
 ECHO DEL /F "!vrd6_logfiles!" >> "!vrdlog!" 2>&1
 DEL /F "!vrd6_logfiles!" >> "!vrdlog!" 2>&1
-REM --------- setup LOG file and TEMP filenames ----------------------------
+ECHO !DATE! !TIME! --------- Finish setup LOG file and TEMP filenames ---------------------------- >> "!vrdlog!" 2>&1
 
-REM --------- setup vrd paths filenames etc ----------------------------
+ECHO !DATE! !TIME! --------- Start setup vrd paths filenames etc ---------------------------- >> "!vrdlog!" 2>&1
 REM set the primary and fallback version of VRD to use for QSF
 REM The QSF fallback process uses these next 2 variables to set/reset which version use when, via "CALL :set_vrd_qsf_paths NUMBER"
 REM
@@ -164,24 +163,24 @@ FOR /F "delims=" %%i IN ("%Path_to_vrd5%vp.vbs") DO (set "Path_to_vp_vbs_vrd5=%%
 REM
 CALL :set_vrd_qsf_paths "!DEFAULT_vrd_version_primary!"
 REM
-ECHO set DEFAULT_vrd_ >> "!vrdlog!" 2>&1
-set DEFAULT_vrd_ >> "!vrdlog!" 2>&1
-ECHO set _vrd_ >> "!vrdlog!" 2>&1
-set _vrd_ >> "!vrdlog!" 2>&1
-REM --------- setup vrd paths filenames etc ----------------------------
+REM ECHO set DEFAULT_vrd_ >> "!vrdlog!" 2>&1
+REM set DEFAULT_vrd_ >> "!vrdlog!" 2>&1
+REM ECHO set _vrd_ >> "!vrdlog!" 2>&1
+REM set _vrd_ >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! --------- Finish setup vrd paths filenames etc ---------------------------- >> "!vrdlog!" 2>&1
 
-REM --------- setup .PY fully qualified filenames to pre-created files which rename and re-timestamp filenames etc ---------
+ECHO !DATE! !TIME! --------- Start setup .PY fully qualified filenames to pre-created files which rename and re-timestamp filenames etc --------- >> "!vrdlog!" 2>&1
 set "Path_to_py_VRDTVSP_Calculate_Duration=!root!VRDTVSP_Calculate_Duration.py"
 set "Path_to_py_VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles=!root!VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles.py"
 set "Path_to_py_VRDTVSP_Modify_File_Date_Timestamps=!root!VRDTVSP_Modify_File_Date_Timestamps.py"
 set "Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section=!root!VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section.py"
 set "Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section=!root!VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section.py"
 set "Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6=!root!VRDTVSP_Run_QSF_with_v5_or_v6.vbs"
-REM --------- setup .VBS and .PS1 and .PY fully qualified filenames to pre-created files which rename and re-timestamp filenames etc ---------
+ECHO !DATE! !TIME! --------- Finish setup .VBS and .PS1 and .PY fully qualified filenames to pre-created files which rename and re-timestamp filenames etc --------- >> "!vrdlog!" 2>&1
 
 CALL :get_date_time_String "TOTAL_start_date_time"
 
-REM --------- Start Initial Summarize ---------
+ECHO !DATE! !TIME! --------- Start Initial Summarize --------- >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Start summary of Initialised paths etc ... >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! COMPUTERNAME="!COMPUTERNAME!"  header="!header!" >> "!vrdlog!" 2>&1
@@ -193,7 +192,6 @@ ECHO !DATE! !TIME! vs_path_drive="!vs_path_drive!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! vs_scripts_path="!vs_scripts_path!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! vs_plugins_path="!vs_plugins_path!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! vs_coreplugins_path="!vs_coreplugins_path!" >> "!vrdlog!" 2>&1
-
 ECHO !DATE! !TIME! ffmpegexe64="!ffmpegexe64!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ffmpegexe64_OpenCL="!ffmpegexe64_OpenCL!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ffprobeexe64="!ffprobeexe64!" >> "!vrdlog!" 2>&1
@@ -202,7 +200,6 @@ ECHO !DATE! !TIME! dgindexNVexe64="!dgindexNVexe64!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! vspipeexe64="!vspipeexe64!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! py_exe="!py_exe!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Insomniaexe64="!Insomniaexe64!" >> "!vrdlog!" 2>&1
-
 ECHO !DATE! !TIME! vrdlog="!vrdlog!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! capture_TS_folder="!capture_TS_folder!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! source_TS_Folder="!source_TS_Folder!" >> "!vrdlog!" 2>&1
@@ -212,7 +209,6 @@ ECHO !DATE! !TIME! scratch_Folder="!scratch_Folder!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! destination_mp4_Folder="!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! PSlog="!PSlog!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! tempfile="!tempfile!" >> "!vrdlog!" 2>&1
-
 ECHO !DATE! !TIME! extension_mpeg2="!extension_mpeg2!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! extension_h264="!extension_h264!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! VRDTVSP_QSF_VBS_SCRIPT="!VRDTVSP_QSF_VBS_SCRIPT!" >> "!vrdlog!" 2>&1
@@ -226,19 +222,16 @@ ECHO !DATE! !TIME! Path_to_vrd_vp_vbs="!Path_to_vrd_vp_vbs!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! profile_name_for_qsf_mpeg2="!profile_name_for_qsf_mpeg2!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! profile_name_for_qsf_h264="!profile_name_for_qsf_h264!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! profile_name_for_qsf_h265="!profile_name_for_qsf_h265!" >> "!vrdlog!" 2>&1
-
 ECHO !DATE! !TIME! Path_to_py_VRDTVSP_Calculate_Duration="!Path_to_py_VRDTVSP_Calculate_Duration!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Path_to_py_VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles="!Path_to_py_VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Path_to_py_VRDTVSP_Modify_File_Date_Timestamps="!Path_to_py_VRDTVSP_Modify_File_Date_Timestamps!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section="!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section="!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" >> "!vrdlog!" 2>&1
-
-ECHO !DATE! !TIME! End summary of Initialised paths etc ... >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! Finish summary of Initialised paths etc ... >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "!vrdlog!" 2>&1
-REM --------- End Initial Summarize ---------
+ECHO !DATE! !TIME! --------- Finish Initial Summarize --------- >> "!vrdlog!" 2>&1
 
-REM --------- SETUP FFMPEG DEVICE and OpenCL stuff and show helps ---------
-ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! --------- Start SETUP FFMPEG DEVICE and OpenCL stuff and show helps --------- >> "!vrdlog!" 2>&1
 REM setup the OpenCL device strings 
 set ff_ffmpeg_device=0.0
 SET ff_OpenCL_device_init=-init_hw_device opencl=ocl:!ff_ffmpeg_device! -filter_hw_device ocl
@@ -272,32 +265,23 @@ REM ECHO !DATE! !TIME! "!mediainfoexe64!"  --Legacy --Info-Parameters  >> "!vrdl
 REM ECHO "!mediainfoexe64!"  --Legacy --Info-Parameters  >> "!vrdlog!" 2>&1
 REM "!mediainfoexe64!"  --Legacy --Info-Parameters  >> "!vrdlog!" 2>&1
 REM ECHO !DATE! !TIME! ---------------------------------------------------------------------------- >> "!vrdlog!" 2>&1
-REM ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! --------- Finish SETUP FFMPEG DEVICE and OpenCL stuff and show helps --------- >> "!vrdlog!" 2>&1
 
-REM ********** PREVENT PC FROM GOING TO SLEEP **********
-ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! Start ********** Start PREVENT PC FROM GOING TO SLEEP ********** >> "!vrdlog!" 2>&1
 set iFile=Insomnia-!header!.exe
 ECHO copy "C:\SOFTWARE\Insomnia\32-bit\Insomnia.exe" "!source_TS_Folder!!iFile!" >> "!vrdlog!" 2>&1
 copy "C:\SOFTWARE\Insomnia\32-bit\Insomnia.exe" "!source_TS_Folder!!iFile!" >> "!vrdlog!" 2>&1
 start /min "!iFile!" "!source_TS_Folder!!iFile!"
-ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "!vrdlog!" 2>&1
-REM ********** PREVENT PC FROM GOING TO SLEEP **********
+ECHO !DATE! !TIME! Finish ********** Finish PREVENT PC FROM GOING TO SLEEP ********** >> "!vrdlog!" 2>&1
 
-REM --------- Swap to source folder and save old folder using PUSHD ---------
-ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! --------- Start Swap to source folder and save old folder using PUSHD --------- >> "!vrdlog!" 2>&1
 CD >> "!vrdlog!" 2>&1
 ECHO PUSHD "!source_TS_Folder!" >> "!vrdlog!" 2>&1
 PUSHD "!source_TS_Folder!" >> "!vrdlog!" 2>&1
 CD >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "!vrdlog!" 2>&1
-REM --------- Swap to source folder and save old folder using PUSHD ---------
+ECHO !DATE! !TIME! --------- Finish Swap to source folder and save old folder using PUSHD --------- >> "!vrdlog!" 2>&1
 
-REM --------- Start move .TS .MP4 .MPG .VOB files from capture folder to source folder
-ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO --------- Start move .TS .MP4 .MPG .VOB files from capture folder "!capture_TS_folder!" to "!source_TS_Folder!" --------- >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! --------- Start move .TS .MP4 .MPG .VOB files from capture folder "!capture_TS_folder!" to "!source_TS_Folder!" --------- >> "!vrdlog!" 2>&1
 CALL :get_date_time_String "start_date_time"
 ECHO MOVE /Y "!capture_TS_folder!*.TS" "!source_TS_Folder!" >> "!vrdlog!" 2>&1
 MOVE /Y "!capture_TS_folder!*.TS" "!source_TS_Folder!" >> "!vrdlog!" 2>&1
@@ -310,18 +294,9 @@ MOVE /Y "!capture_TS_folder!*.VOB" "!source_TS_Folder!" >> "!vrdlog!" 2>&1
 CALL :get_date_time_String "end_date_time"
 REM ECHO "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "MoveFiles" >> "!vrdlog!" 2>&1
 "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "MoveFiles" >> "!vrdlog!" 2>&1
-ECHO --------- End   move .TS .MP4 .MPG .VOB files from capture folder "!capture_TS_folder!" to "!source_TS_Folder!" --------- >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "!vrdlog!" 2>&1
-REM --------- End move .TS .MP4 .MPG .VOB files from capture folder to source folder
+ECHO !DATE! !TIME! --------- Finish move .TS .MP4 .MPG .VOB files from capture folder "!capture_TS_folder!" to "!source_TS_Folder!" --------- >> "!vrdlog!" 2>&1
 
-REM --------- Start Run the py to modify the filenames to enforce validity  i.e. no special characters ---------
-ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! --------- Start Run the py to modify the filenames to enforce validity  i.e. no special characters --------- >> "!vrdlog!" 2>&1
 REM GRRR - sometimes left and right parentheses etc are seem in filenames of the media files ... 
 REM Check if filenames are a "safe string" without special characters like !~`!@#$%^&*()+=[]{}\|:;'"<>,?/
 REM If a filename isn't "safe" then rename it so it really is safe
@@ -339,26 +314,22 @@ ECHO "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!sta
 "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles !the_folder!" >> "!vrdlog!" 2>&1
 REM
 CALL :get_date_time_String "loop_start_date_time"
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "!vrdlog!" 2>&1
-REM --------- End Run the py to modify the filenames to enforce validity  i.e. no special characters ---------
+ECHO !DATE! !TIME! --------- Finish Run the py to modify the filenames to enforce validity  i.e. no special characters --------- >> "!vrdlog!" 2>&1
+
 
 REM ****************************************************************************************************************************************
 REM ****************************************************************************************************************************************
 :before_main_loop
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ------------------ STARTING MAIN LOOP ------------------ %%f >> "!vrdlog!" 2>&1
 CALL :get_date_time_String "loop_start_date_time"
 for %%f in ("!source_TS_Folder!*.TS", "!source_TS_Folder!*.MPG", "!source_TS_Folder!*.MP4", "!source_TS_Folder!*.VOB") do (
 	CALL :get_date_time_String "iloop_start_date_time"
-	ECHO !DATE! !TIME! START ------------------ %%f >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! Input file : "%%~f" >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! ------------------ CYCLE IN MAIN LOOP START ------------------ %%f >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! Start Calling :QSFandCONVERT with Input file "%%~f" >> "!vrdlog!" 2>&1
 	CALL :QSFandCONVERT "%%f"
-	REM no - MOVE "%%f" "!done_TS_Folder!" - INSTEAD do the RENAME/MOVE as a part of the CALL above, depending on whether it's been propcessed correctly
-	ECHO !DATE! !TIME! END ------------------ %%f >> "!vrdlog!" 2>&1
+	REM no - MOVE "%%f" "!done_TS_Folder!" - INSTEAD do the RENAME/MOVE as a part of the CALL above, depending on whether it's been processed correctly
+	ECHO !DATE! !TIME! Finished Calling :QSFandCONVERT with Input file "%%~f" >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! ------------------ CYCLE IN MAIN LOOP FINISH ------------------ %%f >> "!vrdlog!" 2>&1
 	CALL :get_date_time_String "iloop_end_date_time"
 	ECHO "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!iloop_start_date_time!" --end_datetime "!iloop_end_date_time!" --prefix_id ":::::::::: iloop %%f " >> "!vrdlog!" 2>&1
 	"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!iloop_start_date_time!" --end_datetime "!iloop_end_date_time!" --prefix_id ":::::::::: iloop %%f " >> "!vrdlog!" 2>&1
@@ -366,18 +337,13 @@ for %%f in ("!source_TS_Folder!*.TS", "!source_TS_Folder!*.MPG", "!source_TS_Fol
 CALL :get_date_time_String "loop_end_date_time"
 ECHO "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!loop_start_date_time!" --end_datetime "!loop_end_date_time!" --prefix_id "Loop_Processing_Files" >> "!vrdlog!" 2>&1
 "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!loop_start_date_time!" --end_datetime "!loop_end_date_time!" --prefix_id "Loop_Processing_Files" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
 :after_main_loop
+ECHO !DATE! !TIME! ------------------ FINISHED MAIN LOOP ------------------ %%f >> "!vrdlog!" 2>&1
 REM ****************************************************************************************************************************************
 REM ****************************************************************************************************************************************
 
-REM --------- Start Run the py to modify the filenames to enforce validity  i.e. no special characters ---------
-ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
+
+ECHO !DATE! !TIME! --------- Start Run the py to modify the filenames to enforce validity  i.e. no special characters --------- >> "!vrdlog!" 2>&1
 REM GRRR - sometimes left and right parentheses etc are seem in filenames of the media files ... 
 REM Check if filenames are a "safe string" without special characters like !~`!@#$%^&*()+=[]{}\|:;'"<>,?/
 REM If a filename isn't "safe" then rename it so it really is safe
@@ -395,21 +361,10 @@ ECHO "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!sta
 "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titles !the_folder!" >> "!vrdlog!" 2>&1
 REM
 CALL :get_date_time_String "loop_start_date_time"
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "!vrdlog!" 2>&1
-REM --------- End Run the py to modify the filenames to enforce validity  i.e. no special characters ---------
+ECHO !DATE! !TIME! --------- Finish Run the py to modify the filenames to enforce validity  i.e. no special characters --------- >> "!vrdlog!" 2>&1
 
-
-REM --------- Start Run the py to modify the filename timestamps filenames based on the date in the filename eg 2020-06-03 ---------
-ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! --------- Start Run the py to modify the filename timestamps filenames based on the date in the filename eg 2020-06-03 --------- >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! --- START Modify DateCreated and DateModified Timestamps on "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
-
 REM ECHO DEBUG: BEFORE:  >> "!vrdlog!" 2>&1
 REM ECHO dir "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
 REM dir "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
@@ -425,31 +380,22 @@ REM dir "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
 CALL :get_date_time_String "end_date_time"
 REM ECHO "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "ReTimestamp" >> "!vrdlog!" 2>&1
 "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time!" --end_datetime "!end_date_time!" --prefix_id "ReTimestamp" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! --- END Modify DateCreated and DateModified Timestamps on "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "!vrdlog!" 2>&1
-REM --------- End Run the py to modify the filename timestamps filenames based on the date in the filename eg 2020-06-03 ---------
+ECHO !DATE! !TIME! --- FINISH Modify DateCreated and DateModified Timestamps on "!destination_mp4_Folder!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! --------- Finish Run the py to modify the filename timestamps filenames based on the date in the filename eg 2020-06-03 --------- >> "!vrdlog!" 2>&1
 
-REM ********** ALLOW PC TO GO TO SLEEP AGAIN **********
-ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** Start ALLOW PC TO GO TO SLEEP AGAIN ********** >> "!vrdlog!" 2>&1
 REM "C:\000-PStools\pskill.exe" -t -nobanner "%iFile%" >> "!vrdlog!" 2>&1
 ECHO taskkill /t /f /im "%iFile%" >> "!vrdlog!" 2>&1
 taskkill /t /f /im "%iFile%" >> "!vrdlog!" 2>&1
 DEL /F "!source_TS_Folder!!iFile!" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "!vrdlog!" 2>&1
-REM ********** ALLOW PC TO GO TO SLEEP AGAIN **********
+ECHO !DATE! !TIME! ********** Finish ALLOW PC TO GO TO SLEEP AGAIN ********** >> "!vrdlog!" 2>&1
 
-REM --------- Swap back to original folder ---------
-ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! --------- Start Swap back to original folder using POPD --------- >> "!vrdlog!" 2>&1
 CD >> "!vrdlog!" 2>&1
 ECHO POPD >> "!vrdlog!" 2>&1
 POPD >> "!vrdlog!" 2>&1
 CD >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "!vrdlog!" 2>&1
-REM --------- Swap back to original folder ---------
-
+ECHO !DATE! !TIME! --------- Finish Swap back to original folder using POPD --------- >> "!vrdlog!" 2>&1
 
 CALL :get_date_time_String "TOTAL_end_date_time"
 ECHO "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!TOTAL_start_date_time!" --end_datetime "!TOTAL_end_date_time!" --prefix_id "TOTAL" >> "!vrdlog!" 2>&1
@@ -526,7 +472,8 @@ REM    extension_mpeg2=mpg
 REM    extension_h264=mp4
 REM    extension_h265=mp4
 REM    extension_vp9=vp9
-REM 
+
+REM Check if SRC_ interlacing variable is valid
 IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ) ELSE IF /I "!SRC_calc_Video_Interlacement!" == "INTERLACED" (
@@ -542,7 +489,7 @@ IF /I "!SRC_calc_Video_Interlacement!" == "PROGRESSIVE" (
 	"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
 	goto :eof
 )
-REM
+REM Check if SRC_ interlacement field variable is valid
 IF /I "!SRC_calc_Video_FieldFirst!" == "TFF" (
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ) ELSE IF /I "!SRC_calc_Video_FieldFirst!" == "BFF" (
@@ -558,7 +505,7 @@ IF /I "!SRC_calc_Video_FieldFirst!" == "TFF" (
 	"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
 	goto :eof
 )
-REM
+REM Check if SRC_ encoding variable is valid
 IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
 	set "qsf_extension=!extension_h264!"
 ) ELSE IF /I "!SRC_calc_Video_Encoding!" == "MPEG2" (
@@ -578,7 +525,6 @@ IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
 	"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF!" --end_datetime "!end_date_time_QSF!" --prefix_id "QSF itself" >> "!vrdlog!" 2>&1
 	goto :eof
 )
-REM
 
 set "qsf_xml_prefix=QSFinfo_"
 set "SOURCE_File=!~f1!"
@@ -808,12 +754,12 @@ IF /I "!QSF_calc_Video_Encoding!" == "AVC" (
 	set /a "FFMPEG_V_Target_Minimum_BitRate=!extra_bitrate_20percent!"
 	set /a "FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_BitRate! * 2"
 	set /a "FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BitRate! * 2"
-	ECHO !DATE! !TIME! Bitrates are calculated from the max AVC bitrate seen. >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! "AVC"      SRC_calc_Video_Max_Bitrate=!SRC_calc_Video_Max_Bitrate! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! "AVC" FFMPEG_V_Target_Minimum_BitRate=!FFMPEG_V_Target_Minimum_BitRate! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! "AVC"         FFMPEG_V_Target_BitRate=!FFMPEG_V_Target_BitRate! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! "AVC" FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_Maximum_BitRate! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! "AVC"         FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BufSize! >> "!vrdlog!" 2>&1
+	REM ECHO !DATE! !TIME! Bitrates are calculated from the max AVC bitrate seen. >> "!vrdlog!" 2>&1
+	REM ECHO !DATE! !TIME! "AVC"      SRC_calc_Video_Max_Bitrate=!SRC_calc_Video_Max_Bitrate! >> "!vrdlog!" 2>&1
+	REM ECHO !DATE! !TIME! "AVC" FFMPEG_V_Target_Minimum_BitRate=!FFMPEG_V_Target_Minimum_BitRate! >> "!vrdlog!" 2>&1
+	REM ECHO !DATE! !TIME! "AVC"         FFMPEG_V_Target_BitRate=!FFMPEG_V_Target_BitRate! >> "!vrdlog!" 2>&1
+	REM ECHO !DATE! !TIME! "AVC" FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_Maximum_BitRate! >> "!vrdlog!" 2>&1
+	REM ECHO !DATE! !TIME! "AVC"         FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BufSize! >> "!vrdlog!" 2>&1
 ) ELSE IF /I "!QSF_calc_Video_Encoding!" == "MPEG2" (
 	IF /I "%~x1" == ".MPG" (
 		set /a "FFMPEG_V_Target_BitRate=2500000"
@@ -831,12 +777,12 @@ IF /I "!QSF_calc_Video_Encoding!" == "AVC" (
 		set /a "FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_BitRate! * 2"
 		set /a "FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BitRate! * 2"
 	)
-	ECHO !DATE! !TIME! Bitrates are fixed and NOT calculated, for mpeg2 transcode >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! Bitrates are assumed based on the MPEG2 extension ""%~x1"" being [.mpg/.vob] or [anything else] >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! "MPEG2" FFMPEG_V_Target_Minimum_BitRate=!FFMPEG_V_Target_Minimum_BitRate! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! "MPEG2"         FFMPEG_V_Target_BitRate=!FFMPEG_V_Target_BitRate! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! "MPEG2" FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_Maximum_BitRate! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! "MPEG2"         FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BufSize! >> "!vrdlog!" 2>&1
+	REM ECHO !DATE! !TIME! Bitrates are fixed and NOT calculated, for mpeg2 transcode >> "!vrdlog!" 2>&1
+	REM ECHO !DATE! !TIME! Bitrates are assumed based on the MPEG2 extension ""%~x1"" being [.mpg/.vob] or [anything else] >> "!vrdlog!" 2>&1
+	REM ECHO !DATE! !TIME! "MPEG2" FFMPEG_V_Target_Minimum_BitRate=!FFMPEG_V_Target_Minimum_BitRate! >> "!vrdlog!" 2>&1
+	REM ECHO !DATE! !TIME! "MPEG2"         FFMPEG_V_Target_BitRate=!FFMPEG_V_Target_BitRate! >> "!vrdlog!" 2>&1
+	REM ECHO !DATE! !TIME! "MPEG2" FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_Maximum_BitRate! >> "!vrdlog!" 2>&1
+	REM ECHO !DATE! !TIME! "MPEG2"         FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BufSize! >> "!vrdlog!" 2>&1
 ) ELSE IF /I "!QSF_calc_Video_Encoding!" == "HEVC" (
 	REM CALCULATE H.264 TARGET BITRATES FROM THE INCOMING BITRATE
 	set /a "X_bitrate_05percent=!SRC_calc_Video_Max_Bitrate! / 20"
@@ -854,12 +800,12 @@ IF /I "!QSF_calc_Video_Encoding!" == "AVC" (
 	set /a "FFMPEG_V_Target_Minimum_BitRate=!extra_bitrate_20percent!"
 	set /a "FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_BitRate! * 2"
 	set /a "FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BitRate! * 2"
-	ECHO !DATE! !TIME! Bitrates are calculated from the max HEVC bitrate seen. >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! "HEVC"      SRC_calc_Video_Max_Bitrate=!SRC_calc_Video_Max_Bitrate! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! "HEVC" FFMPEG_V_Target_Minimum_BitRate=!FFMPEG_V_Target_Minimum_BitRate! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! "HEVC"         FFMPEG_V_Target_BitRate=!FFMPEG_V_Target_BitRate! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! "HEVC" FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_Maximum_BitRate! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! "HEVC"         FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BufSize! >> "!vrdlog!" 2>&1
+	REM ECHO !DATE! !TIME! Bitrates are calculated from the max HEVC bitrate seen. >> "!vrdlog!" 2>&1
+	REM ECHO !DATE! !TIME! "HEVC"      SRC_calc_Video_Max_Bitrate=!SRC_calc_Video_Max_Bitrate! >> "!vrdlog!" 2>&1
+	REM ECHO !DATE! !TIME! "HEVC" FFMPEG_V_Target_Minimum_BitRate=!FFMPEG_V_Target_Minimum_BitRate! >> "!vrdlog!" 2>&1
+	REM ECHO !DATE! !TIME! "HEVC"         FFMPEG_V_Target_BitRate=!FFMPEG_V_Target_BitRate! >> "!vrdlog!" 2>&1
+	REM ECHO !DATE! !TIME! "HEVC" FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_Maximum_BitRate! >> "!vrdlog!" 2>&1
+	REM ECHO !DATE! !TIME! "HEVC"         FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BufSize! >> "!vrdlog!" 2>&1
 ) ELSE IF /I "!QSF_calc_Video_Encoding!" == "VP9" (
 	REM CALCULATE H.264 TARGET BITRATES FROM THE INCOMING BITRATE
 	set /a "X_bitrate_05percent=!SRC_calc_Video_Max_Bitrate! / 20"
@@ -877,12 +823,12 @@ IF /I "!QSF_calc_Video_Encoding!" == "AVC" (
 	set /a "FFMPEG_V_Target_Minimum_BitRate=!extra_bitrate_20percent!"
 	set /a "FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_BitRate! * 2"
 	set /a "FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BitRate! * 2"
-	ECHO !DATE! !TIME! Bitrates are calculated from the max HEVC bitrate seen. >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! "VP9"      SRC_calc_Video_Max_Bitrate=!SRC_calc_Video_Max_Bitrate! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! "VP9" FFMPEG_V_Target_Minimum_BitRate=!FFMPEG_V_Target_Minimum_BitRate! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! "VP9"         FFMPEG_V_Target_BitRate=!FFMPEG_V_Target_BitRate! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! "VP9" FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_Maximum_BitRate! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! "VP9"         FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BufSize! >> "!vrdlog!" 2>&1
+	REM ECHO !DATE! !TIME! Bitrates are calculated from the max HEVC bitrate seen. >> "!vrdlog!" 2>&1
+	REM ECHO !DATE! !TIME! "VP9"      SRC_calc_Video_Max_Bitrate=!SRC_calc_Video_Max_Bitrate! >> "!vrdlog!" 2>&1
+	REM ECHO !DATE! !TIME! "VP9" FFMPEG_V_Target_Minimum_BitRate=!FFMPEG_V_Target_Minimum_BitRate! >> "!vrdlog!" 2>&1
+	REM ECHO !DATE! !TIME! "VP9"         FFMPEG_V_Target_BitRate=!FFMPEG_V_Target_BitRate! >> "!vrdlog!" 2>&1
+	REM ECHO !DATE! !TIME! "VP9" FFMPEG_V_Target_Maximum_BitRate=!FFMPEG_V_Target_Maximum_BitRate! >> "!vrdlog!" 2>&1
+	REM ECHO !DATE! !TIME! "VP9"         FFMPEG_V_Target_BufSize=!FFMPEG_V_Target_BufSize! >> "!vrdlog!" 2>&1
 ) ELSE (
 	ECHO !DATE! !TIME! ERROR: UNKNOWN QSF_calc_Video_Encoding="!QSF_calc_Video_Encoding!" to base the transcode calculations on. MUST be AVC or MPEG2 or HEVC or VP9 >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! ERROR: UNKNOWN QSF_calc_Video_Encoding="!QSF_calc_Video_Encoding!" to base the transcode calculations on. MUST be AVC or MPEG2 or HEVC or VP9 >> "!vrdlog!" 2>&1
@@ -930,17 +876,17 @@ IF /I "!QSF_calc_Video_FieldFirst!" == "TFF" (
 	goto :eof
 )
 
-ECHO !DATE! !TIME! "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! NOTE: After testing, it has been found that ffprobe can mis-report bitrates in the QSF'd file by about double. >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!       Although mediainfo and the "QSF log" values are reasonably close, testing shows ffprobe gets it more "right" when encoding. >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!       Although hopefully correct, this can result in a much lower transcoded filesizes than the originals. >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME!       For now, accept what we PROPOSE on whether to "Up" the CQ from 0 to 24. >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! NOTE: After testing, it has been found that ffprobe can mis-report bitrates in the QSF'd file by about double. >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!       Although mediainfo and the "QSF log" values are reasonably close, testing shows ffprobe gets it more "right" when encoding. >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!       Although hopefully correct, this can result in a much lower transcoded filesizes than the originals. >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME!       For now, accept what we PROPOSE on whether to "Up" the CQ from 0 to 24. >> "!vrdlog!" 2>&1
 REM Default CQ options, default to cq0
 set "FFMPEG_V_cq0=-cq:v 0"
 set "FFMPEG_V_cq24=-cq:v 24 -qmin 16 -qmax 48"
 set "FFMPEG_V_PROPOSED_x_cq_options=!FFMPEG_V_cq0!"
 set "FFMPEG_V_final_cq_options=!FFMPEG_V_cq0!"
-ECHO !DATE! !TIME! "Initial Default FFMPEG_V_final_cq_options=!FFMPEG_V_final_cq_options!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! Initial Default FFMPEG_V_final_cq_options=:!FFMPEG_V_final_cq_options!" >> "!vrdlog!" 2>&1
 
 REM
 REM FOR AVC INPUT FILES ONLY, calculate the CQ to use (default to CQ0)
@@ -953,20 +899,20 @@ REM			If we detect such a case, change to CQ24 instead of CQ0 and leave the
 REM			specified bitrate unchanged ... which "should" fix it up.
 REM
 IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
-	ECHO !DATE! !TIME! "????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????" >> "!vrdlog!" 2>&1
-	ECHO Example table of values and actions >> "!vrdlog!" 2>&1
-	ECHO	MI		FF		INCOMING	ACTION >> "!vrdlog!" 2>&1
-	ECHO	0		0		5Mb			set to CQ 0 >> "!vrdlog!" 2>&1
-	ECHO	0		1.5Mb	1.5Mb		set to CQ 24 >> "!vrdlog!" 2>&1
-	ECHO	0		4Mb		4Mb			set to CQ 0 >> "!vrdlog!" 2>&1
-	ECHO	1.5Mb	0		1.5Mb		set to CQ 24 >> "!vrdlog!" 2>&1
-	ECHO	1.5Mb 	1.5Mb	1.5Mb		set to CQ 24 >> "!vrdlog!" 2>&1
-	ECHO	1.5Mb	4Mb		4Mb			set to CQ 24 *** this one >> "!vrdlog!" 2>&1
-	ECHO	4Mb		0		4Mb			set to CQ 0 >> "!vrdlog!" 2>&1
-	ECHO	4Mb		1.5Mb	4Mb			set to CQ 0 >> "!vrdlog!" 2>&1
-	ECHO	4Mb		5Mb		5Mb			set to CQ 0 >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! "????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????" >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! "Calculating whether to Bump CQ from 0 to 24 ..." >> "!vrdlog!" 2>&1
+	REM ECHO !DATE! !TIME! "????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????" >> "!vrdlog!" 2>&1
+	REM ECHO Example table of values and actions >> "!vrdlog!" 2>&1
+	REM ECHO	MI		FF		INCOMING	ACTION >> "!vrdlog!" 2>&1
+	REM ECHO	0		0		5Mb			set to CQ 0 >> "!vrdlog!" 2>&1
+	REM ECHO	0		1.5Mb	1.5Mb		set to CQ 24 >> "!vrdlog!" 2>&1
+	REM ECHO	0		4Mb		4Mb			set to CQ 0 >> "!vrdlog!" 2>&1
+	REM ECHO	1.5Mb	0		1.5Mb		set to CQ 24 >> "!vrdlog!" 2>&1
+	REM ECHO	1.5Mb 	1.5Mb	1.5Mb		set to CQ 24 >> "!vrdlog!" 2>&1
+	REM ECHO	1.5Mb	4Mb		4Mb			set to CQ 24 *** this one >> "!vrdlog!" 2>&1
+	REM ECHO	4Mb		0		4Mb			set to CQ 0 >> "!vrdlog!" 2>&1
+	REM ECHO	4Mb		1.5Mb	4Mb			set to CQ 0 >> "!vrdlog!" 2>&1
+	REM ECHO	4Mb		5Mb		5Mb			set to CQ 0 >> "!vrdlog!" 2>&1
+	REM ECHO !DATE! !TIME! "????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????" >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! Start Calculating whether to Bump CQ from 0 to 24 ... >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! "FFMPEG_V_Target_BitRate=!FFMPEG_V_Target_BitRate!" >> "!vrdlog!" 2>&1
 	REM There were nested IF statements which is why the IFs and SETs are done this way
 	If !FFMPEG_V_Target_BitRate! LSS 2000000 (
@@ -976,9 +922,11 @@ IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
 		ECHO !DATE! !TIME! "FFMPEG_V_PROPOSED_x_cq_options=!FFMPEG_V_PROPOSED_x_cq_options!" >> "!vrdlog!" 2>&1
 	)
 	set "FFMPEG_V_final_cq_options=!FFMPEG_V_PROPOSED_x_cq_options!"
+	ECHO !DATE! !TIME! Finish Calculating whether to Bump CQ from 0 to 24 ... >> "!vrdlog!" 2>&1
 )
-ECHO !DATE! !TIME! Final FFMPEG_V_final_cq_options='!FFMPEG_V_final_cq_options!' >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! Final FFMPEG_V_final_cq_options='!FFMPEG_V_final_cq_options!' >> "!vrdlog!" 2>&1
 
+ECHO !DATE! !TIME! ----- Start Calculating whether to use 3900X RTX2060super_extra_flags ... >> "!vrdlog!" 2>&1
 IF /I "%COMPUTERNAME%" == "3900X" (
 	REM		' -dpb_size 0		means automatic (default)
 	REM		' -bf:v 3			means use 3 b-frames (dont use more than 3)
@@ -989,11 +937,12 @@ IF /I "%COMPUTERNAME%" == "3900X" (
 ) ELSE (
 	set "FFMPEG_V_RTX2060super_extra_flags="
 )
+ECHO !DATE! !TIME! ----- Finish Calculating whether to use 3900X RTX2060super_extra_flags ... >> "!vrdlog!" 2>&1
 
+ECHO !DATE! !TIME! ----- Start Checking for and Calculating Footy variables ... >> "!vrdlog!" 2>&1
 REM Now Check for Footy, after the final fiddling with bitrates and CQ.
 REM If is footy, deinterlace to 50FPS 50p, doubling the framerate, rather than just 25p
 REM so that we maintain the "motion fluidity" of 50i into 50p. It's better than Nothing.
-
 set "Footy_found=False"
 IF /I NOT "!file_name_part!"=="!file_name_part:AFL=_____!" (
 	set "Footy_found=True"
@@ -1043,6 +992,9 @@ IF /I "!Footy_found!" == "True" (
 ) ELSE (
 	ECHO NO Footy words found in filename '!file_name_part!', FFMPEG_V_dg_deinterlace unchanged=!FFMPEG_V_dg_deinterlace!, NO footy variables set  >> "!vrdlog!" 2>&1
 )
+ECHO !DATE! !TIME! ----- Finish  Checking for and Calculating Footy variables ... >> "!vrdlog!" 2>&1
+
+ECHO !DATE! !TIME! ----- Start Using These variables ... >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ECHO set FFMPEG_ >> "!vrdlog!" 2>&1
 set FFMPEG_ >> "!vrdlog!" 2>&1
@@ -1050,12 +1002,13 @@ ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ECHO set Footy_ >> "!vrdlog!" 2>&1
 set Footy_ >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-REM ECHO set X_ >> "!vrdlog!" 2>&1
-REM set X_ >> "!vrdlog!" 2>&1
-REM ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-REM ECHO set extra_ >> "!vrdlog!" 2>&1
-REM set extra_ >> "!vrdlog!" 2>&1
-REM ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+ECHO set X_ >> "!vrdlog!" 2>&1
+set X_ >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+ECHO set extra_ >> "!vrdlog!" 2>&1
+set extra_ >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ----- Finish Using These variables ... >> "!vrdlog!" 2>&1
 
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
@@ -1668,10 +1621,11 @@ ECHO call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
-ECHO +++++++++ >> "!vrdlog!" 2>&1
-ECHO set !requested_qsf_xml_prefix! >> "!vrdlog!" 2>&1
-set !requested_qsf_xml_prefix! >> "!vrdlog!" 2>&1
-ECHO +++++++++ >> "!vrdlog!" 2>&1
+
+REM ECHO +++++++++ >> "!vrdlog!" 2>&1
+REM ECHO set !requested_qsf_xml_prefix! >> "!vrdlog!" 2>&1
+REM set !requested_qsf_xml_prefix! >> "!vrdlog!" 2>&1
+REM ECHO +++++++++ >> "!vrdlog!" 2>&1
 
 REM :gather_variables_from_media_file P =	the global prefix to use for this gather, one of "SRC_", "QSF_" "TARGET_"
 CALL :gather_variables_from_media_file "!qsf_filename!" "QSF_" 
@@ -1891,6 +1845,7 @@ REM remove junk files leftover from QSF if it timed out or something
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ECHO DEL /F !scratch_Folder!*.tmp >> "!vrdlog!" 2>&1
 DEL /F !scratch_Folder!*.tmp >> "!vrdlog!" 2>&1
+
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ECHO set SRC_ >> "!vrdlog!" 2>&1
 set SRC_ >> "!vrdlog!" 2>&1
@@ -2155,19 +2110,19 @@ REM get a slash version of MI_V_DisplayAspectRatio_String
 call set !current_prefix!MI_V_DisplayAspectRatio_String_slash=%%!current_prefix!MI_V_DisplayAspectRatio_String%%
 call set !current_prefix!MI_V_DisplayAspectRatio_String_slash=%%!current_prefix!MI_V_DisplayAspectRatio_String_slash::=/%%
 call set !current_prefix!MI_V_DisplayAspectRatio_String_slash=%%!current_prefix!MI_V_DisplayAspectRatio_String_slash::\=/%%
-ECHO +++++++++ >> "!vrdlog!" 2>&1
-ECHO set !current_prefix!MI_V_DisplayAspectRatio_String >> "!vrdlog!" 2>&1
-set !current_prefix!MI_V_DisplayAspectRatio_String >> "!vrdlog!" 2>&1
-ECHO +++++++++ >> "!vrdlog!" 2>&1
+REM ECHO +++++++++ >> "!vrdlog!" 2>&1
+REM ECHO set !current_prefix!MI_V_DisplayAspectRatio_String >> "!vrdlog!" 2>&1
+REM set !current_prefix!MI_V_DisplayAspectRatio_String >> "!vrdlog!" 2>&1
+REM ECHO +++++++++ >> "!vrdlog!" 2>&1
 
 REM get a slash version of FF_V_display_aspect_ratio
 call set !current_prefix!FF_V_display_aspect_ratio_slash=%%!current_prefix!FF_V_display_aspect_ratio%%
 call set !current_prefix!FF_V_display_aspect_ratio_slash=%%!current_prefix!FF_V_display_aspect_ratio_slash::=/%%
 call set !current_prefix!FF_V_display_aspect_ratio_slash=%%!current_prefix!FF_V_display_aspect_ratio_slash::\=/%%
-ECHO +++++++++ >> "!vrdlog!" 2>&1
-ECHO set !current_prefix!FF_V_display_aspect_ratio >> "!vrdlog!" 2>&1
-set !current_prefix!FF_V_display_aspect_ratio >> "!vrdlog!" 2>&1
-ECHO +++++++++ >> "!vrdlog!" 2>&1
+REM ECHO +++++++++ >> "!vrdlog!" 2>&1
+REM ECHO set !current_prefix!FF_V_display_aspect_ratio >> "!vrdlog!" 2>&1
+REM set !current_prefix!FF_V_display_aspect_ratio >> "!vrdlog!" 2>&1
+REM ECHO +++++++++ >> "!vrdlog!" 2>&1
 
 REM calculate MI_A_Audio_Delay from MI_A_Video_Delay
 REM MI_A_Video_Delay is reported by mediainfo as decimal seconds, not milliseconds, so up-convert it
@@ -2178,12 +2133,12 @@ CALL :calc_single_number_result_py "!py_eval_string!" "tmp_MI_A_Video_Delay"
 set /a tmp_MI_A_Audio_Delay=0 - !tmp_MI_A_Video_Delay!
 set "!current_prefix!MI_A_Video_Delay=!tmp_MI_A_Video_Delay!"
 set "!current_prefix!MI_A_Audio_Delay=!tmp_MI_A_Audio_Delay!"
-ECHO +++++++++ >> "!vrdlog!" 2>&1
-ECHO set !current_prefix!MI_A_Video_Delay >> "!vrdlog!" 2>&1
-set !current_prefix!MI_A_Video_Delay >> "!vrdlog!" 2>&1
-ECHO set !current_prefix!MI_A_Audio_Delay >> "!vrdlog!" 2>&1
-set !current_prefix!MI_A_Audio_Delay >> "!vrdlog!" 2>&1
-ECHO +++++++++ >> "!vrdlog!" 2>&1
+REM ECHO +++++++++ >> "!vrdlog!" 2>&1
+REM ECHO set !current_prefix!MI_A_Video_Delay >> "!vrdlog!" 2>&1
+REM set !current_prefix!MI_A_Video_Delay >> "!vrdlog!" 2>&1
+REM ECHO set !current_prefix!MI_A_Audio_Delay >> "!vrdlog!" 2>&1
+REM set !current_prefix!MI_A_Audio_Delay >> "!vrdlog!" 2>&1
+REM ECHO +++++++++ >> "!vrdlog!" 2>&1
 
 REM Determine which type of encoding, AVC or MPEG2 or HEVC or VP9
 call set tmp_MI_V_Format=%%!current_prefix!MI_V_Format%%
@@ -2216,12 +2171,12 @@ REM set tmp_MI_V_Format >> "!vrdlog!" 2>&1
 REM ECHO +++++++++ >> "!vrdlog!" 2>&1
 REM ECHO set tmp_FF_V_codec_name >> "!vrdlog!" 2>&1
 REM set tmp_FF_V_codec_name >> "!vrdlog!" 2>&1
-ECHO +++++++++ >> "!vrdlog!" 2>&1
-ECHO set !current_prefix!calc_Video_Encoding_original >> "!vrdlog!" 2>&1
-set !current_prefix!calc_Video_Encoding_original >> "!vrdlog!" 2>&1
-ECHO set !current_prefix!calc_Video_Encoding >> "!vrdlog!" 2>&1
-set !current_prefix!calc_Video_Encoding >> "!vrdlog!" 2>&1
-ECHO +++++++++ >> "!vrdlog!" 2>&1
+REM ECHO +++++++++ >> "!vrdlog!" 2>&1
+REM ECHO set !current_prefix!calc_Video_Encoding_original >> "!vrdlog!" 2>&1
+REM set !current_prefix!calc_Video_Encoding_original >> "!vrdlog!" 2>&1
+REM ECHO set !current_prefix!calc_Video_Encoding >> "!vrdlog!" 2>&1
+REM set !current_prefix!calc_Video_Encoding >> "!vrdlog!" 2>&1
+REM ECHO +++++++++ >> "!vrdlog!" 2>&1
 
 REM Determine whether PROGRESSIVE or INTERLACED
 call set tmp_MI_V_ScanType=%%!current_prefix!MI_V_ScanType%%
@@ -2238,10 +2193,10 @@ REM set tmp_MI_V_ScanType >> "!vrdlog!" 2>&1
 REM ECHO +++++++++ >> "!vrdlog!" 2>&1
 REM ECHO set tmp_FF_V_field_order >> "!vrdlog!" 2>&1
 REM set tmp_FF_V_field_order >> "!vrdlog!" 2>&1
-ECHO +++++++++ >> "!vrdlog!" 2>&1
-ECHO set !current_prefix!calc_Video_Interlacement >> "!vrdlog!" 2>&1
-set !current_prefix!calc_Video_Interlacement >> "!vrdlog!" 2>&1
-ECHO +++++++++ >> "!vrdlog!" 2>&1
+REM ECHO +++++++++ >> "!vrdlog!" 2>&1
+REM ECHO set !current_prefix!calc_Video_Interlacement >> "!vrdlog!" 2>&1
+REM set !current_prefix!calc_Video_Interlacement >> "!vrdlog!" 2>&1
+REM ECHO +++++++++ >> "!vrdlog!" 2>&1
 
 REM Determine FIELD ORDER for interlaced
 call set tmp_MI_V_ScanOrder=%%!current_prefix!MI_V_ScanOrder%%
@@ -2253,9 +2208,9 @@ REM ECHO +++++++++ >> "!vrdlog!" 2>&1
 REM ECHO set tmp_MI_V_ScanOrder >> "!vrdlog!" 2>&1
 REM set tmp_MI_V_ScanOrder >> "!vrdlog!" 2>&1
 REM ECHO +++++++++ >> "!vrdlog!" 2>&1
-ECHO set !current_prefix!calc_Video_FieldFirst >> "!vrdlog!" 2>&1
-set !current_prefix!calc_Video_FieldFirst >> "!vrdlog!" 2>&1
-ECHO +++++++++ >> "!vrdlog!" 2>&1
+REM ECHO set !current_prefix!calc_Video_FieldFirst >> "!vrdlog!" 2>&1
+REM set !current_prefix!calc_Video_FieldFirst >> "!vrdlog!" 2>&1
+REM ECHO +++++++++ >> "!vrdlog!" 2>&1
 
 call set tmp_calc_Video_Interlacement=%%!current_prefix!calc_Video_Interlacement%%
 call set tmp_calc_Video_Encoding=%%!current_prefix!calc_Video_Encoding%%
@@ -2267,23 +2222,23 @@ IF /I "!tmp_calc_Video_Interlacement!" == "PROGRESSIVE" (
 )
 
 REM display all calculated variables
-ECHO +++++++++ >> "!vrdlog!" 2>&1
-ECHO display all calculated variables >> "!vrdlog!" 2>&1
-ECHO set !current_prefix!calc >> "!vrdlog!" 2>&1
-set !current_prefix!calc >> "!vrdlog!" 2>&1
-ECHO +++++++++ >> "!vrdlog!" 2>&1
+REM ECHO +++++++++ >> "!vrdlog!" 2>&1
+REM ECHO display all calculated variables >> "!vrdlog!" 2>&1
+REM ECHO set !current_prefix!calc >> "!vrdlog!" 2>&1
+REM set !current_prefix!calc >> "!vrdlog!" 2>&1
+REM ECHO +++++++++ >> "!vrdlog!" 2>&1
 
-REM display calculated variables individually
-ECHO +++++++++ >> "!vrdlog!" 2>&1
 call set tmp_calc_Video_Encoding=%%!current_prefix!calc_Video_Encoding%%
 call set tmp_calc_Video_Interlacement=%%!current_prefix!calc_Video_Interlacement%%
 call set tmp_calc_Video_FieldFirst=%%!current_prefix!calc_Video_FieldFirst%%
-ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! !current_prefix!calc_Video_Encoding=!tmp_calc_Video_Encoding! >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! !current_prefix!calc_Video_Interlacement=!tmp_calc_Video_Interlacement! >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! !current_prefix!calc_Video_FieldFirst=!tmp_calc_Video_FieldFirst! >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-ECHO +++++++++ >> "!vrdlog!" 2>&1
+REM display calculated variables individually
+REM ECHO +++++++++ >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! !current_prefix!calc_Video_Encoding=!tmp_calc_Video_Encoding! >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! !current_prefix!calc_Video_Interlacement=!tmp_calc_Video_Interlacement! >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! !current_prefix!calc_Video_FieldFirst=!tmp_calc_Video_FieldFirst! >> "!vrdlog!" 2>&1
+REM ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+REM ECHO +++++++++ >> "!vrdlog!" 2>&1
 
 REM ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 REM ECHO !DATE! !TIME! List all  "!current_prefix!" variables for "!media_filename!" >> "!vrdlog!" 2>&1
@@ -2303,7 +2258,7 @@ REM "!ffprobeexe64!" -v verbose -select_streams a:0 -show_entries stream -of def
 REM ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! End collecting :gather_variables_from_media_file "!current_prefix!" ffprobe and mediainfo variables ... "!media_filename!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! Finish collecting :gather_variables_from_media_file "!current_prefix!" ffprobe and mediainfo variables ... "!media_filename!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 
 CALL :get_date_time_String "gather_variables_from_media_file_END"
@@ -2352,7 +2307,6 @@ call set "rest_of_string=!%1:~1!"
 call :UpCase first_letter
 Call CALL set "%1=!first_letter!!rest_of_string!"
 goto :eof
-
 
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
