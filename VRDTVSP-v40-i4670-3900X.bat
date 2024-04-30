@@ -116,6 +116,10 @@ set "temp_cmd_file=!temp_Folder!temp_cmd_file.bat"
 ECHO !DATE! !TIME! DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 
+set "temp_cmd_file_echo_status=!temp_Folder!temp_cmd_file_echo_status.txt"
+ECHO !DATE! !TIME! DEL /F "!temp_cmd_file_echo_status!" >> "!vrdlog!" 2>&1
+DEL /F "!temp_cmd_file_echo_status!" >> "!vrdlog!" 2>&1
+
 set "vrd5_logfiles=G:\HDTV\VideoReDo-5_*.Log"
 ECHO DEL /F "!vrd5_logfiles!" >> "!vrdlog!" 2>&1
 DEL /F "!vrd5_logfiles!" >> "!vrdlog!" 2>&1
@@ -320,6 +324,8 @@ ECHO !DATE! !TIME! --------- Finish Run the py to modify the filenames to enforc
 REM ****************************************************************************************************************************************
 REM ****************************************************************************************************************************************
 :before_main_loop
+ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ------------------ STARTING MAIN LOOP ------------------ %%f >> "!vrdlog!" 2>&1
 CALL :get_date_time_String "loop_start_date_time"
 for %%f in ("!source_TS_Folder!*.TS", "!source_TS_Folder!*.MPG", "!source_TS_Folder!*.MP4", "!source_TS_Folder!*.VOB") do (
@@ -339,6 +345,8 @@ ECHO "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!loo
 "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!loop_start_date_time!" --end_datetime "!loop_end_date_time!" --prefix_id "Loop_Processing_Files" >> "!vrdlog!" 2>&1
 :after_main_loop
 ECHO !DATE! !TIME! ------------------ FINISHED MAIN LOOP ------------------ %%f >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 REM ****************************************************************************************************************************************
 REM ****************************************************************************************************************************************
 
@@ -886,7 +894,7 @@ set "FFMPEG_V_cq0=-cq:v 0"
 set "FFMPEG_V_cq24=-cq:v 24 -qmin 16 -qmax 48"
 set "FFMPEG_V_PROPOSED_x_cq_options=!FFMPEG_V_cq0!"
 set "FFMPEG_V_final_cq_options=!FFMPEG_V_cq0!"
-ECHO !DATE! !TIME! Initial Default FFMPEG_V_final_cq_options=:!FFMPEG_V_final_cq_options!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! Initial Default FFMPEG_V_final_cq_options="!FFMPEG_V_final_cq_options!" >> "!vrdlog!" 2>&1
 
 REM
 REM FOR AVC INPUT FILES ONLY, calculate the CQ to use (default to CQ0)
@@ -995,7 +1003,8 @@ IF /I "!Footy_found!" == "True" (
 ECHO !DATE! !TIME! ----- Finish  Checking for and Calculating Footy variables ... >> "!vrdlog!" 2>&1
 
 ECHO !DATE! !TIME! ----- Start Using These variables ... >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+ECHO QSF_calc_Video_Encoding="!QSF_calc_Video_Encoding!" >> "!vrdlog!" 2>&1
+ECHO QSF_calc_Video_Interlacement="!QSF_calc_Video_Interlacement!" >> "!vrdlog!" 2>&1
 ECHO set FFMPEG_ >> "!vrdlog!" 2>&1
 set FFMPEG_ >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
@@ -1007,7 +1016,6 @@ set X_ >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ECHO set extra_ >> "!vrdlog!" 2>&1
 set extra_ >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ----- Finish Using These variables ... >> "!vrdlog!" 2>&1
 
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
@@ -1376,14 +1384,28 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	REM ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	ECHO FFMPEG_vspipe_cmd='!FFMPEG_vspipe_cmd!' >> "!vrdlog!" 2>&1
 	ECHO FFMPEG_cmd='!FFMPEG_cmd!' >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	DEL /F "!temp_cmd_file!">NUL 2>&1
+	REM
+	ECHO DEL /F "!temp_cmd_file!">NUL 2>&1
+	ECHO DEL /F "!temp_cmd_file_echo_status!">NUL 2>&1
+	ECHO REM Echo status will be in: "!temp_cmd_file_echo_status!">>"!temp_cmd_file!" 2>&1
+	ECHO DEL /F "!temp_cmd_file_echo_status!">>"!temp_cmd_file!" 2>&1
+    ECHO @ECHO^>^>"!temp_cmd_file_echo_status!" 2^>^&1>>"!temp_cmd_file!" 2>&1
+    ECHO TYPE "!temp_cmd_file_echo_status!">>"!temp_cmd_file!" 2>&1
+    ECHO SET /p initial_echo_status=^<"!temp_cmd_file_echo_status!">>"!temp_cmd_file!" 2>&1
+	ECHO DEL /F "!temp_cmd_file_echo_status!">>"!temp_cmd_file!" 2>&1
 	ECHO @ECHO ON>>"!temp_cmd_file!" 2>&1
 	ECHO !FFMPEG_vspipe_cmd!^^^|!FFMPEG_cmd!>>"!temp_cmd_file!" 2>&1
 	ECHO set "EL=^!ERRORLEVEL^!">>"!temp_cmd_file!" 2>&1
+    ECHO @ECHO ^!initial_echo_status^!>>"!temp_cmd_file!" 2>&1
+    ECHO SET "initial_echo_status=">>"!temp_cmd_file!" 2>&1
 	ECHO goto :eof>>"!temp_cmd_file!" 2>&1
+	REM
+	ECHO !DATE! !TIME! ****************************** >> "!vrdlog!" 2>&1
+	REM ECHO TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+	REM TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 	ECHO CALL "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 	CALL "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! ****************************** >> "!vrdlog!" 2>&1
 	IF /I "!EL!" NEQ "0" (
 		set "check_QSF_failed=********** ERROR: Error Number '!EL!' returned from '!ffmpegexe64!' transcode"
 		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
@@ -1406,10 +1428,10 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	ECHO ======================================================  Finish Run FFMPEG transcode ====================================================== >> "!vrdlog!" 2>&1
 )
 
-ECHO !DATE! !TIME! ********** Moving "%~f1" to "!done_TS_Folder!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** Start Moving "%~f1" to "!done_TS_Folder!" >> "!vrdlog!" 2>&1
 ECHO MOVE /Y "%~f1" "!done_TS_Folder!" >> "!vrdlog!" 2>&1
 MOVE /Y "%~f1" "!done_TS_Folder!" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! ********** Moving "%~f1" to "!done_TS_Folder!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ********** Finish Moving "%~f1" to "!done_TS_Folder!" >> "!vrdlog!" 2>&1
 
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 ECHO DEL /F !scratch_Folder!*.tmp >> "!vrdlog!" 2>&1
@@ -1615,12 +1637,14 @@ IF /I NOT "!check_QSF_failed!" == "" (
 )
 
 REM If it got to here then the QSF worked. Run the .cmd file it created so we see the !requested_qsf_xml_prefix! variables created by the QSF
-REM ECHO TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
-REM TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ****************************** >> "!vrdlog!" 2>&1
+ECHO TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 ECHO call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ****************************** >> "!vrdlog!" 2>&1
 
 REM ECHO +++++++++ >> "!vrdlog!" 2>&1
 REM ECHO set !requested_qsf_xml_prefix! >> "!vrdlog!" 2>&1
@@ -1866,21 +1890,16 @@ REM ----------------------------------------------------------------------------
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
 REM
 :clear_variables
-ECHO FOR /F "tokens=1,* delims==" %%G IN ('SET SRC_') DO (set "%%G=") >> "!vrdlog!" 2>&1
+REM ECHO FOR /F "tokens=1,* delims==" %%G IN ('SET SRC_') DO (set "%%G=") >> "!vrdlog!" 2>&1
 FOR /F "tokens=1,* delims==" %%G IN ('SET SRC_') DO (set "%%G=")>NUL 2>&1
-
-ECHO FOR /F "tokens=1,* delims==" %%G IN ('SET QSF_') DO (set "%%G=") >> "!vrdlog!" 2>&1
+REM ECHO FOR /F "tokens=1,* delims==" %%G IN ('SET QSF_') DO (set "%%G=") >> "!vrdlog!" 2>&1
 FOR /F "tokens=1,* delims==" %%G IN ('SET QSF_') DO (set "%%G=")>NUL 2>&1
-
-ECHO FOR /F "tokens=1,* delims==" %%G IN ('SET TARGET') DO (set "%%G=") >> "!vrdlog!" 2>&1
+REM ECHO FOR /F "tokens=1,* delims==" %%G IN ('SET TARGET') DO (set "%%G=") >> "!vrdlog!" 2>&1
 FOR /F "tokens=1,* delims==" %%G IN ('SET TARGET_') DO (set "%%G=")>NUL 2>&1
-
-ECHO FOR /F "tokens=1,* delims==" %%G IN ('SET FFMPEG_') DO (set "%%G=") >> "!vrdlog!" 2>&1
+REM ECHO FOR /F "tokens=1,* delims==" %%G IN ('SET FFMPEG_') DO (set "%%G=") >> "!vrdlog!" 2>&1
 FOR /F "tokens=1,* delims==" %%G IN ('SET FFMPEG_') DO (set "%%G=")>NUL 2>&1
-
-ECHO FOR /F "tokens=1,* delims==" %%G IN ('SET Footy_') DO (set "%%G=") >> "!vrdlog!" 2>&1
+REM ECHO FOR /F "tokens=1,* delims==" %%G IN ('SET Footy_') DO (set "%%G=") >> "!vrdlog!" 2>&1
 FOR /F "tokens=1,* delims==" %%G IN ('SET Footy_') DO (set "%%G=")>NUL 2>&1
-
 goto :eof
 
 
@@ -1940,7 +1959,7 @@ REM ---
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
-ECHO FOR /F "tokens=1,* delims==" %%G IN ('SET !derived_prefix_FF!') DO (set "%%G=") >> "!vrdlog!" 2>&1
+REM ECHO FOR /F "tokens=1,* delims==" %%G IN ('SET !derived_prefix_FF!') DO (set "%%G=") >> "!vrdlog!" 2>&1
 FOR /F "tokens=1,* delims==" %%G IN ('SET !derived_prefix_FF!') DO (set "%%G=")>NUL 2>&1
 ECHO "!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "!media_filename!" --prefix "!derived_prefix_FF!" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
 "!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "!media_filename!" --prefix "!derived_prefix_FF!" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
@@ -1951,17 +1970,19 @@ IF /I "!EL!" NEQ "0" (
    !xPAUSE!
    EXIT !EL!
 )
-ECHO ### "!derived_prefix_FF!" >> "!vrdlog!" 2>&1
+REM ECHO ### "!derived_prefix_FF!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ****************************** >> "!vrdlog!" 2>&1
 REM ECHO TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 REM TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 ECHO call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ****************************** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
-ECHO FOR /F "tokens=1,* delims==" %%G IN ('SET !derived_prefix_MI!') DO (set "%%G=") >> "!vrdlog!" 2>&1
+REM ECHO FOR /F "tokens=1,* delims==" %%G IN ('SET !derived_prefix_MI!') DO (set "%%G=") >> "!vrdlog!" 2>&1
 FOR /F "tokens=1,* delims==" %%G IN ('SET !derived_prefix_MI!') DO (set "%%G=")>NUL 2>&1
 ECHO "!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "!media_filename!" --prefix "!derived_prefix_MI!" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
 "!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "!media_filename!" --prefix "!derived_prefix_MI!" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
@@ -1972,13 +1993,15 @@ IF /I "!EL!" NEQ "0" (
    !xPAUSE!
    EXIT !EL!
 )
-ECHO ### "!derived_prefix_MI!" >> "!vrdlog!" 2>&1
+REM ECHO ### "!derived_prefix_MI!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ****************************** >> "!vrdlog!" 2>&1
 REM ECHO TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 REM TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 ECHO call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ****************************** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 REM list initial variables we created for "!current_prefix!" and "!media_filename!"
 REM ECHO !DATE! !TIME! List initial "!current_prefix!" variables for "!media_filename!" >> "!vrdlog!" 2>&1
@@ -2067,44 +2090,34 @@ REM Fix up and calculate some variables
 REM
 
 REM sometimes mediainfo omits to return the video bit_rate oin .TS files, so fudge it using other detected bitrates
+ECHO !DATE! !TIME! ########## Start Fudge Checks on !current_prefix!MI_V_BitRate ... >> "!vrdlog!" 2>&1
+ECHO set !current_prefix!MI_V_BitRate >> "!vrdlog!" 2>&1
+set !current_prefix!MI_V_BitRate >> "!vrdlog!" 2>&1
+ECHO set !current_prefix!MI_G_OverallBitRate >> "!vrdlog!" 2>&1
+set !current_prefix!MI_G_OverallBitRate >> "!vrdlog!" 2>&1
+ECHO set !current_prefix!FF_G_bit_rate >> "!vrdlog!" 2>&1
+set !current_prefix!FF_G_bit_rate >> "!vrdlog!" 2>&1
 call set tmp_MI_V_BitRate=%%!current_prefix!MI_V_BitRate%%
 ECHO Fudge Check #1 !current_prefix!MI_V_BitRate '!tmp_MI_V_BitRate!' for blank ... >> "!vrdlog!" 2>&1
 IF /I "!tmp_MI_V_BitRate!" == "" (
-	ECHO set !current_prefix!MI_V_BitRate >> "!vrdlog!" 2>&1
-	set !current_prefix!MI_V_BitRate >> "!vrdlog!" 2>&1
-	ECHO set !current_prefix!MI_G_OverallBitRate >> "!vrdlog!" 2>&1
-	set !current_prefix!MI_G_OverallBitRate >> "!vrdlog!" 2>&1
-	ECHO set !current_prefix!FF_G_bit_rate >> "!vrdlog!" 2>&1
-	set !current_prefix!FF_G_bit_rate >> "!vrdlog!" 2>&1
 	ECHO WARNING: !current_prefix!MI_V_BitRate '!tmp_MI_V_BitRate!' was blank, attempting to fudge to !current_prefix!FF_G_bit_rate >> "!vrdlog!" 2>&1
-	REM
 	call set !current_prefix!MI_V_BitRate=%%!current_prefix!FF_G_bit_rate%%
 )
 call set tmp_MI_V_BitRate=%%!current_prefix!MI_V_BitRate%%
 ECHO Fudge Check #2 !current_prefix!MI_V_BitRate '!tmp_MI_V_BitRate!' for blank ... >> "!vrdlog!" 2>&1
 IF /I "!tmp_MI_V_BitRate!" == "" (
-	ECHO set !current_prefix!MI_V_BitRate >> "!vrdlog!" 2>&1
-	set !current_prefix!MI_V_BitRate >> "!vrdlog!" 2>&1
-	ECHO set !current_prefix!MI_G_OverallBitRate >> "!vrdlog!" 2>&1
-	set !current_prefix!MI_G_OverallBitRate >> "!vrdlog!" 2>&1
-	ECHO set !current_prefix!FF_G_bit_rate >> "!vrdlog!" 2>&1
-	set !current_prefix!FF_G_bit_rate >> "!vrdlog!" 2>&1
 	ECHO WARNING: !current_prefix!MI_V_BitRate '!tmp_MI_V_BitRate!' was blank, attempting to fudge to !current_prefix!MI_G_OverallBitRate >> "!vrdlog!" 2>&1
-	REM
 	call set !current_prefix!MI_V_BitRate=%%!current_prefix!MI_G_OverallBitRate%%
 )
 call set tmp_MI_V_BitRate=%%!current_prefix!MI_V_BitRate%%
-ECHO Fudge Check #3 !current_prefix!MI_V_BitRate '!tmp_MI_V_BitRate!' for blank ... >> "!vrdlog!" 2>&1
+ECHO Fudge Check #3 FINAL CHECK !current_prefix!MI_V_BitRate '!tmp_MI_V_BitRate!' for blank ... >> "!vrdlog!" 2>&1
 IF /I "!tmp_MI_V_BitRate!" == "" (
-	ECHO set !current_prefix!MI_V_BitRate >> "!vrdlog!" 2>&1
-	set !current_prefix!MI_V_BitRate >> "!vrdlog!" 2>&1
-	ECHO set !current_prefix!MI_G_OverallBitRate >> "!vrdlog!" 2>&1
-	set !current_prefix!MI_G_OverallBitRate >> "!vrdlog!" 2>&1
-	ECHO set !current_prefix!FF_G_bit_rate >> "!vrdlog!" 2>&1
-	set !current_prefix!FF_G_bit_rate >> "!vrdlog!" 2>&1
 	ECHO ERROR: Unable to detect !current_prefix!MI_V_BitRate '!tmp_MI_V_BitRate!', failed to fudge it, Aborting >> "!vrdlog!" 2>&1
+	ECHO SET >> "!vrdlog!" 2>&1
+	SET >> "!vrdlog!" 2>&1
 	exit 1
 )
+ECHO !DATE! !TIME! ########## Finish Fudge Checks on !current_prefix!MI_V_BitRate ... >> "!vrdlog!" 2>&1
 
 REM get a slash version of MI_V_DisplayAspectRatio_String
 call set !current_prefix!MI_V_DisplayAspectRatio_String_slash=%%!current_prefix!MI_V_DisplayAspectRatio_String%%
