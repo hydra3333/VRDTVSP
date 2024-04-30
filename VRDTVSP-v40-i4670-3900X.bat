@@ -1385,25 +1385,28 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	ECHO FFMPEG_vspipe_cmd='!FFMPEG_vspipe_cmd!' >> "!vrdlog!" 2>&1
 	ECHO FFMPEG_cmd='!FFMPEG_cmd!' >> "!vrdlog!" 2>&1
 	REM
-	ECHO DEL /F "!temp_cmd_file!">NUL 2>&1
-	ECHO REM Echo status will be in: "!temp_cmd_file_echo_status!">>"!temp_cmd_file!" 2>&1
-    ECHO @ECHO^>"!temp_cmd_file_echo_status!">>"!temp_cmd_file!" 2>&1
-    ECHO TYPE "!temp_cmd_file_echo_status!">>"!temp_cmd_file!" 2>&1
-    ECHO SET /p initial_echo_status=^<"!temp_cmd_file_echo_status!">>"!temp_cmd_file!" 2>&1
+	DEL /F "!temp_cmd_file!">NUL 2>&1
+	ECHO REM Initial echo status will be in: "!temp_cmd_file_echo_status!">>"!temp_cmd_file!" 2>&1
+	ECHO set "initial_echo_status=">>"!temp_cmd_file!" 2>&1
+	ECHO @ECHO^>"!temp_cmd_file_echo_status!">>"!temp_cmd_file!" 2>&1
+	ECHO findstr /c:"ECHO is on" /I "!temp_cmd_file_echo_status!"^>nul>>"!temp_cmd_file!" 2>&1
+	ECHO if not errorlevel 1 ^(set "initial_echo_status=ON"^) else ^(set "initial_echo_status=OFF"^)>>"!temp_cmd_file!" 2>&1
 	ECHO @ECHO ON>>"!temp_cmd_file!" 2>&1
 	ECHO !FFMPEG_vspipe_cmd!^^^|!FFMPEG_cmd!>>"!temp_cmd_file!" 2>&1
 	ECHO set "EL=^!ERRORLEVEL^!">>"!temp_cmd_file!" 2>&1
+	ECHO REM Revert to Initial echo status>>"!temp_cmd_file!" 2>&1
     ECHO @ECHO %%initial_echo_status%%>>"!temp_cmd_file!" 2>&1
     ECHO SET "initial_echo_status=">>"!temp_cmd_file!" 2>&1
 	ECHO goto :eof>>"!temp_cmd_file!" 2>&1
 	REM
 	ECHO !DATE! !TIME! ****************************** >> "!vrdlog!" 2>&1
-	ECHO DEL /F "!temp_cmd_file_echo_status!">NUL 2>&1
+	DEL /F "!temp_cmd_file_echo_status!">NUL 2>&1
 	ECHO TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 	TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 	ECHO CALL "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 	CALL "!temp_cmd_file!" >> "!vrdlog!" 2>&1
-	ECHO DEL /F "!temp_cmd_file_echo_status!">NUL 2>&1
+	DEL /F "!temp_cmd_file!">NUL 2>&1
+	DEL /F "!temp_cmd_file_echo_status!">NUL 2>&1
 	ECHO !DATE! !TIME! ****************************** >> "!vrdlog!" 2>&1
 	IF /I "!EL!" NEQ "0" (
 		set "check_QSF_failed=********** ERROR: Error Number '!EL!' returned from '!ffmpegexe64!' transcode"
