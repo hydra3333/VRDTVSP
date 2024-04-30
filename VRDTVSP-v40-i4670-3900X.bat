@@ -1386,25 +1386,24 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	ECHO FFMPEG_cmd='!FFMPEG_cmd!' >> "!vrdlog!" 2>&1
 	REM
 	ECHO DEL /F "!temp_cmd_file!">NUL 2>&1
-	ECHO DEL /F "!temp_cmd_file_echo_status!">NUL 2>&1
 	ECHO REM Echo status will be in: "!temp_cmd_file_echo_status!">>"!temp_cmd_file!" 2>&1
-	ECHO DEL /F "!temp_cmd_file_echo_status!">>"!temp_cmd_file!" 2>&1
-    ECHO @ECHO^>^>"!temp_cmd_file_echo_status!" 2^>^&1>>"!temp_cmd_file!" 2>&1
+    ECHO @ECHO^>"!temp_cmd_file_echo_status!">>"!temp_cmd_file!" 2>&1
     ECHO TYPE "!temp_cmd_file_echo_status!">>"!temp_cmd_file!" 2>&1
     ECHO SET /p initial_echo_status=^<"!temp_cmd_file_echo_status!">>"!temp_cmd_file!" 2>&1
-	ECHO DEL /F "!temp_cmd_file_echo_status!">>"!temp_cmd_file!" 2>&1
 	ECHO @ECHO ON>>"!temp_cmd_file!" 2>&1
 	ECHO !FFMPEG_vspipe_cmd!^^^|!FFMPEG_cmd!>>"!temp_cmd_file!" 2>&1
 	ECHO set "EL=^!ERRORLEVEL^!">>"!temp_cmd_file!" 2>&1
-    ECHO @ECHO ^!initial_echo_status^!>>"!temp_cmd_file!" 2>&1
+    ECHO @ECHO %%initial_echo_status%%>>"!temp_cmd_file!" 2>&1
     ECHO SET "initial_echo_status=">>"!temp_cmd_file!" 2>&1
 	ECHO goto :eof>>"!temp_cmd_file!" 2>&1
 	REM
 	ECHO !DATE! !TIME! ****************************** >> "!vrdlog!" 2>&1
-	REM ECHO TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
-	REM TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+	ECHO DEL /F "!temp_cmd_file_echo_status!">NUL 2>&1
+	ECHO TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+	TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 	ECHO CALL "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 	CALL "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+	ECHO DEL /F "!temp_cmd_file_echo_status!">NUL 2>&1
 	ECHO !DATE! !TIME! ****************************** >> "!vrdlog!" 2>&1
 	IF /I "!EL!" NEQ "0" (
 		set "check_QSF_failed=********** ERROR: Error Number '!EL!' returned from '!ffmpegexe64!' transcode"
