@@ -1199,12 +1199,16 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 		goto :eof
 	)
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	ECHO ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
 	ECHO TYPE "!DGI_autolog!" >> "!vrdlog!" 2>&1
 	TYPE "!DGI_autolog!" >> "!vrdlog!" 2>&1
+	ECHO ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	ECHO TYPE "!DGI_file!" >> "!vrdlog!" 2>&1
+	REM ECHO ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
+	REM ECHO TYPE "!DGI_file!" >> "!vrdlog!" 2>&1
 	REM TYPE "!DGI_file!" >> "!vrdlog!" 2>&1
 	REM ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	REM ECHO ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
 	ECHO DEL /F "!DGI_autolog!" >> "!vrdlog!" 2>&1
 	DEL /F "!DGI_autolog!" >> "!vrdlog!" 2>&1
 	ECHO ======================================================  Finish the DGIndexNV ====================================================== >> "!vrdlog!" 2>&1
@@ -1225,8 +1229,10 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	ECHO video = core.dgdecodenv.DGSource^( r'!DGI_file!', deinterlace=!FFMPEG_V_dg_deinterlace!, use_top_field=!FFMPEG_V_dg_use_TFF!, use_pf=False !FFMPEG_V_dg_vpy_denoise! !FFMPEG_V_dg_vpy_dsharpen! ^) >> "!VPY_file!" 2>&1
 	ECHO #video = vs.core.text.ClipInfo^(video^) >> "!VPY_file!" 2>&1
 	ECHO video.set_output^(^) >> "!VPY_file!" 2>&1
+	ECHO ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
 	ECHO TYPE "!VPY_file!" >> "!vrdlog!" 2>&1
 	TYPE "!VPY_file!" >> "!vrdlog!" 2>&1
+	ECHO ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
 	ECHO ======================================================  Finish Create a VPY_file ====================================================== >> "!vrdlog!" 2>&1
 )
 IF QSF_calc_Video_Is_Progessive_AVC == "True" (
@@ -1401,8 +1407,10 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	REM
 	ECHO !DATE! !TIME! ****************************** >> "!vrdlog!" 2>&1
 	DEL /F "!temp_cmd_file_echo_status!">NUL 2>&1
+	ECHO ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
 	ECHO TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 	TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+	ECHO ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
 	ECHO CALL "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 	CALL "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 	DEL /F "!temp_cmd_file!">NUL 2>&1
@@ -1640,8 +1648,10 @@ IF /I NOT "!check_QSF_failed!" == "" (
 
 REM If it got to here then the QSF worked. Run the .cmd file it created so we see the !requested_qsf_xml_prefix! variables created by the QSF
 ECHO !DATE! !TIME! ****************************** >> "!vrdlog!" 2>&1
+ECHO ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
 ECHO TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+ECHO ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
 ECHO call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
@@ -1974,8 +1984,10 @@ IF /I "!EL!" NEQ "0" (
 )
 REM ECHO ### "!derived_prefix_FF!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ****************************** >> "!vrdlog!" 2>&1
+REM ECHO ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
 REM ECHO TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 REM TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+REM ECHO ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
 ECHO call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
@@ -1997,8 +2009,10 @@ IF /I "!EL!" NEQ "0" (
 )
 REM ECHO ### "!derived_prefix_MI!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ****************************** >> "!vrdlog!" 2>&1
+REM ECHO ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
 REM ECHO TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 REM TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+REM ECHO ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
 ECHO call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
