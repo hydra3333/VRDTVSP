@@ -16,11 +16,21 @@ import pprint
 #from MediaInfoDLL3 import MediaInfo, Stream, Info, InfoOption
 from pymediainfo import MediaInfo
 
+def remove_duplicate_dashes_dots_from_i4670_filename(source_string):
+    new_source_string = case_insensitive_replace(new_source_string, "..", ".")
+    new_source_string = case_insensitive_replace(new_source_string, "..", ".")
+    new_source_string = case_insensitive_replace(new_source_string, "..", ".")
+    new_source_string = case_insensitive_replace(new_source_string, "--", "-")
+    new_source_string = case_insensitive_replace(new_source_string, "--", "-")
+    new_source_string = case_insensitive_replace(new_source_string, "--", "-")
+    return new_source_string
+
 def remove_special_characters(source_string):
     # remove special characters in a filename by Matching them with a regex match in Python
     # Regex for removing special characters
     regex = re.compile(r'[^a-zA-Z0-9\-_. ]+')
-    return regex.sub('.', source_string)
+    new_source_string = regex.sub('.', source_string)
+    return new_source_string
 
 def recognize_and_move_date_string_to_end(source_string):
     # eg source_string test cases
@@ -821,6 +831,7 @@ if __name__ == "__main__":
         old_file_extension = Path(old_full_filename).suffix
         new_filename_without_extension = old_filename_without_extension
         #
+        new_filename_without_extension = remove_duplicate_dashes_dots_from_i4670_filename(new_filename_without_extension)
         new_filename_without_extension = remove_special_characters(new_filename_without_extension)
         new_filename_without_extension = recognize_and_move_date_string_to_end(new_filename_without_extension)
         new_filename_without_extension = change_filename_layout(new_filename_without_extension)
