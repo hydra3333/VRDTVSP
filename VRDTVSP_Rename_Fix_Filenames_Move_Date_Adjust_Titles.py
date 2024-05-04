@@ -17,6 +17,7 @@ import pprint
 from pymediainfo import MediaInfo
 
 def remove_duplicate_dashes_dots_from_i4670_filename(source_string):
+    new_source_string = source_string
     new_source_string = case_insensitive_replace(new_source_string, "..", ".")
     new_source_string = case_insensitive_replace(new_source_string, "..", ".")
     new_source_string = case_insensitive_replace(new_source_string, "..", ".")
