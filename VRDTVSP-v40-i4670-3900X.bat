@@ -1219,8 +1219,8 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	ECHO #import functool >> "!VPY_file!" 2>&1
 	ECHO #import mvsfunc as mvs			# this relies on the .py residing at the VS folder root level - see run_vsrepo.bat >> "!VPY_file!" 2>&1
 	ECHO #import havsfunc as haf		# this relies on the .py residing at the VS folder root level - see run_vsrepo.bat >> "!VPY_file!" 2>&1
-	ECHO core.std.LoadPlugin^(r'!vs_root!\DGIndex\DGDecodeNV.dll'^) # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765 >> "!VPY_file!" 2>&1
-	ECHO core.avs.LoadPlugin^(r'!vs_root!\DGIndex\DGDecodeNV.dll'^) # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765 >> "!VPY_file!" 2>&1
+	ECHO core.std.LoadPlugin^(r'!vs_root!DGIndex\DGDecodeNV.dll'^) # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765 >> "!VPY_file!" 2>&1
+	ECHO #core.avs.LoadPlugin^(r'!vs_root!DGIndex\DGDecodeNV.dll'^) # do it like gonca https://forum.doom9.org/showthread.php?p=1877765#post1877765 >> "!VPY_file!" 2>&1
 	ECHO # NOTE: deinterlace=1, use_top_field=True for "Interlaced"/"TFF" >> "!VPY_file!" 2>&1
 	ECHO # NOTE: deinterlace=2, use_top_field=True for "Interlaced"/"TFF" >> "!VPY_file!" 2>&1
 	ECHO # dn_enable=x DENOISE >> "!VPY_file!" 2>&1
