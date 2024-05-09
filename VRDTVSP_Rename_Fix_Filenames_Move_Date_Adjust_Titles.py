@@ -315,10 +315,10 @@ def change_filename_layout(new_basename):
     new_basename = case_insensitive_replace(new_basename, "_9Go-", "")
     new_basename = case_insensitive_replace(new_basename, "-9Life", "")
     new_basename = case_insensitive_replace(new_basename, "_9Life", "")
-	new_basename = case_insensitive_replace(new_basename, "-9Rush Adelaide", "")
-	new_basename = case_insensitive_replace(new_basename, "_9Rush Adelaide", "")
-	new_basename = case_insensitive_replace(new_basename, "-9Rush", "")
-	new_basename = case_insensitive_replace(new_basename, "_9Rush", "")
+    new_basename = case_insensitive_replace(new_basename, "-9Rush Adelaide", "")
+    new_basename = case_insensitive_replace(new_basename, "_9Rush Adelaide", "")
+    new_basename = case_insensitive_replace(new_basename, "-9Rush", "")
+    new_basename = case_insensitive_replace(new_basename, "_9Rush", "")
     new_basename = case_insensitive_replace(new_basename, "-10_HD_Adelaide", "")
     new_basename = case_insensitive_replace(new_basename, "_10_HD_Adelaide", "")
     new_basename = case_insensitive_replace(new_basename, "-10_HD", "")
@@ -800,8 +800,8 @@ def rename_to_adjusted_filename(old_full_filename, old_filename_without_extensio
 if __name__ == "__main__":
 
     TERMINAL_WIDTH = 250
-    objPrettyPrint = pprint.PrettyPrinter(width=TERMINAL_WIDTH, compact=False, sort_dicts=False)	# facilitates formatting 
-	#print(f"DEBUG: {objPrettyPrint.pformat(a_list)}")
+    objPrettyPrint = pprint.PrettyPrinter(width=TERMINAL_WIDTH, compact=False, sort_dicts=False)    # facilitates formatting 
+    #print(f"DEBUG: {objPrettyPrint.pformat(a_list)}")
 
     parser = argparse.ArgumentParser(description="Rename Fix Filenames by adjusting titles")
     parser.add_argument("--folder", type=str, default="G:\\HDTV\\000-TO-BE-PROCESSED", help="Folder to process")
