@@ -536,6 +536,7 @@ IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
 
 set "qsf_xml_prefix=QSFinfo_"
 set "SOURCE_File=!~f1!"
+set "pre_QSF_File=!scratch_Folder!%~n1.pre_qsf.!qsf_extension!"
 set "QSF_File=!scratch_Folder!%~n1.qsf.!qsf_extension!"
 set "DGI_file=!scratch_Folder!%~n1.qsf.dgi"
 set "DGI_autolog=!scratch_Folder!%~n1.qsf.log"
@@ -1554,8 +1555,22 @@ CALL :get_date_time_String "start_date_time_QSF_with_timeout"
 
 set "requested_vrd_version=%~1"
 set "source_filename=%~f2"
+set "pre_qsf_filename=%~dpn3.pre_qsf.%~x3"
 set "qsf_filename=%~f3"
 set "requested_qsf_xml_prefix=%~4"
+
+REM Preset the error flag to nothing
+set "check_QSF_failed="
+ECHO DEL /F "!pre_qsf_filename!"  >> "!vrdlog!" 2>&1
+DEL /F "!pre_qsf_filename!"  >> "!vrdlog!" 2>&1
+REM check_QSF_failed! is non-blank if we aborted
+call :run_ffmpeg_pre_QSF_stream_copy "%source_filename%" "%pre_qsf_filename%"
+IF /I NOT "!check_QSF_failed!" == "" (
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! ********** FAILED: run_ffmpeg_pre_QSF_stream_copy in run_cscript_qsf_with_timeout "%~f1" >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	goto :eof
+)
 
 REM Preset the error flag to nothing
 set "check_QSF_failed="
@@ -1603,7 +1618,7 @@ REM ECHO "_vrd_qsf_timeout_seconds=!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&
 REM ECHO "qsf_profile=!qsf_profile!" >> "!vrdlog!" 2>&1
 REM ECHO "qsf_extension=!qsf_extension!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! Start QSF of file: "!source_filename!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! Start QSF of file: "!pre_qsf_filename!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Input: Video Codec: '!SRC_FF_V_codec_name!' ScanType: '!SRC_calc_Video_Interlacement!' ScanOrder: '!SRC_calc_Video_FieldFirst!' WxH: !SRC_MI_V_Width!x!SRC_MI_V_HEIGHT! dar:'!SRC_FF_V_display_aspect_ratio_slash!' and '!SRC_MI_V_DisplayAspectRatio_String_slash!' >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME!        Audio Codec: '!SRC_FF_A_codec_name!' Audio_Delay_ms: '!SRC_MI_A_Audio_Delay!' Video_Delay_ms: '!SRC_MI_A_Video_Delay!' Bitrate: !SRC_MI_V_BitRate! >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! _vrd_version_primary='!_vrd_version_primary!' _vrd_version_fallback=!_vrd_version_fallback!' qsf_profile=!qsf_profile!' qsf_extension='!qsf_extension!' >> "!vrdlog!" 2>&1
@@ -1620,8 +1635,8 @@ ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 
 REM CSCRIPT uses '_vrd_qsf_timeout_seconds' and VBS uses '_vrd_qsf_timeout_minutes' created by ':set_vrd_qsf_paths' 		also see https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/cscript
-ECHO cscript //nologo /t:!_vrd_qsf_timeout_seconds! "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "!source_filename!" "!qsf_filename!" "!qsf_profile!" "!temp_cmd_file!" "!requested_qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
-cscript //nologo /t:!_vrd_qsf_timeout_seconds! "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "!source_filename!" "!qsf_filename!" "!qsf_profile!" "!temp_cmd_file!" "!requested_qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
+ECHO cscript //nologo /t:!_vrd_qsf_timeout_seconds! "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "!pre_qsf_filename!" "!qsf_filename!" "!qsf_profile!" "!temp_cmd_file!" "!requested_qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
+cscript //nologo /t:!_vrd_qsf_timeout_seconds! "!Path_to_vbs_VRDTVSP_Run_QSF_with_v5_or_v6!" "!_vrd_version_primary!" "!pre_qsf_filename!" "!qsf_filename!" "!qsf_profile!" "!temp_cmd_file!" "!requested_qsf_xml_prefix!" "!SRC_MI_V_BitRate!" "!_vrd_qsf_timeout_minutes!" >> "!vrdlog!" 2>&1
 SET EL=!ERRORLEVEL!
 IF /I "!EL!" NEQ "0" (
 	set "check_QSF_failed=********** ERROR: run_cscript_qsf_with_timeout QSF Error '!EL!' returned from cscript QSF"
@@ -1669,9 +1684,103 @@ CALL :gather_variables_from_media_file "!qsf_filename!" "QSF_"
 REM Reset VRD QSF defaults back to the original DEFAULT version. Note _vrd_version_primary and _vrd_version_fallback.
 CALL :set_vrd_qsf_paths "!DEFAULT_vrd_version_primary!"
 
+ECHO DEL /F "!pre_qsf_filename!"  >> "!vrdlog!" 2>&1
+DEL /F "!pre_qsf_filename!"  >> "!vrdlog!" 2>&1
+
 CALL :get_date_time_String "end_date_time_QSF_with_timeout"
 REM ECHO "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF_with_timeout!" --end_datetime "!end_date_time_QSF_with_timeout!" --prefix_id "run_cscript_qsf_with_timeout" >> "!vrdlog!" 2>&1
 "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF_with_timeout!" --end_datetime "!end_date_time_QSF_with_timeout!" --prefix_id "run_cscript_qsf_with_timeout" >> "!vrdlog!" 2>&1
+
+goto :eof
+
+
+REM ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
+REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
+REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
+REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
+REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
+REM
+:run_ffmpeg_pre_QSF_stream_copy
+REM Input Parameters 
+REM		1 	fully qualified filename of the SRC input (usually a .TS file)
+REM 	2	fully qualified filename of name of pre_QSF_File file to create
+REM RETURN Parameters 
+REM		!check_QSF_failed! is non-blank if we abort
+REM Expected preset variables
+REM 	nil
+REM NOTES:
+REM %~1  -  expands %1 removing any surrounding quotes (") 
+REM %~f1  -  expands %1 to a fully qualified path name 
+REM %~d1  -  expands %1 to a drive letter only 
+REM %~p1  -  expands %1 to a path only 
+REM %~n1  -  expands %1 to a file name only including the leading "."
+REM %~x1  -  expands %1 to a file extension only 
+REM %~s1  -  expanded path contains short names only 
+REM %~a1  -  expands %1 to file attributes 
+REM %~t1  -  expands %1 to date/time of file 
+REM %~z1  -  expands %1 to size of file 
+REM The modifiers can be combined to get compound results:
+REM %~dp1  -  expands %1 to a drive letter and path only 
+REM %~nx1  -  expands %1 to a file name and extension only 
+
+REM ECHO IN run_ffmpeg_pre_QSF_stream_copy  >> "!vrdlog!" 2>&1
+REM ECHO 1 "%~1"	fully qualified filename of the SRC input usually a .TS file >> "!vrdlog!" 2>&1
+REM ECHO 2 "%~2"	fully qualified filename of name of pre_QSF file to create >> "!vrdlog!" 2>&1
+
+CALL :get_date_time_String "start_date_time_run_ffmpeg_pre_QSF_stream_copy"
+
+set "source_filename=%~f1"
+set "pre_qsf_filename=%~f2"
+
+REM Preset the error flag to nothing
+set "check_QSF_failed="
+
+REM Delete the pre_QSF target and relevant log files before doing the non-QSF
+ECHO DEL /F "!pre_qsf_filename!"  >> "!vrdlog!" 2>&1
+DEL /F "!pre_qsf_filename!"  >> "!vrdlog!" 2>&1
+ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+
+ECHO ======================================================  Start Run pre_QSF FFMPEG copy video and audio streams ====================================================== >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+REM ffmpeg throws an error due to "-c:v copy" and this together: -vf "setdar="!QSF_MI_V_DisplayAspectRatio_String_slash!"
+REM ffmpeg throws an error due to "-c:v copy" and this together: -profile:v high -level 5.2 
+set "FFMPEG_cmd="!ffmpegexe64!""
+set "FFMPEG_cmd=!FFMPEG_cmd! -hide_banner -v info -nostats -fflags +igndts -err_detect ignore_err -probesize 100M -analyzeduration 100M -strict experimental"
+set "FFMPEG_cmd=!FFMPEG_cmd! -i "!source_filename!" "
+set "FFMPEG_cmd=!FFMPEG_cmd! -map 0:v:0 -map 0:a:0 -map_metadata 0 -map_metadata:s:v 0:s:v -map_metadata:s:a 0:s:a"
+set "FFMPEG_cmd=!FFMPEG_cmd! -c:v copy -fps_mode passthrough"
+set "FFMPEG_cmd=!FFMPEG_cmd! -strict experimental"
+set "FFMPEG_cmd=!FFMPEG_cmd! -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp"
+set "FFMPEG_cmd=!FFMPEG_cmd! -movflags +faststart+write_colr"
+set "FFMPEG_cmd=!FFMPEG_cmd! -c:a copy"
+set "FFMPEG_cmd=!FFMPEG_cmd! -y "!pre_qsf_filename!""
+ECHO !FFMPEG_cmd! >> "!vrdlog!" 2>&1
+!FFMPEG_cmd! >> "!vrdlog!" 2>&1
+SET EL=!ERRORLEVEL!
+IF /I "!EL!" NEQ "0" (
+	set "check_QSF_failed=********** ERROR: run_ffmpeg_pre_QSF_stream_copy  Error '!EL!' returned from ffmpeg"
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+) ELSE if NOT exist "!pre_qsf_filename!" ( 
+	set "check_QSF_failed=********** ERROR: run_ffmpeg_pre_QSF_stream_copy  Error pre_QSF file not created: '!qsf_filename!'"
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+)
+IF /I NOT "!check_QSF_failed!" == "" (
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! ********** FAILED: run_ffmpeg_pre_QSF_stream_copy "%~f1" >> "!vrdlog!" 2>&1
+	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+	goto :eof
+)
+ECHO ======================================================  Finish Run pre_QSF FFMPEG copy video and audio streams ====================================================== >> "!vrdlog!" 2>&1
+
+CALL :get_date_time_String "end_date_time_run_ffmpeg_pre_QSF_stream_copy"
+REM ECHO "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_run_ffmpeg_pre_QSF_stream_copy!" --end_datetime "!end_date_time_run_ffmpeg_pre_QSF_stream_copy!" --prefix_id "run_ffmpeg_pre_QSF_stream_copy" >> "!vrdlog!" 2>&1
+"!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_run_ffmpeg_pre_QSF_stream_copy!" --end_datetime "!end_date_time_run_ffmpeg_pre_QSF_stream_copy!" --prefix_id "run_ffmpeg_pre_QSF_stream_copy" >> "!vrdlog!" 2>&1
 
 goto :eof
 
@@ -1711,7 +1820,7 @@ REM The modifiers can be combined to get compound results:
 REM %~dp1  -  expands %1 to a drive letter and path only 
 REM %~nx1  -  expands %1 to a file name and extension only 
 
-REM ECHO IN run_cscript_qsf_with_timeout  >> "!vrdlog!" 2>&1
+REM ECHO IN run_ffmpeg_stream_copy_instead_of_qsf  >> "!vrdlog!" 2>&1
 REM ECHO 1 "%~1"	fully qualified filename of the SRC input usually a .TS file >> "!vrdlog!" 2>&1
 REM ECHO 2 "%~2"	fully qualified filename of name of QSF file to create >> "!vrdlog!" 2>&1
 REM ECHO 3 "%~3"	qsf prefix for variables output from the VideoReDo QSF  >> "!vrdlog!" 2>&1
@@ -1776,8 +1885,9 @@ ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 REM ffmpeg throws an error due to "-c:v copy" and this together: -vf "setdar="!QSF_MI_V_DisplayAspectRatio_String_slash!"
 REM ffmpeg throws an error due to "-c:v copy" and this together: -profile:v high -level 5.2 
 set "FFMPEG_cmd="!ffmpegexe64!""
-set "FFMPEG_cmd=!FFMPEG_cmd! -hide_banner -v info -nostats"
-set "FFMPEG_cmd=!FFMPEG_cmd! -i "!source_filename!" -probesize 100M -analyzeduration 100M"
+set "FFMPEG_cmd=!FFMPEG_cmd! -hide_banner -v info -nostats -fflags +igndts -err_detect ignore_err -probesize 100M -analyzeduration 100M -strict experimental"
+set "FFMPEG_cmd=!FFMPEG_cmd! -i "!source_filename!" "
+set "FFMPEG_cmd=!FFMPEG_cmd! -map 0:v:0 -map 0:a:0 -map_metadata 0 -map_metadata:s:v 0:s:v -map_metadata:s:a 0:s:a"
 set "FFMPEG_cmd=!FFMPEG_cmd! -c:v copy -fps_mode passthrough"
 set "FFMPEG_cmd=!FFMPEG_cmd! -strict experimental"
 set "FFMPEG_cmd=!FFMPEG_cmd! -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp"
@@ -1833,7 +1943,7 @@ set "!requested_qsf_xml_prefix!OutputSizeMB=0"
 set "!requested_qsf_xml_prefix!OutputSceneCount=1"
 set "!requested_qsf_xml_prefix!VideoOutputFrameCount=0"
 set "!requested_qsf_xml_prefix!AudioOutputFrameCount=0"
-set "!requested_qsf_xml_prefix!ProcessingTimeSecs0"
+set "!requested_qsf_xml_prefix!ProcessingTimeSecs=0"
 set "!requested_qsf_xml_prefix!ProcessedFramePerSec=0"
 set "!requested_qsf_xml_prefix!ActualVideoBitrate=!default_ActualBitrate_bps!"
 ECHO ======================================================  Finish Run non-QSF FFMPEG copy video and audio streams ====================================================== >> "!vrdlog!" 2>&1
