@@ -133,8 +133,11 @@ ECHO !DATE! !TIME! --------- Start setup vrd paths filenames etc ---------------
 REM set the primary and fallback version of VRD to use for QSF
 REM The QSF fallback process uses these next 2 variables to set/reset which version use when, via "CALL :set_vrd_qsf_paths NUMBER"
 REM
-set "DEFAULT_vrd_version_primary=5"
-set "DEFAULT_vrd_version_fallback=6"
+REM set "DEFAULT_vrd_version_primary=5"
+REM set "DEFAULT_vrd_version_fallback=6"
+REM
+set "DEFAULT_vrd_version_primary=6"
+set "DEFAULT_vrd_version_fallback=5"
 REM
 set "extension_mpeg2=mpg"
 set "extension_h264=mp4"
@@ -545,6 +548,7 @@ set "Target_File=!destination_mp4_Folder!%~n1.MP4"
 set "Target_File_hevc=!destination_mp4_Folder!%~n1.hevc.MP4"
 
 set "can_do_qsf=False"
+set "do_pre_QSF_process=False"
 IF /I "!SRC_calc_Video_Encoding!" == "AVC" (
 	set "can_do_qsf=True"
 ) ELSE IF /I "!SRC_calc_Video_Encoding!" == "MPEG2" (
@@ -1702,15 +1706,22 @@ set "requested_qsf_xml_prefix=%~4"
 
 REM Preset the error flag to nothing
 set "check_QSF_failed="
-ECHO DEL /F "!pre_qsf_filename!"  >> "!vrdlog!" 2>&1
-DEL /F "!pre_qsf_filename!"  >> "!vrdlog!" 2>&1
-REM check_QSF_failed! is non-blank if we aborted
-call :run_ffmpeg_pre_QSF_stream_copy "%source_filename%" "%pre_qsf_filename%"
-IF /I NOT "!check_QSF_failed!" == "" (
-	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! ********** FAILED: run_ffmpeg_pre_QSF_stream_copy in run_cscript_qsf_with_timeout "%~f1" >> "!vrdlog!" 2>&1
-	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-	goto :eof
+
+IF /I "!do_pre_QSF_process!" == "True" (
+	ECHO !DATE! !TIME! do_pre_QSF_process= "!do_pre_QSF_process!", Performing pre_QSF ffmpeg processing >> "!vrdlog!" 2>&1
+	ECHO DEL /F "!pre_qsf_filename!"  >> "!vrdlog!" 2>&1
+	DEL /F "!pre_qsf_filename!"  >> "!vrdlog!" 2>&1
+	REM run the pre3-QSF ffmpeg copy
+	call :run_ffmpeg_pre_QSF_stream_copy "%source_filename%" "%pre_qsf_filename%"
+	IF /I NOT "!check_QSF_failed!" == "" (
+		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+		ECHO !DATE! !TIME! ********** FAILED: run_ffmpeg_pre_QSF_stream_copy in run_cscript_qsf_with_timeout "%~f1" >> "!vrdlog!" 2>&1
+		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+		goto :eof
+	)
+) ELSE (
+	ECHO !DATE! !TIME! do_pre_QSF_process= "!do_pre_QSF_process!", Skipping pre_QSF ffmpeg processing >> "!vrdlog!" 2>&1
+	set "pre_qsf_filename=!source_filename!"
 )
 
 REM Preset the error flag to nothing
@@ -1825,8 +1836,10 @@ CALL :gather_variables_from_media_file "!qsf_filename!" "QSF_"
 REM Reset VRD QSF defaults back to the original DEFAULT version. Note _vrd_version_primary and _vrd_version_fallback.
 CALL :set_vrd_qsf_paths "!DEFAULT_vrd_version_primary!"
 
-ECHO DEL /F "!pre_qsf_filename!"  >> "!vrdlog!" 2>&1
-DEL /F "!pre_qsf_filename!"  >> "!vrdlog!" 2>&1
+IF /I "!do_pre_QSF_process!" == "True" (
+	ECHO DEL /F "!pre_qsf_filename!"  >> "!vrdlog!" 2>&1
+	DEL /F "!pre_qsf_filename!"  >> "!vrdlog!" 2>&1
+)
 
 CALL :get_date_time_String "end_date_time_QSF_with_timeout"
 REM ECHO "!py_exe!" "!Path_to_py_VRDTVSP_Calculate_Duration!" --start_datetime "!start_date_time_QSF_with_timeout!" --end_datetime "!end_date_time_QSF_with_timeout!" --prefix_id "run_cscript_qsf_with_timeout" >> "!vrdlog!" 2>&1
@@ -1877,7 +1890,7 @@ set "pre_qsf_filename=%~f2"
 REM Preset the error flag to nothing
 set "check_QSF_failed="
 
-REM Delete the pre_QSF target and relevant log files before doing the non-QSF
+REM Delete the pre_QSF target and relevant log files before doing the non-QSF ffmpeg copy
 ECHO DEL /F "!pre_qsf_filename!"  >> "!vrdlog!" 2>&1
 DEL /F "!pre_qsf_filename!"  >> "!vrdlog!" 2>&1
 ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
