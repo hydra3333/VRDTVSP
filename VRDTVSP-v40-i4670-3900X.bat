@@ -133,11 +133,11 @@ ECHO !DATE! !TIME! --------- Start setup vrd paths filenames etc ---------------
 REM set the primary and fallback version of VRD to use for QSF
 REM The QSF fallback process uses these next 2 variables to set/reset which version use when, via "CALL :set_vrd_qsf_paths NUMBER"
 REM
-REM set "DEFAULT_vrd_version_primary=5"
-REM set "DEFAULT_vrd_version_fallback=6"
+set "DEFAULT_vrd_version_primary=5"
+set "DEFAULT_vrd_version_fallback=6"
 REM
-set "DEFAULT_vrd_version_primary=6"
-set "DEFAULT_vrd_version_fallback=5"
+REM set "DEFAULT_vrd_version_primary=6"
+REM set "DEFAULT_vrd_version_fallback=5"
 REM
 set "extension_mpeg2=mpg"
 set "extension_h264=mp4"
