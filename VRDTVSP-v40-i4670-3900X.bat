@@ -129,6 +129,10 @@ ECHO DEL /F "!vrd6_logfiles!" >> "!vrdlog!" 2>&1
 DEL /F "!vrd6_logfiles!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! --------- Finish setup LOG file and TEMP filenames ---------------------------- >> "!vrdlog!" 2>&1
 
+ECHO !DATE! !TIME! --------- Start Boolean control variables for conversion to hevc(h.265) ---------------------------- >> "!vrdlog!" 2>&1
+set "ENABLE_HEVC_TRANSCODE=False"
+ECHO !DATE! !TIME! --------- Finish Boolean control variables for conversion to hevc(h.265) ---------------------------- >> "!vrdlog!" 2>&1
+
 ECHO !DATE! !TIME! --------- Start setup vrd paths filenames etc ---------------------------- >> "!vrdlog!" 2>&1
 REM set the primary and fallback version of VRD to use for QSF
 REM The QSF fallback process uses these next 2 variables to set/reset which version use when, via "CALL :set_vrd_qsf_paths NUMBER"
@@ -234,6 +238,7 @@ ECHO !DATE! !TIME! Path_to_py_VRDTVSP_Rename_Fix_Filenames_Move_Date_Adjust_Titl
 ECHO !DATE! !TIME! Path_to_py_VRDTVSP_Modify_File_Date_Timestamps="!Path_to_py_VRDTVSP_Modify_File_Date_Timestamps!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section="!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section="!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! ENABLE_HEVC_TRANSCODE="!ENABLE_HEVC_TRANSCODE!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! Finish summary of Initialised paths etc ... >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ----------------------------------------------------------------------------------------------------------------------- >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! --------- Finish Initial Summarize --------- >> "!vrdlog!" 2>&1
@@ -1273,35 +1278,39 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	)
 	REM ++++++++++++++++++++++++++++++ HEVC ON 2060 Super in the 3900X ONLY
 	IF /I "%COMPUTERNAME%" == "3900X" (
-		ECHO ++++++++++++++++++++++++++++++ START ffmpeg HEVC ON 2060 Super in the 3900X ONLY in the code for copy video stream ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
-		set "FFMPEG_cmd_hevc="!ffmpegexe64!""
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -hide_banner -v info -nostats"
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -i "!QSF_File!" -probesize 100M -analyzeduration 100M"
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -map 0:v:0 -map 0:a:0"
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -vf "setdar=!SRC_MI_V_DisplayAspectRatio_String_slash!""
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -fps_mode passthrough -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental"
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -c:v hevc_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g !FFMPEG_V_G! -coder:v cabac"
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! !FFMPEG_V_RTX2060super_extra_flags!"
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -rc:v vbr !FFMPEG_V_final_cq_options!"
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -b:v !FFMPEG_V_Target_BitRate! -minrate:v !FFMPEG_V_Target_Minimum_BitRate! -maxrate:v !FFMPEG_V_Target_Maximum_BitRate! -bufsize !FFMPEG_V_Target_Maximum_BitRate!"
-		REM set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -b:v 4000k -minrate:v 100k -maxrate:v 6000k -bufsize 6000k"
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -strict experimental"
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -profile:v main -level 5.2 -movflags +faststart+write_colr"
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -c:a libfdk_aac -b:a 256k -ar 48000"
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -y "!Target_File_hevc!""
-		ECHO !FFMPEG_cmd_hevc! >> "!vrdlog!" 2>&1
-		!FFMPEG_cmd_hevc! >> "!vrdlog!" 2>&1
-		SET EL=!ERRORLEVEL!
-		IF /I "!EL!" NEQ "0" (
-			set "check_QSF_failed=********** ERROR: Error Number '!EL!' returned from '!ffmpegexe64!' HEVC in the code for copy video stream"
-			ECHO !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
-			ECHO !DATE! !TIME! SRC file="%~f1" >> "!vrdlog!" 2>&1
-			ECHO !DATE! !TIME! QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
-			ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-			CALL :declare_FAILED "%~f1"
-			goto :eof
+		IF /I "!ENABLE_HEVC_TRANSCODE!"=="true" (
+			ECHO ++++++++++++++++++++++++++++++ START ffmpeg HEVC ON 2060 Super in the 3900X ONLY in the code for copy video stream ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
+			set "FFMPEG_cmd_hevc="!ffmpegexe64!""
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -hide_banner -v info -nostats"
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -i "!QSF_File!" -probesize 100M -analyzeduration 100M"
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -map 0:v:0 -map 0:a:0"
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -vf "setdar=!SRC_MI_V_DisplayAspectRatio_String_slash!""
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -fps_mode passthrough -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental"
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -c:v hevc_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g !FFMPEG_V_G! -coder:v cabac"
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! !FFMPEG_V_RTX2060super_extra_flags!"
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -rc:v vbr !FFMPEG_V_final_cq_options!"
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -b:v !FFMPEG_V_Target_BitRate! -minrate:v !FFMPEG_V_Target_Minimum_BitRate! -maxrate:v !FFMPEG_V_Target_Maximum_BitRate! -bufsize !FFMPEG_V_Target_Maximum_BitRate!"
+			REM set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -b:v 4000k -minrate:v 100k -maxrate:v 6000k -bufsize 6000k"
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -strict experimental"
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -profile:v main -level 5.2 -movflags +faststart+write_colr"
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -c:a libfdk_aac -b:a 256k -ar 48000"
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -y "!Target_File_hevc!""
+			ECHO !FFMPEG_cmd_hevc! >> "!vrdlog!" 2>&1
+			!FFMPEG_cmd_hevc! >> "!vrdlog!" 2>&1
+			SET EL=!ERRORLEVEL!
+			IF /I "!EL!" NEQ "0" (
+				set "check_QSF_failed=********** ERROR: Error Number '!EL!' returned from '!ffmpegexe64!' HEVC in the code for copy video stream"
+				ECHO !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
+				ECHO !DATE! !TIME! SRC file="%~f1" >> "!vrdlog!" 2>&1
+				ECHO !DATE! !TIME! QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
+				ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+				CALL :declare_FAILED "%~f1"
+				goto :eof
+			)
+			ECHO ++++++++++++++++++++++++++++++ FINISH ffmpeg HEVC ON 2060 Super in the 3900X ONLY in the code for copy video stream ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
+		) else (
+			echo HEVC transcode disabled; skipping HEVC transcode SRC file="%~f1" QSF_file="!QSF_File!"  >> "!vrdlog!" 2>&1
 		)
-		ECHO ++++++++++++++++++++++++++++++ FINISH ffmpeg HEVC ON 2060 Super in the 3900X ONLY in the code for copy video stream ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
 	)
 	REM ++++++++++++++++++++++++++++++ HEVC ON 2060 Super in the 3900X ONLY
 	ECHO ======================================================  Finish Run FFMPEG copy video stream ====================================================== >> "!vrdlog!" 2>&1
@@ -1389,39 +1398,41 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	)
 	REM ++++++++++++++++++++++++++++++ HEVC ON 2060 Super in the 3900X ONLY
 	IF /I "%COMPUTERNAME%" == "3900X" (
-		ECHO ++++++++++++++++++++++++++++++ START ffmpeg HEVC ON 2060 Super in the 3900X ONLY in the code for VP9 ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
-		set "FFMPEG_cmd_hevc="!ffmpegexe64!""
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -hide_banner -v info -nostats"
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -i "!QSF_File!" -probesize 100M -analyzeduration 100M"
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -map 0:v:0 -map 0:a:0"
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -vf "setdar=!SRC_MI_V_DisplayAspectRatio_String_slash!""
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -fps_mode passthrough -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental"
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -c:v hevc_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g !FFMPEG_V_G! -coder:v cabac"
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! !FFMPEG_V_RTX2060super_extra_flags!"
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -rc:v vbr !FFMPEG_V_final_cq_options!"
-		REM set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -b:v !FFMPEG_V_Target_BitRate! -minrate:v !FFMPEG_V_Target_Minimum_BitRate! -maxrate:v !FFMPEG_V_Target_Maximum_BitRate! -bufsize !FFMPEG_V_Target_Maximum_BitRate!"
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -b:v 4000k -minrate:v 100k -maxrate:v 6000k -bufsize 6000k"
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -strict experimental"
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -profile:v main -level 5.2 -movflags +faststart+write_colr"
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -c:a libfdk_aac -b:a 256k -ar 48000"
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -y "!Target_File_hevc!""
-		ECHO !FFMPEG_cmd_hevc! >> "!vrdlog!" 2>&1
-		!FFMPEG_cmd_hevc! >> "!vrdlog!" 2>&1
-		SET EL=!ERRORLEVEL!
-		IF /I "!EL!" NEQ "0" (
-			set "check_QSF_failed=********** ERROR: Error Number '!EL!' returned from '!ffmpegexe64!' HEVC in the code for VP9"
-			ECHO !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
-			ECHO !DATE! !TIME! SRC file="%~f1" >> "!vrdlog!" 2>&1
-			ECHO !DATE! !TIME! QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
-			ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-			CALL :declare_FAILED "%~f1"
-			goto :eof
+		IF /I "!ENABLE_HEVC_TRANSCODE!"=="true" (
+			ECHO ++++++++++++++++++++++++++++++ START ffmpeg HEVC ON 2060 Super in the 3900X ONLY in the code for VP9 ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
+			set "FFMPEG_cmd_hevc="!ffmpegexe64!""
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -hide_banner -v info -nostats"
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -i "!QSF_File!" -probesize 100M -analyzeduration 100M"
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -map 0:v:0 -map 0:a:0"
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -vf "setdar=!SRC_MI_V_DisplayAspectRatio_String_slash!""
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -fps_mode passthrough -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental"
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -c:v hevc_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g !FFMPEG_V_G! -coder:v cabac"
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! !FFMPEG_V_RTX2060super_extra_flags!"
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -rc:v vbr !FFMPEG_V_final_cq_options!"
+			REM set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -b:v !FFMPEG_V_Target_BitRate! -minrate:v !FFMPEG_V_Target_Minimum_BitRate! -maxrate:v !FFMPEG_V_Target_Maximum_BitRate! -bufsize !FFMPEG_V_Target_Maximum_BitRate!"
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -b:v 4000k -minrate:v 100k -maxrate:v 6000k -bufsize 6000k"
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -strict experimental"
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -profile:v main -level 5.2 -movflags +faststart+write_colr"
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -c:a libfdk_aac -b:a 256k -ar 48000"
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -y "!Target_File_hevc!""
+			ECHO !FFMPEG_cmd_hevc! >> "!vrdlog!" 2>&1
+			!FFMPEG_cmd_hevc! >> "!vrdlog!" 2>&1
+			SET EL=!ERRORLEVEL!
+			IF /I "!EL!" NEQ "0" (
+				set "check_QSF_failed=********** ERROR: Error Number '!EL!' returned from '!ffmpegexe64!' HEVC in the code for VP9"
+				ECHO !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
+				ECHO !DATE! !TIME! SRC file="%~f1" >> "!vrdlog!" 2>&1
+				ECHO !DATE! !TIME! QSF_file="!QSF_File!" >> "!vrdlog!" 2>&1
+				ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+				CALL :declare_FAILED "%~f1"
+				goto :eof
+			)
+			ECHO ++++++++++++++++++++++++++++++ FINISH ffmpeg HEVC ON 2060 Super in the 3900X ONLY in the code for VP9 ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
+		) else (
+			echo HEVC transcode disabled; skipping HEVC transcode SRC file="%~f1" QSF_file="!QSF_File!"  >> "!vrdlog!" 2>&1
 		)
-		ECHO ++++++++++++++++++++++++++++++ FINISH ffmpeg HEVC ON 2060 Super in the 3900X ONLY in the code for VP9 ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
 	)
 	REM ++++++++++++++++++++++++++++++ HEVC ON 2060 Super in the 3900X ONLY
-
-
 	ECHO ======================================================  Finish Run FFMPEG VP9 transcode ====================================================== >> "!vrdlog!" 2>&1
 ) ELSE (
 	REM for the rest:
@@ -1511,55 +1522,56 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	REM ++++++++++++++++++++++++++++++ HEVC ON 2060 Super in the 3900X ONLY
 	IF /I "%COMPUTERNAME%" == "3900X" (
-		ECHO ++++++++++++++++++++++++++++++ START ffmpeg HEVC ON 2060 Super in the 3900X ONLY in the code for interlaced or mpeg2 or hevc ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
-		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-		REM set "FFMPEG_vspipe_cmd="!vspipeexe64!" --container y4m --filter-time "!VPY_file!" -"
-		set "FFMPEG_vspipe_cmd="!vspipeexe64!" --container y4m "!VPY_file!" -"
-		set "FFMPEG_cmd_hevc="!ffmpegexe64!""
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -hide_banner -v info -nostats"
-		REM set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -hide_banner -v verbose -nostats"
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -f yuv4mpegpipe -i pipe: -probesize 100M -analyzeduration 100M"
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -i "!QSF_File!""
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -map 0:v:0 -map 1:a:0"
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -vf "setdar=!SRC_MI_V_DisplayAspectRatio_String_slash!""
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -fps_mode passthrough -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental"
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -c:v hevc_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g !FFMPEG_V_G! -coder:v cabac"
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! !FFMPEG_V_RTX2060super_extra_flags!"
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -rc:v vbr !FFMPEG_V_final_cq_options!"
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -b:v !FFMPEG_V_Target_BitRate! -minrate:v !FFMPEG_V_Target_Minimum_BitRate! -maxrate:v !FFMPEG_V_Target_Maximum_BitRate! -bufsize !FFMPEG_V_Target_Maximum_BitRate!"
-		REM set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -b:v 4000k -minrate:v 100k -maxrate:v 6000k -bufsize 6000k"
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -strict experimental"
-		REM set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp"
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -profile:v main -level 5.2 -movflags +faststart+write_colr"
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -c:a libfdk_aac -b:a 256k -ar 48000"
-		set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -y "!Target_File_hevc!""
-		REM
-		DEL /F "!temp_cmd_file!">NUL 2>&1
-		ECHO REM Initial echo status will be in: "!temp_cmd_file_echo_status!">>"!temp_cmd_file!" 2>&1
-		ECHO set "initial_echo_status=">>"!temp_cmd_file!" 2>&1
-		ECHO @ECHO^>"!temp_cmd_file_echo_status!">>"!temp_cmd_file!" 2>&1
-		ECHO findstr /c:"ECHO is on" /I "!temp_cmd_file_echo_status!"^>nul>>"!temp_cmd_file!" 2>&1
-		ECHO if not errorlevel 1 ^(set "initial_echo_status=ON"^) else ^(set "initial_echo_status=OFF"^)>>"!temp_cmd_file!" 2>&1
-		ECHO @ECHO ON>>"!temp_cmd_file!" 2>&1
-		ECHO !FFMPEG_vspipe_cmd!^^^|!FFMPEG_cmd_hevc!>>"!temp_cmd_file!" 2>&1
-		ECHO set "EL=^!ERRORLEVEL^!">>"!temp_cmd_file!" 2>&1
-		ECHO REM Revert to Initial echo status>>"!temp_cmd_file!" 2>&1
-		ECHO @ECHO %%initial_echo_status%%>>"!temp_cmd_file!" 2>&1
-		ECHO SET "initial_echo_status=">>"!temp_cmd_file!" 2>&1
-		ECHO goto :eof>>"!temp_cmd_file!" 2>&1
-		REM
-		ECHO !DATE! !TIME! ****************************** >> "!vrdlog!" 2>&1
-		DEL /F "!temp_cmd_file_echo_status!">NUL 2>&1
-		ECHO ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
-		ECHO TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
-		TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
-		ECHO ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
-		ECHO CALL "!temp_cmd_file!" >> "!vrdlog!" 2>&1
-		CALL "!temp_cmd_file!" >> "!vrdlog!" 2>&1
-		DEL /F "!temp_cmd_file!">NUL 2>&1
-		DEL /F "!temp_cmd_file_echo_status!">NUL 2>&1
-		ECHO !DATE! !TIME! ****************************** >> "!vrdlog!" 2>&1
-		IF /I "!EL!" NEQ "0" (
+		IF /I "!ENABLE_HEVC_TRANSCODE!"=="true" (
+			ECHO ++++++++++++++++++++++++++++++ START ffmpeg HEVC ON 2060 Super in the 3900X ONLY in the code for interlaced or mpeg2 or hevc ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
+			ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+			REM set "FFMPEG_vspipe_cmd="!vspipeexe64!" --container y4m --filter-time "!VPY_file!" -"
+			set "FFMPEG_vspipe_cmd="!vspipeexe64!" --container y4m "!VPY_file!" -"
+			set "FFMPEG_cmd_hevc="!ffmpegexe64!""
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -hide_banner -v info -nostats"
+			REM set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -hide_banner -v verbose -nostats"
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -f yuv4mpegpipe -i pipe: -probesize 100M -analyzeduration 100M"
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -i "!QSF_File!""
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -map 0:v:0 -map 1:a:0"
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -vf "setdar=!SRC_MI_V_DisplayAspectRatio_String_slash!""
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -fps_mode passthrough -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp -strict experimental"
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -c:v hevc_nvenc -pix_fmt nv12 -preset p7 -multipass fullres -forced-idr 1 -g !FFMPEG_V_G! -coder:v cabac"
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! !FFMPEG_V_RTX2060super_extra_flags!"
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -rc:v vbr !FFMPEG_V_final_cq_options!"
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -b:v !FFMPEG_V_Target_BitRate! -minrate:v !FFMPEG_V_Target_Minimum_BitRate! -maxrate:v !FFMPEG_V_Target_Maximum_BitRate! -bufsize !FFMPEG_V_Target_Maximum_BitRate!"
+			REM set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -b:v 4000k -minrate:v 100k -maxrate:v 6000k -bufsize 6000k"
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -strict experimental"
+			REM set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -sws_flags lanczos+accurate_rnd+full_chroma_int+full_chroma_inp"
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -profile:v main -level 5.2 -movflags +faststart+write_colr"
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -c:a libfdk_aac -b:a 256k -ar 48000"
+			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -y "!Target_File_hevc!""
+			REM
+			DEL /F "!temp_cmd_file!">NUL 2>&1
+			ECHO REM Initial echo status will be in: "!temp_cmd_file_echo_status!">>"!temp_cmd_file!" 2>&1
+			ECHO set "initial_echo_status=">>"!temp_cmd_file!" 2>&1
+			ECHO @ECHO^>"!temp_cmd_file_echo_status!">>"!temp_cmd_file!" 2>&1
+			ECHO findstr /c:"ECHO is on" /I "!temp_cmd_file_echo_status!"^>nul>>"!temp_cmd_file!" 2>&1
+			ECHO if not errorlevel 1 ^(set "initial_echo_status=ON"^) else ^(set "initial_echo_status=OFF"^)>>"!temp_cmd_file!" 2>&1
+			ECHO @ECHO ON>>"!temp_cmd_file!" 2>&1
+			ECHO !FFMPEG_vspipe_cmd!^^^|!FFMPEG_cmd_hevc!>>"!temp_cmd_file!" 2>&1
+			ECHO set "EL=^!ERRORLEVEL^!">>"!temp_cmd_file!" 2>&1
+			ECHO REM Revert to Initial echo status>>"!temp_cmd_file!" 2>&1
+			ECHO @ECHO %%initial_echo_status%%>>"!temp_cmd_file!" 2>&1
+			ECHO SET "initial_echo_status=">>"!temp_cmd_file!" 2>&1
+			ECHO goto :eof>>"!temp_cmd_file!" 2>&1
+			REM
+			ECHO !DATE! !TIME! ****************************** >> "!vrdlog!" 2>&1
+			DEL /F "!temp_cmd_file_echo_status!">NUL 2>&1
+			ECHO ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
+			ECHO TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+			TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+			ECHO ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
+			ECHO CALL "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+			CALL "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+			DEL /F "!temp_cmd_file!">NUL 2>&1
+			DEL /F "!temp_cmd_file_echo_status!">NUL 2>&1
+			ECHO !DATE! !TIME! ****************************** >> "!vrdlog!" 2>&1
+			IF /I "!EL!" NEQ "0" (
 				set "check_QSF_failed=********** ERROR: Error Number '!EL!' returned from '!ffmpegexe64!' transcode HEVC in the code for interlaced or mpeg2 or hevc"
 				ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 				ECHO !DATE! !TIME! !check_QSF_failed! >> "!vrdlog!" 2>&1
@@ -1576,14 +1588,16 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 				ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 				CALL :declare_FAILED "%~f1"
 				goto :eof
+			)
+			ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+			ECHO ++++++++++++++++++++++++++++++ FINISH ffmpeg HEVC ON 2060 Super in the 3900X ONLY in the code for interlaced or mpeg2 or hevc ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
+		) else (
+			echo HEVC transcode disabled; skipping HEVC transcode SRC file="%~f1" QSF_file="!QSF_File!"  >> "!vrdlog!" 2>&1
 		)
-		ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
-		ECHO ++++++++++++++++++++++++++++++ FINISH ffmpeg HEVC ON 2060 Super in the 3900X ONLY in the code for interlaced or mpeg2 or hevc ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
 	)
 	REM ++++++++++++++++++++++++++++++ HEVC ON 2060 Super in the 3900X ONLY
 	ECHO ======================================================  Finish Run FFMPEG transcode ====================================================== >> "!vrdlog!" 2>&1
 )
-
 ECHO !DATE! !TIME! ********** Start Moving "%~f1" to "!done_TS_Folder!" >> "!vrdlog!" 2>&1
 ECHO MOVE /Y "%~f1" "!done_TS_Folder!" >> "!vrdlog!" 2>&1
 MOVE /Y "%~f1" "!done_TS_Folder!" >> "!vrdlog!" 2>&1
