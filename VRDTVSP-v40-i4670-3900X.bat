@@ -2617,6 +2617,88 @@ call :UpCase first_letter
 Call CALL set "%1=!first_letter!!rest_of_string!"
 goto :eof
 
+:TCaseUnicodeSafeSpacedWordsOnly
+REM==============================================================================
+REM :TCaseUnicodeSafeSpacedWordsOnly - Unicode Title Case only on words which are space-separated; eliminates multi-spaces
+REM Leaves punctuation untouched.
+REM Example Input :  "  hello-WORLD's   test_case  "
+REM Example Output:  "Hello-WORLD's Test_case"
+REM==============================================================================
+for /f "delims=" %%A in ('powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -Command ^
+  "$w='%!%1!'.Split(' '); $w = $w | ForEach-Object { $_.Substring(0,1).ToUpper()+$_.Substring(1) }; $w -join ' '"') do (
+  set "%1=%%A"
+)
+goto :eof
+
+:TCaseUnicodeSafeCompoundPreserveMidCasing
+REM------------------------------------------------------------------------------
+REM :TCaseUnicodeSafeCompoundPreserveMidCasing
+REM Unicode-safe extended title case.
+REM Capitalizes the first letter of each segment between space, dot, dash, and underscore; keeps multiple-delimters
+REM Only segments starting with a letter are changed.
+REM Preserves original casing after the first letter
+REM Example Input :  "nASA.file--NAME_with...MIXED.case"
+REM Example Output:  "NASA.File--NAME_With...MIXED.Case"
+REM------------------------------------------------------------------------------
+for /f "delims=" %%A in ('powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -Command ^
+  "$txt='%!%1!'; -join ($txt -split '([ ._-])' | ForEach-Object { if ($_ -match '^[^\W\d_]{1}') { $_.Substring(0,1).ToUpper() + $_.Substring(1) } else { $_ } })"') do (
+  set "%1=%%A"
+)
+goto :eof
+
+:TCaseUnicodeSafeCompoundPreserveMidCasingCollapseDelims
+REM------------------------------------------------------------------------------
+REM :TCaseUnicodeSafeCompoundPreserveMidCasingCollapseDelims
+REM Unicode-safe extended title case with collapsed delimiters.
+REM Capitalizes the first letter of each segment between space, dot, dash, and underscore; collapses multiple-delimters
+REM Consecutive delimiters are replaced by a single instance.
+REM Preserves original casing after the first letter.
+REM Example Input :  "nASA...project--ALPHA_test  FILE.42 with__MIXED.case"
+REM Example Output:  "NASA.Project-ALPHA_Test File.42 With_MIXED.Case"
+REM------------------------------------------------------------------------------
+for /f "delims=" %%A in ('powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -Command ^
+  "$txt='%!%1!'; " ^
+  "$txt = $txt -replace '[-]{2,}', '-' -replace '[.]{2,}', '.' -replace '[_]{2,}', '_' -replace ' {2,}', ' '; " ^
+  "-join ($txt -split '([ ._-])' | ForEach-Object { " ^
+  "if ($_ -match '^[^\W\d_]{1}') { $_.Substring(0,1).ToUpper() + $_.Substring(1) } else { $_ } })"') do (
+  set "%1=%%A"
+)
+goto :eof
+
+:TCaseUnicodeSafeCompoundFullTitlecase
+REM------------------------------------------------------------------------------
+REM :TCaseUnicodeSafeCompoundFullTitlecase
+REM Full Unicode Title Case — capitalizes and lowercases word parts between; keeps multiple-delimters
+REM Lowercases all non-initial characters in each segment (i.e., FULL title casing)
+REM space, hyphen, underscore, and dot.
+REM Example Input :  "east---ASIAN_language...Processing--system"
+REM Example Output:  "East---Asian_Language...Processing--System"
+REM-----------------------------------------------------------------------------
+for /f "delims=" %%A in ('powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -Command ^
+  "$s='%!%1!'; -join ($s -split '([-_\. ])' | ForEach-Object { if ($_ -match '^[-_\. ]$') { $_ } else { $_.Substring(0,1).ToUpper() + $_.Substring(1).ToLower() } })"') do (
+  set "%1=%%A"
+)
+goto :eof
+
+:TCaseUnicodeSafeCompoundFullTitlecaseCollapseDelims
+REM------------------------------------------------------------------------------
+REM :TCaseUnicodeSafeCompoundFullTitlecaseCollapseDelims
+REM Unicode-safe extended title case with collapsed delimiters.
+REM Capitalizes the first letter of each segment between space, dot, dash, and underscore; collapses multiple-delimters
+REM Lowercases all non-initial characters in each segment (i.e., FULL title casing)
+REM Consecutive delimiters are replaced by a single instance.
+REM Example Input :  "east---ASIAN_language...Processing--system"
+REM Example Output:  "East-Asian_Language.Processing-System"
+REM------------------------------------------------------------------------------
+for /f "delims=" %%A in ('powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -Command ^
+  "$s='%!%1!'; " ^
+  "$s = $s -replace '[-]{2,}', '-' -replace '[.]{2,}', '.' -replace '[_]{2,}', '_' -replace ' {2,}', ' '; " ^
+  "-join ($s -split '([-_\. ])' | ForEach-Object { " ^
+  "if ($_ -match '^[-_\. ]$') { $_ } else { $_.Substring(0,1).ToUpper() + $_.Substring(1).ToLower() } })"') do (
+  set "%1=%%A"
+)
+goto :eof
+
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
