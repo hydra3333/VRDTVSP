@@ -2595,6 +2595,32 @@ REM The argument for this subroutine is the variable NAME.
 FOR %%i IN ("a=A" "b=B" "c=C" "d=D" "e=E" "f=F" "g=G" "h=H" "i=I" "j=J" "k=K" "l=L" "m=M" "n=N" "o=O" "p=P" "q=Q" "r=R" "s=S" "t=T" "u=U" "v=V" "w=W" "x=X" "y=Y" "z=Z") DO CALL set "%1=%%%1:%%~i%%"
 goto :eof
 
+:LoCaseUnicodeSafe
+REM==============================================================================
+REM :TCaseUnicodeSafeLoCase - Unicode-safe lowercasing of a variable value
+REM Preserves all characters, works with accented and non-English letters
+REM Example Input :  "ÇA VA Très BIEN, Señor Müller!"
+REM Example Output: "ça va très bien, señor müller!"
+REM==============================================================================
+for /f "delims=" %%A in ('powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -Command ^
+  "[string]::IsNullOrEmpty('%!%1!') ? '' : '%!%1!'.ToLowerInvariant()"') do (
+  set "%1=%%A"
+)
+goto :eof
+
+:UpCaseUnicodeSafe
+REM==============================================================================
+REM :TCaseUnicodeSafeUpCase - Unicode-safe uppercasing of a variable value
+REM Preserves all characters, works with accented and non-English letters
+REM Example Input :  "Ça va très bien, señor müller!"
+REM Example Output: "ÇA VA TRÈS BIEN, SEÑOR MÜLLER!"
+REM==============================================================================
+for /f "delims=" %%A in ('powershell -NoLogo -ExecutionPolicy Unrestricted -Sta -NonInteractive -Command ^
+  "[string]::IsNullOrEmpty('%!%1!') ? '' : '%!%1!'.ToUpperInvariant()"') do (
+  set "%1=%%A"
+)
+goto :eof
+
 :TCase
 REM Subroutine to convert a variable VALUE to Title Case.
 REM The argument for this subroutine is the variable NAME.
@@ -2726,7 +2752,6 @@ DEL /F "!eval_formula_vbs_filename!" >NUL 2>&1
 REM ECHO "eval_formula_vbs_filename=!eval_formula_vbs_filename!"
 REM ECHO "eval_variable_name=!eval_variable_name! eval_formula=!eval_formula! eval_single_number_result=!eval_single_number_result!"
 goto :eof
-
 
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
 REM ---------------------------------------------------------------------------------------------------------------------------------------------------------
