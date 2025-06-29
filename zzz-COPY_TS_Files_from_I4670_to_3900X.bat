@@ -5,7 +5,7 @@
 REM MOVE .TS Files from I4670 \\10.0.0.2\XFER to 3900X \\10.0.0.4
 REM Assume they both run this exact same batch file
 
-call :maketempheader
+call :get_header_String "tempheader"
 ECHO !COMPUTERNAME! !DATE! !TIME! tempheader="!tempheader!"
 
 REM ***** PREVENT PC FROM GOING TO SLEEP *****
@@ -66,18 +66,28 @@ goto :eof
 
 REM +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 REM +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-REM --- start set a temp header to date and time
-:maketempheader
-set "Datex=%DATE: =0%"
-set yyyy=!Datex:~10,4!
-set mm=!Datex:~7,2!
-set dd=!Datex:~4,2!
-set "Timex=%time: =0%"
-set hh=!Timex:~0,2!
-set min=!Timex:~3,2!
-set ss=!Timex:~6,2!
-set ms=!Timex:~9,2!
-ECHO !DATE! !TIME! As at !yyyy!.!mm!.!dd!_!hh!.!min!.!ss!.!ms!  COMPUTERNAME="!COMPUTERNAME!"
-set tempheader=!yyyy!.!mm!.!dd!.!hh!.!min!.!ss!.!ms!-!COMPUTERNAME!
-REM --- end set a temp header to date and time
+
+:get_date_time_String
+REM return a datetime string with spaces replaced by zeroes in format yyyy-mm-dd hh.mm.ss.hh
+set "datetimestring_variable_name=%~1"
+set "Datey=!DATE: =0!"
+set "Timey=!TIME: =0!"
+set "eval_datetime=!Datey:~10,4!-!Datey:~7,2!-!Datey:~4,2! !Timey:~0,2!.!Timey:~3,2!.!Timey:~6,2!.!Timey:~9,2!"
+set "!datetimestring_variable_name!=!eval_datetime!"
+goto :eof
+
+:get_date_time_String_nospaces
+REM return a datetime string with spaces replaced by zeroes and no spaces in format yyyy-mm-dd.hh.mm.ss.hh
+set "ns_datetimestring_variable_name=%~1"
+set "ns_eval_datetime="
+CALL :get_date_time_String "ns_eval_datetime"
+set "ns_eval_datetime=!ns_eval_datetime: =.!"
+set "!ns_datetimestring_variable_name!=!ns_eval_datetime!"
+goto :eof
+
+:get_header_String
+REM Create a Header
+set "ghs_header_variable_name=%~1"
+CALL :get_date_time_String_nospaces "ghs_date_time_String"
+set "!ghs_header_variable_name!=!ghs_date_time_String!-!COMPUTERNAME!"
 goto :eof
