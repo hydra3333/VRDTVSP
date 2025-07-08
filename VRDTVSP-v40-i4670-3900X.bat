@@ -1915,9 +1915,7 @@ ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 REM ffmpeg throws an error due to "-c:v copy" and this together: -vf "setdar="!QSF_MI_V_DisplayAspectRatio_String_slash!"
 REM ffmpeg throws an error due to "-c:v copy" and this together: -profile:v high -level 5.2 
 set "FFMPEG_cmd="!ffmpegexe64!""
-REM set "FFMPEG_cmd=!FFMPEG_cmd! -hide_banner -v error -nostats -fflags +igndts+discardcorrupt -err_detect ignore_err -probesize 100M -analyzeduration 100M -strict experimental"
-REM set "FFMPEG_cmd=!FFMPEG_cmd! -hide_banner -v error -nostats -fflags +igndts -err_detect ignore_err -probesize 100M -analyzeduration 100M -strict experimental"
-set "FFMPEG_cmd=!FFMPEG_cmd! -hide_banner -v fatal -nostats -fflags +igndts -err_detect ignore_err -probesize 100M -analyzeduration 100M -strict experimental"
+set "FFMPEG_cmd=!FFMPEG_cmd! -hide_banner -v fatal -nostats -fflags +discardcorrupt -err_detect ignore_err -af "aresample=async=1" -copyts -start_at_zero -probesize 100M -analyzeduration 100M -strict experimental"
 set "FFMPEG_cmd=!FFMPEG_cmd! -i "!source_filename!" "
 set "FFMPEG_cmd=!FFMPEG_cmd! -map 0:v:0 -map 0:a:0 -map_metadata 0 -map_metadata:s:v 0:s:v -map_metadata:s:a 0:s:a"
 set "FFMPEG_cmd=!FFMPEG_cmd! -c:v copy -fps_mode passthrough"
@@ -2055,7 +2053,7 @@ ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 REM ffmpeg throws an error due to "-c:v copy" and this together: -vf "setdar="!QSF_MI_V_DisplayAspectRatio_String_slash!"
 REM ffmpeg throws an error due to "-c:v copy" and this together: -profile:v high -level 5.2 
 set "FFMPEG_cmd="!ffmpegexe64!""
-set "FFMPEG_cmd=!FFMPEG_cmd! -hide_banner -v info -nostats -fflags +igndts -err_detect ignore_err -probesize 100M -analyzeduration 100M -strict experimental"
+set "FFMPEG_cmd=!FFMPEG_cmd! -hide_banner -v info -nostats -fflags +discardcorrupt -err_detect ignore_err -af "aresample=async=1" -copyts -start_at_zero -probesize 100M -analyzeduration 100M -strict experimental"
 set "FFMPEG_cmd=!FFMPEG_cmd! -i "!source_filename!" "
 set "FFMPEG_cmd=!FFMPEG_cmd! -map 0:v:0 -map 0:a:0 -map_metadata 0 -map_metadata:s:v 0:s:v -map_metadata:s:a 0:s:a"
 set "FFMPEG_cmd=!FFMPEG_cmd! -c:v copy -fps_mode passthrough"
