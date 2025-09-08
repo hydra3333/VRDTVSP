@@ -115,7 +115,8 @@ if __name__ == "__main__":
     # Run MediaInfo command to generate JSON output
     mediainfo_subprocess_command = [mediainfo_path, '--Full', '--Output=JSON', '--BOM', mediafile ]
     #print(f"DEBUG: issuing subprocess command: {mediainfo_subprocess_command}")
-    mediainfo_output = subprocess.check_output(mediainfo_subprocess_command).decode('utf-8', 'ignore')
+    #mediainfo_output = subprocess.check_output(mediainfo_subprocess_command).decode('utf-8', 'ignore')
+    mediainfo_output = subprocess.check_output(mediainfo_subprocess_command).decode('utf-8-sig')
     #print(f"DEBUG: returned output string: {mediainfo_output}")
 
     # Parse JSON output
