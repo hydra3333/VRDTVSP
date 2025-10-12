@@ -21,7 +21,8 @@ import pprint
 #from MediaInfoDLL3 import MediaInfo, Stream, Info, InfoOption
 from pymediainfo import MediaInfo
 
-IS_VERBOSE = True
+#IS_VERBOSE = True
+IS_VERBOSE = False
 
 # Windows Error Codes from CLause AI :=
 # Windows System Error Codes (from winerror.h)
