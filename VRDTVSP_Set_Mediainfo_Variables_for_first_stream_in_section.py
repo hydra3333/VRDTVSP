@@ -1,3 +1,6 @@
+# Run like:
+#   python "G:\HDTV\VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section.py" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "G:\HDTV\file1.ts" --prefix "SRC_MI_" --output_cmd_file="D:\VRDTVSP-SCRATCH\temp_cmd_file.bat" 
+#
 import os
 import sys
 import re
@@ -12,9 +15,160 @@ from pathlib import Path
 import json
 import xml.etree.ElementTree as ET
 import subprocess
+import chardet
+from charset_normalizer import from_bytes as cn_from_bytes
 import pprint
 #from MediaInfoDLL3 import MediaInfo, Stream, Info, InfoOption
 from pymediainfo import MediaInfo
+
+# Windows Error Codes from CLause AI :=
+# Windows System Error Codes (from winerror.h)
+# https://learn.microsoft.com/en-us/windows/win32/debug/system-error-codes
+# Success
+ERROR_SUCCESS = 0                       # The operation completed successfully
+# Failures
+ERROR_INVALID_FUNCTION = 1
+# File/Path errors
+ERROR_FILE_NOT_FOUND = 2                # The system cannot find the file specified
+ERROR_PATH_NOT_FOUND = 3                # The system cannot find the path specified
+ERROR_ACCESS_DENIED = 5                 # Access is denied
+ERROR_INVALID_DATA = 13
+ERROR_INVALID_DRIVE = 15                # The system cannot find the drive specified
+ERROR_NOT_READY = 21                    # The device is not ready
+ERROR_BAD_LENGTH = 24                   # The program issued a command but the command length is incorrect
+ERROR_SHARING_VIOLATION = 32            # The process cannot access the file because it is being used by another process
+ERROR_HANDLE_EOF = 38                   # Reached the end of the file
+ERROR_NOT_SUPPORTED = 50                # The request is not supported
+ERROR_BAD_NETPATH = 53                  # The network path was not found
+ERROR_ALREADY_EXISTS = 80               # The file exists
+# Parameter/Data errors
+ERROR_INVALID_PARAMETER = 87            # The parameter is incorrect
+ERROR_INSUFFICIENT_BUFFER = 122         # The data area passed to a system call is too small
+ERROR_INVALID_NAME = 123                # The filename, directory name, or volume label syntax is incorrect
+ERROR_MOD_NOT_FOUND = 126               # The specified module could not be found
+ERROR_PROC_NOT_FOUND = 127              # The specified procedure could not be found
+ERROR_INVALID_FLAGS = 1004              # Invalid flags
+ERROR_UNRECOGNIZED_MEDIA = 1785         # The disk media is not recognized. It may not be formatted
+# Data format errors
+ERROR_INVALID_DATA = 13                 # The data is invalid
+ERROR_BAD_FORMAT = 11                   # An attempt was made to load a program with an incorrect format
+ERROR_CRC = 23                          # Data error (cyclic redundancy check)
+ERROR_BAD_FILE_TYPE = 222               # The file type being saved or retrieved has been blocked
+# Operation errors  
+ERROR_CALL_NOT_IMPLEMENTED = 120        # This function is not supported on this system
+ERROR_CANCELLED = 1223                  # The operation was canceled by the user
+ERROR_TIMEOUT = 1460                    # This operation returned because the timeout period expired
+# Process/Resource errors
+ERROR_OUTOFMEMORY = 14                  # Not enough storage is available to complete this operation
+ERROR_NOT_ENOUGH_MEMORY = 8             # Not enough memory resources are available to process this command
+ERROR_NO_PROC_SLOTS = 89                # The system cannot start another process at this time
+def Attempt_to_detect_mediainfo_output_encoding(raw_bytes):
+    """
+    We are forced to try various encodings because mediainfo swaps them around willy nilly.
+    Try to detect/guess encoding for mediainfo output bytes and return
+    (encoding_name, decoded_text).
+    Strict decode attempts are used (no silent replacement) so we know
+    the decode was valid. If nothing decodes strictly, returns (None, None).
+    """
+    #---
+    # Attempt to detect the encoding via charset_normalizer (better for Python3/utf-8-ish data than chardet)
+    cn_result = None
+    cn_detected_bytes = None
+    cn_detected_this_time = None
+    cn_detected_confidence = None
+    try:
+        cn_result = cn_from_bytes(raw_bytes)
+        if cn_result:
+            cn_detected_bytes = cn_result.best()
+            if cn_detected_bytes:
+                cn_detected_this_time = cn_detected_bytes.encoding
+                # charset_normalizer has 'percent' idea but not a single confidence number; use None or estimated
+                cn_detected_confidence = getattr(cn_detected_bytes, "confidence", None)
+    except Exception:
+        # charset_normalizer not installed or failed
+        pass
+    if cn_detected_this_time:
+        cn_detected_this_time = cn_detected_this_time.strip().lower()
+    #---
+    # Attempt to detect the encoding via chardet
+    chardet_detected_bytes = None
+    chardet_detected_this_time = None
+    chardet_detected_confidence = None
+    try:
+        chardet_detected_bytes = chardet.detect(raw_bytes)
+        if chardet_detected_bytes:
+            chardet_detected_this_time = chardet_detected_bytes.get('encoding')
+            chardet_detected_confidence = chardet_detected_bytes.get('confidence')
+    except Exception:
+        # chardet not installed or failed
+        pass
+    if chardet_detected_this_time:
+        chardet_detected_this_time = chardet_detected_this_time.strip().lower()
+    #---
+    # Attempt to detect Windows codepage OEM first because your environment is Windows console
+    windows_cp = None
+    windows_cp_encoding = None
+    try:
+        windows_cp = ctypes.windll.kernel32.GetOEMCP()  # e.g. 850
+        windows_cp_encoding = f'cp{windows_cp}'
+    except Exception:
+        # failed to get windows codepage
+        pass
+    if windows_cp_encoding:
+        windows_cp_encoding = windows_cp_encoding.strip().lower()
+    #---
+    # create a list of candidate encodings:
+    candidate_encodings = []
+    # add candicate encodings in order of likelihood
+    if windows_cp_encoding and windows_cp_encoding not in candidate_encodings:
+        windows_cp_encoding = windows_cp_encoding.strip().lower()
+        candidate_encodings.append(windows_cp_encoding)
+    if cn_detected_this_time and cn_detected_this_time not in candidate_encodings:
+        cn_detected_this_time = cn_detected_this_time.strip().lower()
+        candidate_encodings.append(cn_detected_this_time)
+    if chardet_detected_this_time and chardet_detected_this_time not in candidate_encodings:
+        chardet_detected_this_time = chardet_detected_this_time.strip().lower()
+        candidate_encodings.append(chardet_detected_this_time)
+    #
+    # finally, always try these common encodings afterwards (utf-8 with/without BOM, utf-16 variations, windows-1252, latin-1)
+    for enc in ('utf-8-sig', 'utf-8', 'utf-16', 'utf-16le', 'utf-16be', 'cp850', 'cp1252', 'latin-1'):
+        if enc not in candidate_encodings:
+            candidate_encodings.append(enc.strip().lower())
+    #---
+    # Go through the rigmarole of trying fallback encodings in the strict order which I defined
+    mediainfo_encoding_this_time = None
+    decoded_mediainfo_output = None
+    decode_error = None
+    for encoding in candidate_encodings:
+        if not encoding:    # skip any bum entries
+            continue
+        try:
+            decoded_mediainfo_output = raw_bytes.decode(encoding)
+            # success, if it gets to here
+            mediainfo_encoding_this_time = encoding # always put this line after the decode attempt
+            break
+        except UnicodeDecodeError as ude:
+            decode_error = ude
+            print(f"Candidate mediainfo encoding '{encoding}' rejected: UnicodeDecodeError: {decode_error}", file=sys.stderr)
+            # try next candidate
+            continue
+        except LookupError:
+            # unknown encoding name from detection - skip it
+            print(f"Candidate mediainfo encoding '{encoding}' rejected: unknown encoding name", file=sys.stderr)
+            continue
+    #---
+    if mediainfo_encoding_this_time is None:
+        # None of the decodes succeeded strictly; fail fatally with an error message
+        print("Fatal: failed to decode mediainfo output with any tried encoding.", file=sys.stderr)
+        if decode_error:
+            print(f"Last detected UnicodeDecodeError: {decode_error}", file=sys.stderr)
+        sys.exit(ERROR_INVALID_DATA)
+    #---
+    # By this time we have successfully decoded whatever the mediainfo output is
+    print(f"Candidate mediainfo encoding '{mediainfo_encoding_this_time}' accepted.")
+    #print(f"DEBUG: returned output string: {decoded_mediainfo_output}")
+    
+    return mediainfo_encoding_this_time, decoded_mediainfo_output
 
 def add_variable_to_list(key, value, set_cmd_list):
     set_cmd_list.append(f'SET "{key}={value}"')
@@ -86,12 +240,12 @@ if __name__ == "__main__":
     mediainfo_path = os.environ.get(mediainfo_dos_variablename)
     if not mediainfo_path or not os.path.exists(mediainfo_path):
         print(f"Error: MediaInfo path not specified or does not exist for variable {mediainfo_dos_variablename}.")
-        sys.exit(1)
+        sys.exit(ERROR_PATH_NOT_FOUND)
 
     # Check if media file exists
     if not os.path.exists(mediafile):
         print(f"Error: Media file does not exist at path {mediafile}.")
-        sys.exit(1)
+        sys.exit(ERROR_FILE_NOT_FOUND)
 
     set_cmd_list = [ 'REM ---' ]
     set_cmd_list.append(f'DEL /F ".\\tmp_echo_status.log">NUL 2>&1"')
@@ -115,15 +269,43 @@ if __name__ == "__main__":
     # Run MediaInfo command to generate JSON output
     mediainfo_subprocess_command = [mediainfo_path, '--Full', '--Output=JSON', '--BOM', mediafile ]
     #print(f"DEBUG: issuing subprocess command: {mediainfo_subprocess_command}")
+    #
+    #OLD:
     #mediainfo_output = subprocess.check_output(mediainfo_subprocess_command).decode('utf-8', 'ignore')
-    mediainfo_output = subprocess.check_output(mediainfo_subprocess_command).decode('utf-8-sig')
-    #print(f"DEBUG: returned output string: {mediainfo_output}")
+    #mediainfo_output = subprocess.check_output(mediainfo_subprocess_command).decode('utf-8-sig')
+    #mediainfo_output = subprocess.check_output(mediainfo_subprocess_command)
+    #
+    # NEW:
+    # run and capture raw bytes (not text)
+    result = subprocess.run(mediainfo_subprocess_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    # Do this before checking stderr and abort if an error occurred
+    if result.returncode != 0:
+        print(f"Mediainfo exited with code {result.returncode}", file=sys.stderr)
+        if result.stderr:
+            stderr_encoding_this_time, stderr_output = Attempt_to_detect_mediainfo_output_encoding(result.stderr)
+            print(f"Mediainfo stderr: {stderr_output}", file=sys.stderr)
+        sys.exit(ERROR_INVALID_FUNCTION)
+
+    # If mediainfo wrote anything to stderr, log it and abort
+    if result.stderr:
+        # Attempt to detect the stderr encoding, if it returns we're good to go.
+        stderr_bytes = result.stderr
+        stderr_encoding_this_time, stderr_output = Attempt_to_detect_mediainfo_output_encoding(stderr_bytes)
+        if stderr_output.strip():
+            print(f"Mediainfo error, stderr: {stderr_output}", file=sys.stderr)
+        sys.exit(ERROR_INVALID_FUNCTION)
+
+    # When we get to here, no errors so far ...
+    # Attempt to detect the real output encoding, if it returns we're good to go.
+    raw_bytes = result.stdout
+    mediainfo_encoding_this_time, mediainfo_output = Attempt_to_detect_mediainfo_output_encoding(raw_bytes)
 
     # Parse JSON output
     json_data = json.loads(mediainfo_output)
     if json_data is None:
         print(f"Error: No mediainfo JSON data returned from: {mediafile}")
-        sys.exit(1)
+        sys.exit(ERROR_INVALID_DATA)
     if "track" in json_data['media']:
         for sn in [ "General", "Video", "Audio" ]:
             section_name = sn.capitalize()
@@ -132,7 +314,7 @@ if __name__ == "__main__":
             process_section2(section_name.capitalize(), tracks, prefix_X, set_cmd_list)
     else:
         print(f"Error: No mediainfo tracks detected processing {mediafile}\n")
-        #sys.exit(1)
+        #sys.exit(ERROR_INVALID_DATA)
         pass
 
     set_cmd_list.append(f'@ECHO !initial_echo_status!')
@@ -144,8 +326,7 @@ if __name__ == "__main__":
     output_cmd_file = args.output_cmd_file
     if os.path.exists(output_cmd_file):
         os.remove(output_cmd_file)
-    with open(output_cmd_file, 'w') as cmd_file:
-        # Write each item in the list to the file followed by a newline character
+    # We need a BOM for some Windows consumers, use encoding='utf-8-sig'.
+    with open(output_cmd_file, 'w', encoding='utf-8-sig', newline='\r\n') as cmd_file:
         for cmd_item in set_cmd_list:
-            cmd_file.write(cmd_item + '\n')
-
+            cmd_file.write(cmd_item + '\n') # use \n to force the newline as specified in 'newline='
