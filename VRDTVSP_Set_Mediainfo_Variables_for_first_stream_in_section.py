@@ -21,6 +21,8 @@ import pprint
 #from MediaInfoDLL3 import MediaInfo, Stream, Info, InfoOption
 from pymediainfo import MediaInfo
 
+IS_VERBOSE = True
+
 # Windows Error Codes from CLause AI :=
 # Windows System Error Codes (from winerror.h)
 # https://learn.microsoft.com/en-us/windows/win32/debug/system-error-codes
@@ -62,6 +64,7 @@ ERROR_TIMEOUT = 1460                    # This operation returned because the ti
 ERROR_OUTOFMEMORY = 14                  # Not enough storage is available to complete this operation
 ERROR_NOT_ENOUGH_MEMORY = 8             # Not enough memory resources are available to process this command
 ERROR_NO_PROC_SLOTS = 89                # The system cannot start another process at this time
+
 def Attempt_to_detect_mediainfo_output_encoding(raw_bytes):
     """
     We are forced to try various encodings because mediainfo swaps them around willy nilly.
@@ -70,6 +73,10 @@ def Attempt_to_detect_mediainfo_output_encoding(raw_bytes):
     Strict decode attempts are used (no silent replacement) so we know
     the decode was valid. If nothing decodes strictly, returns (None, None).
     """
+    global IS_VERBOSE
+
+    if IS_VERBOSE:
+        print(f"Entered: Attempt_to_detect_mediainfo_output_encoding", flush=True)
     #---
     # Attempt to detect the encoding via charset_normalizer (better for Python3/utf-8-ish data than chardet)
     cn_result = None
@@ -167,20 +174,36 @@ def Attempt_to_detect_mediainfo_output_encoding(raw_bytes):
     # By this time we have successfully decoded whatever the mediainfo output is
     print(f"Candidate mediainfo encoding '{mediainfo_encoding_this_time}' accepted.")
     #print(f"DEBUG: returned output string: {decoded_mediainfo_output}")
-    
+
+    if IS_VERBOSE:
+        print(f"Exiting: Attempt_to_detect_mediainfo_output_encoding", flush=True)
+   
     return mediainfo_encoding_this_time, decoded_mediainfo_output
 
 def add_variable_to_list(key, value, set_cmd_list):
+    global IS_VERBOSE
+    if IS_VERBOSE:
+        print(f"Entered: add_variable_to_list", flush=True)
     set_cmd_list.append(f'SET "{key}={value}"')
+    if IS_VERBOSE:
+        print(f"Exiting: add_variable_to_list", flush=True)
 
 def escape_special_chars(text):
     # Replace special characters with underscores.
+    global IS_VERBOSE
+    if IS_VERBOSE:
+        print(f"Entered: escape_special_chars", flush=True)
     special_chars = r'<>|&"?*()\' @'    # leave : and / alone
+    if IS_VERBOSE:
+        print(f"Exiting: escape_special_chars", flush=True)
     return re.sub(r'[%s]' % re.escape(special_chars), '_', text.strip()).replace('__', '_').replace('__', '_')
 
 def process_track2(track, prefix, set_cmd_list):
     # Create or overwrite environment variables with key/value pairs
     # Because os.environ() ONLY set/get environment variables within the life of the PYTHON process, add to a list
+    global IS_VERBOSE
+    if IS_VERBOSE:
+        print(f"Entered: process_track2", flush=True)
     for key, value in track.items():
         if not isinstance(value, str):
             value = str(value)
@@ -191,22 +214,32 @@ def process_track2(track, prefix, set_cmd_list):
         #debug_value = os.environ[key]
         #print(f"DEBUG: after set_env_variable '{key}' = '{debug_value}'")
         add_variable_to_list(key, value, set_cmd_list)
+    if IS_VERBOSE:
+        print(f"Exiting: process_track2", flush=True)
 
 def process_section2(section_name, tracks, prefix, set_cmd_list):
     # Process elements within the section based on the section name
     # sort the tracks based on their index within the specified codec type 
     # and then select the stream with the lowest index as the first stream for that codec type.
+    global IS_VERBOSE
+    if IS_VERBOSE:
+        print(f"Entered: process_section2", flush=True)
     sorted_tracks = sorted(tracks, key=lambda x: x['StreamKindID'])  # Sort tracks based on StreamKindID
     if len(sorted_tracks) > 0:
         #print(f"Processing first {section_name} track ...")
         process_track2(sorted_tracks[0], prefix, set_cmd_list)  # Choose the first stream with the lowest index
     else:
         print(f"No mediainfo {section_name} track found for {mediafile}")
+    if IS_VERBOSE:
+        print(f"Exiting: process_section2", flush=True)
 
 def process_section(section_name_capitalize, section, prefix, set_cmd_list):
     #print(f"DEBUG: json_data Section {section_name_capitalize}:\nSection Data: {section}\n{objPrettyPrint.pformat(section)}")
     #for key, value in section.items():
     #    print(f"DEBUG: Section {section_name_capitalize} key='{key}' value='{value}'")
+    global IS_VERBOSE
+    if IS_VERBOSE:
+        print(f"Entered: process_section", flush=True)
     for key, value in section.items():
         if not isinstance(value, str):
             value = str(value)
@@ -214,6 +247,14 @@ def process_section(section_name_capitalize, section, prefix, set_cmd_list):
         value = escape_special_chars(value.strip())
         os.environ[key] = value
         add_variable_to_list(key, value, set_cmd_list)
+    if IS_VERBOSE:
+        print(f"Exiting: process_section", flush=True)
+
+def quote_if_needed(arg):
+    global IS_VERBOSE
+    if ' ' in arg or '"' in arg or '\t' in arg:
+        return f'"{arg}"'
+    return arg
 
 if __name__ == "__main__":
     # REM prefix is usually "SRC_", "QSF_", "TARGET"
@@ -223,6 +264,9 @@ if __name__ == "__main__":
     TERMINAL_WIDTH = 250
     objPrettyPrint = pprint.PrettyPrinter(width=TERMINAL_WIDTH, compact=False, sort_dicts=False)    # facilitates formatting 
     #print(f"DEBUG: {objPrettyPrint.pformat(a_list)}")
+
+    if IS_VERBOSE:
+        print(f"Entered: {' '.join(quote_if_needed(arg) for arg in sys.argv)}", flush=True)
 
     parser = argparse.ArgumentParser(description="Parse media file with MediaInfo and create DOS variables.")
     parser.add_argument("--mediainfo_dos_variablename", help="Name of DOS variable for fully qualified MediaInfo path", required=True)
@@ -239,12 +283,12 @@ if __name__ == "__main__":
     # Retrieve the path of MediaInfo from the environment variable and Check if MediaInfo file path exists
     mediainfo_path = os.environ.get(mediainfo_dos_variablename)
     if not mediainfo_path or not os.path.exists(mediainfo_path):
-        print(f"Error: MediaInfo path not specified or does not exist for variable {mediainfo_dos_variablename}.")
+        print(f"Error: MediaInfo path not specified or does not exist for variable {mediainfo_dos_variablename}.", flush=True)
         sys.exit(ERROR_PATH_NOT_FOUND)
 
     # Check if media file exists
     if not os.path.exists(mediafile):
-        print(f"Error: Media file does not exist at path {mediafile}.")
+        print(f"Error: Media file does not exist at path {mediafile}.", flush=True)
         sys.exit(ERROR_FILE_NOT_FOUND)
 
     set_cmd_list = [ 'REM ---' ]
@@ -277,14 +321,18 @@ if __name__ == "__main__":
     #
     # NEW:
     # run and capture raw bytes (not text)
+    if IS_VERBOSE:
+        print(f"subprocess.run calling: {objPrettyPrint.pformat(mediainfo_subprocess_command)}", flush=True)
     result = subprocess.run(mediainfo_subprocess_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if IS_VERBOSE:
+        print(f"subprocess.run returned from: {objPrettyPrint.pformat(mediainfo_subprocess_command)}", flush=True)
 
     # Do this before checking stderr and abort if an error occurred
     if result.returncode != 0:
-        print(f"Mediainfo exited with code {result.returncode}", file=sys.stderr)
+        print(f"Mediainfo exited with code {result.returncode}", file=sys.stderr, flush=True)
         if result.stderr:
             stderr_encoding_this_time, stderr_output = Attempt_to_detect_mediainfo_output_encoding(result.stderr)
-            print(f"Mediainfo stderr: {stderr_output}", file=sys.stderr)
+            print(f"Mediainfo stderr: {stderr_output}", file=sys.stderr, flush=True)
         sys.exit(ERROR_INVALID_FUNCTION)
 
     # If mediainfo wrote anything to stderr, log it and abort
@@ -293,7 +341,7 @@ if __name__ == "__main__":
         stderr_bytes = result.stderr
         stderr_encoding_this_time, stderr_output = Attempt_to_detect_mediainfo_output_encoding(stderr_bytes)
         if stderr_output.strip():
-            print(f"Mediainfo error, stderr: {stderr_output}", file=sys.stderr)
+            print(f"Mediainfo error, stderr: {stderr_output}", file=sys.stderr, flush=True)
         sys.exit(ERROR_INVALID_FUNCTION)
 
     # When we get to here, no errors so far ...
@@ -302,9 +350,11 @@ if __name__ == "__main__":
     mediainfo_encoding_this_time, mediainfo_output = Attempt_to_detect_mediainfo_output_encoding(raw_bytes)
 
     # Parse JSON output
+    if IS_VERBOSE:
+        print(f"Start Parsing JSON result of mediainfo", flush=True)
     json_data = json.loads(mediainfo_output)
     if json_data is None:
-        print(f"Error: No mediainfo JSON data returned from: {mediafile}")
+        print(f"Error: No mediainfo JSON data returned from: {mediafile}", flush=True)
         sys.exit(ERROR_INVALID_DATA)
     if "track" in json_data['media']:
         for sn in [ "General", "Video", "Audio" ]:
@@ -313,14 +363,16 @@ if __name__ == "__main__":
             tracks = [t for t in json_data['media']['track'] if "@type" in t and t["@type"].lower() == section_name.lower()]
             process_section2(section_name.capitalize(), tracks, prefix_X, set_cmd_list)
     else:
-        print(f"Error: No mediainfo tracks detected processing {mediafile}\n")
+        print(f"Error: No mediainfo tracks detected processing {mediafile}\n", flush=True)
         #sys.exit(ERROR_INVALID_DATA)
         pass
+    if IS_VERBOSE:
+        print(f"End Parsing JSON result of mediainfo", flush=True)
 
     set_cmd_list.append(f'@ECHO !initial_echo_status!')
     set_cmd_list.append(f'set "initial_echo_status="')
     set_cmd_list.append(f'goto :eof')
-    #print(f"DEBUG: set_cmd_list=\n{objPrettyPrint.pformat(set_cmd_list)}")
+    #print(f"DEBUG: set_cmd_list=\n{objPrettyPrint.pformat(set_cmd_list)}", flush=True)
 
     # Open the cmd file for writing in overwrite mode
     output_cmd_file = args.output_cmd_file
@@ -330,3 +382,8 @@ if __name__ == "__main__":
     with open(output_cmd_file, 'w', encoding='utf-8-sig', newline='\r\n') as cmd_file:
         for cmd_item in set_cmd_list:
             cmd_file.write(cmd_item + '\n') # use \n to force the newline as specified in 'newline='
+            if IS_VERBOSE:
+                print(f"Wrote line to .bat file: {cmd_item}", flush=True)
+
+    if IS_VERBOSE:
+        print(f"Exiting: {' '.join(quote_if_needed(arg) for arg in sys.argv)}", flush=True)
