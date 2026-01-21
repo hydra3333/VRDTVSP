@@ -44,7 +44,7 @@ ECHO !DATE! !TIME! -- Finish Header --------------------------------------------
 
 ECHO !DATE! !TIME! -- Start Prepare the log file --------------------------------------------------------------------- >> "!vrdlog!" 2>&1
 SET vrdlog=!root!%~n0-vrdlog-!header!.log
-REM ECHO !DATE! !TIME! DEL /F "!vrdlog!"
+ECHO !DATE! !TIME! DEL /F "!vrdlog!"
 DEL /F "!vrdlog!" >NUL 2>&1
 ECHO !DATE! !TIME! -- Finish Prepare the log file --------------------------------------------------------------------- >> "!vrdlog!" 2>&1
 
@@ -101,30 +101,37 @@ ECHO !DATE! !TIME! --------- Finish Setup Folders --------- >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! --------- Start setup LOG file and TEMP filenames ---------------------------- >> "!vrdlog!" 2>&1
 REM base the filenames on the running script filename using %~n0
 set PSlog=!source_TS_Folder!%~n0-!header!-PSlog.log
+ECHO !DATE! !TIME! DEL /F "!PSlog!"
 ECHO !DATE! !TIME! DEL /F "!PSlog!" >> "!vrdlog!" 2>&1
 DEL /F "!PSlog!" >> "!vrdlog!" 2>&1
 
 SET tempfile=!scratch_Folder!%~n0-!header!-temp.txt
+ECHO !DATE! !TIME! DEL /F "!tempfile!" >> "!vrdlog!"
 ECHO !DATE! !TIME! DEL /F "!tempfile!" >> "!vrdlog!" 2>&1
 DEL /F "!tempfile!" >> "!vrdlog!" 2>&1
 
 SET tempfile_stderr=!scratch_Folder!%~n0-!header!-temp_stderr.txt
+ECHO !DATE! !TIME! DEL /F "!tempfile!"
 ECHO !DATE! !TIME! DEL /F "!tempfile!" >> "!vrdlog!" 2>&1
 DEL /F "!tempfile!" >> "!vrdlog!" 2>&1
 
 set "temp_cmd_file=!temp_Folder!temp_cmd_file.bat"
+ECHO !DATE! !TIME! DEL /F "!temp_cmd_file!"
 ECHO !DATE! !TIME! DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 
 set "temp_cmd_file_echo_status=!temp_Folder!temp_cmd_file_echo_status.txt"
+ECHO !DATE! !TIME! DEL /F "!temp_cmd_file_echo_status!"
 ECHO !DATE! !TIME! DEL /F "!temp_cmd_file_echo_status!" >> "!vrdlog!" 2>&1
 DEL /F "!temp_cmd_file_echo_status!" >> "!vrdlog!" 2>&1
 
 set "vrd5_logfiles=G:\HDTV\VideoReDo-5_*.Log"
+ECHO DEL /F "!vrd5_logfiles!"
 ECHO DEL /F "!vrd5_logfiles!" >> "!vrdlog!" 2>&1
 DEL /F "!vrd5_logfiles!" >> "!vrdlog!" 2>&1
 
 set "vrd6_logfiles=G:\HDTV\VideoReDo6_*.Log"
+ECHO DEL /F "!vrd6_logfiles!"
 ECHO DEL /F "!vrd6_logfiles!" >> "!vrdlog!" 2>&1
 DEL /F "!vrd6_logfiles!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! --------- Finish setup LOG file and TEMP filenames ---------------------------- >> "!vrdlog!" 2>&1
@@ -403,6 +410,8 @@ ECHO !DATE! !TIME! ********** Start ALLOW PC TO GO TO SLEEP AGAIN ********** >> 
 REM "C:\000-PStools\pskill.exe" -t -nobanner "%iFile%" >> "!vrdlog!" 2>&1
 ECHO taskkill /t /f /im "%iFile%" >> "!vrdlog!" 2>&1
 taskkill /t /f /im "%iFile%" >> "!vrdlog!" 2>&1
+echo DEL /F "!source_TS_Folder!!iFile!"
+echo DEL /F "!source_TS_Folder!!iFile!" >> "!vrdlog!" 2>&1
 DEL /F "!source_TS_Folder!!iFile!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ********** Finish ALLOW PC TO GO TO SLEEP AGAIN ********** >> "!vrdlog!" 2>&1
 
@@ -1220,10 +1229,13 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	REM TYPE "!DGI_file!" >> "!vrdlog!" 2>&1
 	REM ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
 	REM ECHO ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
+	ECHO DEL /F "!DGI_autolog!"
 	ECHO DEL /F "!DGI_autolog!" >> "!vrdlog!" 2>&1
 	DEL /F "!DGI_autolog!" >> "!vrdlog!" 2>&1
 	ECHO ======================================================  Finish the DGIndexNV ====================================================== >> "!vrdlog!" 2>&1
 	ECHO ======================================================  Start Create a VPY_file ====================================================== >> "!vrdlog!" 2>&1
+	ECHO DEL /F "!VPY_file!"
+	ECHO DEL /F "!VPY_file!" >> "!vrdlog!" 2>&1
 	DEL /F "!VPY_file!">NUL 2>&1
 	ECHO import vapoursynth as vs		# this allows use of constants eg vs.YUV420P8 >> "!VPY_file!" 2>&1
 	ECHO from vapoursynth import core	# actual vapoursynth core >> "!VPY_file!" 2>&1
@@ -1477,6 +1489,8 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	ECHO FFMPEG_vspipe_cmd='!FFMPEG_vspipe_cmd!' >> "!vrdlog!" 2>&1
 	ECHO FFMPEG_cmd='!FFMPEG_cmd!' >> "!vrdlog!" 2>&1
 	REM
+	ECHO DEL /F "!temp_cmd_file!"
+	ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 	DEL /F "!temp_cmd_file!">NUL 2>&1
 	ECHO REM Initial echo status will be in: "!temp_cmd_file_echo_status!">>"!temp_cmd_file!" 2>&1
 	ECHO set "initial_echo_status=">>"!temp_cmd_file!" 2>&1
@@ -1492,6 +1506,8 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	ECHO goto :eof>>"!temp_cmd_file!" 2>&1
 	REM
 	ECHO !DATE! !TIME! ****************************** >> "!vrdlog!" 2>&1
+	ECHO  DEL /F "!temp_cmd_file_echo_status!"
+	ECHO  DEL /F "!temp_cmd_file_echo_status!" >> "!vrdlog!" 2>&1
 	DEL /F "!temp_cmd_file_echo_status!">NUL 2>&1
 	ECHO ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
 	ECHO TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
@@ -1499,7 +1515,11 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 	ECHO ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
 	ECHO CALL "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 	CALL "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+	ECHO DEL /F "!temp_cmd_file!"
+	ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 	DEL /F "!temp_cmd_file!">NUL 2>&1
+	ECHO DEL /F "!temp_cmd_file_echo_status!"
+	ECHO DEL /F "!temp_cmd_file_echo_status!" >> "!vrdlog!" 2>&1
 	DEL /F "!temp_cmd_file_echo_status!">NUL 2>&1
 	ECHO !DATE! !TIME! ****************************** >> "!vrdlog!" 2>&1
 	IF /I "!EL!" NEQ "0" (
@@ -1547,6 +1567,8 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -c:a libfdk_aac -b:a 256k -ar 48000"
 			set "FFMPEG_cmd_hevc=!FFMPEG_cmd_hevc! -y "!Target_File_hevc!""
 			REM
+			ECHO DEL /F "!temp_cmd_file!"
+			ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 			DEL /F "!temp_cmd_file!">NUL 2>&1
 			ECHO REM Initial echo status will be in: "!temp_cmd_file_echo_status!">>"!temp_cmd_file!" 2>&1
 			ECHO set "initial_echo_status=">>"!temp_cmd_file!" 2>&1
@@ -1562,6 +1584,8 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 			ECHO goto :eof>>"!temp_cmd_file!" 2>&1
 			REM
 			ECHO !DATE! !TIME! ****************************** >> "!vrdlog!" 2>&1
+			ECHO DEL /F "!temp_cmd_file_echo_status!"
+			ECHO DEL /F "!temp_cmd_file_echo_status!" >> "!vrdlog!" 2>&1
 			DEL /F "!temp_cmd_file_echo_status!">NUL 2>&1
 			ECHO ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
 			ECHO TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
@@ -1569,7 +1593,11 @@ IF QSF_calc_Video_Is_Progessive_AVC == "True" (
 			ECHO ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
 			ECHO CALL "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 			CALL "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+			ECHO DEL /F "!temp_cmd_file!"
+			ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 			DEL /F "!temp_cmd_file!">NUL 2>&1
+			ECHO DEL /F "!temp_cmd_file_echo_status!"
+			ECHO DEL /F "!temp_cmd_file_echo_status!" >> "!vrdlog!" 2>&1
 			DEL /F "!temp_cmd_file_echo_status!">NUL 2>&1
 			ECHO !DATE! !TIME! ****************************** >> "!vrdlog!" 2>&1
 			IF /I "!EL!" NEQ "0" (
@@ -1605,16 +1633,22 @@ MOVE /Y "%~f1" "!done_TS_Folder!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ********** Finish Moving "%~f1" to "!done_TS_Folder!" >> "!vrdlog!" 2>&1
 
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+ECHO DEL /F !scratch_Folder!*.tmp
 ECHO DEL /F !scratch_Folder!*.tmp >> "!vrdlog!" 2>&1
 DEL /F !scratch_Folder!*.tmp >> "!vrdlog!" 2>&1
+ECHO DEL /F "!QSF_file!"
 ECHO DEL /F "!QSF_file!" >> "!vrdlog!" 2>&1
 DEL /F "!QSF_file!" >> "!vrdlog!" 2>&1
+ECHO DEL /F "!VPY_file!"
 ECHO DEL /F "!VPY_file!" >> "!vrdlog!" 2>&1
 DEL /F "!VPY_file!" >> "!vrdlog!" 2>&1
+ECHO DEL /F "!DGI_file!"
 ECHO DEL /F "!DGI_file!" >> "!vrdlog!" 2>&1
 DEL /F "!DGI_file!" >> "!vrdlog!" 2>&1
+ECHO DEL /F "!DGI_autolog!"
 ECHO DEL /F "!DGI_autolog!" >> "!vrdlog!" 2>&1
 DEL /F "!DGI_autolog!" >> "!vrdlog!" 2>&1
+ECHO DEL /F "!temp_cmd_file!"
 ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 
@@ -1724,6 +1758,7 @@ set "check_QSF_failed="
 
 IF /I "!do_pre_QSF_process!" == "True" (
 	ECHO !DATE! !TIME! do_pre_QSF_process= "!do_pre_QSF_process!", Performing pre_QSF ffmpeg processing >> "!vrdlog!" 2>&1
+	ECHO DEL /F "!pre_qsf_filename!"
 	ECHO DEL /F "!pre_qsf_filename!"  >> "!vrdlog!" 2>&1
 	DEL /F "!pre_qsf_filename!"  >> "!vrdlog!" 2>&1
 	REM run the pre3-QSF ffmpeg copy
@@ -1792,12 +1827,16 @@ ECHO !DATE! !TIME! _vrd_version_primary='!_vrd_version_primary!' _vrd_version_fa
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 
 REM Delete the QSF target and relevant log files before doing the QSF
+ECHO DEL /F "!qsf_filename!"
 ECHO DEL /F "!qsf_filename!"  >> "!vrdlog!" 2>&1
 DEL /F "!qsf_filename!"  >> "!vrdlog!" 2>&1
+ECHO DEL /F "!vrd5_logfiles!"
 ECHO DEL /F "!vrd5_logfiles!" >> "!vrdlog!" 2>&1
 DEL /F "!vrd5_logfiles!" >> "!vrdlog!" 2>&1
+ECHO DEL /F "!vrd6_logfiles!"
 ECHO DEL /F "!vrd6_logfiles!" >> "!vrdlog!" 2>&1
 DEL /F "!vrd6_logfiles!" >> "!vrdlog!" 2>&1
+ECHO DEL /F "!temp_cmd_file!"
 ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 
@@ -1836,6 +1875,7 @@ TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 ECHO ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
 ECHO call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+ECHO DEL /F "!temp_cmd_file!"
 ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ****************************** >> "!vrdlog!" 2>&1
@@ -1852,6 +1892,7 @@ REM Reset VRD QSF defaults back to the original DEFAULT version. Note _vrd_versi
 CALL :set_vrd_qsf_paths "!DEFAULT_vrd_version_primary!"
 
 IF /I "!do_pre_QSF_process!" == "True" (
+	ECHO DEL /F "!pre_qsf_filename!"
 	ECHO DEL /F "!pre_qsf_filename!"  >> "!vrdlog!" 2>&1
 	DEL /F "!pre_qsf_filename!"  >> "!vrdlog!" 2>&1
 )
@@ -1906,8 +1947,10 @@ REM Preset the error flag to nothing
 set "check_QSF_failed="
 
 REM Delete the pre_QSF target and relevant log files before doing the non-QSF ffmpeg copy
+ECHO DEL /F "!pre_qsf_filename!"
 ECHO DEL /F "!pre_qsf_filename!"  >> "!vrdlog!" 2>&1
 DEL /F "!pre_qsf_filename!"  >> "!vrdlog!" 2>&1
+ECHO DEL /F "!temp_cmd_file!"
 ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 
@@ -2037,12 +2080,16 @@ ECHO !DATE! !TIME! _vrd_version_primary='!_vrd_version_primary!' _vrd_version_fa
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
 
 REM Delete the QSF target and relevant log files before doing the non-QSF
+ECHO DEL /F "!qsf_filename!"
 ECHO DEL /F "!qsf_filename!"  >> "!vrdlog!" 2>&1
 DEL /F "!qsf_filename!"  >> "!vrdlog!" 2>&1
+ECHO DEL /F "!vrd5_logfiles!"
 ECHO DEL /F "!vrd5_logfiles!" >> "!vrdlog!" 2>&1
 DEL /F "!vrd5_logfiles!" >> "!vrdlog!" 2>&1
+ECHO DEL /F "!vrd6_logfiles!"
 ECHO DEL /F "!vrd6_logfiles!" >> "!vrdlog!" 2>&1
 DEL /F "!vrd6_logfiles!" >> "!vrdlog!" 2>&1
+ECHO DEL /F "!temp_cmd_file!"
 ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 
@@ -2158,6 +2205,7 @@ ECHO MOVE /Y "%~f1" "!failed_conversion_TS_Folder!" >> "!vrdlog!" 2>&1
 MOVE /Y "%~f1" "!failed_conversion_TS_Folder!" >> "!vrdlog!" 2>&1
 REM remove junk files leftover from QSF if it timed out or something
 ECHO !DATE! !TIME! >> "!vrdlog!" 2>&1
+ECHO DEL /F !scratch_Folder!*.tmp
 ECHO DEL /F !scratch_Folder!*.tmp >> "!vrdlog!" 2>&1
 DEL /F !scratch_Folder!*.tmp >> "!vrdlog!" 2>&1
 
@@ -2248,6 +2296,7 @@ set "derived_prefix_FF=!current_prefix!FF_"
 set "derived_prefix_MI=!current_prefix!MI_"
 REM ---
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+ECHO DEL /F "!temp_cmd_file!"
 ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 REM ECHO FOR /F "tokens=1,* delims==" %%G IN ('SET !derived_prefix_FF!') DO (set "%%G=") >> "!vrdlog!" 2>&1
@@ -2269,10 +2318,12 @@ REM TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 REM ECHO ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
 ECHO call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+ECHO DEL /F "!temp_cmd_file!"
 ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ****************************** >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ====================================================================================================================================================== >> "!vrdlog!" 2>&1
+ECHO DEL /F "!temp_cmd_file!"
 ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 REM ECHO FOR /F "tokens=1,* delims==" %%G IN ('SET !derived_prefix_MI!') DO (set "%%G=") >> "!vrdlog!" 2>&1
@@ -2294,6 +2345,7 @@ REM TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 REM ECHO ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
 ECHO call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+ECHO DEL /F "!temp_cmd_file!"
 ECHO DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 DEL /F "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ****************************** >> "!vrdlog!" 2>&1
@@ -2747,6 +2799,8 @@ for /f %%A in ('cscript //nologo "!eval_formula_vbs_filename!" "!eval_formula!"'
     set "!eval_variable_name!=%%A"
     set "eval_single_number_result=%%A"
 )
+ECHO DEL /F "!eval_formula_vbs_filename!"
+ECHO DEL /F "!eval_formula_vbs_filename!" >> "!vrdlog!" 2>&1
 DEL /F "!eval_formula_vbs_filename!" >NUL 2>&1
 REM ECHO "eval_formula_vbs_filename=!eval_formula_vbs_filename!"
 REM ECHO "eval_variable_name=!eval_variable_name! eval_formula=!eval_formula! eval_single_number_result=!eval_single_number_result!"
@@ -2775,6 +2829,8 @@ set "eval_single_number_result="
 set /p eval_single_number_result=<"!eval_result_filename!"
 set "!eval_variable_name!=!eval_single_number_result!"
 set "eval_single_number_result="
+ECHO DEL /F "!eval_result_filename!"
+ECHO DEL /F "!eval_result_filename!" >> "!vrdlog!" 2>&1
 DEL /F "!eval_result_filename!" >NUL 2>&1
 goto :eof
 
