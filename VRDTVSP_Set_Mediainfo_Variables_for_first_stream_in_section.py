@@ -23,6 +23,8 @@ from pymediainfo import MediaInfo
 
 #IS_VERBOSE = True
 IS_VERBOSE = False
+#DEBUG_MODE = True
+DEBUG_MODE = False
 
 # Windows Error Codes from CLause AI :=
 # Windows System Error Codes (from winerror.h)
@@ -66,6 +68,7 @@ ERROR_OUTOFMEMORY = 14                  # Not enough storage is available to com
 ERROR_NOT_ENOUGH_MEMORY = 8             # Not enough memory resources are available to process this command
 ERROR_NO_PROC_SLOTS = 89                # The system cannot start another process at this time
 
+
 def Attempt_to_detect_mediainfo_output_encoding(raw_bytes):
     """
     We are forced to try various encodings because mediainfo swaps them around willy nilly.
@@ -75,9 +78,10 @@ def Attempt_to_detect_mediainfo_output_encoding(raw_bytes):
     the decode was valid. If nothing decodes strictly, returns (None, None).
     """
     global IS_VERBOSE
+    global DEBUG_MODE
 
-    if IS_VERBOSE:
-        print(f"Entered: Attempt_to_detect_mediainfo_output_encoding", flush=True)
+    if DEBUG_MODE or IS_VERBOSE:
+        print(f"DEBUG: Entered: Attempt_to_detect_mediainfo_output_encoding", flush=True)
     #---
     # Attempt to detect the encoding via charset_normalizer (better for Python3/utf-8-ish data than chardet)
     cn_result = None
@@ -92,6 +96,14 @@ def Attempt_to_detect_mediainfo_output_encoding(raw_bytes):
                 cn_detected_this_time = cn_detected_bytes.encoding
                 # charset_normalizer has 'percent' idea but not a single confidence number; use None or estimated
                 cn_detected_confidence = getattr(cn_detected_bytes, "confidence", None)
+                if DEBUG_MODE or IS_VERBOSE:
+                    print(f"DEBUG: Attempt_to_detect_mediainfo_output_encoding: detected bytes, charset_normalizer: cn_detected_this_time='{cn_detected_this_time}', cn_detected_confidence={cn_detected_confidence}", flush=True)
+            else:
+                if DEBUG_MODE or IS_VERBOSE:
+                    print(f"DEBUG: Attempt_to_detect_mediainfo_output_encoding: no detected bytes", flush=True)
+        else:
+            if DEBUG_MODE or IS_VERBOSE:
+                print(f"DEBUG: Attempt_to_detect_mediainfo_output_encoding: no result detected", flush=True)
     except Exception:
         # charset_normalizer not installed or failed
         pass
@@ -107,6 +119,11 @@ def Attempt_to_detect_mediainfo_output_encoding(raw_bytes):
         if chardet_detected_bytes:
             chardet_detected_this_time = chardet_detected_bytes.get('encoding')
             chardet_detected_confidence = chardet_detected_bytes.get('confidence')
+            if DEBUG_MODE or IS_VERBOSE:
+                print(f"DEBUG: Attempt_to_detect_mediainfo_output_encoding: chardet: chardet_detected_this_time='{chardet_detected_this_time}', chardet_detected_confidence={chardet_detected_confidence}", flush=True)
+        else:
+            if DEBUG_MODE or IS_VERBOSE:
+                print(f"DEBUG: Attempt_to_detect_mediainfo_output_encoding: chardet not detected", flush=True)
     except Exception:
         # chardet not installed or failed
         pass
@@ -119,6 +136,8 @@ def Attempt_to_detect_mediainfo_output_encoding(raw_bytes):
     try:
         windows_cp = ctypes.windll.kernel32.GetOEMCP()  # e.g. 850
         windows_cp_encoding = f'cp{windows_cp}'
+        if DEBUG_MODE or IS_VERBOSE:
+            print(f"DEBUG: Attempt_to_detect_mediainfo_output_encoding: ctypes.windll.kernel32.GetOEMCP: windows_cp_encoding='{windows_cp_encoding}'", flush=True)
     except Exception:
         # failed to get windows codepage
         pass
@@ -127,13 +146,23 @@ def Attempt_to_detect_mediainfo_output_encoding(raw_bytes):
     #---
     # create a list of candidate encodings:
     candidate_encodings = []
-    # add candicate encodings in order of likelihood
+    # add candidate encodings in order of likelihood
+    # PRIORITY 1: If chardet detected ANY encoding with very high confidence (>= 0.95), prioritize it first
+    # Chardet with 95%+ confidence is highly reliable and should be trusted
+    if (chardet_detected_this_time and 
+        chardet_detected_confidence and chardet_detected_confidence >= 0.95):
+        candidate_encodings.append(chardet_detected_this_time)
+        if DEBUG_MODE or IS_VERBOSE:
+            print(f"DEBUG: Attempt_to_detect_mediainfo_output_encoding: Prioritizing chardet detection '{chardet_detected_this_time}' due to very high confidence ({chardet_detected_confidence})", flush=True)
+    # PRIORITY 2: Windows codepage (but not if we already added it from chardet above)
     if windows_cp_encoding and windows_cp_encoding not in candidate_encodings:
         windows_cp_encoding = windows_cp_encoding.strip().lower()
         candidate_encodings.append(windows_cp_encoding)
+    # PRIORITY 3: charset_normalizer detection
     if cn_detected_this_time and cn_detected_this_time not in candidate_encodings:
         cn_detected_this_time = cn_detected_this_time.strip().lower()
         candidate_encodings.append(cn_detected_this_time)
+    # PRIORITY 4: chardet detection (if not already added in PRIORITY 1)
     if chardet_detected_this_time and chardet_detected_this_time not in candidate_encodings:
         chardet_detected_this_time = chardet_detected_this_time.strip().lower()
         candidate_encodings.append(chardet_detected_this_time)
@@ -151,9 +180,13 @@ def Attempt_to_detect_mediainfo_output_encoding(raw_bytes):
         if not encoding:    # skip any bum entries
             continue
         try:
+            if DEBUG_MODE or IS_VERBOSE:
+                print(f"DEBUG: Attempt_to_detect_mediainfo_output_encoding: CHECKING ENCODING CANDIDATE encoding='{encoding}'", flush=True)
             decoded_mediainfo_output = raw_bytes.decode(encoding)
             # success, if it gets to here
             mediainfo_encoding_this_time = encoding # always put this line after the decode attempt
+            if DEBUG_MODE or IS_VERBOSE:
+                print(f"DEBUG: Attempt_to_detect_mediainfo_output_encoding: SUCCESSFULLY detected mediainfo_encoding_this_time='{mediainfo_encoding_this_time}'", flush=True)
             break
         except UnicodeDecodeError as ude:
             decode_error = ude
@@ -173,74 +206,80 @@ def Attempt_to_detect_mediainfo_output_encoding(raw_bytes):
         sys.exit(ERROR_INVALID_DATA)
     #---
     # By this time we have successfully decoded whatever the mediainfo output is
-    print(f"Candidate mediainfo encoding '{mediainfo_encoding_this_time}' accepted.")
-    #print(f"DEBUG: returned output string: {decoded_mediainfo_output}")
-
-    if IS_VERBOSE:
-        print(f"Exiting: Attempt_to_detect_mediainfo_output_encoding", flush=True)
-   
+    print(f"Candidate mediainfo encoding '{mediainfo_encoding_this_time}' chosen.")
+    if DEBUG_MODE or IS_VERBOSE:
+        print(f"DEBUG: Attempt_to_detect_mediainfo_output_encoding: Exiting with mediainfo_encoding_this_time='{mediainfo_encoding_this_time}', decoded_mediainfo_output='{decoded_mediainfo_output}'", flush=True)
     return mediainfo_encoding_this_time, decoded_mediainfo_output
 
 def add_variable_to_list(key, value, set_cmd_list):
     global IS_VERBOSE
-    if IS_VERBOSE:
-        print(f"Entered: add_variable_to_list", flush=True)
+    global DEBUG_MODE
+    if DEBUG_MODE or IS_VERBOSE:
+        print(f"DEBUG: Entered: add_variable_to_list", flush=True)
     set_cmd_list.append(f'SET "{key}={value}"')
-    if IS_VERBOSE:
-        print(f"Exiting: add_variable_to_list", flush=True)
+    if DEBUG_MODE or IS_VERBOSE:
+        print(f"DEBUG: Exiting: add_variable_to_list", flush=True)
 
 def escape_special_chars(text):
     # Replace special characters with underscores.
     global IS_VERBOSE
-    if IS_VERBOSE:
-        print(f"Entered: escape_special_chars", flush=True)
+    global DEBUG_MODE
+    #if DEBUG_MODE or IS_VERBOSE:
+    #    print(f"DEBUG: Entered: escape_special_chars", flush=True)
     special_chars = r'<>|&"?*()\' @'    # leave : and / alone
-    if IS_VERBOSE:
-        print(f"Exiting: escape_special_chars", flush=True)
+    #if DEBUG_MODE or IS_VERBOSE:
+    #    print(f"DEBUG: Exiting: escape_special_chars", flush=True)
     return re.sub(r'[%s]' % re.escape(special_chars), '_', text.strip()).replace('__', '_').replace('__', '_')
 
 def process_track2(track, prefix, set_cmd_list):
     # Create or overwrite environment variables with key/value pairs
     # Because os.environ() ONLY set/get environment variables within the life of the PYTHON process, add to a list
     global IS_VERBOSE
-    if IS_VERBOSE:
-        print(f"Entered: process_track2", flush=True)
+    global DEBUG_MODE
+    if DEBUG_MODE or IS_VERBOSE:
+        print(f"DEBUG: Entered: process_track2", flush=True)
     for key, value in track.items():
         if not isinstance(value, str):
             value = str(value)
         key = escape_special_chars(prefix + key)
         value = escape_special_chars(value.strip())
-        #print(f"DEBUG: do set_env_variable '{key}'] = '{value}'")
+        if DEBUG_MODE or IS_VERBOSE:
+            print(f"DEBUG: do set_env_variable '{key}'] = '{value}'")
         os.environ[key] = value    # Because os.environ() ONLY set/get environment variables within the life of the PYTHON process
-        #debug_value = os.environ[key]
-        #print(f"DEBUG: after set_env_variable '{key}' = '{debug_value}'")
+        if DEBUG_MODE or IS_VERBOSE:
+            debug_value = os.environ[key]
+            print(f"DEBUG: after set_env_variable '{key}' = '{debug_value}'")
         add_variable_to_list(key, value, set_cmd_list)
-    if IS_VERBOSE:
-        print(f"Exiting: process_track2", flush=True)
+    if DEBUG_MODE or IS_VERBOSE:
+        print(f"DEBUG: Exiting: process_track2", flush=True)
 
 def process_section2(section_name, tracks, prefix, set_cmd_list):
     # Process elements within the section based on the section name
     # sort the tracks based on their index within the specified codec type 
     # and then select the stream with the lowest index as the first stream for that codec type.
     global IS_VERBOSE
-    if IS_VERBOSE:
-        print(f"Entered: process_section2", flush=True)
+    global DEBUG_MODE
+    if DEBUG_MODE or IS_VERBOSE:
+        print(f"DEBUG: Entered: process_section2", flush=True)
     sorted_tracks = sorted(tracks, key=lambda x: x['StreamKindID'])  # Sort tracks based on StreamKindID
     if len(sorted_tracks) > 0:
-        #print(f"Processing first {section_name} track ...")
+        if DEBUG_MODE or IS_VERBOSE:
+            print(f"DEBUG: Processing first {section_name} track ...")
         process_track2(sorted_tracks[0], prefix, set_cmd_list)  # Choose the first stream with the lowest index
     else:
         print(f"No mediainfo {section_name} track found for {mediafile}")
-    if IS_VERBOSE:
-        print(f"Exiting: process_section2", flush=True)
+    if DEBUG_MODE or IS_VERBOSE:
+        print(f"DEBUG: Exiting: process_section2", flush=True)
 
 def process_section(section_name_capitalize, section, prefix, set_cmd_list):
-    #print(f"DEBUG: json_data Section {section_name_capitalize}:\nSection Data: {section}\n{objPrettyPrint.pformat(section)}")
-    #for key, value in section.items():
-    #    print(f"DEBUG: Section {section_name_capitalize} key='{key}' value='{value}'")
     global IS_VERBOSE
-    if IS_VERBOSE:
-        print(f"Entered: process_section", flush=True)
+    global DEBUG_MODE
+    if DEBUG_MODE or IS_VERBOSE:
+        print(f"DEBUG: Entered: process_section", flush=True)
+    if DEBUG_MODE or IS_VERBOSE:
+        print(f"DEBUG: json_data Section {section_name_capitalize}:\nSection Data: {section}\n{objPrettyPrint.pformat(section)}")
+        for key, value in section.items():
+            print(f"   DEBUG: Section {section_name_capitalize} key='{key}' value='{value}'")
     for key, value in section.items():
         if not isinstance(value, str):
             value = str(value)
@@ -248,11 +287,12 @@ def process_section(section_name_capitalize, section, prefix, set_cmd_list):
         value = escape_special_chars(value.strip())
         os.environ[key] = value
         add_variable_to_list(key, value, set_cmd_list)
-    if IS_VERBOSE:
-        print(f"Exiting: process_section", flush=True)
+    if DEBUG_MODE or IS_VERBOSE:
+        print(f"DEBUG: Exiting: process_section", flush=True)
 
 def quote_if_needed(arg):
     global IS_VERBOSE
+    global DEBUG_MODE
     if ' ' in arg or '"' in arg or '\t' in arg:
         return f'"{arg}"'
     return arg
@@ -262,12 +302,17 @@ if __name__ == "__main__":
     # python.exe --mediainfo_dos_variablename "mediainfo_dos_variablename" --mediafile "!source_mediafile!" --prefix "!prefix!"
     # set !prefix!
 
+    if DEBUG_MODE or IS_VERBOSE:
+        print(f"DEBUG: Started program ...")
+        IS_VERBOSE = True
+        DEBUG_MODE = True
+
     TERMINAL_WIDTH = 250
     objPrettyPrint = pprint.PrettyPrinter(width=TERMINAL_WIDTH, compact=False, sort_dicts=False)    # facilitates formatting 
-    #print(f"DEBUG: {objPrettyPrint.pformat(a_list)}")
+    #example: print(f"DEBUG: {objPrettyPrint.pformat(a_list)}")
 
-    if IS_VERBOSE:
-        print(f"Entered: {' '.join(quote_if_needed(arg) for arg in sys.argv)}", flush=True)
+    if DEBUG_MODE or IS_VERBOSE:
+        print(f"DEBUG: Entered: {' '.join(quote_if_needed(arg) for arg in sys.argv)}", flush=True)
 
     parser = argparse.ArgumentParser(description="Parse media file with MediaInfo and create DOS variables.")
     parser.add_argument("--mediainfo_dos_variablename", help="Name of DOS variable for fully qualified MediaInfo path", required=True)
@@ -295,14 +340,18 @@ if __name__ == "__main__":
     set_cmd_list = [ 'REM ---' ]
     set_cmd_list.append(f'DEL /F ".\\tmp_echo_status.log">NUL 2>&1"')
     set_cmd_list.append(f'@ECHO>".\\tmp_echo_status.log" 2>&1')
-    #set_cmd_list.append(f'TYPE ".\\tmp_echo_status.log"')
+    if DEBUG_MODE or IS_VERBOSE:
+        set_cmd_list.append(f'TYPE ".\\tmp_echo_status.log"')
     set_cmd_list.append(f'set /p initial_echo_status=<".\\tmp_echo_status.log"')
     set_cmd_list.append(f'DEL /F ".\\tmp_echo_status.log">NUL 2>&1')
-    #set_cmd_list.append(f'echo DEBUG: 1 initial_echo_status=!initial_echo_status!')
+    if DEBUG_MODE or IS_VERBOSE:
+        set_cmd_list.append(f'echo DEBUG: 1 initial_echo_status=!initial_echo_status!')
     set_cmd_list.append(f'set "initial_echo_status=!initial_echo_status:ECHO is =!"')
-    #set_cmd_list.append(f'echo DEBUG: 2 initial_echo_status=!initial_echo_status!')
+    if DEBUG_MODE or IS_VERBOSE:
+        set_cmd_list.append(f'echo DEBUG: 2 initial_echo_status=!initial_echo_status!')
     set_cmd_list.append(f'set "initial_echo_status=!initial_echo_status:.=!"')
-    #set_cmd_list.append(f'echo DEBUG: 3 initial_echo_status=!initial_echo_status!')
+    if DEBUG_MODE or IS_VERBOSE:
+        set_cmd_list.append(f'echo DEBUG: 3 initial_echo_status=!initial_echo_status!')
     set_cmd_list.append(f'REM ---')
     set_cmd_list.append(f'@ECHO OFF')
     set_cmd_list.append(f'echo prefix = "{prefix}"   Initial echo status=!initial_echo_status!')
@@ -313,7 +362,8 @@ if __name__ == "__main__":
 
     # Run MediaInfo command to generate JSON output
     mediainfo_subprocess_command = [mediainfo_path, '--Full', '--Output=JSON', '--BOM', mediafile ]
-    #print(f"DEBUG: issuing subprocess command: {mediainfo_subprocess_command}")
+    if DEBUG_MODE or IS_VERBOSE:
+        print(f"DEBUG: issuing subprocess command: {mediainfo_subprocess_command}")
     #
     #OLD:
     #mediainfo_output = subprocess.check_output(mediainfo_subprocess_command).decode('utf-8', 'ignore')
@@ -322,19 +372,21 @@ if __name__ == "__main__":
     #
     # NEW:
     # run and capture raw bytes (not text)
-    if IS_VERBOSE:
+    if DEBUG_MODE or IS_VERBOSE:
         print(f"subprocess.run calling: {objPrettyPrint.pformat(mediainfo_subprocess_command)}", flush=True)
     result = subprocess.run(mediainfo_subprocess_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    if IS_VERBOSE:
-        print(f"subprocess.run returned from: {objPrettyPrint.pformat(mediainfo_subprocess_command)}", flush=True)
+    if DEBUG_MODE or IS_VERBOSE:
+        print(f"DEBUG: subprocess.run returned from: {objPrettyPrint.pformat(mediainfo_subprocess_command)}", flush=True)
 
     # Do this before checking stderr and abort if an error occurred
     if result.returncode != 0:
-        print(f"Mediainfo exited with code {result.returncode}", file=sys.stderr, flush=True)
+        print(f"Mediainfo exited with non-zero ERROR return code {result.returncode}", file=sys.stderr, flush=True)
         if result.stderr:
             stderr_encoding_this_time, stderr_output = Attempt_to_detect_mediainfo_output_encoding(result.stderr)
-            print(f"Mediainfo stderr: {stderr_output}", file=sys.stderr, flush=True)
+            print(f"Mediainfo ERROR had stderr data: {stderr_output}", file=sys.stderr, flush=True)
         sys.exit(ERROR_INVALID_FUNCTION)
+    else:
+        print(f"Mediainfo exited with SUCCESS return code {result.returncode}", file=sys.stderr, flush=True)
 
     # If mediainfo wrote anything to stderr, log it and abort
     if result.stderr:
@@ -342,8 +394,8 @@ if __name__ == "__main__":
         stderr_bytes = result.stderr
         stderr_encoding_this_time, stderr_output = Attempt_to_detect_mediainfo_output_encoding(stderr_bytes)
         if stderr_output.strip():
-            print(f"Mediainfo error, stderr: {stderr_output}", file=sys.stderr, flush=True)
-        sys.exit(ERROR_INVALID_FUNCTION)
+            print(f"WARNING: Mediainfo returned stderr data with result.returncode='{result.returncode}', message: {stderr_output}", file=sys.stderr, flush=True)
+        #sys.exit(ERROR_INVALID_FUNCTION)
 
     # When we get to here, no errors so far ...
     # Attempt to detect the real output encoding, if it returns we're good to go.
@@ -351,8 +403,14 @@ if __name__ == "__main__":
     mediainfo_encoding_this_time, mediainfo_output = Attempt_to_detect_mediainfo_output_encoding(raw_bytes)
 
     # Parse JSON output
-    if IS_VERBOSE:
-        print(f"Start Parsing JSON result of mediainfo", flush=True)
+    if DEBUG_MODE or IS_VERBOSE:
+        print(f"DEBUG: Start Parsing JSON result from mediainfo using json.loads(mediainfo_output) ...", flush=True)
+    # Manually strip BOM (encoding) if present (safety net for json.loads compatibility)
+    # Even though utf-8-sig should handle this, we double-check in case cp65001 or similar was used
+    if mediainfo_output.startswith('\ufeff'):
+        if DEBUG_MODE or IS_VERBOSE:
+            print(f"DEBUG: Stripping BOM character from JSON result string before json.loads()", flush=True)
+        mediainfo_output = mediainfo_output[1:]
     json_data = json.loads(mediainfo_output)
     if json_data is None:
         print(f"Error: No mediainfo JSON data returned from: {mediafile}", flush=True)
@@ -367,13 +425,14 @@ if __name__ == "__main__":
         print(f"Error: No mediainfo tracks detected processing {mediafile}\n", flush=True)
         #sys.exit(ERROR_INVALID_DATA)
         pass
-    if IS_VERBOSE:
-        print(f"End Parsing JSON result of mediainfo", flush=True)
+    if DEBUG_MODE or IS_VERBOSE:
+        print(f"DEBUG: End Parsing JSON result from mediainfo", flush=True)
 
     set_cmd_list.append(f'@ECHO !initial_echo_status!')
     set_cmd_list.append(f'set "initial_echo_status="')
     set_cmd_list.append(f'goto :eof')
-    #print(f"DEBUG: set_cmd_list=\n{objPrettyPrint.pformat(set_cmd_list)}", flush=True)
+    if DEBUG_MODE or IS_VERBOSE:
+        print(f"DEBUG: set_cmd_list=\n{objPrettyPrint.pformat(set_cmd_list)}", flush=True)
 
     # Open the cmd file for writing in overwrite mode
     output_cmd_file = args.output_cmd_file
@@ -381,10 +440,13 @@ if __name__ == "__main__":
         os.remove(output_cmd_file)
     # We need a BOM for some Windows consumers, use encoding='utf-8-sig'.
     with open(output_cmd_file, 'w', encoding='utf-8-sig', newline='\r\n') as cmd_file:
+        if DEBUG_MODE or IS_VERBOSE:
+            print(f"DEBUG: start writing commands to '{output_cmd_file}' ...")
         for cmd_item in set_cmd_list:
             cmd_file.write(cmd_item + '\n') # use \n to force the newline as specified in 'newline='
-            if IS_VERBOSE:
-                print(f"Wrote line to .bat file: {cmd_item}", flush=True)
-
-    if IS_VERBOSE:
-        print(f"Exiting: {' '.join(quote_if_needed(arg) for arg in sys.argv)}", flush=True)
+            if DEBUG_MODE or IS_VERBOSE:
+                print(f"DEBUG: Wrote line to .bat file: {cmd_item}", flush=True)
+        if DEBUG_MODE or IS_VERBOSE:
+            print(f"DEBUG: end writing commands to '{output_cmd_file}' ...")
+    if DEBUG_MODE or IS_VERBOSE:
+        print(f"DEBUG: Exiting: {' '.join(quote_if_needed(arg) for arg in sys.argv)}", flush=True)

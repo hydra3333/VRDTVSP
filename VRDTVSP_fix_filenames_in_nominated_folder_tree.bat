@@ -86,6 +86,8 @@ REM Nominate the folder tree top here !  ("--recurse" on the python comandline s
 REM
 REM set "the_folder=G:\HDTV\"
 set "the_folder=T:\HDTV\"
+REM set "the_folder=X:\autoTVS-mpg\"
+REM set "the_folder=Y:\VRDTVSP-Converted\"
 REM
 REM @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 REM @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

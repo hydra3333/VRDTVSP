@@ -2305,17 +2305,17 @@ ECHO "!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_s
 "!py_exe!" "!Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section!" --ffprobe_dos_variablename "ffprobeexe64" --mediafile "!media_filename!" --prefix "!derived_prefix_FF!" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
 SET EL=!ERRORLEVEL!
 IF /I "!EL!" NEQ "0" (
-   ECHO !DATE! !TIME! **********  ffprobe "!derived_prefix_FF!" Error !EL! returned from !Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section! >> "!vrdlog!" 2>&1
+   ECHO !DATE! !TIME! **********  ffprobe "!derived_prefix_FF!" Error !EL! returned from !Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section! >> "!vrdlog!" 2>&1
    ECHO !DATE! !TIME! **********  ABORTING ... >> "!vrdlog!" 2>&1
    !xPAUSE!
    EXIT !EL!
 )
 REM ECHO ### "!derived_prefix_FF!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ****************************** >> "!vrdlog!" 2>&1
-REM ECHO ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
-REM ECHO TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
-REM TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
-REM ECHO ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
+ECHO ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
+ECHO TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+ECHO ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
 ECHO call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 ECHO DEL /F "!temp_cmd_file!"
@@ -2332,17 +2332,17 @@ ECHO "!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in
 "!py_exe!" "!Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section!" --mediainfo_dos_variablename "mediainfoexe64" --mediafile "!media_filename!" --prefix "!derived_prefix_MI!" --output_cmd_file="!temp_cmd_file!" >> "!vrdlog!" 2>&1
 SET EL=!ERRORLEVEL!
 IF /I "!EL!" NEQ "0" (
-   ECHO !DATE! !TIME! **********  mediainfo "!derived_prefix_MI!" Error !EL! returned from !Path_to_py_VRDTVSP_Set_ffprobe_Variables_for_first_stream_in_section! >> "!vrdlog!" 2>&1
+   ECHO !DATE! !TIME! **********  mediainfo "!derived_prefix_MI!" Error !EL! returned from !Path_to_py_VRDTVSP_Set_Mediainfo_Variables_for_first_stream_in_section! >> "!vrdlog!" 2>&1
    ECHO !DATE! !TIME! **********  ABORTING ... >> "!vrdlog!" 2>&1
    !xPAUSE!
    EXIT !EL!
 )
-REM ECHO ### "!derived_prefix_MI!" >> "!vrdlog!" 2>&1
+ECHO ### "!derived_prefix_MI!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ****************************** >> "!vrdlog!" 2>&1
-REM ECHO ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
-REM ECHO TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
-REM TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
-REM ECHO ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
+ECHO ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
+ECHO TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+TYPE "!temp_cmd_file!" >> "!vrdlog!" 2>&1
+ECHO ++++++++++++++++++++++++++++++ >> "!vrdlog!" 2>&1
 ECHO call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 call "!temp_cmd_file!" >> "!vrdlog!" 2>&1
 ECHO DEL /F "!temp_cmd_file!"
