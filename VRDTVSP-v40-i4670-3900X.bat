@@ -10,6 +10,10 @@ REM --------- set whether pause statements take effect -------------------------
 ECHO !DATE! !TIME! --------- Start setup paths and exe filenames ---------------------------- >> "!vrdlog!" 2>&1
 set "root=G:\HDTV\"
 set "vs_root=C:\SOFTWARE\Vapoursynth-x64\"
+set "vs_root_exe_files=%vs_root%Scripts\"
+set "vs_root_plugin_files=%vs_root%Lib\site-packages\vapoursynth\plugins\vsrepo\"
+set "vs_root_dg_plugin_files=%vs_root%\DGIndex\"
+
 set "destination_mp4_Folder=T:\HDTV\VRDTVSP-Converted\"
 set "scratch_Folder=D:\VRDTVSP-SCRATCH\"
 
@@ -17,23 +21,15 @@ if /I NOT "!root:~-1!" == "\" (set "root=!root!\")
 if /I NOT "!vs_root:~-1!" == "\" (set "vs_root=!vs_root!\")
 set "root_nobackslash=%root:~0,-1%"
 set "vs_root_nobackslash=%vs_root:~0,-1%"
-
 set "vs_path_drive=!vs_root:~,2!"
-set "vs_scripts_path=!vs_root!vs-scripts\"
-set "vs_plugins_path=!vs_root!vs-plugins\"
-set "vs_coreplugins_path=!vs_root!vs-coreplugins\"
-
-if /I NOT "!vs_scripts_path:~-1!" == "\" (set "vs_scripts_path=!vs_scripts_path!\")
-if /I NOT "!vs_plugins_path:~-1!" == "\" (set "vs_plugins_path=!vs_plugins_path!\")
-if /I NOT "!vs_coreplugins_path:~-1!" == "\" (set "vs_coreplugins_path=!vs_coreplugins_path!\")
 
 set "ffmpegexe64=!vs_root!ffmpeg.exe"
 set "ffmpegexe64_OpenCL=!vs_root!ffmpeg_OpenCL.exe"
 set "ffprobeexe64=!vs_root!ffprobe.exe"
 set "mediainfoexe64=!vs_root!MediaInfo.exe"
-set "dgindexNVexe64=!vs_root!DGIndex\DGIndexNV.exe"
-set "vspipeexe64=!vs_root!VSPipe.exe"
+set "dgindexNVexe64=!vs_root_dg_plugin_files!DGIndexNV.exe"
 set "py_exe=!vs_root!python.exe"
+set "vspipeexe64=!vs_root_exe_files!VSPipe.exe"
 set "Insomniaexe64=C:\SOFTWARE\Insomnia\64-bit\Insomnia.exe"
 ECHO !DATE! !TIME! --------- Finish setup paths and exe filenames ---------------------------- >> "!vrdlog!" 2>&1
 
@@ -207,9 +203,9 @@ ECHO !DATE! !TIME! root_nobackslash="!root_nobackslash!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! vs_root="!vs_root!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! vs_root_nobackslash="!vs_root_nobackslash!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! vs_path_drive="!vs_path_drive!" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! vs_scripts_path="!vs_scripts_path!" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! vs_plugins_path="!vs_plugins_path!" >> "!vrdlog!" 2>&1
-ECHO !DATE! !TIME! vs_coreplugins_path="!vs_coreplugins_path!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! vs_root_exe_files="!vs_root_exe_files!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! vs_root_plugin_files="!vs_root_plugin_files!" >> "!vrdlog!" 2>&1
+ECHO !DATE! !TIME! vs_root_dg_plugin_files="!vs_root_dg_plugin_files!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ffmpegexe64="!ffmpegexe64!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ffmpegexe64_OpenCL="!ffmpegexe64_OpenCL!" >> "!vrdlog!" 2>&1
 ECHO !DATE! !TIME! ffprobeexe64="!ffprobeexe64!" >> "!vrdlog!" 2>&1
