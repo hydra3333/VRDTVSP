@@ -11,9 +11,9 @@ ECHO !DATE! !TIME! --------- Start setup paths and exe filenames ---------------
 set "root=G:\HDTV\"
 set "vs_root=C:\SOFTWARE\Vapoursynth-x64\"
 set "vs_root_exe_files=%vs_root%Scripts\"
+set "vs_root_site_packages=%vs_root%Lib\site-packages\"
 set "vs_root_plugin_files=%vs_root%Lib\site-packages\vapoursynth\plugins\vsrepo\"
 set "vs_root_dg_plugin_files=%vs_root%\DGIndex\"
-
 set "destination_mp4_Folder=T:\HDTV\VRDTVSP-Converted\"
 set "scratch_Folder=D:\VRDTVSP-SCRATCH\"
 
@@ -29,7 +29,8 @@ set "ffprobeexe64=!vs_root!ffprobe.exe"
 set "mediainfoexe64=!vs_root!MediaInfo.exe"
 set "dgindexNVexe64=!vs_root_dg_plugin_files!DGIndexNV.exe"
 set "py_exe=!vs_root!python.exe"
-set "vspipeexe64=!vs_root_exe_files!VSPipe.exe"
+REM set "vspipeexe64=!vs_root_exe_files!VSPipe.exe"
+set "vspipeexe64=!vs_root_site_packages!vapoursynth\vspipe.exe"
 set "Insomniaexe64=C:\SOFTWARE\Insomnia\64-bit\Insomnia.exe"
 ECHO !DATE! !TIME! --------- Finish setup paths and exe filenames ---------------------------- >> "!vrdlog!" 2>&1
 
