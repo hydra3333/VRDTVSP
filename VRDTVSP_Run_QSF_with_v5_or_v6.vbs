@@ -1,4 +1,7 @@
 Option Explicit
+	' VRDTVSP compatibility revision 1.1.
+	' Existing arguments, exit behaviour and legacy QSFinfo_* variable names are
+	' retained.  Additional ActualVideoBitrate provenance variables are appended.
 	' cscript //nologo "VRDTVSP_Run_QSF_with_v5_or_v6.vbs" "6" "c:\TEMP\input.ts" "c:\TEMP\output.QSF.MP4" "VRDTVS-for-QSF-H264_VRD6" "c:\TEMP\output_cmd_file.bat" "QSFinfo_" "5000000" "15"
 	'                  name-of-script                args: 0   1                  2                        3                           4                             5         6         7
 	'
@@ -282,7 +285,7 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 	'
 	Dim actual_outputFile, actual_VideoOutputFrameCount, actual_ActualVideoBitrate
 	Dim estimated_outputFile, estimated_VideoOutputFrameCount, estimated_ActualVideoBitrate
-	Dim x
+	Dim interpreted_bitrate_bps, bitrate_source, bitrate_raw, bitrate_declared_unit
 	'
 	giveup_minutes = qsf_timeout_minutes
 	'
@@ -508,6 +511,9 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 		xml_string_completedfile = VideoReDo.OutputGetCompletedInfo() ' which is the most recently completed output file (hopefully the QSF file) https://www.videoredo.com/TVSuite_Application_Notes/output_complete_info_xml_forma.html" 
 		on error goto 0
 	End If
+	' Diagnostic intentionally enabled for the acceptance run.  Redirect stdout
+	' to a log file to retain the exact completion XML returned by VideoReDo.
+	Wscript.StdOut.WriteLine("VRDTVSP_QSF_COMPLETION_XML=" & xml_string_completedfile)
 	closeflag = VideoReDo.FileClose()
 	'on error resume Next
 	on error goto 0
@@ -554,18 +560,16 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 	objDict.Add "OutputSceneCount", gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/OutputSceneCount")
 	objDict.Add "VideoOutputFrameCount", gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/VideoOutputFrameCount")
 	objDict.Add "AudioOutputFrameCount", gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/AudioOutputFrameCount")
-	' 2023.12.26 Rarely, there is text in the supposedlynueric field "//VRDOutputInfo/ActualVideoBitrate"
-	x = gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/ActualVideoBitrate")
-	if IsNumeric(x) Then
-		objDict.Add "ActualVideoBitrate", CLng(CDbl(x) * CDbl(1000000.0)) ' convert from decimal Mpbs to bps
-	else
-		objDict.Add "ActualVideoBitrate", default_ActualBitrate_bps	' assume h.264, guess or use bitrate from mediainfo/ffprobe
-		'if gimme_xml_named_value(xmlDoc, "//VRDOutputInfo/OutputType") = Ucase("MP4") Then
-		'	objDict.Add "ActualVideoBitrate", 4000000	' assume h.264, guess or use bitrate from mediainfo/ffprobe
-		'else
-		'	objDict.Add "ActualVideoBitrate", 2000000	' assume mpeg2, guess or use bitrate from mediainfo/ffprobe
-		'End If
-	End If
+	' Preserve the legacy ActualVideoBitrate variable in bps, but do not assume
+	' that every VideoReDo version serialises the XML value in Mbps.  The
+	' completion XML unit declaration is authoritative when present; otherwise a
+	' deliberately conservative magnitude rule is used.  Ambiguous or invalid
+	' values use the caller-supplied bps fallback, exactly as the old interface did.
+	Call InterpretActualVideoBitrate(xmlDoc, default_ActualBitrate_bps, interpreted_bitrate_bps, bitrate_source, bitrate_raw, bitrate_declared_unit)
+	objDict.Add "ActualVideoBitrate", interpreted_bitrate_bps
+	objDict.Add "ActualVideoBitrate_Source", bitrate_source
+	objDict.Add "ActualVideoBitrate_Raw", bitrate_raw
+	objDict.Add "ActualVideoBitrate_DeclaredUnit", bitrate_declared_unit
 	If NOT objDict.Exists("outputFile") Then 
 		Set xmlDoc = Nothing
 		WScript.StdOut.WriteLine("VRDTVSP_Run_QSF_with_v5_or_v6: ABORTING: outputFile string from VideoReDo.OutputGetCompletedInfo() not in Dict, xml_string_completedfile=" & xml_string_completedfile)
@@ -615,6 +619,90 @@ Function VRDTVSP_Run_QSF_with_v5_or_v6(	byVAL vrd_version_number, _
 	'	objDict.Remove objDict.Keys()(i)
 	'	objDict.Key(key) = newkey ' but You can't change a value in a key-value pair.  If you want a different value, you need to delete the item, then add a new one.
 End Function
+
+Sub InterpretActualVideoBitrate(xmlDoc_object, byVal fallback_bps, ByRef result_bps, ByRef result_source, ByRef result_raw, ByRef result_declared_unit)
+	' Interpret //VRDOutputInfo/ActualVideoBitrate while retaining the old public
+	' contract: result_bps is always an integer bps value and falls back to the
+	' caller's Args(6) value if the XML value cannot be trusted.
+	Const plausible_maximum_bps = 30000000
+	Dim bitrate_node, format_attribute, raw_text, format_text, numeric_value
+	Dim multiplier, candidate_bps, declared_unit
+
+	result_bps = fallback_bps
+	result_source = "CALLER_FALLBACK_MISSING"
+	result_raw = ""
+	result_declared_unit = ""
+
+	Set bitrate_node = xmlDoc_object.selectSingleNode("//VRDOutputInfo/ActualVideoBitrate")
+	If bitrate_node Is Nothing Then Exit Sub
+
+	raw_text = Trim(CStr(bitrate_node.text))
+	If raw_text = "" Then Exit Sub
+	If Not IsNumeric(raw_text) Then
+		result_source = "CALLER_FALLBACK_NONNUMERIC"
+		Exit Sub
+	End If
+
+	numeric_value = CDbl(raw_text)
+	result_raw = raw_text
+	If numeric_value <= 0 Then
+		result_source = "CALLER_FALLBACK_NONPOSITIVE"
+		Exit Sub
+	End If
+
+	format_text = ""
+	Set format_attribute = bitrate_node.attributes.getNamedItem("val_format")
+	If Not format_attribute Is Nothing Then
+		format_text = LCase(Trim(CStr(format_attribute.text)))
+	End If
+
+	multiplier = 0
+	declared_unit = ""
+	' Test longer unit names first because each contains the substring "bps".
+	If InStr(1, format_text, "gbps", vbTextCompare) > 0 Then
+		multiplier = CDbl(1000000000.0)
+		declared_unit = "Gbps"
+	ElseIf InStr(1, format_text, "mbps", vbTextCompare) > 0 Then
+		multiplier = CDbl(1000000.0)
+		declared_unit = "Mbps"
+	ElseIf InStr(1, format_text, "kbps", vbTextCompare) > 0 Then
+		multiplier = CDbl(1000.0)
+		declared_unit = "Kbps"
+	ElseIf InStr(1, format_text, "bps", vbTextCompare) > 0 Then
+		multiplier = CDbl(1.0)
+		declared_unit = "bps"
+	End If
+
+	If multiplier > 0 Then
+		result_declared_unit = declared_unit
+		candidate_bps = numeric_value * multiplier
+		If candidate_bps > 0 And candidate_bps <= plausible_maximum_bps Then
+			result_bps = CLng(candidate_bps)
+			result_source = "VRD_COMPLETION_XML_DECLARED_UNIT"
+		Else
+			result_source = "CALLER_FALLBACK_DECLARED_UNIT_IMPLAUSIBLE"
+		End If
+		Exit Sub
+	End If
+
+	' Older completion XML examples contain no val_format.  Small positive values
+	' are interpreted as decimal Mbps; normal broadcast-rate integers are bps.
+	' Values between those bands are deliberately treated as ambiguous.
+	If numeric_value <= 30 Then
+		candidate_bps = numeric_value * CDbl(1000000.0)
+		If candidate_bps > 0 And candidate_bps <= plausible_maximum_bps Then
+			result_bps = CLng(candidate_bps)
+			result_source = "VRD_COMPLETION_XML_INFERRED_MBPS"
+		Else
+			result_source = "CALLER_FALLBACK_INFERRED_MBPS_IMPLAUSIBLE"
+		End If
+	ElseIf numeric_value >= 50000 And numeric_value <= plausible_maximum_bps Then
+		result_bps = CLng(numeric_value)
+		result_source = "VRD_COMPLETION_XML_INFERRED_BPS"
+	Else
+		result_source = "CALLER_FALLBACK_AMBIGUOUS"
+	End If
+End Sub
 
 Function gimme_xml_named_value (xmlDoc_object, byVAL xml_item_name) ' assumes the xml doc is already loaded in xmlDoc_object
 	'	Parameters:
